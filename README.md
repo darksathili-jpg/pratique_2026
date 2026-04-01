@@ -1,7 +1,3 @@
-Voici une proposition de `README.md` structurée, moderne et motivante, à l'image du design soigné de ton application. Elle s'adresse à la fois aux utilisateurs (élèves/profs) et aux contributeurs éventuels.
-
----
-
 # 🎓 NSI Terminale — Fiches BAC 2026
 
 [![NSI](https://img.shields.io/badge/Discipline-NSI-blue.svg)](https://eduscol.education.fr/1715/numerique-et-sciences-informatiques-bac-general)
