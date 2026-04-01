@@ -1,0 +1,1276 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Fiche – Cycle Menstruel | NSI Terminale | BAC 2026</title>
+
+  <!-- Bootstrap 5.3.3 -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Rubik+Dirt&family=Source+Serif+4:ital,opsz,wght@0,8..60,300..900;1,8..60,300..900&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+
+  <!-- MathJax v3 -->
+  <script>
+    MathJax = {
+      tex: { inlineMath: [['\\(', '\\)'], ['$', '$']] },
+      options: { skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre'] }
+    };
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js" async></script>
+
+  <!-- PyScript 2026.3.1 -->
+  <script type="module" src="https://pyscript.net/releases/2026.3.1/core.js"></script>
+
+  <style>
+    :root {
+      --bg-main:    #f8f9fb;
+      --bg-panel:   #eef1f5;
+      --bg-cours:   #ffffff;
+      --accent:     #2a6496;
+      --py-editor-input: white;
+      --accent-or:  #b5610a;
+      --accent-vert:#2e7d32;
+      --text-main:  #1a1a1a;
+      --text-muted: #5a6470;
+      --border-radius: 8px;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      background-color: var(--bg-main);
+      color: var(--text-main);
+      font-family: 'Source Serif 4', Georgia, serif;
+      font-size: 1.1rem;
+      line-height: 1.8;
+      margin: 0;
+      padding-bottom: 4rem;
+    }
+
+    h1, h2, h3, h4 {
+      font-family: 'Rubik Dirt', cursive;
+      color: var(--accent);
+      letter-spacing: 0.02em;
+    }
+
+    h1 { font-size: 2.2rem; color: #111; }
+    h2 { font-size: 1.55rem; border-bottom: 2px solid var(--accent); padding-bottom: .3rem; margin-top: 2.5rem; }
+    h3 { font-size: 1.25rem; color: var(--accent-or); margin-top: 1.8rem; }
+    h4 { font-size: 1.05rem; color: var(--accent-vert); }
+
+    p { margin-bottom: 1rem; }
+
+    code, pre, .mono {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.9em;
+    }
+
+    code {
+      background: #e8edf2;
+      padding: 2px 6px;
+      border-radius: 4px;
+      color: #8b3a00;
+    }
+
+    pre {
+      background: #f0f3f7;
+      border-left: 3px solid var(--accent);
+      padding: 1rem 1.2rem;
+      border-radius: var(--border-radius);
+      overflow-x: auto;
+      color: #1a1a1a;
+    }
+
+    a { color: var(--accent); text-decoration: underline dotted; }
+    a:hover { color: var(--accent-or); }
+
+    /* ── NAVIGATION ── */
+    #navbar {
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      background: #2a6496;
+      border-bottom: 2px solid #1a4a70;
+      padding: .5rem 1.5rem;
+      display: flex;
+      gap: .5rem;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    #navbar span {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: .8rem;
+      color: #ccddf0;
+      margin-right: auto;
+    }
+
+    #navbar a {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: .8rem;
+      color: #fff;
+      text-decoration: none;
+      padding: .25rem .7rem;
+      border: 1px solid #ccddf0;
+      border-radius: 4px;
+      transition: background .2s;
+    }
+
+    #navbar a:hover { background: #1a4a70; color: #fff; }
+
+    /* ── CONTENU ── */
+    .container-content {
+      max-width: 860px;
+      margin: 0 auto;
+      padding: 2rem 1.5rem;
+    }
+
+    /* ── ENCADRÉS ── */
+    .encadre,
+    .encadre-conseil,
+    .encadre-indice,
+    .encadre-question {
+      background: #ffffff;
+      border-radius: var(--border-radius);
+      padding: 1.1rem 1.4rem;
+      margin: 1.4rem 0;
+      position: relative;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+    }
+
+    .encadre          { border-left: 4px solid var(--accent); }
+    .encadre-conseil  { border-left: 4px solid var(--accent-or); background: #fff8f0; }
+    .encadre-indice   { border-left: 4px solid var(--accent-vert); background: #f0faf0; }
+    .encadre-question { border-left: 4px solid #7b3fa8; border-top: 1px solid #c8a8e820; background: #faf5ff; }
+
+    .encadre-prefix {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: .72rem;
+      font-variant: small-caps;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      margin-bottom: .4rem;
+      display: block;
+    }
+
+    .encadre          .encadre-prefix { color: var(--accent); }
+    .encadre-conseil  .encadre-prefix { color: var(--accent-or); }
+    .encadre-indice   .encadre-prefix { color: var(--accent-vert); }
+    .encadre-question .encadre-prefix { color: #7b3fa8; }
+
+    /* ── BOUTONS ── */
+    .btn-tp, .btn-tp-or, .btn-tp-vert, .btn-secondaire {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: .82rem;
+      border: none;
+      border-radius: 5px;
+      padding: .45rem 1.1rem;
+      cursor: pointer;
+      transition: opacity .2s, transform .1s;
+      margin: .3rem .2rem;
+    }
+
+    .btn-tp         { background: var(--accent);      color: #fff; }
+    .btn-tp-or      { background: var(--accent-or);   color: #fff; }
+    .btn-tp-vert    { background: var(--accent-vert); color: #fff; }
+    .btn-secondaire { background: #eef1f5; border: 1px solid var(--accent); color: var(--text-main); }
+
+    .btn-tp:hover, .btn-tp-or:hover, .btn-tp-vert:hover, .btn-secondaire:hover {
+      opacity: .85; transform: translateY(-1px);
+    }
+
+    /* ── BADGE QUESTION ── */
+    .badge-question {
+      display: inline-block;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: .8rem;
+      background: #7b3fa8;
+      color: #fff;
+      border-radius: 4px;
+      padding: .15rem .7rem;
+      margin-right: .5rem;
+      vertical-align: middle;
+    }
+
+    /* ── INDICES / CORRECTIONS CACHÉS ── */
+    .indice-bloc { display: none; }
+    .indice-bloc.visible { display: block; }
+    .correction-bloc { display: none; }
+    .correction-bloc.visible { display: block; }
+
+    /* ── PIED DE PAGE ── */
+    footer {
+      text-align: center;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: .8rem;
+      color: var(--text-muted);
+      padding: 2rem 1rem 1rem;
+      border-top: 1px solid #d0d8e4;
+    }
+
+    /* ── RETOUR EN HAUT ── */
+    #btn-top {
+      position: fixed;
+      bottom: 1.5rem;
+      right: 1.5rem;
+      z-index: 999;
+      background: var(--accent);
+      color: #fff;
+      border: none;
+      border-radius: 50%;
+      width: 44px;
+      height: 44px;
+      font-size: 1.2rem;
+      cursor: pointer;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      font-family: 'JetBrains Mono', monospace;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.25);
+      transition: opacity .2s;
+    }
+
+    #btn-top:hover { opacity: .8; }
+
+    /* ── PIÈGE ── */
+    .encadre-piege {
+      background: #fff5f5;
+      border-left: 4px solid #c0392b;
+      border-radius: var(--border-radius);
+      padding: 1rem 1.4rem;
+      margin: 1.2rem 0;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.07);
+    }
+
+    .encadre-piege .encadre-prefix {
+      color: #c0392b;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: .72rem;
+      font-variant: small-caps;
+      letter-spacing: .12em;
+      display: block;
+      margin-bottom: .3rem;
+    }
+
+    /* ── TABLE PHASES ── */
+    .table-phases {
+      border-collapse: collapse;
+      width: 100%;
+      font-size: .92rem;
+      margin: 1rem 0;
+    }
+
+    .table-phases th {
+      background: #dce8f2;
+      color: var(--accent);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: .8rem;
+      padding: .5rem .9rem;
+      border: 1px solid #b5c9dc;
+      text-align: left;
+    }
+
+    .table-phases td {
+      border: 1px solid #b5c9dc;
+      padding: .45rem .9rem;
+    }
+
+    .table-phases tr:nth-child(even) td { background: #f4f7fb; }
+
+    .phase-tag {
+      display: inline-block;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: .75rem;
+      border-radius: 3px;
+      padding: .1rem .5rem;
+      font-weight: 600;
+    }
+
+    .tag-regles   { background: #fde; color: #a0003a; }
+    .tag-follic   { background: #e8f4fd; color: #1a5276; }
+    .tag-ovul     { background: #eafaf1; color: #1e8449; }
+    .tag-luteal   { background: #fef9e7; color: #7d6608; }
+
+    /* sommaire */
+    #sommaire ol {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: .88rem;
+      line-height: 2.2;
+    }
+
+    #sommaire a { color: var(--accent); }
+    #sommaire a:hover { color: var(--accent-or); }
+
+    /* separateur */
+    .sep { border: none; border-top: 1px dashed #9ab0c8; margin: 2.5rem 0; opacity: .7; }
+
+    /* cycle diagram */
+    .cycle-diagram {
+      display: flex;
+      align-items: stretch;
+      border-radius: 8px;
+      overflow: hidden;
+      margin: 1.2rem 0;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: .78rem;
+      box-shadow: 0 1px 6px rgba(0,0,0,0.1);
+    }
+
+    .cycle-phase {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: .8rem .5rem;
+      text-align: center;
+      font-weight: 600;
+    }
+
+    .cycle-phase .jours { font-size: .65rem; font-weight: 400; margin-top: .3rem; opacity: .85; }
+
+    .cp-regles  { background: #fce4ec; color: #880e4f; flex: 5; }
+    .cp-follic  { background: #e3f2fd; color: #0d47a1; flex: 8; }
+    .cp-ovul    { background: #e8f5e9; color: #1b5e20; flex: 1; }
+    .cp-luteal  { background: #fff8e1; color: #e65100; flex: 14; }
+
+    /* py-editor */
+    py-editor { display: block; min-height: 100px; }
+    .py-editor-input {
+      background: var(--py-editor-input);
+      color: #1a1a1a;
+      border: 1px solid var(--accent);
+      border-radius: 4px;
+      padding: .8rem;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: .9rem;
+    }
+
+    /* appel prof */
+    .appel-prof {
+      display: inline-flex;
+      align-items: center;
+      gap: .5rem;
+      background: #e8f4fd;
+      border: 1px solid #2a6496;
+      border-radius: 6px;
+      padding: .5rem 1rem;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: .82rem;
+      color: #1a4a70;
+      margin: 1rem 0;
+    }
+  </style>
+</head>
+<body>
+
+<!-- Initialisation PyScript silencieuse -->
+<div id="pyinit" style="display:none">
+  <script type="py" env="cycle">
+    pass
+  </script>
+</div>
+
+<!-- BOUTON RETOUR EN HAUT -->
+<button id="btn-top" title="Retour en haut" aria-label="Retour en haut">▲</button>
+
+<!-- NAVIGATION STICKY -->
+<nav id="navbar">
+  <span>NSI Terminale – Cycle Menstruel</span>
+  <a href="#s0">Intro</a>
+  <a href="#s1">Rappels</a>
+  <a href="#q1">Q1</a>
+  <a href="#q2">Q2</a>
+  <a href="#q3">Q3</a>
+  <a href="#q4">Q4</a>
+  <a href="#pieges">Pièges</a>
+  <a href="#extension">Extension</a>
+</nav>
+
+<!-- CONTENU PRINCIPAL -->
+<div class="container-content">
+
+  <!-- EN-TÊTE -->
+  <div style="text-align:center; padding: 2rem 0 1rem;">
+    <div style="font-family:'JetBrains Mono',monospace; font-size:.8rem; color:var(--text-muted); margin-bottom:.5rem;">
+      BAC NSI 2026 — Sujet n°3 — Partie pratique
+    </div>
+    <h1>Cycle Menstruel<br><span style="font-size:1.1rem; color:var(--accent); font-family:'Source Serif 4',serif; font-style:italic; font-weight:300;">Fiche de révision guidée</span></h1>
+    <div style="font-family:'JetBrains Mono',monospace; font-size:.8rem; color:var(--text-muted); margin-top:.5rem;">
+      Terminale NSI &nbsp;·&nbsp; Algorithmique &nbsp;·&nbsp; Tuples &amp; Dates &amp; iCalendar
+    </div>
+  </div>
+
+  <hr class="sep">
+
+  <!-- SOMMAIRE -->
+  <section id="s0">
+    <div id="sommaire" class="encadre">
+      <span class="encadre-prefix">Sommaire</span>
+      <ol>
+        <li><a href="#s1">Introduction &amp; Rappels de cours — tuples et années bissextiles</a></li>
+        <li><a href="#q1">Question 1 — Écrire <code>est_bissextile(annee)</code></a></li>
+        <li><a href="#q2">Question 2 — Écrire <code>determiner_phase(jour)</code></a></li>
+        <li><a href="#q3">Question 3 — Compléter <code>test_ajouter_jours</code></a></li>
+        <li><a href="#q4">Question 4 — Corriger <code>calendrier_cycles</code> pour le format iCalendar</a></li>
+        <li><a href="#pieges">Pièges fréquents</a></li>
+        <li><a href="#extension">Mini-exercices d'extension</a></li>
+      </ol>
+    </div>
+  </section>
+
+  <hr class="sep">
+
+  <!-- SECTION 1 : INTRODUCTION ET RAPPELS -->
+  <section id="s1">
+    <h2>1 — Introduction &amp; Rappels de cours</h2>
+
+    <h3>Le cycle menstruel en quatre actes</h3>
+
+    <p>
+      Imagine une horloge biologique qui se remet à zéro toutes les 28 jours (en moyenne).
+      Ce cycle se décompose en quatre étapes que l'on numérote de 1 à 4 :
+    </p>
+
+    <!-- Diagramme visuel du cycle -->
+    <div class="cycle-diagram">
+      <div class="cycle-phase cp-regles">
+        Règles
+        <span class="jours">Jours 1–5</span>
+      </div>
+      <div class="cycle-phase cp-follic">
+        Phase folliculaire
+        <span class="jours">Jours 6–13</span>
+      </div>
+      <div class="cycle-phase cp-ovul">
+        Ovul.
+        <span class="jours">J. 14</span>
+      </div>
+      <div class="cycle-phase cp-luteal">
+        Phase lutéale
+        <span class="jours">Jours 15–28</span>
+      </div>
+    </div>
+
+    <table class="table-phases">
+      <thead>
+        <tr>
+          <th>Phase</th>
+          <th>Numéro</th>
+          <th>Jours du cycle</th>
+          <th>En bref…</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><span class="phase-tag tag-regles">Règles</span></td>
+          <td>1</td>
+          <td>1 à 5</td>
+          <td>Écoulement menstruel</td>
+        </tr>
+        <tr>
+          <td><span class="phase-tag tag-follic">Phase folliculaire</span></td>
+          <td>2</td>
+          <td>6 à 13</td>
+          <td>Développement d'un follicule dans l'ovaire</td>
+        </tr>
+        <tr>
+          <td><span class="phase-tag tag-ovul">Ovulation</span></td>
+          <td>3</td>
+          <td>14</td>
+          <td>Libération de l'ovocyte</td>
+        </tr>
+        <tr>
+          <td><span class="phase-tag tag-luteal">Phase lutéale</span></td>
+          <td>4</td>
+          <td>15 à 28</td>
+          <td>Développement de la muqueuse utérine</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <p>
+      Dans ce sujet, on va <strong>modéliser</strong> ce cycle en Python : représenter les dates,
+      calculer dans quelle phase se trouve un jour donné, et même générer un fichier d'agenda automatiquement.
+    </p>
+
+    <hr class="sep">
+
+    <h3>Rappel — Les tuples en Python</h3>
+
+    <p>
+      Un <strong>tuple</strong>, c'est comme une liste, mais on ne peut pas le modifier après sa création.
+      On le crée avec des parenthèses :
+    </p>
+
+    <pre><code>date = (7, 9, 2025)   # le 7 septembre 2025</code></pre>
+
+    <p>
+      Pour accéder à chaque élément, on utilise un indice — <strong>attention</strong>, ça commence à 0 :
+    </p>
+
+    <pre><code>jour, mois, annee = date   # déballage (unpacking)
+print(jour)    # affiche 7
+print(mois)    # affiche 9
+print(annee)   # affiche 2025</code></pre>
+
+    <div class="encadre">
+      <span class="encadre-prefix">Définition — Tuple</span>
+      <p style="margin:0">
+        Un <strong>tuple</strong> est une séquence <em>immuable</em> d'éléments. Dans ce sujet, on représente
+        toujours une date par le tuple <code>(jour, mois, annee)</code>, dans cet ordre précis.
+        Par exemple, <code>(3, 7, 2026)</code> désigne le 3 juillet 2026.
+      </p>
+    </div>
+
+    <hr class="sep">
+
+    <h3>Rappel — Les années bissextiles</h3>
+
+    <p>
+      Une année est <strong>bissextile</strong> si elle compte 366 jours au lieu de 365.
+      La règle se décompose en trois conditions que tu peux vérifier dans cet ordre :
+    </p>
+
+    <div class="encadre">
+      <span class="encadre-prefix">Règle des années bissextiles</span>
+      <p>Une année \(a\) est bissextile si et seulement si :</p>
+      <ul>
+        <li>Elle est divisible par 4, <strong>et</strong></li>
+        <li>Elle <em>n'est pas</em> divisible par 100, <strong>ou bien</strong></li>
+        <li>Elle est divisible par 400.</li>
+      </ul>
+      <p style="margin:0">
+        En Python, la divisibilité se teste avec l'opérateur <code>%</code> (modulo) :
+        <code>a % 4 == 0</code> est <code>True</code> si et seulement si <code>a</code> est divisible par 4.
+      </p>
+    </div>
+
+    <div class="encadre-conseil">
+      <span class="encadre-prefix">Trois exemples du sujet</span>
+      <ul style="margin:0">
+        <li><strong>2024</strong> : divisible par 4 ✔, pas par 100 ✔ → <em>bissextile</em></li>
+        <li><strong>2100</strong> : divisible par 4 ✔, divisible par 100 ✔, mais pas par 400 ✗ → <em>non bissextile</em></li>
+        <li><strong>2000</strong> : divisible par 4 ✔, par 100 ✔, et par 400 ✔ → <em>bissextile</em></li>
+      </ul>
+    </div>
+
+  </section>
+
+  <hr class="sep">
+
+  <!-- QUESTION 1 -->
+  <section id="q1">
+    <h2>Question 1 — La fonction <code>est_bissextile</code></h2>
+
+    <div class="encadre-question">
+      <span class="encadre-prefix">Énoncé — Question 1</span>
+      <p>
+        <span class="badge-question">Q1</span>
+        Écrire en Python une fonction nommée <code>est_bissextile</code> qui prend en paramètre
+        un entier correspondant à une année et qui renvoie un booléen (<code>True</code> ou <code>False</code>)
+        indiquant si elle est bissextile, en appliquant la règle donnée ci-dessus.
+      </p>
+      <p style="margin:0">
+        ✋ <em>Appel professeur — présente ta réponse ou sollicite de l'aide.</em>
+      </p>
+    </div>
+
+    <h3>Comment aborder cette question ?</h3>
+
+    <p>
+      Tu dois traduire la règle en trois conditions Python. La clé, c'est de bien
+      choisir l'ordre des tests. Voici une démarche possible :
+    </p>
+
+    <ol>
+      <li>Est-ce que l'année est divisible par 4 ? Si non, pas bissextile.</li>
+      <li>Si oui, est-elle divisible par 100 ? Si non, elle est bissextile.</li>
+      <li>Si oui, est-elle divisible par 400 ? Si oui, bissextile. Sinon, non.</li>
+    </ol>
+
+    <button class="btn-tp-or" onclick="toggleIndice('indice-q1', this)">▶ Indice — structure du <code>if</code></button>
+    <div id="indice-q1" class="indice-bloc encadre-indice" style="margin-top:.7rem;">
+      <span class="encadre-prefix">Indice</span>
+      <p>La structure générale avec des conditions imbriquées :</p>
+      <pre><code>if annee % 4 != 0:
+    return False
+elif annee % 100 != 0:
+    return True
+elif annee % 400 == 0:
+    return True
+else:
+    return False</code></pre>
+      <p style="margin:0">Tu peux aussi écrire tout cela en <strong>une seule ligne</strong> avec des opérateurs logiques
+      (<code>and</code>, <code>or</code>, <code>not</code>). C'est plus élégant mais peut être moins lisible.</p>
+    </div>
+
+    <h4>Essaie dans l'éditeur ci-dessous :</h4>
+
+    <script type="py" env="cycle">
+import calendar
+
+def est_bissextile(annee):
+    if annee % 4 != 0:
+        return False
+    elif annee % 100 != 0:
+        return True
+    elif annee % 400 == 0:
+        return True
+    else:
+        return False
+
+def test_est_bissextile():
+    assert est_bissextile(2024) == True,  "2024 doit être bissextile"
+    assert est_bissextile(2100) == False, "2100 ne doit pas être bissextile"
+    assert est_bissextile(2000) == True,  "2000 doit être bissextile"
+    assert est_bissextile(2025) == False, "2025 ne doit pas être bissextile"
+    print("Les tests sont validés.")
+
+test_est_bissextile()
+    </script>
+
+    <script type="py-editor" env="cycle">
+# Écris ici ta fonction est_bissextile
+def est_bissextile(annee):
+    # À toi de jouer !
+    pass
+
+def test_est_bissextile():
+    assert est_bissextile(2024) == True,  "2024 doit être bissextile"
+    assert est_bissextile(2100) == False, "2100 ne doit pas être bissextile"
+    assert est_bissextile(2000) == True,  "2000 doit être bissextile"
+    assert est_bissextile(2025) == False, "2025 ne doit pas être bissextile"
+    print("Les tests sont validés.")
+
+test_est_bissextile()
+    </script>
+
+    <button class="btn-secondaire" onclick="toggleCorrection('corr-q1', this)">Afficher la correction</button>
+    <div id="corr-q1" class="correction-bloc encadre" style="margin-top:.7rem;">
+      <span class="encadre-prefix">Correction — Q1</span>
+      <pre><code>def est_bissextile(annee):
+    if annee % 4 != 0:
+        return False
+    elif annee % 100 != 0:
+        return True
+    elif annee % 400 == 0:
+        return True
+    else:
+        return False
+
+def test_est_bissextile():
+    assert est_bissextile(2024) == True
+    assert est_bissextile(2100) == False
+    assert est_bissextile(2000) == True
+    assert est_bissextile(2025) == False
+    print("Les tests sont validés.")</code></pre>
+      <p style="margin:0">
+        Version condensée possible (avancée) :<br>
+        <code>return (annee % 4 == 0 and annee % 100 != 0) or (annee % 400 == 0)</code>
+      </p>
+    </div>
+
+  </section>
+
+  <hr class="sep">
+
+  <!-- QUESTION 2 -->
+  <section id="q2">
+    <h2>Question 2 — La fonction <code>determiner_phase</code></h2>
+
+    <div class="encadre-question">
+      <span class="encadre-prefix">Énoncé — Question 2</span>
+      <p>
+        <span class="badge-question">Q2</span>
+        Écrire en Python une fonction nommée <code>determiner_phase</code> qui prend en paramètre
+        un entier compris entre 1 et 28 inclus (le jour du cycle) et qui renvoie un entier
+        correspondant au numéro de la phase associée (1, 2, 3 ou 4).
+      </p>
+      <p style="margin:0">
+        À l'aide d'une <strong>assertion</strong>, on garantira que l'entier donné en argument
+        est bien compris entre 1 et 28 inclus.<br>
+        ✋ <em>Appel professeur — présente ta réponse ou sollicite de l'aide.</em>
+      </p>
+    </div>
+
+    <h3>Qu'est-ce qu'une assertion ?</h3>
+
+    <p>
+      Une <strong>assertion</strong>, c'est un garde-fou : on dit à Python « je garantis que cette condition
+      est vraie — si elle ne l'est pas, arrête tout et affiche une erreur ». La syntaxe est simple :
+    </p>
+
+    <pre><code>assert condition, "Message d'erreur si la condition est fausse"</code></pre>
+
+    <div class="encadre-conseil">
+      <span class="encadre-prefix">Exemple</span>
+      <pre style="margin:0"><code>assert 1 &lt;= jour &lt;= 28, "Le jour doit être entre 1 et 28"</code></pre>
+      <p style="margin:0">
+        Si on appelle la fonction avec <code>jour = 0</code> ou <code>jour = 29</code>,
+        Python lèvera une <code>AssertionError</code> avec le message.
+      </p>
+    </div>
+
+    <h3>Les conditions de phase</h3>
+
+    <p>
+      Reporte-toi au tableau de la section 1 : règles si le jour est entre 1 et 5,
+      phase folliculaire entre 6 et 13, ovulation le jour 14, phase lutéale entre 15 et 28.
+      Tu vas enchaîner des conditions <code>if … elif … elif … else</code>.
+    </p>
+
+    <button class="btn-tp-or" onclick="toggleIndice('indice-q2', this)">▶ Indice — squelette</button>
+    <div id="indice-q2" class="indice-bloc encadre-indice" style="margin-top:.7rem;">
+      <span class="encadre-prefix">Indice</span>
+      <pre><code>def determiner_phase(jour):
+    assert 1 &lt;= jour &lt;= 28, "Jour invalide"
+    if 1 &lt;= jour &lt;= 5:
+        return 1
+    elif 6 &lt;= jour &lt;= 13:
+        return ...   # à compléter
+    elif jour == 14:
+        return ...
+    else:
+        return ...</code></pre>
+    </div>
+
+    <h4>Essaie dans l'éditeur :</h4>
+
+    <script type="py-editor" env="cycle">
+def determiner_phase(jour):
+    # Ajoute d'abord ton assertion
+    # Puis tes conditions if / elif / else
+    pass
+
+def test_determiner_phase():
+    assert determiner_phase(1)  == 1, "Jour 1 = Règles"
+    assert determiner_phase(5)  == 1, "Jour 5 = Règles"
+    assert determiner_phase(6)  == 2, "Jour 6 = Phase folliculaire"
+    assert determiner_phase(13) == 2, "Jour 13 = Phase folliculaire"
+    assert determiner_phase(14) == 3, "Jour 14 = Ovulation"
+    assert determiner_phase(15) == 4, "Jour 15 = Phase lutéale"
+    assert determiner_phase(28) == 4, "Jour 28 = Phase lutéale"
+    print("Les tests sont validés.")
+
+test_determiner_phase()
+    </script>
+
+    <button class="btn-secondaire" onclick="toggleCorrection('corr-q2', this)">Afficher la correction</button>
+    <div id="corr-q2" class="correction-bloc encadre" style="margin-top:.7rem;">
+      <span class="encadre-prefix">Correction — Q2</span>
+      <pre><code>def determiner_phase(jour):
+    assert 1 &lt;= jour &lt;= 28, "Le jour doit être compris entre 1 et 28 inclus"
+    if 1 &lt;= jour &lt;= 5:
+        return 1   # Règles
+    elif 6 &lt;= jour &lt;= 13:
+        return 2   # Phase folliculaire
+    elif jour == 14:
+        return 3   # Ovulation
+    else:
+        return 4   # Phase lutéale (jours 15 à 28)
+
+def test_determiner_phase():
+    assert determiner_phase(1)  == 1
+    assert determiner_phase(5)  == 1
+    assert determiner_phase(6)  == 2
+    assert determiner_phase(13) == 2
+    assert determiner_phase(14) == 3
+    assert determiner_phase(15) == 4
+    assert determiner_phase(28) == 4
+    print("Les tests sont validés.")</code></pre>
+    </div>
+
+  </section>
+
+  <hr class="sep">
+
+  <!-- QUESTION 3 -->
+  <section id="q3">
+    <h2>Question 3 — Tests de <code>ajouter_jours</code></h2>
+
+    <div class="encadre-question">
+      <span class="encadre-prefix">Énoncé — Question 3</span>
+      <p>
+        <span class="badge-question">Q3</span>
+        La fonction <code>ajouter_jours</code> est déjà fournie dans <code>cycle_menstruel.py</code>.
+        Elle prend une date (tuple <code>(jour, mois, annee)</code>) et un nombre de jours à ajouter,
+        et renvoie la nouvelle date calculée.
+      </p>
+      <p style="margin:0">
+        Compléter la fonction <code>test_ajouter_jours</code> en ajoutant <strong>au moins trois autres tests pertinents</strong>.
+        Pour chaque test ajouté, explique brièvement <em>pourquoi</em> ce cas est important à vérifier.
+      </p>
+    </div>
+
+    <h3>La fonction fournie</h3>
+
+    <p>
+      Voici le code complet de <code>ajouter_jours</code> que tu dois comprendre avant d'écrire des tests :
+    </p>
+
+    <pre><code>import calendar
+
+def jours_dans_mois(annee, mois):
+    if mois == 2:
+        return 29 if calendar.isleap(annee) else 28
+    elif mois in [1, 3, 5, 7, 8, 10, 12]:
+        return 31
+    else:
+        return 30
+
+def ajouter_jours(date, nb_jours):
+    jour, mois, annee = date
+    jour = jour + nb_jours
+    while jour > jours_dans_mois(annee, mois):
+        jour = jour - jours_dans_mois(annee, mois)
+        mois = mois + 1
+        if mois > 12:    # passage à l'année suivante
+            mois = 1
+            annee = annee + 1
+    return (jour, mois, annee)</code></pre>
+
+    <div class="encadre-conseil">
+      <span class="encadre-prefix">Test déjà fourni</span>
+      <pre style="margin:0"><code>def test_ajouter_jours():
+    assert ajouter_jours((7, 9, 2025), 3) == (10, 9, 2025)
+    # → cas simple : reste dans le même mois</code></pre>
+    </div>
+
+    <h3>Quels cas faut-il tester ?</h3>
+
+    <p>
+      Un bon jeu de tests couvre les <strong>cas limites</strong>, pas seulement les cas normaux.
+      Pose-toi cette question : « Où est-ce que ça pourrait mal tourner ? »
+    </p>
+
+    <div class="encadre">
+      <span class="encadre-prefix">Idées de cas limites</span>
+      <ul style="margin:0">
+        <li><strong>Passage au mois suivant</strong> : ajouter des jours qui dépassent la fin du mois.</li>
+        <li><strong>Passage à l'année suivante</strong> : ajouter des jours en décembre qui débordent sur janvier.</li>
+        <li><strong>Février en année bissextile</strong> : le 29 février existe seulement certaines années.</li>
+        <li><strong>Ajout de 0 jours</strong> : la date ne doit pas changer.</li>
+        <li><strong>Ajout de 28 jours</strong> : c'est exactement la durée du cycle menstruel !</li>
+      </ul>
+    </div>
+
+    <button class="btn-tp-or" onclick="toggleIndice('indice-q3', this)">▶ Indice — exemples de valeurs à tester</button>
+    <div id="indice-q3" class="indice-bloc encadre-indice" style="margin-top:.7rem;">
+      <span class="encadre-prefix">Indice — valeurs pré-calculées</span>
+      <pre><code># Passage au mois suivant (30 sept + 5 = 5 oct)
+ajouter_jours((30, 9, 2025), 5)  →  (5, 10, 2025)
+
+# Passage à l'année suivante (31 déc + 1 = 1 jan)
+ajouter_jours((31, 12, 2025), 1) →  (1, 1, 2026)
+
+# Février bissextile 2024 (28 fév + 1 = 29 fév)
+ajouter_jours((28, 2, 2024), 1)  →  (29, 2, 2024)
+
+# Février non bissextile 2025 (28 fév + 1 = 1 mars)
+ajouter_jours((28, 2, 2025), 1)  →  (1, 3, 2025)
+
+# Ajout de 28 jours à une date de début de règles
+ajouter_jours((12, 3, 2026), 28) →  (9, 4, 2026)</code></pre>
+    </div>
+
+    <h4>Essaie dans l'éditeur :</h4>
+
+    <script type="py-editor" env="cycle">
+# La fonction ajouter_jours est déjà chargée dans l'environnement
+# Complète test_ajouter_jours avec au moins 3 nouveaux tests
+
+def test_ajouter_jours():
+    # Test fourni
+    assert ajouter_jours((7, 9, 2025), 3) == (10, 9, 2025)
+    # → Cas simple : reste dans le même mois. OK comme point de départ.
+
+    # Test 2 : passage au mois suivant
+    # → Important : vérifie que la boucle while fonctionne au changement de mois
+    assert ajouter_jours((30, 9, 2025), 5) == (5, 10, 2025)
+
+    # Test 3 : passage à l'année suivante
+    # → Important : vérifie le cas mois > 12 (retour à janvier)
+    assert ajouter_jours((31, 12, 2025), 1) == (1, 1, 2026)
+
+    # Test 4 : février en année bissextile
+    # → Important : 2024 est bissextile, le 29/02 doit exister
+    assert ajouter_jours((28, 2, 2024), 1) == (29, 2, 2024)
+
+    # Test 5 : février en année non bissextile
+    # → Important : 2025 n'est pas bissextile, après le 28/02 vient le 01/03
+    assert ajouter_jours((28, 2, 2025), 1) == (1, 3, 2025)
+
+    print("Les tests sont validés.")
+
+test_ajouter_jours()
+    </script>
+
+    <button class="btn-secondaire" onclick="toggleCorrection('corr-q3', this)">Afficher la correction</button>
+    <div id="corr-q3" class="correction-bloc encadre" style="margin-top:.7rem;">
+      <span class="encadre-prefix">Correction — Q3 (exemple complet avec justifications)</span>
+      <pre><code>def test_ajouter_jours():
+    # Test 1 (fourni) — cas simple dans le même mois
+    assert ajouter_jours((7, 9, 2025), 3) == (10, 9, 2025)
+
+    # Test 2 — passage au mois suivant
+    # Vérifie que la boucle while franchit correctement la fin d'un mois de 30 jours.
+    assert ajouter_jours((30, 9, 2025), 5) == (5, 10, 2025)
+
+    # Test 3 — passage à l'année suivante
+    # Le cas mois > 12 réinitialise à janvier de l'année suivante.
+    assert ajouter_jours((31, 12, 2025), 1) == (1, 1, 2026)
+
+    # Test 4 — février bissextile
+    # 2024 est bissextile : le 29 février existe.
+    assert ajouter_jours((28, 2, 2024), 1) == (29, 2, 2024)
+
+    # Test 5 — février non bissextile
+    # 2025 n'est pas bissextile : après le 28 vient directement le 1er mars.
+    assert ajouter_jours((28, 2, 2025), 1) == (1, 3, 2025)
+
+    print("Les tests sont validés.")</code></pre>
+    </div>
+
+  </section>
+
+  <hr class="sep">
+
+  <!-- QUESTION 4 -->
+  <section id="q4">
+    <h2>Question 4 — Corriger le format iCalendar</h2>
+
+    <div class="encadre-question">
+      <span class="encadre-prefix">Énoncé — Question 4</span>
+      <p>
+        <span class="badge-question">Q4</span>
+        La fonction <code>calendrier_cycles</code> (déjà fournie) génère un calendrier iCalendar des prochaines dates
+        de règles dans les 100 jours suivant une date de départ.
+        En l'observant avec <code>test_calendrier_cycles</code>, on constate que le calendrier produit
+        n'est <strong>pas dans un format valide</strong>.
+      </p>
+      <p style="margin:0">
+        Identifier le problème, proposer une démarche de résolution et la mettre en œuvre.
+        ✋ <em>Appel professeur — présente ta réponse ou sollicite de l'aide.</em>
+      </p>
+    </div>
+
+    <h3>Le format iCalendar — qu'est-ce que c'est ?</h3>
+
+    <p>
+      Un fichier iCalendar (<code>.ics</code>) est un format texte que tous les agendas numériques comprennent
+      (Google Calendar, Apple Calendrier, Outlook…). Chaque événement s'écrit ainsi :
+    </p>
+
+    <pre><code>BEGIN:VEVENT
+SUMMARY:Règles
+DTSTART:20260703
+END:VEVENT</code></pre>
+
+    <p>
+      La valeur de <code>DTSTART</code> suit le format <strong>AAAAMMJJ</strong>, soit
+      <em>toujours 8 caractères</em>. Le 3 juillet 2026 s'écrit donc <code>20260703</code>
+      et <strong>non</strong> <code>202673</code>.
+    </p>
+
+    <h3>Où est le bug ?</h3>
+
+    <p>
+      Voici la ligne problématique dans <code>calendrier_cycles</code> :
+    </p>
+
+    <pre><code>date = str(annee) + str(mois) + str(jour)</code></pre>
+
+    <p>
+      Avec <code>annee = 2026</code>, <code>mois = 7</code>, <code>jour = 3</code>, cette concaténation donne :
+    </p>
+
+    <pre><code>"2026" + "7" + "3"  =  "202673"   # ← 6 caractères, format invalide !</code></pre>
+
+    <div class="encadre-conseil">
+      <span class="encadre-prefix">Ce qui est attendu</span>
+      <p style="margin:0">
+        <code>"2026" + "07" + "03"  =  "20260703"</code> &nbsp;— toujours 8 caractères.<br>
+        Les mois et jours inférieurs à 10 doivent être complétés par un zéro à gauche.
+      </p>
+    </div>
+
+    <h3>Deux solutions possibles</h3>
+
+    <div class="encadre">
+      <span class="encadre-prefix">Solution A — méthode <code>zfill</code></span>
+      <p>
+        <code>str(n).zfill(k)</code> complète la chaîne avec des zéros à gauche pour atteindre une longueur de <code>k</code>.
+      </p>
+      <pre style="margin:0"><code>date = str(annee) + str(mois).zfill(2) + str(jour).zfill(2)
+# "2026" + "07" + "03" = "20260703" ✔</code></pre>
+    </div>
+
+    <div class="encadre">
+      <span class="encadre-prefix">Solution B — f-string avec formatage <code>:02d</code></span>
+      <p>
+        Avec une f-string, <code>{n:02d}</code> formate l'entier sur au moins 2 chiffres, avec un zéro si nécessaire.
+      </p>
+      <pre style="margin:0"><code>date = f"{annee}{mois:02d}{jour:02d}"
+# "20260703" ✔</code></pre>
+    </div>
+
+    <h4>Essaie dans l'éditeur — corrige la fonction :</h4>
+
+    <script type="py-editor" env="cycle">
+# Voici la version buggée de calendrier_cycles.
+# Trouve la ligne problématique et corrige-la.
+
+def calendrier_cycles_corrige(date_regles):
+    cal_lignes = ['BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:']
+    date_courante = date_regles
+    jours_ecoules = 0
+    while jours_ecoules + 28 <= 100:
+        jour, mois, annee = date_courante
+        cal_lignes.append('BEGIN:VEVENT')
+        cal_lignes.append('SUMMARY:Règles')
+        # ↓ Corrige cette ligne !
+        date = str(annee) + str(mois) + str(jour)
+        cal_lignes.append('DTSTART:' + date)
+        cal_lignes.append('END:VEVENT')
+        date_courante = ajouter_jours(date_courante, 28)
+        jours_ecoules += 28
+    cal_lignes.append('END:VCALENDAR')
+    return '\n'.join(cal_lignes)
+
+def test_calendrier_cycles_corrige():
+    cal = calendrier_cycles_corrige((12, 3, 2026))
+    print(cal)
+    # Vérifie que toutes les dates DTSTART ont une longueur de 8
+    for ligne in cal.split('\n'):
+        if ligne.startswith('DTSTART:'):
+            valeur = ligne.split(':')[1]
+            assert len(valeur) == 8, f"Format invalide : {valeur} (longueur {len(valeur)})"
+    print("Format iCalendar valide !")
+
+test_calendrier_cycles_corrige()
+    </script>
+
+    <button class="btn-secondaire" onclick="toggleCorrection('corr-q4', this)">Afficher la correction</button>
+    <div id="corr-q4" class="correction-bloc encadre" style="margin-top:.7rem;">
+      <span class="encadre-prefix">Correction — Q4</span>
+      <p><strong>Problème identifié :</strong> la ligne</p>
+      <pre><code>date = str(annee) + str(mois) + str(jour)</code></pre>
+      <p>
+        ne complète pas les mois et jours inférieurs à 10 avec un zéro. Pour le 3 juillet 2026,
+        elle produit <code>"202673"</code> (6 caractères) au lieu de <code>"20260703"</code> (8 caractères requis).
+      </p>
+      <p><strong>Correction (avec f-string) :</strong></p>
+      <pre><code>date = f"{annee}{mois:02d}{jour:02d}"</code></pre>
+      <p><strong>Correction (avec zfill) :</strong></p>
+      <pre><code>date = str(annee) + str(mois).zfill(2) + str(jour).zfill(2)</code></pre>
+      <p style="margin:0">
+        Les deux solutions sont équivalentes. La f-string est généralement considérée plus lisible en Python moderne.
+      </p>
+    </div>
+
+  </section>
+
+  <hr class="sep">
+
+  <!-- PIÈGES FRÉQUENTS -->
+  <section id="pieges">
+    <h2>Pièges fréquents &amp; points de vigilance</h2>
+
+    <div class="encadre-piege">
+      <span class="encadre-prefix">Piège 1 — Confondre l'indice du tuple et sa valeur</span>
+      <p style="margin:0">
+        Le tuple <code>(7, 9, 2025)</code> représente le 7 septembre 2025.
+        L'accès <code>date[0]</code> renvoie <code>7</code> (le jour), pas le mois.
+        Si tu mélanges les indices, tu te retrouves à calculer des mois comme des jours.
+        Utilise toujours le <strong>déballage</strong> (<em>unpacking</em>) : <code>jour, mois, annee = date</code>.
+      </p>
+    </div>
+
+    <div class="encadre-piege">
+      <span class="encadre-prefix">Piège 2 — Le cycle commence au jour 1, pas au jour 0</span>
+      <p style="margin:0">
+        L'assertion <code>assert 1 &lt;= jour &lt;= 28</code> est correcte.
+        Écrire <code>assert 0 &lt;= jour &lt;= 28</code> ou <code>assert 0 &lt;= jour &lt; 28</code> est une erreur :
+        le jour 0 n'existe pas dans un cycle, et le jour 28 est la phase lutéale — il doit être inclus.
+      </p>
+    </div>
+
+    <div class="encadre-piege">
+      <span class="encadre-prefix">Piège 3 — Oublier <code>str()</code> avant de concaténer</span>
+      <p style="margin:0">
+        <code>str(annee) + str(mois) + str(jour)</code> — chaque composante doit être convertie en chaîne.
+        Si tu écris <code>str(annee) + mois + jour</code>, Python lève une <code>TypeError</code>
+        car on ne peut pas additionner une chaîne et un entier.
+      </p>
+    </div>
+
+    <div class="encadre-piege">
+      <span class="encadre-prefix">Piège 4 — Ne pas compléter avec des zéros (<code>zfill</code> ou <code>:02d</code>)</span>
+      <p style="margin:0">
+        C'est le cœur de la Question 4 : <code>str(7)</code> renvoie <code>"7"</code>, pas <code>"07"</code>.
+        Le format iCalendar exige <strong>exactement 8 caractères</strong> pour <code>DTSTART</code>.
+        Utilise <code>str(mois).zfill(2)</code> ou <code>f"{mois:02d}"</code> pour forcer deux chiffres.
+      </p>
+    </div>
+
+    <div class="encadre-conseil" style="margin-top:1.5rem;">
+      <span class="encadre-prefix">Astuces de vérification rapide</span>
+      <ul style="margin:0">
+        <li>
+          <strong>Longueur de la date :</strong> <code>assert len(date_str) == 8</code> doit toujours passer
+          quel que soit le mois ou le jour.
+        </li>
+        <li>
+          <strong>Aller-retour sur les dates :</strong> si tu ajoutes 0 jours à une date, tu dois retrouver
+          exactement la même date.
+        </li>
+        <li>
+          <strong>AssertionError volontaire :</strong> pour tester ton assertion dans <code>determiner_phase</code>,
+          essaie d'appeler <code>determiner_phase(0)</code> ou <code>determiner_phase(29)</code> — Python doit lever une erreur.
+        </li>
+      </ul>
+    </div>
+
+  </section>
+
+  <hr class="sep">
+
+  <!-- MINI-EXERCICES D'EXTENSION -->
+  <section id="extension">
+    <h2>Mini-exercices d'extension</h2>
+
+    <div class="encadre">
+      <span class="encadre-prefix">Extension A — Cycle de 30 jours</span>
+      <p>
+        Le sujet suppose un cycle régulier de 28 jours. Dans la réalité, les cycles varient entre 21 et 35 jours.
+      </p>
+      <p>
+        Modifie la fonction <code>calendrier_cycles</code> pour qu'elle accepte un second paramètre facultatif
+        <code>duree_cycle = 28</code>. Le calendrier doit alors utiliser cette durée au lieu de 28.
+      </p>
+      <p>Vérifie qu'avec <code>duree_cycle = 30</code>, on obtient au plus 3 occurrences en 100 jours.</p>
+      <button class="btn-secondaire" onclick="toggleCorrection('corr-ext-a', this)">Afficher la correction</button>
+      <div id="corr-ext-a" class="correction-bloc" style="margin-top:.7rem;">
+        <pre><code>def calendrier_cycles(date_regles, duree_cycle=28):
+    cal_lignes = ['BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:']
+    date_courante = date_regles
+    jours_ecoules = 0
+    while jours_ecoules + duree_cycle <= 100:
+        jour, mois, annee = date_courante
+        cal_lignes.append('BEGIN:VEVENT')
+        cal_lignes.append('SUMMARY:Règles')
+        date = f"{annee}{mois:02d}{jour:02d}"   # format corrigé
+        cal_lignes.append('DTSTART:' + date)
+        cal_lignes.append('END:VEVENT')
+        date_courante = ajouter_jours(date_courante, duree_cycle)
+        jours_ecoules += duree_cycle
+    cal_lignes.append('END:VCALENDAR')
+    return '\n'.join(cal_lignes)
+
+# Avec 30 jours : 3 occurrences (0, 30, 60 jours écoulés — 90+30 > 100 donc on s'arrête)
+cal = calendrier_cycles((12, 3, 2026), duree_cycle=30)
+occurrences = [l for l in cal.split('\n') if l.startswith('DTSTART')]
+assert len(occurrences) == 3
+print("OK — 3 occurrences pour un cycle de 30 jours")</code></pre>
+      </div>
+    </div>
+
+    <div class="encadre">
+      <span class="encadre-prefix">Extension B — Assertion sur le mois</span>
+      <p>
+        La fonction <code>jours_dans_mois(annee, mois)</code> suppose que le mois est entre 1 et 12.
+        Si on lui passe <code>mois = 0</code> ou <code>mois = 13</code>, elle peut donner un résultat incorrect
+        sans avertir.
+      </p>
+      <p>
+        Ajoute une assertion au début de <code>jours_dans_mois</code> pour garantir que
+        le mois est bien entre 1 et 12. Écris ensuite un test qui vérifie que cette assertion est bien déclenchée.
+      </p>
+      <button class="btn-secondaire" onclick="toggleCorrection('corr-ext-b', this)">Afficher la correction</button>
+      <div id="corr-ext-b" class="correction-bloc" style="margin-top:.7rem;">
+        <pre><code>def jours_dans_mois(annee, mois):
+    assert 1 &lt;= mois &lt;= 12, f"Mois invalide : {mois} (doit être entre 1 et 12)"
+    if mois == 2:
+        return 29 if calendar.isleap(annee) else 28
+    elif mois in [1, 3, 5, 7, 8, 10, 12]:
+        return 31
+    else:
+        return 30
+
+# Test de l'assertion (doit lever une AssertionError)
+try:
+    jours_dans_mois(2026, 13)
+    print("ERREUR : l'assertion n'a pas été déclenchée !")
+except AssertionError:
+    print("Correct : AssertionError bien levée pour mois = 13")</code></pre>
+      </div>
+    </div>
+
+    <!-- Récapitulatif -->
+    <div class="encadre" style="margin-top:2rem;">
+      <span class="encadre-prefix">Ce que tu dois retenir</span>
+      <ul style="margin:0">
+        <li>Un tuple <code>(jour, mois, annee)</code> représente une date — l'ordre compte, les indices commencent à 0.</li>
+        <li>Une assertion protège ta fonction contre des entrées invalides : <code>assert condition, "message"</code>.</li>
+        <li>Les années bissextiles suivent la règle : divisible par 4, sauf les multiples de 100, sauf les multiples de 400.</li>
+        <li>Le format iCalendar <code>DTSTART</code> exige exactement 8 caractères : <code>AAAAMMJJ</code>.</li>
+        <li>Pour forcer 2 chiffres : <code>f"{mois:02d}"</code> ou <code>str(mois).zfill(2)</code>.</li>
+        <li>Teste toujours les cas limites : changement de mois, changement d'année, février bissextile.</li>
+      </ul>
+    </div>
+
+  </section>
+
+</div><!-- /container-content -->
+
+<!-- PIED DE PAGE -->
+<footer>
+  DarkSATHI Li &nbsp;·&nbsp; NSI Terminale &nbsp;·&nbsp; Session Pratique 2026 &nbsp;·&nbsp; Sujet n°3
+</footer>
+
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+  /* ── RETOUR EN HAUT ── */
+  const btnTop = document.getElementById('btn-top');
+  window.addEventListener('scroll', function () {
+    btnTop.style.display = window.scrollY > 300 ? 'flex' : 'none';
+  });
+  btnTop.addEventListener('click', function () {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  });
+
+  /* ── TOGGLE INDICE ── */
+  function toggleIndice(id, btn) {
+    var el = document.getElementById(id);
+    if (!el) return;
+    if (el.classList.contains('visible')) {
+      el.classList.remove('visible');
+      btn.textContent = btn.textContent.replace('▼', '▶');
+    } else {
+      el.classList.add('visible');
+      btn.textContent = btn.textContent.replace('▶', '▼');
+    }
+  }
+
+  /* ── TOGGLE CORRECTION ── */
+  function toggleCorrection(id, btn) {
+    var el = document.getElementById(id);
+    if (!el) return;
+    if (el.classList.contains('visible')) {
+      el.classList.remove('visible');
+      if (btn) btn.textContent = btn.textContent.replace('Masquer', 'Afficher');
+    } else {
+      el.classList.add('visible');
+      if (btn) btn.textContent = btn.textContent.replace('Afficher', 'Masquer');
+    }
+  }
+</script>
+</body>
+</html>
