@@ -1,0 +1,1512 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Fiche – Écarts de salaires &amp; k-NN | NSI Terminale | BAC 2026</title>
+
+  <!-- Bootstrap 5.3.3 -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Rubik+Dirt&family=Source+Serif+4:ital,opsz,wght@0,8..60,300..900;1,8..60,300..900&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+
+  <!-- MathJax v3 -->
+  <script>
+    MathJax = {
+      tex: { inlineMath: [['\\(', '\\)'], ['$', '$']] },
+      options: { skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre'] }
+    };
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js" async></script>
+
+  <!-- PyScript 2026.3.1 -->
+  <script type="module" src="https://pyscript.net/releases/2026.3.1/core.js"></script>
+
+  <style>
+    :root {
+      --bg-main:    #f8f9fb;
+      --bg-panel:   #eef1f5;
+      --bg-cours:   #ffffff;
+      --accent:     #2a6496;
+      --py-editor-input: white;
+      --accent-or:  #b5610a;
+      --accent-vert:#2e7d32;
+      --text-main:  #1a1a1a;
+      --text-muted: #5a6470;
+      --border-radius: 8px;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      background-color: var(--bg-main);
+      color: var(--text-main);
+      font-family: 'Source Serif 4', Georgia, serif;
+      font-size: 1.1rem;
+      line-height: 1.8;
+      margin: 0;
+      padding-bottom: 4rem;
+    }
+
+    h1, h2, h3, h4 {
+      font-family: 'Rubik Dirt', cursive;
+      color: var(--accent);
+      letter-spacing: 0.02em;
+    }
+
+    h1 { font-size: 2.2rem; color: #111; }
+    h2 { font-size: 1.55rem; border-bottom: 2px solid var(--accent); padding-bottom: .3rem; margin-top: 2.5rem; }
+    h3 { font-size: 1.25rem; color: var(--accent-or); margin-top: 1.8rem; }
+    h4 { font-size: 1.05rem; color: var(--accent-vert); }
+
+    p { margin-bottom: 1rem; }
+
+    code, pre, .mono {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.9em;
+    }
+
+    code {
+      background: #e8edf2;
+      padding: 2px 6px;
+      border-radius: 4px;
+      color: #8b3a00;
+    }
+
+    pre {
+      background: #f0f3f7;
+      border-left: 3px solid var(--accent);
+      padding: 1rem 1.2rem;
+      border-radius: var(--border-radius);
+      overflow-x: auto;
+      color: #1a1a1a;
+    }
+
+    a { color: var(--accent); text-decoration: underline dotted; }
+    a:hover { color: var(--accent-or); }
+
+    /* NAVIGATION */
+    #navbar {
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      background: #2a6496;
+      border-bottom: 2px solid #1a4a70;
+      padding: .5rem 1.5rem;
+      display: flex;
+      gap: .5rem;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    #navbar span {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: .8rem;
+      color: #ccddf0;
+      margin-right: auto;
+    }
+
+    #navbar a {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: .8rem;
+      color: #fff;
+      text-decoration: none;
+      padding: .25rem .7rem;
+      border: 1px solid #ccddf0;
+      border-radius: 4px;
+      transition: background .2s;
+    }
+
+    #navbar a:hover { background: #1a4a70; color: #fff; }
+
+    /* CONTENU */
+    .container-content {
+      max-width: 860px;
+      margin: 0 auto;
+      padding: 2rem 1.5rem;
+    }
+
+    /* ENCADRÉS */
+    .encadre,
+    .encadre-conseil,
+    .encadre-indice,
+    .encadre-question {
+      background: #ffffff;
+      border-radius: var(--border-radius);
+      padding: 1.1rem 1.4rem;
+      margin: 1.4rem 0;
+      position: relative;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+    }
+
+    .encadre          { border-left: 4px solid var(--accent); }
+    .encadre-conseil  { border-left: 4px solid var(--accent-or); background: #fff8f0; }
+    .encadre-indice   { border-left: 4px solid var(--accent-vert); background: #f0faf0; }
+    .encadre-question { border-left: 4px solid #7b3fa8; background: #faf5ff; }
+
+    .encadre-prefix {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: .72rem;
+      font-variant: small-caps;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      margin-bottom: .4rem;
+      display: block;
+    }
+
+    .encadre          .encadre-prefix { color: var(--accent); }
+    .encadre-conseil  .encadre-prefix { color: var(--accent-or); }
+    .encadre-indice   .encadre-prefix { color: var(--accent-vert); }
+    .encadre-question .encadre-prefix { color: #7b3fa8; }
+
+    /* BOUTONS */
+    .btn-tp, .btn-tp-or, .btn-tp-vert, .btn-secondaire {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: .82rem;
+      border: none;
+      border-radius: 5px;
+      padding: .45rem 1.1rem;
+      cursor: pointer;
+      transition: opacity .2s, transform .1s;
+      margin: .3rem .2rem;
+    }
+
+    .btn-tp         { background: var(--accent);      color: #fff; }
+    .btn-tp-or      { background: var(--accent-or);   color: #fff; }
+    .btn-tp-vert    { background: var(--accent-vert); color: #fff; }
+    .btn-secondaire { background: #eef1f5; border: 1px solid var(--accent); color: var(--text-main); }
+
+    .btn-tp:hover, .btn-tp-or:hover, .btn-tp-vert:hover, .btn-secondaire:hover {
+      opacity: .85; transform: translateY(-1px);
+    }
+
+    /* BADGE QUESTION */
+    .badge-question {
+      display: inline-block;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: .8rem;
+      background: #7b3fa8;
+      color: #fff;
+      border-radius: 4px;
+      padding: .15rem .7rem;
+      margin-right: .5rem;
+      vertical-align: middle;
+    }
+
+    /* INDICES ET CORRECTIONS CACHÉS */
+    .indice-bloc { display: none; }
+    .indice-bloc.visible { display: block; }
+    .correction-bloc { display: none; }
+    .correction-bloc.visible { display: block; }
+
+    /* PIED DE PAGE */
+    footer {
+      text-align: center;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: .8rem;
+      color: var(--text-muted);
+      padding: 2rem 1rem 1rem;
+      border-top: 1px solid #d0d8e4;
+    }
+
+    /* RETOUR EN HAUT */
+    #btn-top {
+      position: fixed;
+      bottom: 1.5rem;
+      right: 1.5rem;
+      z-index: 999;
+      background: var(--accent);
+      color: #fff;
+      border: none;
+      border-radius: 50%;
+      width: 44px;
+      height: 44px;
+      font-size: 1.2rem;
+      cursor: pointer;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      font-family: 'JetBrains Mono', monospace;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.25);
+      transition: opacity .2s;
+    }
+
+    #btn-top:hover { opacity: .8; }
+
+    /* PIÈGE */
+    .encadre-piege {
+      background: #fff5f5;
+      border-left: 4px solid #c0392b;
+      border-radius: var(--border-radius);
+      padding: 1rem 1.4rem;
+      margin: 1.2rem 0;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.07);
+    }
+
+    .encadre-piege .encadre-prefix {
+      color: #c0392b;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: .72rem;
+      font-variant: small-caps;
+      letter-spacing: .12em;
+      display: block;
+      margin-bottom: .3rem;
+    }
+
+    /* SOMMAIRE */
+    #sommaire ol {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: .88rem;
+      line-height: 2.2;
+    }
+
+    #sommaire a { color: var(--accent); }
+    #sommaire a:hover { color: var(--accent-or); }
+
+    /* séparateur */
+    .sep { border: none; border-top: 1px dashed #9ab0c8; margin: 2.5rem 0; opacity: .7; }
+
+    /* tableau données */
+    .table-employes {
+      border-collapse: collapse;
+      margin: 1rem 0;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: .85rem;
+      width: 100%;
+    }
+
+    .table-employes th {
+      background: #dce8f2;
+      color: var(--accent);
+      font-weight: 600;
+      padding: .4rem .8rem;
+      border: 1px solid #b0c8e0;
+      text-align: center;
+    }
+
+    .table-employes td {
+      border: 1px solid #c8d8e8;
+      padding: .35rem .8rem;
+      text-align: center;
+    }
+
+    .table-employes tr:nth-child(even) td { background: #f4f8fc; }
+
+    .row-f td { color: #c0392b; }
+    .row-m td { color: #2a6496; }
+
+    /* py-editor */
+    py-editor { display: block; min-height: 100px; }
+    .py-editor-input { background: var(--py-editor-input); color: #1a1a1a; border: 1px solid var(--accent); border-radius: 4px; padding: .8rem; font-family: 'JetBrains Mono', monospace; font-size: .9rem; }
+  </style>
+</head>
+<body>
+
+<!-- PyScript env init (force Pyodide load) -->
+<div id="pyinit" style="display:none">
+  <script type="py" env="salaires">
+    pass
+  </script>
+</div>
+
+<!-- BOUTON RETOUR EN HAUT -->
+<button id="btn-top" title="Retour en haut" aria-label="Retour en haut">▲</button>
+
+<!-- NAVIGATION STICKY -->
+<nav id="navbar">
+  <span>NSI Terminale – Écarts de salaires &amp; k-NN</span>
+  <a href="#s0">Intro</a>
+  <a href="#s1">Rappels</a>
+  <a href="#s2">Contexte</a>
+  <a href="#q1">Q1</a>
+  <a href="#q2">Q2</a>
+  <a href="#q3">Q3</a>
+  <a href="#q4">Q4</a>
+  <a href="#pieges">Pièges</a>
+</nav>
+
+<!-- CONTENU PRINCIPAL -->
+<div class="container-content">
+
+  <!-- EN-TÊTE -->
+  <div style="text-align:center; padding: 2rem 0 1rem;">
+    <div style="font-family:'JetBrains Mono',monospace; font-size:.8rem; color:var(--text-muted); margin-bottom:.5rem;">
+      BAC NSI 2026 — Sujet n°2 — Partie pratique
+    </div>
+    <h1>Écarts de salaires<br><span style="font-size:1.1rem; color:var(--accent); font-family:'Source Serif 4',serif; font-style:italic; font-weight:300;">Analyse de données &amp; algorithme des k plus proches voisins</span></h1>
+    <div style="font-family:'JetBrains Mono',monospace; font-size:.8rem; color:var(--text-muted); margin-top:.5rem;">
+      Terminale NSI &nbsp;·&nbsp; Algorithmique &nbsp;·&nbsp; Traitement de données &amp; k-NN
+    </div>
+  </div>
+
+  <hr class="sep">
+
+  <!-- SOMMAIRE -->
+  <section id="s0">
+    <div id="sommaire" class="encadre">
+      <span class="encadre-prefix">Sommaire</span>
+      <ol>
+        <li><a href="#s1">Rappels – listes de dictionnaires en Python</a></li>
+        <li><a href="#s2">Le contexte – écarts de salaires femmes/hommes</a></li>
+        <li><a href="#q1">Question 1 – Calculer un salaire moyen conditionnel</a></li>
+        <li><a href="#q2">Question 2 – Compter les effectifs par sexe</a></li>
+        <li><a href="#q3">Question 3 – Déboguer <code>calcul_ecart_sexe</code></a></li>
+        <li><a href="#q4">Question 4 – Algorithme des k plus proches voisins</a></li>
+        <li><a href="#pieges">Pièges fréquents &amp; mini-exercices</a></li>
+      </ol>
+    </div>
+  </section>
+
+  <hr class="sep">
+
+  <!-- SECTION 1 : RAPPELS -->
+  <section id="s1">
+    <h2>1 — Rappels : les listes de dictionnaires</h2>
+
+    <p>
+      Imagine que tu dois gérer un annuaire d'élèves dans ton lycée. Chaque élève a un prénom,
+      une note de maths et une note de NSI. Comment stocker tout ça en Python ?
+      La réponse la plus naturelle : une <strong>liste de dictionnaires</strong>.
+    </p>
+
+    <div class="encadre">
+      <span class="encadre-prefix">Définition – Liste de dictionnaires</span>
+      <p style="margin:0">
+        Une <strong>liste de dictionnaires</strong> est une liste Python dont chaque élément est un dictionnaire.
+        Tous les dictionnaires partagent en général les mêmes clés — un peu comme les colonnes d'un tableau.
+        Chaque dictionnaire représente une « ligne » de ce tableau.
+      </p>
+    </div>
+
+    <p>
+      Par exemple, voici un petit annuaire de trois élèves :
+    </p>
+
+<pre><code>annuaire = [
+    {'prenom': 'Alice', 'maths': 17, 'nsi': 18},
+    {'prenom': 'Bob',   'maths': 12, 'nsi': 15},
+    {'prenom': 'Carla', 'maths': 14, 'nsi': 16}
+]</code></pre>
+
+    <p>
+      Pour accéder à la note de NSI d'Alice, tu écris <code>annuaire[0]['nsi']</code>.
+      Pour parcourir tous les élèves et afficher leurs prénoms :
+    </p>
+
+<pre><code>for eleve in annuaire:
+    print(eleve['prenom'])</code></pre>
+
+    <div class="encadre-conseil">
+      <span class="encadre-prefix">Astuce – Filtrer une liste</span>
+      <p style="margin:0">
+        Pour garder uniquement les élèves ayant plus de 15 en NSI, tu peux utiliser une
+        <strong>compréhension de liste</strong> :
+      </p>
+<pre style="margin:.5rem 0 0"><code>bons_en_nsi = [e for e in annuaire if e['nsi'] > 15]
+# résultat : [{'prenom': 'Alice', ...}, {'prenom': 'Carla', ...}]</code></pre>
+    </div>
+
+    <p>
+      C'est exactement ce principe que tu vas utiliser tout au long de ce sujet : filtrer les employés
+      selon leur sexe, leur expérience ou leur niveau d'études.
+    </p>
+
+    <h3>Calculer la moyenne d'un champ</h3>
+
+    <p>
+      Pour obtenir la moyenne de toutes les notes de NSI, deux approches classiques :
+    </p>
+
+<pre><code># Approche 1 : boucle for
+total = 0
+for e in annuaire:
+    total = total + e['nsi']
+moyenne = total / len(annuaire)
+
+# Approche 2 : avec sum() et une compréhension (plus compact)
+moyenne = sum(e['nsi'] for e in annuaire) / len(annuaire)</code></pre>
+
+    <div class="encadre-conseil">
+      <span class="encadre-prefix">Rappel – Renvoyer None</span>
+      <p style="margin:0">
+        Certaines fonctions doivent renvoyer <code>None</code> quand le résultat n'a pas de sens —
+        par exemple la moyenne d'une liste vide (division par zéro !). En Python, on teste cela avec
+        <code>if len(liste) == 0: return None</code> ou plus simplement <code>if not liste: return None</code>.
+      </p>
+    </div>
+  </section>
+
+  <hr class="sep">
+
+  <!-- SECTION 2 : CONTEXTE -->
+  <section id="s2">
+    <h2>2 — Contexte : les données et le sujet</h2>
+
+    <p>
+      En France, selon l'INSEE, l'écart de salaire moyen entre les femmes et les hommes est encore
+      d'environ <strong>15 %</strong> en 2023. Pour observer cet écart, on dispose d'un jeu de données
+      représentant les employés d'une entreprise.
+    </p>
+
+    <p>
+      Chaque employé est décrit par un dictionnaire à quatre champs :
+    </p>
+
+    <div class="encadre">
+      <span class="encadre-prefix">Structure d'un employé</span>
+      <table class="table-employes" style="margin:.5rem 0;">
+        <tr>
+          <th>Champ</th>
+          <th>Type</th>
+          <th>Description</th>
+          <th>Exemple</th>
+        </tr>
+        <tr>
+          <td><code>'experience'</code></td>
+          <td><code>int</code></td>
+          <td>Années d'expérience professionnelle</td>
+          <td><code>5</code></td>
+        </tr>
+        <tr>
+          <td><code>'etudes'</code></td>
+          <td><code>int</code></td>
+          <td>Années d'études après le bac</td>
+          <td><code>3</code></td>
+        </tr>
+        <tr>
+          <td><code>'sexe'</code></td>
+          <td><code>str</code></td>
+          <td>Sexe (<code>'F'</code> ou <code>'M'</code>)</td>
+          <td><code>'F'</code></td>
+        </tr>
+        <tr>
+          <td><code>'salaire'</code></td>
+          <td><code>int</code></td>
+          <td>Salaire mensuel en euros</td>
+          <td><code>2400</code></td>
+        </tr>
+      </table>
+    </div>
+
+    <p>Voici le petit jeu de données de test (6 employés) qui te permettra de vérifier tes fonctions :</p>
+
+<pre><code>employes = [
+    {'experience': 5, 'etudes': 3, 'sexe': 'F', 'salaire': 2400},
+    {'experience': 3, 'etudes': 3, 'sexe': 'M', 'salaire': 2550},
+    {'experience': 5, 'etudes': 5, 'sexe': 'F', 'salaire': 2500},
+    {'experience': 3, 'etudes': 5, 'sexe': 'M', 'salaire': 2800},
+    {'experience': 2, 'etudes': 5, 'sexe': 'F', 'salaire': 2300},
+    {'experience': 2, 'etudes': 3, 'sexe': 'M', 'salaire': 2700}
+]</code></pre>
+
+    <table class="table-employes">
+      <tr>
+        <th>Employé</th>
+        <th>experience</th>
+        <th>etudes</th>
+        <th>sexe</th>
+        <th>salaire</th>
+      </tr>
+      <tr class="row-f"><td>1</td><td>5</td><td>3</td><td>F</td><td>2 400 €</td></tr>
+      <tr class="row-m"><td>2</td><td>3</td><td>3</td><td>M</td><td>2 550 €</td></tr>
+      <tr class="row-f"><td>3</td><td>5</td><td>5</td><td>F</td><td>2 500 €</td></tr>
+      <tr class="row-m"><td>4</td><td>3</td><td>5</td><td>M</td><td>2 800 €</td></tr>
+      <tr class="row-f"><td>5</td><td>2</td><td>5</td><td>F</td><td>2 300 €</td></tr>
+      <tr class="row-m"><td>6</td><td>2</td><td>3</td><td>M</td><td>2 700 €</td></tr>
+    </table>
+
+    <p style="font-size:.9rem; color:var(--text-muted); font-family:'JetBrains Mono',monospace;">
+      ← Lignes rouges : femmes &nbsp;|&nbsp; Lignes bleues : hommes
+    </p>
+
+    <p>
+      Tu disposeras aussi d'un jeu complet de <strong>2 000 employés</strong> (dans <code>donnees_completes.py</code>)
+      pour obtenir des résultats statistiquement significatifs.
+    </p>
+
+    <div class="encadre-conseil">
+      <span class="encadre-prefix">À retenir — Objectif des 4 questions</span>
+      <p style="margin:0">
+        <strong>Q1</strong> : calculer un salaire moyen pour un groupe donné.<br>
+        <strong>Q2</strong> : compter les effectifs femmes/hommes.<br>
+        <strong>Q3</strong> : corriger une fonction bugguée qui calcule l'écart en pourcentage.<br>
+        <strong>Q4</strong> : tester et corriger un algorithme de recommandation de salaire basé sur la proximité.
+      </p>
+    </div>
+  </section>
+
+  <hr class="sep">
+
+  <!-- QUESTION 1 -->
+  <section id="q1">
+    <h2>Question 1 — Salaire moyen conditionnel</h2>
+
+    <div class="encadre-question">
+      <span class="encadre-prefix">Énoncé — Question 1</span>
+      <p>
+        <span class="badge-question">Q1</span>
+        Écrire le corps de la fonction <code>salaire_moyen_condition(employes, champ, valeur)</code>
+        qui renvoie le <strong>salaire moyen</strong> des employés dont la valeur associée au
+        champ <code>champ</code> est égale à <code>valeur</code>.
+        La fonction renvoie <code>None</code> si aucun employé ne correspond.
+      </p>
+      <p style="margin:0">
+        Exemple : <code>salaire_moyen_condition(employes, 'sexe', 'F')</code> renvoie <code>2400.0</code>.
+        Ensuite, utiliser le jeu complet pour calculer les salaires moyens des femmes et des hommes.
+      </p>
+    </div>
+
+    <h3>Aide méthodologique</h3>
+
+    <p>
+      Décompose le problème en trois étapes simples :
+    </p>
+    <ol>
+      <li><strong>Filtrer</strong> : garde uniquement les employés dont <code>emp[champ] == valeur</code>.</li>
+      <li><strong>Vérifier</strong> : si la liste filtrée est vide, renvoie <code>None</code>.</li>
+      <li><strong>Calculer</strong> : renvoie <code>sum(...) / len(...)</code> sur les salaires filtrés.</li>
+    </ol>
+
+    <div class="encadre">
+      <span class="encadre-prefix">Exemple chiffré – vérification manuelle</span>
+      <p>
+        Sur le jeu de test, les 3 femmes ont des salaires 2 400, 2 500 et 2 300.
+        Leur moyenne vaut \(\frac{2400 + 2500 + 2300}{3} = \frac{7200}{3} = 2400{,}0\).
+      </p>
+      <p style="margin:0">
+        Les 3 hommes ont des salaires 2 550, 2 800 et 2 700.
+        Leur moyenne vaut \(\frac{2550 + 2800 + 2700}{3} = \frac{8050}{3} \approx 2683{,}3\).
+      </p>
+    </div>
+
+    <!-- INDICES -->
+    <div style="margin:.8rem 0;">
+      <button class="btn-tp-vert" onclick="toggleIndice('indice-q1-1', this)">▶ Indice 1 — Filtrer avec une compréhension</button>
+    </div>
+    <div id="indice-q1-1" class="encadre-indice indice-bloc">
+      <span class="encadre-prefix">Indice 1</span>
+      <p style="margin:0">
+        Pour obtenir uniquement les salaires des employés vérifiant la condition :
+      </p>
+<pre style="margin:.5rem 0 0"><code>salaires_filtres = [emp['salaire'] for emp in employes if emp[champ] == valeur]</code></pre>
+    </div>
+
+    <div style="margin:.8rem 0;">
+      <button class="btn-tp-vert" onclick="toggleIndice('indice-q1-2', this)">▶ Indice 2 — Gérer le cas vide</button>
+    </div>
+    <div id="indice-q1-2" class="encadre-indice indice-bloc">
+      <span class="encadre-prefix">Indice 2</span>
+      <p style="margin:0">
+        Après avoir filtré, teste si la liste est vide avant de diviser :
+      </p>
+<pre style="margin:.5rem 0 0"><code>if len(salaires_filtres) == 0:
+    return None
+return sum(salaires_filtres) / len(salaires_filtres)</code></pre>
+    </div>
+
+    <!-- ÉDITEUR PYSCRIPT -->
+    <div class="encadre" style="margin-top:1.2rem;">
+      <span class="encadre-prefix">Éditeur Python — Complète la fonction</span>
+      <script type="py-editor" env="salaires">
+employes_test = [
+    {'experience': 5, 'etudes': 3, 'sexe': 'F', 'salaire': 2400},
+    {'experience': 3, 'etudes': 3, 'sexe': 'M', 'salaire': 2550},
+    {'experience': 5, 'etudes': 5, 'sexe': 'F', 'salaire': 2500},
+    {'experience': 3, 'etudes': 5, 'sexe': 'M', 'salaire': 2800},
+    {'experience': 2, 'etudes': 5, 'sexe': 'F', 'salaire': 2300},
+    {'experience': 2, 'etudes': 3, 'sexe': 'M', 'salaire': 2700}
+]
+
+def salaire_moyen_condition(employes, champ, valeur):
+    '''Renvoie le salaire moyen des employes dont la valeur du champ
+    correspond a la valeur donnee. Renvoie None si aucun employe.'''
+    # A toi de compléter !
+    pass
+
+
+def test_salaire_moyen_condition():
+    e = employes_test
+    assert salaire_moyen_condition([], 'sexe', 'F') == None
+    assert salaire_moyen_condition(e, 'sexe', 'F') == 2400.0
+    assert salaire_moyen_condition(e, 'etudes', 3) == 2550.0
+    assert salaire_moyen_condition(e, 'etudes', 12) == None
+    print("Les tests sont valides.")
+
+test_salaire_moyen_condition()
+      </script>
+    </div>
+
+    <!-- CORRECTION -->
+    <div style="margin:1rem 0;">
+      <button class="btn-tp-or" onclick="toggleCorrection('corr-q1', this)">&#128274; Afficher la correction</button>
+    </div>
+    <div id="corr-q1" class="correction-bloc encadre-conseil">
+      <span class="encadre-prefix">Correction — Question 1</span>
+      <script type="py-editor" env="salaires-corr1">
+employes_test = [
+    {'experience': 5, 'etudes': 3, 'sexe': 'F', 'salaire': 2400},
+    {'experience': 3, 'etudes': 3, 'sexe': 'M', 'salaire': 2550},
+    {'experience': 5, 'etudes': 5, 'sexe': 'F', 'salaire': 2500},
+    {'experience': 3, 'etudes': 5, 'sexe': 'M', 'salaire': 2800},
+    {'experience': 2, 'etudes': 5, 'sexe': 'F', 'salaire': 2300},
+    {'experience': 2, 'etudes': 3, 'sexe': 'M', 'salaire': 2700}
+]
+
+def salaire_moyen_condition(employes, champ, valeur):
+    '''Renvoie le salaire moyen des employes dont la valeur du champ
+    correspond a la valeur donnee. Renvoie None si aucun employe.'''
+    # Etape 1 : on filtre les salaires correspondant au critere
+    salaires_filtres = [emp['salaire'] for emp in employes if emp[champ] == valeur]
+    # Etape 2 : cas vide -> None
+    if len(salaires_filtres) == 0:
+        return None
+    # Etape 3 : calcul de la moyenne
+    return sum(salaires_filtres) / len(salaires_filtres)
+
+
+def test_salaire_moyen_condition():
+    e = employes_test
+    assert salaire_moyen_condition([], 'sexe', 'F') == None
+    assert salaire_moyen_condition(e, 'sexe', 'F') == 2400.0
+    assert salaire_moyen_condition(e, 'etudes', 3) == 2550.0
+    assert salaire_moyen_condition(e, 'etudes', 12) == None
+    print("Les tests sont valides.")
+
+test_salaire_moyen_condition()
+      </script>
+      <div style="margin-top:.8rem;">
+        <p>
+          La clé de cette fonction : utiliser <code>emp[champ]</code> (le champ est une variable)
+          plutôt que d'écrire <code>emp['sexe']</code> en dur — ce qui la rendrait générique.
+        </p>
+        <p>
+          <strong>Sur le jeu complet (2 000 employés) :</strong><br>
+          Salaire moyen des femmes ≈ <strong>2 229 €</strong><br>
+          Salaire moyen des hommes ≈ <strong>2 438 €</strong>
+        </p>
+        <p style="margin:0">
+          On observe déjà un écart d'environ 200 € — soit près de <strong>8,6 %</strong>.
+          C'est ce que la Question 3 te fera calculer précisément.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <hr class="sep">
+
+  <!-- QUESTION 2 -->
+  <section id="q2">
+    <h2>Question 2 — Effectifs par sexe</h2>
+
+    <div class="encadre-question">
+      <span class="encadre-prefix">Énoncé — Question 2</span>
+      <p>
+        <span class="badge-question">Q2</span>
+        Écrire la fonction <code>effectif_par_sexe(employes)</code> qui prend en paramètre
+        un tableau non vide d'employés et qui renvoie un dictionnaire ayant deux clés
+        <code>'F'</code> et <code>'M'</code> associées respectivement au nombre de femmes
+        et au nombre d'hommes.
+      </p>
+      <p style="margin:0">
+        Exemple : <code>effectif_par_sexe(employes)</code> renvoie <code>{'F': 3, 'M': 3}</code>.
+      </p>
+    </div>
+
+    <h3>Aide méthodologique</h3>
+
+    <p>
+      Deux approches sont envisageables. Choisis celle qui te semble la plus lisible.
+    </p>
+
+    <div class="encadre">
+      <span class="encadre-prefix">Approche A — Compteur explicite</span>
+<pre style="margin:.5rem 0 0"><code>nb_f = 0
+nb_m = 0
+for emp in employes:
+    if emp['sexe'] == 'F':
+        nb_f += 1
+    else:
+        nb_m += 1
+return {'F': nb_f, 'M': nb_m}</code></pre>
+    </div>
+
+    <div class="encadre">
+      <span class="encadre-prefix">Approche B — Avec sum() et une compréhension</span>
+<pre style="margin:.5rem 0 0"><code>nb_f = sum(1 for emp in employes if emp['sexe'] == 'F')
+nb_m = sum(1 for emp in employes if emp['sexe'] == 'M')
+return {'F': nb_f, 'M': nb_m}</code></pre>
+    </div>
+
+    <!-- INDICES -->
+    <div style="margin:.8rem 0;">
+      <button class="btn-tp-vert" onclick="toggleIndice('indice-q2-1', this)">▶ Indice — Vérification manuelle sur l'exemple</button>
+    </div>
+    <div id="indice-q2-1" class="encadre-indice indice-bloc">
+      <span class="encadre-prefix">Indice</span>
+      <p style="margin:0">
+        Sur le jeu de test, les lignes 1, 3 et 5 sont des femmes (3 au total),
+        les lignes 2, 4 et 6 sont des hommes (3 au total).
+        Le résultat attendu est donc <code>{'F': 3, 'M': 3}</code>.
+      </p>
+    </div>
+
+    <!-- ÉDITEUR PYSCRIPT -->
+    <div class="encadre" style="margin-top:1.2rem;">
+      <span class="encadre-prefix">Éditeur Python — Complète la fonction</span>
+      <script type="py-editor" env="salaires">
+employes_test = [
+    {'experience': 5, 'etudes': 3, 'sexe': 'F', 'salaire': 2400},
+    {'experience': 3, 'etudes': 3, 'sexe': 'M', 'salaire': 2550},
+    {'experience': 5, 'etudes': 5, 'sexe': 'F', 'salaire': 2500},
+    {'experience': 3, 'etudes': 5, 'sexe': 'M', 'salaire': 2800},
+    {'experience': 2, 'etudes': 5, 'sexe': 'F', 'salaire': 2300},
+    {'experience': 2, 'etudes': 3, 'sexe': 'M', 'salaire': 2700}
+]
+
+def effectif_par_sexe(employes):
+    '''Renvoie un dictionnaire {F: nb_femmes, M: nb_hommes}.'''
+    # A toi de compléter !
+    pass
+
+
+def test_effectif_par_sexe():
+    e = employes_test
+    assert effectif_par_sexe(e) == {'F': 3, 'M': 3}
+    assert effectif_par_sexe([e[0], e[2]]) == {'F': 2, 'M': 0}
+    assert effectif_par_sexe([e[1]]) == {'F': 0, 'M': 1}
+    print("Les tests sont valides.")
+
+test_effectif_par_sexe()
+      </script>
+    </div>
+
+    <!-- CORRECTION -->
+    <div style="margin:1rem 0;">
+      <button class="btn-tp-or" onclick="toggleCorrection('corr-q2', this)">&#128274; Afficher la correction</button>
+    </div>
+    <div id="corr-q2" class="correction-bloc encadre-conseil">
+      <span class="encadre-prefix">Correction — Question 2</span>
+      <script type="py-editor" env="salaires-corr2">
+employes_test = [
+    {'experience': 5, 'etudes': 3, 'sexe': 'F', 'salaire': 2400},
+    {'experience': 3, 'etudes': 3, 'sexe': 'M', 'salaire': 2550},
+    {'experience': 5, 'etudes': 5, 'sexe': 'F', 'salaire': 2500},
+    {'experience': 3, 'etudes': 5, 'sexe': 'M', 'salaire': 2800},
+    {'experience': 2, 'etudes': 5, 'sexe': 'F', 'salaire': 2300},
+    {'experience': 2, 'etudes': 3, 'sexe': 'M', 'salaire': 2700}
+]
+
+def effectif_par_sexe(employes):
+    '''Renvoie un dictionnaire {F: nb_femmes, M: nb_hommes}.'''
+    nb_f = sum(1 for emp in employes if emp['sexe'] == 'F')
+    nb_m = sum(1 for emp in employes if emp['sexe'] == 'M')
+    return {'F': nb_f, 'M': nb_m}
+
+
+def test_effectif_par_sexe():
+    e = employes_test
+    assert effectif_par_sexe(e) == {'F': 3, 'M': 3}
+    assert effectif_par_sexe([e[0], e[2]]) == {'F': 2, 'M': 0}
+    assert effectif_par_sexe([e[1]]) == {'F': 0, 'M': 1}
+    print("Les tests sont valides.")
+
+test_effectif_par_sexe()
+      </script>
+      <div style="margin-top:.8rem;">
+        <p style="margin:0">
+          Note que la fonction renvoie bien <code>{'F': 0, 'M': 1}</code>
+          (et non pas <code>{'M': 1}</code>) quand il n'y a que des hommes —
+          les deux clés sont toujours présentes.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <hr class="sep">
+
+  <!-- QUESTION 3 -->
+  <section id="q3">
+    <h2>Question 3 — Déboguer <code>calcul_ecart_sexe</code></h2>
+
+    <div class="encadre-question">
+      <span class="encadre-prefix">Énoncé — Question 3</span>
+      <p>
+        <span class="badge-question">Q3</span>
+        La fonction <code>calcul_ecart_sexe</code> du fichier <code>analyse.py</code> est incorrecte.
+        Explique pourquoi, propose des assertions pour mettre les erreurs en évidence,
+        puis écris une version corrigée nommée <code>ecart_salaire</code>.
+        Calcule enfin l'écart en pourcentage sur les 2 000 employés.
+      </p>
+    </div>
+
+    <h3>Code bugué original</h3>
+
+<pre><code>def calcul_ecart_sexe(employes):
+    '''Renvoie l'écart de salaire en pourcentage pour les femmes
+    par rapport aux hommes'''
+    moy_h = salaire_moyen_condition(employes, 'sexe', 'M')
+    moy_f = salaire_moyen_condition(<strong>'employes'</strong>, 'sexe', 'F')  # BUG 1
+    return <strong>moy_h - moy_f</strong>                                   # BUG 2</code></pre>
+
+    <h3>Analyse des deux bugs</h3>
+
+    <div class="encadre-piege">
+      <span class="encadre-prefix">Bug 1 — Chaîne de caractères à la place de la variable</span>
+      <p>
+        Regarde attentivement : <code>salaire_moyen_condition(<strong>'employes'</strong>, 'sexe', 'F')</code>.
+        Le premier argument est la chaîne <code>'employes'</code> (entre guillemets) au lieu de la
+        variable <code>employes</code> (sans guillemets).
+      </p>
+      <p style="margin:0">
+        Résultat : Python va itérer sur les caractères de la chaîne <code>'employes'</code>
+        au lieu de parcourir la liste d'employés. Aucun caractère n'a le champ <code>'sexe'</code>,
+        donc la fonction renvoie <code>None</code> — et la soustraction <code>moy_h - None</code>
+        lève une <code>TypeError</code>.
+      </p>
+    </div>
+
+    <div class="encadre-piege">
+      <span class="encadre-prefix">Bug 2 — Différence au lieu du pourcentage</span>
+      <p>
+        La formule correcte de l'écart en pourcentage est :
+      </p>
+      <p style="text-align:center; font-size:1.1rem; margin:.5rem 0;">
+        \(\text{écart} = \dfrac{\text{salaire moyen hommes} - \text{salaire moyen femmes}}{\text{salaire moyen hommes}} \times 100\)
+      </p>
+      <p style="margin:0">
+        Or la fonction renvoie <code>moy_h - moy_f</code> — une différence en euros, pas un pourcentage.
+        De plus, si <code>moy_h</code> ou <code>moy_f</code> est <code>None</code> (un seul sexe présent),
+        la soustraction plantera.
+      </p>
+    </div>
+
+    <h3>Assertions de mise en évidence</h3>
+
+    <p>
+      Voici des assertions qui permettent de détecter les deux bugs :
+    </p>
+
+<pre><code># Bug 1 : sur le jeu de test, moy_f ne devrait pas être None
+# (mais avec le bug, 'employes' est une chaine -> None -> TypeError)
+
+# Bug 2 : l'écart sur le jeu de test doit être un pourcentage (entre 0 et 100)
+# et non une difference en euros (~283 €)
+
+employes_only_f = [e for e in employes if e['sexe'] == 'F']
+# Si un seul sexe est présent, ecart_salaire doit renvoyer None
+assert ecart_salaire(employes_only_f) == None
+
+# L'ecart en pourcentage doit être compris entre 0 et 100
+assert 0 <= ecart_salaire(employes) <= 100</code></pre>
+
+    <!-- INDICES -->
+    <div style="margin:.8rem 0;">
+      <button class="btn-tp-vert" onclick="toggleIndice('indice-q3-1', this)">▶ Indice — Formule complète étape par étape</button>
+    </div>
+    <div id="indice-q3-1" class="encadre-indice indice-bloc">
+      <span class="encadre-prefix">Indice</span>
+      <p>Décompose la fonction corrigée en 4 étapes :</p>
+      <ol>
+        <li>Calcule <code>moy_h = salaire_moyen_condition(employes, 'sexe', 'M')</code>.</li>
+        <li>Calcule <code>moy_f = salaire_moyen_condition(employes, 'sexe', 'F')</code> (sans guillemets !).</li>
+        <li>Si <code>moy_h</code> est <code>None</code> ou <code>moy_f</code> est <code>None</code>, renvoie <code>None</code>.</li>
+        <li>Sinon renvoie <code>(moy_h - moy_f) / moy_h * 100</code>.</li>
+      </ol>
+    </div>
+
+    <!-- ÉDITEUR PYSCRIPT -->
+    <div class="encadre" style="margin-top:1.2rem;">
+      <span class="encadre-prefix">Éditeur Python — Écris la version corrigée</span>
+      <script type="py-editor" env="salaires">
+employes_test = [
+    {'experience': 5, 'etudes': 3, 'sexe': 'F', 'salaire': 2400},
+    {'experience': 3, 'etudes': 3, 'sexe': 'M', 'salaire': 2550},
+    {'experience': 5, 'etudes': 5, 'sexe': 'F', 'salaire': 2500},
+    {'experience': 3, 'etudes': 5, 'sexe': 'M', 'salaire': 2800},
+    {'experience': 2, 'etudes': 5, 'sexe': 'F', 'salaire': 2300},
+    {'experience': 2, 'etudes': 3, 'sexe': 'M', 'salaire': 2700}
+]
+
+def salaire_moyen_condition(employes, champ, valeur):
+    salaires = [emp['salaire'] for emp in employes if emp[champ] == valeur]
+    if len(salaires) == 0:
+        return None
+    return sum(salaires) / len(salaires)
+
+def ecart_salaire(employes):
+    '''Renvoie l'ecart de salaire en pourcentage (femmes vs hommes).
+    Renvoie None si un seul sexe est present.'''
+    # A toi de compléter !
+    pass
+
+
+def test_ecart_salaire():
+    e = employes_test
+    employes_only_f = [emp for emp in e if emp['sexe'] == 'F']
+    assert ecart_salaire(employes_only_f) == None
+    assert ecart_salaire([]) == None
+    ecart = ecart_salaire(e)
+    assert ecart is not None
+    assert 0 <= ecart <= 100
+    print("Les tests sont valides.")
+
+test_ecart_salaire()
+      </script>
+    </div>
+
+    <!-- CORRECTION -->
+    <div style="margin:1rem 0;">
+      <button class="btn-tp-or" onclick="toggleCorrection('corr-q3', this)">&#128274; Afficher la correction</button>
+    </div>
+    <div id="corr-q3" class="correction-bloc encadre-conseil">
+      <span class="encadre-prefix">Correction — Question 3</span>
+      <script type="py-editor" env="salaires-corr3">
+employes_test = [
+    {'experience': 5, 'etudes': 3, 'sexe': 'F', 'salaire': 2400},
+    {'experience': 3, 'etudes': 3, 'sexe': 'M', 'salaire': 2550},
+    {'experience': 5, 'etudes': 5, 'sexe': 'F', 'salaire': 2500},
+    {'experience': 3, 'etudes': 5, 'sexe': 'M', 'salaire': 2800},
+    {'experience': 2, 'etudes': 5, 'sexe': 'F', 'salaire': 2300},
+    {'experience': 2, 'etudes': 3, 'sexe': 'M', 'salaire': 2700}
+]
+
+def salaire_moyen_condition(employes, champ, valeur):
+    salaires = [emp['salaire'] for emp in employes if emp[champ] == valeur]
+    if len(salaires) == 0:
+        return None
+    return sum(salaires) / len(salaires)
+
+def ecart_salaire(employes):
+    '''Renvoie l'ecart de salaire en pourcentage (femmes vs hommes).
+    Renvoie None si un seul sexe est present.'''
+    # Correction bug 1 : variable sans guillemets
+    moy_h = salaire_moyen_condition(employes, 'sexe', 'M')
+    moy_f = salaire_moyen_condition(employes, 'sexe', 'F')
+    # Correction bug 2 : cas None et formule correcte
+    if moy_h is None or moy_f is None:
+        return None
+    return (moy_h - moy_f) / moy_h * 100
+
+
+def test_ecart_salaire():
+    e = employes_test
+    employes_only_f = [emp for emp in e if emp['sexe'] == 'F']
+    assert ecart_salaire(employes_only_f) == None
+    assert ecart_salaire([]) == None
+    ecart = ecart_salaire(e)
+    assert ecart is not None
+    assert 0 <= ecart <= 100
+    print("Les tests sont valides.")
+
+test_ecart_salaire()
+
+# Sur le jeu de test :
+print("Ecart sur jeu de test :", round(ecart_salaire(employes_test), 2), "%")
+      </script>
+      <div style="margin-top:.8rem;">
+        <p>
+          <strong>Résumé des deux corrections :</strong>
+        </p>
+        <ul>
+          <li>Ligne 2 : <code>'employes'</code> → <code>employes</code> (supprimer les guillemets).</li>
+          <li>Ligne 3 : ajouter un garde <code>if moy_h is None or moy_f is None: return None</code>.</li>
+          <li>Formule : remplacer <code>moy_h - moy_f</code> par <code>(moy_h - moy_f) / moy_h * 100</code>.</li>
+        </ul>
+        <p>
+          <strong>Sur le jeu de test :</strong> écart ≈ <strong>10,6 %</strong><br>
+          <strong>Sur les 2 000 employés :</strong> écart ≈ <strong>8,6 %</strong>
+        </p>
+        <p style="margin:0">
+          On retrouve un ordre de grandeur proche des statistiques réelles françaises (environ 15 %
+          selon l'INSEE pour l'ensemble du marché du travail, mais variable selon les secteurs).
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <hr class="sep">
+
+  <!-- QUESTION 4 -->
+  <section id="q4">
+    <h2>Question 4 — Algorithme des k plus proches voisins</h2>
+
+    <div class="encadre-question">
+      <span class="encadre-prefix">Énoncé — Question 4</span>
+      <p>
+        <span class="badge-question">Q4</span>
+        L'entreprise utilise l'algorithme des k plus proches voisins pour proposer un salaire
+        d'embauche. Tester <code>salaire_par_proximite</code> sur deux profils identiques
+        (même expérience, mêmes études) mais de sexe différent. Identifier la source de
+        l'écart dans le programme et la corriger.
+      </p>
+    </div>
+
+    <h3>Principe de l'algorithme des k plus proches voisins</h3>
+
+    <p>
+      Imagine que tu arrives dans une nouvelle ville et que tu cherches un appartement.
+      Pour estimer le loyer raisonnable, tu regardes les <strong>3 appartements les plus similaires
+      au tien</strong> (même surface, même quartier) et tu fais la moyenne de leurs loyers.
+      C'est exactement l'idée des <strong>k plus proches voisins</strong> (k-NN).
+    </p>
+
+    <div class="encadre">
+      <span class="encadre-prefix">Algorithme k-NN – Étapes</span>
+      <ol style="margin:0">
+        <li>Définir une <strong>distance</strong> entre deux individus (ici, entre deux employés).</li>
+        <li>Calculer la distance entre le nouvel individu et <strong>tous</strong> les individus connus.</li>
+        <li>Garder les <strong>k plus proches</strong> (les k distances les plus faibles).</li>
+        <li>Renvoyer la <strong>moyenne</strong> des valeurs cibles de ces k voisins (ici, leurs salaires).</li>
+      </ol>
+    </div>
+
+    <h3>La distance utilisée dans le programme</h3>
+
+    <p>
+      La fonction <code>distance</code> du programme calcule une distance entre deux employés
+      en tenant compte de <strong>trois critères</strong> : le sexe (converti en ±1), l'expérience et les études.
+    </p>
+
+<pre><code>def sexe_vers_entier(e):
+    if e['sexe'] == 'F':
+        return 1
+    else:
+        return -1
+
+def distance(e1, e2):
+    s = (sexe_vers_entier(e1) - sexe_vers_entier(e2))**2   # différence sexe
+    s = s + (e1['experience'] - e2['experience'])**2        # différence expérience
+    s = s + (e1['etudes'] - e2['etudes'])**2                # différence études
+    return sqrt(s)</code></pre>
+
+    <div class="encadre-conseil">
+      <span class="encadre-prefix">Rappel — Distance euclidienne</span>
+      <p style="margin:0">
+        La formule \(d = \sqrt{(x_1-x_2)^2 + (y_1-y_2)^2 + \ldots}\) est la généralisation
+        en plusieurs dimensions du théorème de Pythagore. Ici on l'applique à trois « coordonnées » :
+        sexe, expérience, études.
+      </p>
+    </div>
+
+    <h3>Test sur deux profils</h3>
+
+    <p>
+      Applique <code>salaire_par_proximite</code> aux deux profils suivants sur le jeu de test :
+    </p>
+
+<pre><code>profil_f = {'experience': 3, 'etudes': 3, 'sexe': 'F'}
+profil_m = {'experience': 3, 'etudes': 3, 'sexe': 'M'}</code></pre>
+
+    <div class="encadre">
+      <span class="encadre-prefix">Calcul manuel des distances – profil_f</span>
+      <p>
+        Pour <code>profil_f</code> (<code>'F'</code>, expérience 3, études 3), calculons les distances
+        aux 6 employés de test :
+      </p>
+      <table class="table-employes">
+        <tr>
+          <th>Employé</th><th>sexe</th><th>exp</th><th>etu</th><th>Distance</th>
+        </tr>
+        <tr class="row-f"><td>1 – F, 5, 3, 2400€</td><td>F→1</td><td>5</td><td>3</td>
+          <td>\(\sqrt{0^2+2^2+0^2}=2\)</td></tr>
+        <tr class="row-m"><td>2 – M, 3, 3, 2550€</td><td>M→-1</td><td>3</td><td>3</td>
+          <td>\(\sqrt{2^2+0^2+0^2}=2\)</td></tr>
+        <tr class="row-f"><td>3 – F, 5, 5, 2500€</td><td>F→1</td><td>5</td><td>5</td>
+          <td>\(\sqrt{0^2+2^2+2^2}\approx2{,}83\)</td></tr>
+        <tr class="row-m"><td>4 – M, 3, 5, 2800€</td><td>M→-1</td><td>3</td><td>5</td>
+          <td>\(\sqrt{2^2+0^2+2^2}\approx2{,}83\)</td></tr>
+        <tr class="row-f"><td>5 – F, 2, 5, 2300€</td><td>F→1</td><td>2</td><td>5</td>
+          <td>\(\sqrt{0^2+1^2+2^2}\approx2{,}24\)</td></tr>
+        <tr class="row-m"><td>6 – M, 2, 3, 2700€</td><td>M→-1</td><td>2</td><td>3</td>
+          <td>\(\sqrt{2^2+1^2+0^2}\approx2{,}24\)</td></tr>
+      </table>
+      <p style="margin:0">
+        Les 3 plus proches (distance 2) : <strong>employé 1 (F, 2400€)</strong>,
+        <strong>employé 2 (M, 2550€)</strong>, puis à distance ≈ 2,24 l'employé 5 (F, 2300€)
+        ou 6 (M, 2700€) — selon le tri, le résultat change. En pratique, le programme renvoie
+        une moyenne autour de <strong>2 417 €</strong>.
+      </p>
+    </div>
+
+    <p>
+      Pour <code>profil_m</code>, le calcul est symétrique : les employés proches des hommes
+      sont d'abord les hommes avec les mêmes caractéristiques. Le programme renvoie
+      environ <strong>2 683 €</strong>.
+    </p>
+
+    <div class="encadre-piege">
+      <span class="encadre-prefix">Le problème — Le sexe dans la distance crée un biais</span>
+      <p>
+        Deux profils identiques en termes d'expérience et d'études obtiennent des salaires
+        proposés différents (<strong>~2 417 € vs ~2 683 €</strong>) — uniquement parce que
+        leur sexe influence les voisins sélectionnés !
+      </p>
+      <p style="margin:0">
+        En incluant le sexe dans le calcul de la distance, on fait en sorte que les voisins
+        des femmes sont principalement des femmes (qui ont historiquement des salaires plus bas),
+        et vice versa. L'algorithme reproduit et perpétue le biais salarial qu'on cherche pourtant à mesurer.
+      </p>
+    </div>
+
+    <h3>Correction</h3>
+
+    <p>
+      Pour obtenir une recommandation équitable, il faut retirer le sexe du calcul de la distance :
+      deux personnes avec la même expérience et le même niveau d'études sont également proches,
+      quel que soit leur sexe.
+    </p>
+
+    <!-- INDICES -->
+    <div style="margin:.8rem 0;">
+      <button class="btn-tp-vert" onclick="toggleIndice('indice-q4-1', this)">▶ Indice — Modifier uniquement la fonction distance</button>
+    </div>
+    <div id="indice-q4-1" class="encadre-indice indice-bloc">
+      <span class="encadre-prefix">Indice</span>
+      <p style="margin:0">
+        Il suffit de supprimer la ligne qui ajoute la contribution du sexe dans <code>distance</code>,
+        ou d'écrire une nouvelle version <code>distance_sans_sexe</code> :
+      </p>
+<pre style="margin:.5rem 0 0"><code>def distance_sans_sexe(e1, e2):
+    s = (e1['experience'] - e2['experience'])**2
+    s = s + (e1['etudes'] - e2['etudes'])**2
+    return sqrt(s)</code></pre>
+    </div>
+
+    <!-- ÉDITEUR PYSCRIPT -->
+    <div class="encadre" style="margin-top:1.2rem;">
+      <span class="encadre-prefix">Éditeur Python — Teste et corrige le biais</span>
+      <script type="py-editor" env="salaires">
+from math import sqrt
+
+employes_test = [
+    {'experience': 5, 'etudes': 3, 'sexe': 'F', 'salaire': 2400},
+    {'experience': 3, 'etudes': 3, 'sexe': 'M', 'salaire': 2550},
+    {'experience': 5, 'etudes': 5, 'sexe': 'F', 'salaire': 2500},
+    {'experience': 3, 'etudes': 5, 'sexe': 'M', 'salaire': 2800},
+    {'experience': 2, 'etudes': 5, 'sexe': 'F', 'salaire': 2300},
+    {'experience': 2, 'etudes': 3, 'sexe': 'M', 'salaire': 2700}
+]
+
+# --- VERSION ORIGINALE BUGUEE (avec le sexe dans la distance) ---
+def sexe_vers_entier(e):
+    return 1 if e['sexe'] == 'F' else -1
+
+def distance_avec_sexe(e1, e2):
+    s = (sexe_vers_entier(e1) - sexe_vers_entier(e2))**2
+    s += (e1['experience'] - e2['experience'])**2
+    s += (e1['etudes'] - e2['etudes'])**2
+    return sqrt(s)
+
+# --- VERSION CORRIGÉE (a completer) ---
+def distance_sans_sexe(e1, e2):
+    # A toi de compléter : ne garder que l'expérience et les études
+    pass
+
+def k_plus_proches(k, employes, e, dist_fn):
+    e_d = [(dist_fn(e, employes[i]), i) for i in range(len(employes))]
+    e_d.sort()
+    return [employes[e_d[i][1]] for i in range(k)]
+
+def salaire_moyen(employes):
+    if len(employes) == 0:
+        return None
+    return sum(emp['salaire'] for emp in employes) / len(employes)
+
+profil_f = {'experience': 3, 'etudes': 3, 'sexe': 'F'}
+profil_m = {'experience': 3, 'etudes': 3, 'sexe': 'M'}
+
+
+def test_knn_corrige():
+    e = employes_test
+    voisins_f = k_plus_proches(3, e, profil_f, distance_sans_sexe)
+    voisins_m = k_plus_proches(3, e, profil_m, distance_sans_sexe)
+    sal_f = salaire_moyen(voisins_f)
+    sal_m = salaire_moyen(voisins_m)
+    # Apres correction : meme profil -> meme salaire propose
+    assert sal_f == sal_m, f"Encore un biais : {sal_f} != {sal_m}"
+    assert sal_f == 2550.0
+    print("Les tests sont valides.")
+
+test_knn_corrige()
+      </script>
+    </div>
+
+    <!-- CORRECTION -->
+    <div style="margin:1rem 0;">
+      <button class="btn-tp-or" onclick="toggleCorrection('corr-q4', this)">&#128274; Afficher la correction</button>
+    </div>
+    <div id="corr-q4" class="correction-bloc encadre-conseil">
+      <span class="encadre-prefix">Correction — Question 4</span>
+      <script type="py-editor" env="salaires-corr4">
+from math import sqrt
+
+employes_test = [
+    {'experience': 5, 'etudes': 3, 'sexe': 'F', 'salaire': 2400},
+    {'experience': 3, 'etudes': 3, 'sexe': 'M', 'salaire': 2550},
+    {'experience': 5, 'etudes': 5, 'sexe': 'F', 'salaire': 2500},
+    {'experience': 3, 'etudes': 5, 'sexe': 'M', 'salaire': 2800},
+    {'experience': 2, 'etudes': 5, 'sexe': 'F', 'salaire': 2300},
+    {'experience': 2, 'etudes': 3, 'sexe': 'M', 'salaire': 2700}
+]
+
+def distance_sans_sexe(e1, e2):
+    '''Distance basee uniquement sur l'experience et les etudes.'''
+    s = (e1['experience'] - e2['experience'])**2
+    s += (e1['etudes'] - e2['etudes'])**2
+    return sqrt(s)
+
+def k_plus_proches(k, employes, e, dist_fn):
+    e_d = [(dist_fn(e, employes[i]), i) for i in range(len(employes))]
+    e_d.sort()
+    return [employes[e_d[i][1]] for i in range(k)]
+
+def salaire_moyen(employes):
+    if len(employes) == 0:
+        return None
+    return sum(emp['salaire'] for emp in employes) / len(employes)
+
+def salaire_par_proximite_corrige(employes, e):
+    '''Version corrigee : le sexe n'intervient pas dans la distance.'''
+    voisins = k_plus_proches(3, employes, e, distance_sans_sexe)
+    return salaire_moyen(voisins)
+
+
+def test_knn_corrige():
+    e = employes_test
+    profil_f = {'experience': 3, 'etudes': 3, 'sexe': 'F'}
+    profil_m = {'experience': 3, 'etudes': 3, 'sexe': 'M'}
+    voisins_f = k_plus_proches(3, e, profil_f, distance_sans_sexe)
+    voisins_m = k_plus_proches(3, e, profil_m, distance_sans_sexe)
+    sal_f = salaire_moyen(voisins_f)
+    sal_m = salaire_moyen(voisins_m)
+    assert sal_f == sal_m, f"Encore un biais : {sal_f} != {sal_m}"
+    assert sal_f == 2550.0
+    print("Les tests sont valides.")
+
+test_knn_corrige()
+
+# Affichage des résultats avant/apres
+print("=== Résultats comparatifs ===")
+from math import sqrt as sqrt2
+def sexe_vers_entier(e): return 1 if e['sexe'] == 'F' else -1
+def dist_avec_sexe(e1, e2):
+    s = (sexe_vers_entier(e1) - sexe_vers_entier(e2))**2
+    s += (e1['experience'] - e2['experience'])**2
+    s += (e1['etudes'] - e2['etudes'])**2
+    return sqrt2(s)
+profil_f = {'experience': 3, 'etudes': 3, 'sexe': 'F'}
+profil_m = {'experience': 3, 'etudes': 3, 'sexe': 'M'}
+v_f_bug = k_plus_proches(3, employes_test, profil_f, dist_avec_sexe)
+v_m_bug = k_plus_proches(3, employes_test, profil_m, dist_avec_sexe)
+print(f"BUGUÉ  - F: {salaire_moyen(v_f_bug):.0f} €  M: {salaire_moyen(v_m_bug):.0f} €")
+v_f_ok = k_plus_proches(3, employes_test, profil_f, distance_sans_sexe)
+v_m_ok = k_plus_proches(3, employes_test, profil_m, distance_sans_sexe)
+print(f"CORRIGÉ - F: {salaire_moyen(v_f_ok):.0f} €  M: {salaire_moyen(v_m_ok):.0f} €")
+      </script>
+      <div style="margin-top:.8rem;">
+        <p>
+          <strong>Résumé :</strong> la source du biais est la présence du sexe dans le calcul de la distance.
+          En l'excluant, les deux profils identiques (experience 3, études 3) obtiennent le même salaire proposé :
+          <strong>2 550 €</strong>.
+        </p>
+        <p>
+          <strong>Avant correction :</strong> profil_f → ~2 417 €, profil_m → ~2 683 €<br>
+          <strong>Après correction :</strong> profil_f → 2 550 €, profil_m → 2 550 €
+        </p>
+        <p style="margin:0">
+          Ce cas illustre concrètement comment un algorithme peut <em>reproduire</em> des inégalités
+          existantes s'il est mal conçu — et comment une correction technique simple peut suffire à
+          le rendre équitable.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <hr class="sep">
+
+  <!-- PIÈGES FRÉQUENTS -->
+  <section id="pieges">
+    <h2>Pièges fréquents &amp; astuces de vérification</h2>
+
+    <div class="encadre-piege">
+      <span class="encadre-prefix">Piège 1 — Variable vs chaîne de caractères</span>
+      <p>
+        C'est exactement le bug de <code>calcul_ecart_sexe</code> : écrire <code>'employes'</code>
+        (avec guillemets) au lieu de <code>employes</code> (sans guillemets).
+        La chaîne <code>'employes'</code> est itérable en Python — elle donne les caractères
+        <code>'e'</code>, <code>'m'</code>, <code>'p'</code>, … — ce qui ne lève pas d'erreur
+        immédiatement mais produit un résultat absurde.
+      </p>
+      <p style="margin:0">
+        <strong>Réflexe :</strong> si ta fonction renvoie <code>None</code> de façon inattendue,
+        vérifie que tu n'as pas mis de guillemets autour d'un nom de variable.
+      </p>
+    </div>
+
+    <div class="encadre-piege">
+      <span class="encadre-prefix">Piège 2 — Oublier le cas « aucun employé »</span>
+      <p>
+        Toute fonction qui calcule une moyenne doit gérer le cas où la liste est vide.
+        Diviser par zéro en Python lève une <code>ZeroDivisionError</code>.
+        Toujours tester : <code>assert salaire_moyen_condition([], 'sexe', 'F') == None</code>.
+      </p>
+    </div>
+
+    <div class="encadre-piege">
+      <span class="encadre-prefix">Piège 3 — Différence vs pourcentage</span>
+      <p>
+        L'écart en euros (<code>moy_h - moy_f</code>) et l'écart en pourcentage
+        (<code>(moy_h - moy_f) / moy_h * 100</code>) sont deux choses très différentes.
+        Sur le jeu de test, l'un vaut ~283 (euros), l'autre ~10,6 (pourcent).
+        L'énoncé demande toujours le pourcentage.
+      </p>
+    </div>
+
+    <div class="encadre-piege">
+      <span class="encadre-prefix">Piège 4 — Biais dans la distance k-NN</span>
+      <p>
+        Intégrer une caractéristique sensible (sexe, origine…) dans le calcul de distance
+        revient à regrouper les individus par cette caractéristique — et donc à reproduire
+        les inégalités présentes dans les données d'entraînement.
+        C'est un problème éthique majeur en apprentissage automatique.
+      </p>
+    </div>
+
+    <div class="encadre-piege">
+      <span class="encadre-prefix">Piège 5 — Confondre <code>is None</code> et <code>== None</code></span>
+      <p>
+        En Python, pour tester si une variable vaut <code>None</code>, la bonne pratique est
+        d'écrire <code>if x is None</code> (et non <code>if x == None</code>).
+        Les deux fonctionnent pour <code>None</code>, mais <code>is None</code> est plus idiomatique
+        et plus sûr avec des objets personnalisés.
+      </p>
+    </div>
+
+    <hr class="sep">
+
+    <h3>Mini-exercices de vérification</h3>
+
+    <div class="encadre">
+      <span class="encadre-prefix">Mini-exercice A — Jeu de données inventé</span>
+      <p>
+        Invente un jeu de données minimal de 4 employés (2F, 2M) où l'écart de salaire est
+        exactement <strong>20 %</strong> (les hommes gagnent 20 % de plus que les femmes).
+        Vérifie avec ta fonction <code>ecart_salaire</code>.
+      </p>
+      <button class="btn-secondaire" onclick="toggleCorrection('corr-mini-a', this)">Exemple de réponse</button>
+      <div id="corr-mini-a" class="correction-bloc" style="margin-top:.7rem;">
+        <p>Un exemple possible : femmes à 2 000 € et 2 000 €, hommes à 2 500 € et 2 500 €.</p>
+        <p style="margin:0">
+          Écart = \(\frac{2500 - 2000}{2500} \times 100 = \frac{500}{2500} \times 100 = 20\,\%\). ✓
+        </p>
+      </div>
+    </div>
+
+    <div class="encadre">
+      <span class="encadre-prefix">Mini-exercice B — Interprétation de l'écart trouvé</span>
+      <p>
+        Sur les 2 000 employés, l'écart calculé est d'environ <strong>8,6 %</strong>.
+        L'INSEE annonce 15 % pour la France. Comment expliques-tu cette différence ?
+        (Réfléchis aux caractéristiques des employés dans ce jeu de données simulé.)
+      </p>
+      <button class="btn-secondaire" onclick="toggleCorrection('corr-mini-b', this)">Piste de réflexion</button>
+      <div id="corr-mini-b" class="correction-bloc" style="margin-top:.7rem;">
+        <p>
+          Le jeu de données est simulé et peut ne pas refléter toutes les inégalités réelles.
+          Il peut aussi ne pas inclure certains facteurs importants comme le secteur d'activité,
+          le temps partiel (souvent subi par les femmes) ou la progression de carrière.
+          L'écart brut de 8,6 % reste cependant significatif sur un même poste, puisqu'on contrôle
+          l'expérience et les études.
+        </p>
+      </div>
+    </div>
+
+    <div class="encadre">
+      <span class="encadre-prefix">Mini-exercice C — Assertions supplémentaires</span>
+      <p>
+        Écris une assertion qui vérifie que <code>ecart_salaire</code> renvoie <code>None</code>
+        sur une liste ne contenant que des hommes, <em>et</em> une autre qui vérifie que l'écart
+        est strictement positif sur le jeu de test.
+      </p>
+      <button class="btn-secondaire" onclick="toggleCorrection('corr-mini-c', this)">Exemple</button>
+      <div id="corr-mini-c" class="correction-bloc" style="margin-top:.7rem;">
+<pre style="margin:0"><code>employes_h = [e for e in employes_test if e['sexe'] == 'M']
+assert ecart_salaire(employes_h) == None
+assert ecart_salaire(employes_test) > 0</code></pre>
+      </div>
+    </div>
+
+  </section>
+
+  <hr class="sep">
+
+  <!-- RÉCAPITULATIF -->
+  <div class="encadre" style="margin-top:2rem;">
+    <span class="encadre-prefix">Récapitulatif – Ce que tu dois retenir</span>
+    <ul style="margin:0">
+      <li>Une liste de dictionnaires se parcourt avec une boucle <code>for emp in employes</code> — on accède aux champs avec <code>emp['champ']</code>.</li>
+      <li>La moyenne conditionnelle : filtrer d'abord, vérifier que la liste n'est pas vide, puis diviser.</li>
+      <li><code>'employes'</code> ≠ <code>employes</code> : les guillemets transforment une variable en chaîne de caractères.</li>
+      <li>L'écart en pourcentage se calcule avec \(\frac{\text{moy}_H - \text{moy}_F}{\text{moy}_H} \times 100\), pas une simple soustraction.</li>
+      <li>Dans un algorithme k-NN, inclure une caractéristique sensible dans la distance reproduit les biais des données d'entraînement.</li>
+      <li>Toujours écrire des fonctions de test avec au moins 3 assertions pour détecter les bugs rapidement.</li>
+    </ul>
+  </div>
+
+</div><!-- /container-content -->
+
+<!-- PIED DE PAGE -->
+<footer>
+  Lycée Antoine Watteau — DarkSATHI Li
+</footer>
+
+<!-- SCRIPTS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+  /* RETOUR EN HAUT */
+  var btnTop = document.getElementById('btn-top');
+
+  window.addEventListener('scroll', function () {
+    if (window.scrollY > 300) {
+      btnTop.style.display = 'flex';
+    } else {
+      btnTop.style.display = 'none';
+    }
+  });
+
+  btnTop.addEventListener('click', function () {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  });
+
+  /* TOGGLE INDICE */
+  function toggleIndice(id, btn) {
+    var el = document.getElementById(id);
+    if (!el) return;
+    if (el.classList.contains('visible')) {
+      el.classList.remove('visible');
+      btn.textContent = btn.textContent.replace('▼', '▶');
+    } else {
+      el.classList.add('visible');
+      btn.textContent = btn.textContent.replace('▶', '▼');
+    }
+  }
+
+  /* TOGGLE CORRECTION */
+  function toggleCorrection(id, btn) {
+    var el = document.getElementById(id);
+    if (!el) return;
+    if (el.classList.contains('visible')) {
+      el.classList.remove('visible');
+      btn.textContent = btn.textContent.replace('Masquer', 'Afficher').replace('Exemple', 'Exemple').replace('Piste', 'Piste');
+    } else {
+      el.classList.add('visible');
+      btn.textContent = btn.textContent.replace('Afficher', 'Masquer');
+    }
+  }
+</script>
+</body>
+</html>

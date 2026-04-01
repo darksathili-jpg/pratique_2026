@@ -1,0 +1,788 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NSI Terminale — Fiches BAC 2026</title>
+
+  <!-- Bootstrap 5.3.3 -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Rubik+Dirt&family=Source+Serif+4:ital,opsz,wght@0,8..60,300..900;1,8..60,300..900&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --bg-main:    #f8f9fb;
+      --bg-panel:   #eef1f5;
+      --bg-cours:   #ffffff;
+      --accent:     #2a6496;
+      --accent-or:  #b5610a;
+      --accent-vert:#2e7d32;
+      --text-main:  #1a1a1a;
+      --text-muted: #5a6470;
+      --border-radius: 8px;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      background-color: var(--bg-main);
+      color: var(--text-main);
+      font-family: 'Source Serif 4', Georgia, serif;
+      font-size: 1.05rem;
+      line-height: 1.75;
+      margin: 0;
+      padding-bottom: 4rem;
+    }
+
+    h1, h2, h3, h4 {
+      font-family: 'Rubik Dirt', cursive;
+      color: var(--accent);
+      letter-spacing: 0.02em;
+    }
+
+    h1 { font-size: 2.4rem; color: #111; }
+    h2 { font-size: 1.5rem; border-bottom: 2px solid var(--accent); padding-bottom: .3rem; margin-top: 2.5rem; }
+
+    code, pre, .mono {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.85em;
+    }
+
+    code {
+      background: #e8edf2;
+      padding: 2px 6px;
+      border-radius: 4px;
+      color: #8b3a00;
+    }
+
+    /* ── NAVIGATION ── */
+    #navbar {
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      background: #2a6496;
+      border-bottom: 2px solid #1a4a70;
+      padding: .5rem 1.5rem;
+      display: flex;
+      gap: .5rem;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    #navbar span {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: .8rem;
+      color: #ccddf0;
+      margin-right: auto;
+    }
+
+    #navbar a {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: .8rem;
+      color: #fff;
+      text-decoration: none;
+      padding: .25rem .7rem;
+      border: 1px solid #ccddf0;
+      border-radius: 4px;
+      transition: background .2s;
+    }
+
+    #navbar a:hover { background: #1a4a70; color: #fff; }
+
+    /* ── CONTENU ── */
+    .container-content {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 2rem 1.5rem;
+    }
+
+    /* ── HERO ── */
+    .hero-block {
+      background: #ffffff;
+      border-radius: var(--border-radius);
+      border-left: 4px solid var(--accent);
+      padding: 1.8rem 2rem;
+      margin-bottom: 2rem;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+    }
+
+    .hero-block h1 {
+      margin-bottom: .5rem;
+    }
+
+    .hero-meta {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: .78rem;
+      color: var(--text-muted);
+      display: flex;
+      flex-wrap: wrap;
+      gap: .4rem 1.2rem;
+      margin-top: .6rem;
+    }
+
+    .ping-dot {
+      display: inline-block;
+      width: 7px; height: 7px;
+      border-radius: 50%;
+      background: #2e7d32;
+      animation: blink 1.6s ease infinite;
+      vertical-align: middle;
+      margin-right: .3rem;
+    }
+    @keyframes blink {
+      0%,100% { opacity: 1; }
+      50%      { opacity: 0.2; }
+    }
+
+    /* ── BARRE PROGRESSION ── */
+    .progress-wrap {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin-top: 1rem;
+    }
+    .progress-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: .72rem;
+      color: var(--text-muted);
+      white-space: nowrap;
+    }
+    .progress-track {
+      flex: 1;
+      height: 5px;
+      background: #dce8f2;
+      border-radius: 4px;
+      overflow: hidden;
+    }
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--accent), var(--accent-vert));
+      border-radius: 4px;
+      width: 0%;
+      transition: width .6s ease;
+    }
+    .progress-count {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: .72rem;
+      color: var(--accent);
+      white-space: nowrap;
+    }
+
+    /* ── FILTRES ── */
+    .filter-bar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: .5rem;
+      align-items: center;
+      margin-bottom: 1.5rem;
+    }
+    .filter-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: .72rem;
+      color: var(--text-muted);
+      margin-right: .3rem;
+    }
+    .filter-btn {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: .75rem;
+      padding: .28rem .85rem;
+      border-radius: 20px;
+      border: 1px solid #c0ccda;
+      background: #fff;
+      color: var(--text-muted);
+      cursor: pointer;
+      transition: all .2s;
+    }
+    .filter-btn:hover, .filter-btn.active {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: #fff;
+    }
+
+    /* ── ASTUCE ÉDITION ── */
+    .edit-hint {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: .72rem;
+      color: var(--text-muted);
+      background: #fff8f0;
+      border: 1px dashed var(--accent-or);
+      border-radius: var(--border-radius);
+      padding: .8rem 1.2rem;
+      margin-bottom: 1.5rem;
+    }
+
+    /* ── GRILLE ── */
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
+      gap: 1.1rem;
+    }
+
+    /* ── CARTE ── */
+    .card {
+      background: #ffffff;
+      border: 1px solid #d5dfe8;
+      border-radius: var(--border-radius);
+      border-top: 3px solid var(--card-accent, var(--accent));
+      padding: 1.2rem 1.3rem 1rem;
+      display: flex;
+      flex-direction: column;
+      gap: .6rem;
+      text-decoration: none;
+      color: inherit;
+      transition: transform .2s ease, box-shadow .2s ease;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+      animation: fadeUp .4s ease both;
+    }
+
+    .card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 6px 20px rgba(42,100,150,0.13);
+      border-color: var(--card-accent, var(--accent));
+    }
+
+    .card.locked { cursor: default; }
+    .card.locked:hover {
+      transform: none;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+    }
+    .card.locked .card-arrow { display: none; }
+
+    .card-num {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: .65rem;
+      color: var(--card-accent, var(--accent));
+      letter-spacing: .1em;
+      opacity: .75;
+      display: flex;
+      align-items: center;
+      gap: .5rem;
+    }
+    .card-num::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: #e2e8ef;
+    }
+
+    .card-title {
+      font-family: 'Rubik Dirt', cursive;
+      font-size: .98rem;
+      line-height: 1.3;
+      color: var(--text-main);
+    }
+
+    .card-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: .35rem;
+    }
+    .tag {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: .6rem;
+      padding: .15rem .5rem;
+      border-radius: 4px;
+      border: 1px solid var(--card-accent, var(--accent));
+      color: var(--card-accent, var(--accent));
+      opacity: .75;
+    }
+
+    .card-footer {
+      margin-top: auto;
+      padding-top: .65rem;
+      border-top: 1px solid #e2e8ef;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .status-badge {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: .62rem;
+      padding: .2rem .65rem;
+      border-radius: 20px;
+      display: inline-flex;
+      align-items: center;
+      gap: .3rem;
+    }
+    .status-done {
+      background: #f0faf0;
+      color: var(--accent-vert);
+      border: 1px solid #b2d8b2;
+    }
+    .status-wip {
+      background: #fff8f0;
+      color: var(--accent-or);
+      border: 1px solid #f5c88a;
+    }
+    .status-todo {
+      background: var(--bg-panel);
+      color: var(--text-muted);
+      border: 1px solid #c0ccda;
+    }
+
+    .card-arrow {
+      font-size: 1rem;
+      color: var(--card-accent, var(--accent));
+      opacity: 0;
+      transform: translateX(-5px);
+      transition: all .2s;
+    }
+    .card:hover .card-arrow { opacity: 1; transform: translateX(0); }
+
+    /* ── FOOTER ── */
+    footer {
+      margin-top: 4rem;
+      padding-top: 1.5rem;
+      border-top: 2px solid var(--accent);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: .7rem;
+      color: var(--text-muted);
+      text-align: center;
+    }
+    footer a { color: var(--accent); text-decoration: underline dotted; }
+    footer a:hover { color: var(--accent-or); }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(14px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    @media (max-width: 640px) {
+      .grid { grid-template-columns: 1fr; }
+      h1 { font-size: 1.8rem; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- NAVBAR -->
+<nav id="navbar">
+  <span>~/nsi/bac2026/fiches/index.html</span>
+  <a href="https://sujets.examens-concours.gouv.fr/delos/public/bgt/nsi" target="_blank">Banque nationale</a>
+  <span style="margin-right:0; margin-left:.5rem; background:#1a4a70; padding:.2rem .8rem; border-radius:4px; color:#fff;">BAC 2026</span>
+</nav>
+
+<div class="container-content">
+
+  <!-- HERO -->
+  <div class="hero-block">
+    <h1>Fiches de révision<br>NSI Terminale</h1>
+    <div class="hero-meta">
+      <span><span class="ping-dot"></span>Épreuve pratique · session 2026</span>
+      <span>23 sujets officiels</span>
+    </div>
+    <div class="progress-wrap">
+      <span class="progress-label">PROGRESSION</span>
+      <div class="progress-track">
+        <div class="progress-fill" id="progressFill"></div>
+      </div>
+      <span class="progress-count" id="progressCount">0 / 23</span>
+    </div>
+  </div>
+
+  <!-- ASTUCE ÉDITION
+  <div class="edit-hint">
+    💡 Pour ajouter un lien : modifie l'attribut <code>href</code> de la carte dans le HTML.
+    Passe <code>data-status="todo"</code> à <code>data-status="done"</code> quand la fiche est prête.
+  </div> -->
+
+  <!-- FILTRES -->
+  <div class="filter-bar">
+    <span class="filter-label">FILTRER :</span>
+    <button class="filter-btn active" data-filter="all">Tous</button>
+    <button class="filter-btn" data-filter="done">✓ Fiche prête</button>
+    <button class="filter-btn" data-filter="todo">⏳ À créer</button>
+  </div>
+
+  <!-- GRILLE PRINCIPALE -->
+  <div class="grid" id="mainGrid">
+
+    <!-- ── Sujet 1 ── -->
+    <a class="card locked" href="sujet_1/fiche_rle_nsi_light.html" target="_blank" data-status="done" style="--card-accent:#2a6496;" data-delay="0">
+      <div class="card-num">SUJET 01</div>
+      <div class="card-title">Traitement d'images en niveaux de gris</div>
+      <div class="card-tags">
+        <span class="tag">PIL</span>
+        <span class="tag">matrices</span>
+      </div>
+      <div class="card-footer">
+        <span class="status-badge status-done">✓ Fiche prête</span>
+        <span class="card-arrow">→</span>
+      </div>
+    </a>
+
+    <!-- ── Sujet 2 ── -->
+    <a class="card locked" href="#" data-status="todo" style="--card-accent:#b5610a;" data-delay="1">
+      <div class="card-num">SUJET 02</div>
+      <div class="card-title">Écarts de salaires femmes / hommes</div>
+      <div class="card-tags">
+        <span class="tag">CSV</span>
+        <span class="tag">données</span>
+        <span class="tag">statistiques</span>
+      </div>
+      <div class="card-footer">
+        <span class="status-badge status-todo">⏳ À créer</span>
+        <span class="card-arrow">→</span>
+      </div>
+    </a>
+
+    <!-- ── Sujet 3 ── -->
+    <a class="card locked" href="#" data-status="todo" style="--card-accent:#2e7d32;" data-delay="2">
+      <div class="card-num">SUJET 03</div>
+      <div class="card-title">Cycle menstruel — phases et ovulation</div>
+      <div class="card-tags">
+        <span class="tag">données</span>
+        <span class="tag">listes</span>
+        <span class="tag">algorithmes</span>
+      </div>
+      <div class="card-footer">
+        <span class="status-badge status-todo">⏳ À créer</span>
+        <span class="card-arrow">→</span>
+      </div>
+    </a>
+
+    <!-- ── Sujet 4 ── -->
+    <a class="card locked" href="#" data-status="todo" style="--card-accent:#7b3fa8;" data-delay="3">
+      <div class="card-num">SUJET 04</div>
+      <div class="card-title">Croissance de plantes en serre</div>
+      <div class="card-tags">
+        <span class="tag">CSV</span>
+        <span class="tag">données</span>
+        <span class="tag">statistiques</span>
+      </div>
+      <div class="card-footer">
+        <span class="status-badge status-todo">⏳ À créer</span>
+        <span class="card-arrow">→</span>
+      </div>
+    </a>
+
+    <!-- ── Sujet 5 ── -->
+    <a class="card locked" href="#" data-status="todo" style="--card-accent:#2a6496;" data-delay="4">
+      <div class="card-num">SUJET 05</div>
+      <div class="card-title">Empreinte carbone — simulateur nosgestesclimat</div>
+      <div class="card-tags">
+        <span class="tag">dictionnaires</span>
+        <span class="tag">données</span>
+        <span class="tag">CO2</span>
+      </div>
+      <div class="card-footer">
+        <span class="status-badge status-todo">⏳ À créer</span>
+        <span class="card-arrow">→</span>
+      </div>
+    </a>
+
+    <!-- ── Sujet 6 ── -->
+    <a class="card locked" href="#" data-status="todo" style="--card-accent:#b5610a;" data-delay="5">
+      <div class="card-num">SUJET 06</div>
+      <div class="card-title">Recettes de smoothies — Maison des lycéens</div>
+      <div class="card-tags">
+        <span class="tag">listes</span>
+        <span class="tag">dictionnaires</span>
+        <span class="tag">Python</span>
+      </div>
+      <div class="card-footer">
+        <span class="status-badge status-todo">⏳ À créer</span>
+        <span class="card-arrow">→</span>
+      </div>
+    </a>
+
+    <!-- ── Sujet 7 ── -->
+    <a class="card locked" href="#" data-status="todo" style="--card-accent:#2e7d32;" data-delay="6">
+      <div class="card-num">SUJET 07</div>
+      <div class="card-title">Coccinelles et régulation des pucerons</div>
+      <div class="card-tags">
+        <span class="tag">simulation</span>
+        <span class="tag">algorithmes</span>
+        <span class="tag">listes</span>
+      </div>
+      <div class="card-footer">
+        <span class="status-badge status-todo">⏳ À créer</span>
+        <span class="card-arrow">→</span>
+      </div>
+    </a>
+
+    <!-- ── Sujet 8 ── -->
+    <a class="card locked" href="#" data-status="todo" style="--card-accent:#7b3fa8;" data-delay="7">
+      <div class="card-num">SUJET 08</div>
+      <div class="card-title">Nombres flottants et valeurs monétaires</div>
+      <div class="card-tags">
+        <span class="tag">binaire</span>
+        <span class="tag">flottants</span>
+        <span class="tag">précision</span>
+      </div>
+      <div class="card-footer">
+        <span class="status-badge status-todo">⏳ À créer</span>
+        <span class="card-arrow">→</span>
+      </div>
+    </a>
+
+    <!-- ── Sujet 9 ── -->
+    <a class="card locked" href="#" data-status="todo" style="--card-accent:#2a6496;" data-delay="8">
+      <div class="card-num">SUJET 09</div>
+      <div class="card-title">Fichiers OBJ — modélisation 3D</div>
+      <div class="card-tags">
+        <span class="tag">fichiers</span>
+        <span class="tag">3D</span>
+        <span class="tag">parsing</span>
+      </div>
+      <div class="card-footer">
+        <span class="status-badge status-todo">⏳ À créer</span>
+        <span class="card-arrow">→</span>
+      </div>
+    </a>
+
+    <!-- ── Sujet 10 ── -->
+    <a class="card locked" href="#" data-status="todo" style="--card-accent:#b5610a;" data-delay="9">
+      <div class="card-num">SUJET 10</div>
+      <div class="card-title">Compteurs d'eau connectés</div>
+      <div class="card-tags">
+        <span class="tag">données</span>
+        <span class="tag">CSV</span>
+        <span class="tag">statistiques</span>
+      </div>
+      <div class="card-footer">
+        <span class="status-badge status-todo">⏳ À créer</span>
+        <span class="card-arrow">→</span>
+      </div>
+    </a>
+
+    <!-- ── Sujet 11 ── -->
+    <a class="card locked" href="#" data-status="todo" style="--card-accent:#2e7d32;" data-delay="10">
+      <div class="card-num">SUJET 11</div>
+      <div class="card-title">Le renard — habitat et protection (loi Biodiversité)</div>
+      <div class="card-tags">
+        <span class="tag">données</span>
+        <span class="tag">listes</span>
+        <span class="tag">algorithmes</span>
+      </div>
+      <div class="card-footer">
+        <span class="status-badge status-todo">⏳ À créer</span>
+        <span class="card-arrow">→</span>
+      </div>
+    </a>
+
+    <!-- ── Sujet 12 ── -->
+    <a class="card locked" href="#" data-status="todo" style="--card-accent:#7b3fa8;" data-delay="11">
+      <div class="card-num">SUJET 12</div>
+      <div class="card-title">Refuge de renards — base de données CSV</div>
+      <div class="card-tags">
+        <span class="tag">CSV</span>
+        <span class="tag">BDD</span>
+        <span class="tag">Python</span>
+      </div>
+      <div class="card-footer">
+        <span class="status-badge status-todo">⏳ À créer</span>
+        <span class="card-arrow">→</span>
+      </div>
+    </a>
+
+    <!-- ── Sujet 13 ── -->
+    <a class="card locked" href="#" data-status="todo" style="--card-accent:#2a6496;" data-delay="12">
+      <div class="card-num">SUJET 13</div>
+      <div class="card-title">Ballon sonde météo — données atmosphériques</div>
+      <div class="card-tags">
+        <span class="tag">CSV</span>
+        <span class="tag">météo</span>
+        <span class="tag">statistiques</span>
+      </div>
+      <div class="card-footer">
+        <span class="status-badge status-todo">⏳ À créer</span>
+        <span class="card-arrow">→</span>
+      </div>
+    </a>
+
+    <!-- ── Sujet 14 ── -->
+    <a class="card locked" href="#" data-status="todo" style="--card-accent:#b5610a;" data-delay="13">
+      <div class="card-num">SUJET 14</div>
+      <div class="card-title">Normes de construction et évacuation des bâtiments</div>
+      <div class="card-tags">
+        <span class="tag">copy</span>
+        <span class="tag">random</span>
+        <span class="tag">tkinter</span>
+      </div>
+      <div class="card-footer">
+        <span class="status-badge status-todo">⏳ À créer</span>
+        <span class="card-arrow">→</span>
+      </div>
+    </a>
+
+    <!-- ── Sujet 15 ── -->
+    <a class="card locked" href="#" data-status="todo" style="--card-accent:#2e7d32;" data-delay="14">
+      <div class="card-num">SUJET 15</div>
+      <div class="card-title">Gestion clients et animaux — cabinet vétérinaire</div>
+      <div class="card-tags">
+        <span class="tag">sqlite3</span>
+        <span class="tag">SQL</span>
+        <span class="tag">BDD</span>
+      </div>
+      <div class="card-footer">
+        <span class="status-badge status-todo">⏳ À créer</span>
+        <span class="card-arrow">→</span>
+      </div>
+    </a>
+
+    <!-- ── Sujet 16 ── -->
+    <a class="card locked" href="#" data-status="todo" style="--card-accent:#7b3fa8;" data-delay="15">
+      <div class="card-num">SUJET 16</div>
+      <div class="card-title">Évolution des températures et warming stripes</div>
+      <div class="card-tags">
+        <span class="tag">csv</span>
+        <span class="tag">matplotlib</span>
+        <span class="tag">visualisation</span>
+      </div>
+      <div class="card-footer">
+        <span class="status-badge status-todo">⏳ À créer</span>
+        <span class="card-arrow">→</span>
+      </div>
+    </a>
+
+    <!-- ── Sujet 17 ── -->
+    <a class="card locked" href="#" data-status="todo" style="--card-accent:#2a6496;" data-delay="16">
+      <div class="card-num">SUJET 17</div>
+      <div class="card-title">Gestion d'un club de handball professionnel</div>
+      <div class="card-tags">
+        <span class="tag">dictionnaires</span>
+        <span class="tag">POO</span>
+      </div>
+      <div class="card-footer">
+        <span class="status-badge status-todo">⏳ À créer</span>
+        <span class="card-arrow">→</span>
+      </div>
+    </a>
+
+    <!-- ── Sujet 18 ── -->
+    <a class="card locked" href="#" data-status="todo" style="--card-accent:#b5610a;" data-delay="17">
+      <div class="card-num">SUJET 18</div>
+      <div class="card-title">Températures de l'océan en Polynésie française</div>
+      <div class="card-tags">
+        <span class="tag">CSV</span>
+        <span class="tag">statistiques</span>
+      </div>
+      <div class="card-footer">
+        <span class="status-badge status-todo">⏳ À créer</span>
+        <span class="card-arrow">→</span>
+      </div>
+    </a>
+
+    <!-- ── Sujet 19 ── -->
+    <a class="card locked" href="#" data-status="todo" style="--card-accent:#2e7d32;" data-delay="18">
+      <div class="card-num">SUJET 19</div>
+      <div class="card-title">Gestion des réserves d'eau en Polynésie française</div>
+      <div class="card-tags">
+        <span class="tag">algorithmes</span>
+        <span class="tag">listes</span>
+      </div>
+      <div class="card-footer">
+        <span class="status-badge status-todo">⏳ À créer</span>
+        <span class="card-arrow">→</span>
+      </div>
+    </a>
+
+    <!-- ── Sujet 20 ── -->
+    <a class="card locked" href="#" data-status="todo" style="--card-accent:#7b3fa8;" data-delay="19">
+      <div class="card-num">SUJET 20</div>
+      <div class="card-title">Numérique et émission de gaz à effet de serre</div>
+      <div class="card-tags">
+        <span class="tag">données</span>
+        <span class="tag">algorithmes</span>
+      </div>
+      <div class="card-footer">
+        <span class="status-badge status-todo">⏳ À créer</span>
+        <span class="card-arrow">→</span>
+      </div>
+    </a>
+
+    <!-- ── Sujet 21 ── -->
+    <a class="card locked" href="#" data-status="todo" style="--card-accent:#2a6496;" data-delay="20">
+      <div class="card-num">SUJET 21</div>
+      <div class="card-title">Cartes mémoire Flashcards — support de révisions</div>
+      <div class="card-tags">
+        <span class="tag">POO</span>
+        <span class="tag">dictionnaires</span>
+      </div>
+      <div class="card-footer">
+        <span class="status-badge status-todo">⏳ À créer</span>
+        <span class="card-arrow">→</span>
+      </div>
+    </a>
+
+    <!-- ── Sujet 22 ── -->
+    <a class="card locked" href="#" data-status="todo" style="--card-accent:#b5610a;" data-delay="21">
+      <div class="card-num">SUJET 22</div>
+      <div class="card-title">Génération et décodage de QR Codes</div>
+      <div class="card-tags">
+        <span class="tag">binaire</span>
+        <span class="tag">matrices</span>
+        <span class="tag">encodage</span>
+      </div>
+      <div class="card-footer">
+        <span class="status-badge status-todo">⏳ À créer</span>
+        <span class="card-arrow">→</span>
+      </div>
+    </a>
+
+    <!-- ── Sujet 23 ── -->
+    <a class="card locked" href="#" data-status="todo" style="--card-accent:#2e7d32;" data-delay="22">
+      <div class="card-num">SUJET 23</div>
+      <div class="card-title">Données environnementales et prévention de maladies dans les cultures</div>
+      <div class="card-tags">
+        <span class="tag">matplotlib</span>
+        <span class="tag">données</span>
+      </div>
+      <div class="card-footer">
+        <span class="status-badge status-todo">⏳ À créer</span>
+        <span class="card-arrow">→</span>
+      </div>
+    </a>
+
+  </div><!-- /grid -->
+
+  <!-- FOOTER -->
+  <footer>
+  DarkSATHI Li &nbsp;·&nbsp; NSI Terminale 2025–2026
+    &nbsp;·&nbsp; Sujets officiels : <a href="https://sujets.examens-concours.gouv.fr/delos/public/bgt/nsi" target="_blank">banque nationale</a>
+  </footer>
+
+</div><!-- /container-content -->
+
+<!-- SCRIPTS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+  /* Animation staggered */
+  document.querySelectorAll('.card').forEach((card, i) => {
+    card.style.animationDelay = (i * 0.04) + 's';
+  });
+
+  /* Barre de progression */
+  function updateProgress() {
+    const all  = document.querySelectorAll('#mainGrid .card');
+    const done = document.querySelectorAll('#mainGrid .card[data-status="done"]');
+    const total = all.length;
+    const n = done.length;
+    const pct = total ? Math.round(n / total * 100) : 0;
+    document.getElementById('progressFill').style.width = pct + '%';
+    document.getElementById('progressCount').textContent = n + ' / ' + total;
+  }
+  updateProgress();
+
+  /* Filtres */
+  document.querySelectorAll('.filter-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      const f = btn.dataset.filter;
+      document.querySelectorAll('.card').forEach(card => {
+        card.style.display = (f === 'all' || f === card.dataset.status) ? '' : 'none';
+      });
+    });
+  });
+</script>
+
+</body>
+</html>
