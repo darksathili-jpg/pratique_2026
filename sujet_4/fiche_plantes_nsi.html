@@ -1,0 +1,1354 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Fiche – Plantes en serre | NSI Terminale | BAC 2026</title>
+
+  <!-- Bootstrap 5.3.3 -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Rubik+Dirt&family=Source+Serif+4:ital,opsz,wght@0,8..60,300..900;1,8..60,300..900&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+
+  <!-- MathJax v3 -->
+  <script>
+    MathJax = {
+      tex: { inlineMath: [['\\(', '\\)'], ['$', '$']] },
+      options: { skipHtmlTags: ['script','noscript','style','textarea','pre'] }
+    };
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js" async></script>
+
+  <!-- PyScript 2026.3.1 -->
+  <script type="module" src="https://pyscript.net/releases/2026.3.1/core.js"></script>
+
+  <style>
+    :root {
+      --bg-main:    #f8f9fb;
+      --bg-panel:   #eef1f5;
+      --bg-cours:   #ffffff;
+      --accent:     #2a6496;
+      --py-editor-input: white;
+      --accent-or:  #b5610a;
+      --accent-vert:#2e7d32;
+      --text-main:  #1a1a1a;
+      --text-muted: #5a6470;
+      --border-radius: 8px;
+    }
+
+    /* ── BASE ── */
+    *, *::before, *::after { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      background-color: var(--bg-main);
+      color: var(--text-main);
+      font-family: 'Source Serif 4', Georgia, serif;
+      font-size: 1.1rem;
+      line-height: 1.8;
+      margin: 0;
+      padding-bottom: 4rem;
+    }
+
+    h1, h2, h3, h4 {
+      font-family: 'Rubik Dirt', cursive;
+      color: var(--accent);
+      letter-spacing: 0.02em;
+    }
+
+    h1 { font-size: 2.2rem; color: #111; }
+    h2 { font-size: 1.55rem; border-bottom: 2px solid var(--accent); padding-bottom: .3rem; margin-top: 2.5rem; }
+    h3 { font-size: 1.25rem; color: var(--accent-or); margin-top: 1.8rem; }
+    h4 { font-size: 1.05rem; color: var(--accent-vert); }
+
+    p { margin-bottom: 1rem; }
+
+    code, pre, .mono {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.9em;
+    }
+
+    code {
+      background: #e8edf2;
+      padding: 2px 6px;
+      border-radius: 4px;
+      color: #8b3a00;
+    }
+
+    pre {
+      background: #f0f3f7;
+      border-left: 3px solid var(--accent);
+      padding: 1rem 1.2rem;
+      border-radius: var(--border-radius);
+      overflow-x: auto;
+      color: #1a1a1a;
+    }
+
+    a { color: var(--accent); text-decoration: underline dotted; }
+    a:hover { color: var(--accent-or); }
+
+    /* ── NAVIGATION ── */
+    #navbar {
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      background: #2a6496;
+      border-bottom: 2px solid #1a4a70;
+      padding: .5rem 1.5rem;
+      display: flex;
+      gap: .5rem;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    #navbar span {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: .8rem;
+      color: #ccddf0;
+      margin-right: auto;
+    }
+
+    #navbar a {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: .8rem;
+      color: #fff;
+      text-decoration: none;
+      padding: .25rem .7rem;
+      border: 1px solid #ccddf0;
+      border-radius: 4px;
+      transition: background .2s;
+    }
+
+    #navbar a:hover { background: #1a4a70; color: #fff; }
+
+    /* ── CONTENU ── */
+    .container-content {
+      max-width: 860px;
+      margin: 0 auto;
+      padding: 2rem 1.5rem;
+    }
+
+    /* ── ENCADRÉS ── */
+    .encadre,
+    .encadre-conseil,
+    .encadre-indice,
+    .encadre-question {
+      background: #ffffff;
+      border-radius: var(--border-radius);
+      padding: 1.1rem 1.4rem;
+      margin: 1.4rem 0;
+      position: relative;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+    }
+
+    .encadre          { border-left: 4px solid var(--accent); }
+    .encadre-conseil  { border-left: 4px solid var(--accent-or); background: #fff8f0; }
+    .encadre-indice   { border-left: 4px solid var(--accent-vert); background: #f0faf0; }
+    .encadre-question { border-left: 4px solid #7b3fa8; border-top: 1px solid #c8a8e820; background: #faf5ff; }
+
+    .encadre-prefix {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: .72rem;
+      font-variant: small-caps;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      margin-bottom: .4rem;
+      display: block;
+    }
+
+    .encadre          .encadre-prefix { color: var(--accent); }
+    .encadre-conseil  .encadre-prefix { color: var(--accent-or); }
+    .encadre-indice   .encadre-prefix { color: var(--accent-vert); }
+    .encadre-question .encadre-prefix { color: #7b3fa8; }
+
+    /* ── ENCADRÉ PIÈGE ── */
+    .encadre-piege {
+      background: #fff5f5;
+      border-left: 4px solid #c0392b;
+      border-radius: var(--border-radius);
+      padding: 1rem 1.4rem;
+      margin: 1.2rem 0;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+    }
+
+    .encadre-piege .encadre-prefix {
+      color: #c0392b;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: .72rem;
+      font-variant: small-caps;
+      letter-spacing: .12em;
+      display: block;
+      margin-bottom: .3rem;
+    }
+
+    /* ── BOUTONS ── */
+    .btn-tp, .btn-tp-or, .btn-tp-vert, .btn-secondaire {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: .82rem;
+      border: none;
+      border-radius: 5px;
+      padding: .45rem 1.1rem;
+      cursor: pointer;
+      transition: opacity .2s, transform .1s;
+      margin: .3rem .2rem;
+    }
+
+    .btn-tp         { background: var(--accent);      color: #fff; }
+    .btn-tp-or      { background: var(--accent-or);   color: #fff; }
+    .btn-tp-vert    { background: var(--accent-vert); color: #fff; }
+    .btn-secondaire { background: #eef1f5; border: 1px solid var(--accent); color: var(--text-main); }
+
+    .btn-tp:hover, .btn-tp-or:hover, .btn-tp-vert:hover, .btn-secondaire:hover {
+      opacity: .85; transform: translateY(-1px);
+    }
+
+    /* ── BADGE QUESTION ── */
+    .badge-question {
+      display: inline-block;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: .8rem;
+      background: #7b3fa8;
+      color: #fff;
+      border-radius: 4px;
+      padding: .15rem .7rem;
+      margin-right: .5rem;
+      vertical-align: middle;
+    }
+
+    /* ── INDICES / CORRECTIONS CACHÉS ── */
+    .indice-bloc    { display: none; }
+    .correction-bloc { display: none; }
+    .indice-bloc.visible    { display: block; }
+    .correction-bloc.visible { display: block; }
+
+    /* ── SOMMAIRE ── */
+    #sommaire ol {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: .88rem;
+      line-height: 2.2;
+    }
+
+    #sommaire a { color: var(--accent); }
+    #sommaire a:hover { color: var(--accent-or); }
+
+    /* ── TABLEAU ── */
+    .table-donnees {
+      border-collapse: collapse;
+      width: 100%;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: .82rem;
+      margin: 1rem 0;
+    }
+
+    .table-donnees th {
+      background: #dce8f2;
+      color: var(--accent);
+      border: 1px solid var(--accent);
+      padding: .45rem .8rem;
+      text-align: left;
+    }
+
+    .table-donnees td {
+      border: 1px solid #c8d8e8;
+      padding: .4rem .8rem;
+      color: var(--text-main);
+    }
+
+    .table-donnees tr:nth-child(even) td { background: #f0f5fa; }
+
+    /* ── SÉPARATEUR ── */
+    .sep { border: none; border-top: 1px dashed var(--accent); margin: 2.5rem 0; opacity: .4; }
+
+    /* ── RETOUR EN HAUT ── */
+    #btn-top {
+      position: fixed;
+      bottom: 1.5rem;
+      right: 1.5rem;
+      z-index: 999;
+      background: var(--accent);
+      color: #fff;
+      border: none;
+      border-radius: 50%;
+      width: 44px;
+      height: 44px;
+      font-size: 1.2rem;
+      cursor: pointer;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      font-family: 'JetBrains Mono', monospace;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.18);
+      transition: opacity .2s;
+    }
+
+    #btn-top:hover { opacity: .8; }
+
+    /* annotation de code bugué */
+    .code-bug { color: #c0392b; }
+    .code-ok  { color: var(--accent-vert); }
+  </style>
+</head>
+<body>
+
+<!-- Élément bootstrap PyScript (force l'initialisation de Pyodide) -->
+<div id="pyinit" style="display:none">
+  <script type="py" env="plantes">pass</script>
+</div>
+
+<!-- RETOUR EN HAUT -->
+<button id="btn-top" title="Retour en haut" aria-label="Retour en haut">▲</button>
+
+<!-- NAVIGATION STICKY -->
+<nav id="navbar">
+  <span>NSI Terminale – Plantes en serre</span>
+  <a href="#s0">Intro</a>
+  <a href="#s1">Rappels POO</a>
+  <a href="#s2">Les données</a>
+  <a href="#q1">Q1</a>
+  <a href="#q2">Q2</a>
+  <a href="#q3">Q3</a>
+  <a href="#q4">Q4</a>
+  <a href="#pieges">Pièges</a>
+</nav>
+
+<!-- CONTENU PRINCIPAL -->
+<div class="container-content">
+
+  <!-- EN-TÊTE -->
+  <div style="text-align:center; padding: 2rem 0 1rem;">
+    <div style="font-family:'JetBrains Mono',monospace; font-size:.8rem; color:var(--text-muted); margin-bottom:.5rem;">
+      BAC NSI 2026 — Sujet n°4 — Partie pratique
+    </div>
+    <h1>Plantes en serre<br>
+      <span style="font-size:1.1rem; color:var(--accent); font-family:'Source Serif 4',serif; font-style:italic; font-weight:300;">
+        POO · Dictionnaires · Traitement de listes
+      </span>
+    </h1>
+    <div style="font-family:'JetBrains Mono',monospace; font-size:.8rem; color:var(--text-muted); margin-top:.5rem;">
+      Terminale NSI &nbsp;·&nbsp; Algorithmique &amp; Programmation &nbsp;·&nbsp; Structures de données
+    </div>
+  </div>
+
+  <hr class="sep">
+
+  <!-- SOMMAIRE -->
+  <section id="s0">
+    <div id="sommaire" class="encadre">
+      <span class="encadre-prefix">Sommaire</span>
+      <ol>
+        <li><a href="#s1">Rappels de cours — Programmation Orientée Objet (POO)</a></li>
+        <li><a href="#s2">Les données du sujet — plantes et mesures</a></li>
+        <li><a href="#q1">Question 1 — Moyenne de croissance des plantes</a></li>
+        <li><a href="#q2">Question 2 — Regrouper les mesures par plante</a></li>
+        <li><a href="#q3">Question 3 — Analyser le bug de <code>purger_mesures_extremes</code></a></li>
+        <li><a href="#q4">Question 4 — Corriger la fonction de purge</a></li>
+        <li><a href="#pieges">Pièges fréquents &amp; astuces de vérification</a></li>
+      </ol>
+    </div>
+  </section>
+
+  <hr class="sep">
+
+  <!-- SECTION 1 : RAPPELS POO -->
+  <section id="s1">
+    <h2>1 — Rappels : la Programmation Orientée Objet</h2>
+
+    <p>
+      Tu as déjà manipulé des listes, des dictionnaires, des entiers. Ces types de données
+      sont fournis par Python. Mais parfois, on a besoin de représenter des entités plus complexes
+      — comme une plante, avec son nom, son espèce, sa taille, etc.
+      La POO permet de créer ses propres types de données sur mesure.
+    </p>
+
+    <div class="encadre">
+      <span class="encadre-prefix">Définition — Classe, instance, attribut</span>
+      <p>
+        Une <strong>classe</strong> est un modèle (ou « moule ») qui décrit la structure
+        d'un objet. Une <strong>instance</strong> est un objet concret créé d'après ce modèle.
+        Les <strong>attributs</strong> sont les données propres à chaque instance.
+      </p>
+      <p style="margin:0">
+        La méthode spéciale <code>__init__</code> est appelée automatiquement à la création
+        d'une instance : c'est le <em>constructeur</em>. Le paramètre <code>self</code>
+        désigne toujours l'instance en cours de création.
+      </p>
+    </div>
+
+    <p>Voici la classe <code>Plante</code> du sujet :</p>
+
+    <pre><code>class Plante:
+    def __init__(self, nom, espece, croissance, taille, exposition):
+        self.nom        = nom         # chaîne : nom courant
+        self.espece     = espece      # chaîne : nom latin
+        self.croissance = croissance  # entier : durée en jours
+        self.taille     = taille      # entier : hauteur maximale en cm
+        self.exposition = exposition  # chaîne : "ombre", "mi-ombre" ou "plein soleil"</code></pre>
+
+    <div class="encadre-conseil">
+      <span class="encadre-prefix">Exemple concret — Créer et interroger une instance</span>
+      <pre style="margin:.3rem 0"><code># Création d'une instance
+basilic = Plante("Basilic", "Ocimum basilicum", 60, 40, "plein soleil")
+
+# Accès aux attributs avec la notation pointée
+print(basilic.nom)         # affiche : Basilic
+print(basilic.croissance)  # affiche : 60
+print(basilic.taille)      # affiche : 40</code></pre>
+      <p style="margin:0; margin-top:.5rem;">
+        Retiens bien la <strong>notation pointée</strong> : <code>objet.attribut</code>.
+        C'est la seule façon d'accéder aux données d'une instance depuis l'extérieur de la classe.
+      </p>
+    </div>
+
+    <h3>Parcourir une liste d'instances</h3>
+
+    <p>
+      Dans ce sujet, les plantes sont stockées dans une liste Python ordinaire.
+      Pour accéder aux attributs de chaque plante, on combine la boucle <code>for</code>
+      avec la notation pointée :
+    </p>
+
+    <pre><code>for p in plantes:
+    print(p.nom, "→", p.croissance, "jours")</code></pre>
+
+    <div class="encadre-conseil">
+      <span class="encadre-prefix">Rappel — Moyenne d'une liste de valeurs</span>
+      <p>
+        La moyenne de \(n\) valeurs \(v_1, v_2, \ldots, v_n\) est :
+        $$\bar{v} = \frac{v_1 + v_2 + \cdots + v_n}{n} = \frac{\displaystyle\sum_{i=1}^{n} v_i}{n}$$
+      </p>
+      <p style="margin:0">
+        En Python : <code>sum(liste) / len(liste)</code> — mais attention à ne pas diviser
+        par zéro si la liste est vide.
+      </p>
+    </div>
+  </section>
+
+  <hr class="sep">
+
+  <!-- SECTION 2 : LES DONNÉES -->
+  <section id="s2">
+    <h2>2 — Les données du sujet</h2>
+
+    <h3>Les plantes</h3>
+
+    <p>
+      Cinq espèces sont cultivées dans la serre. Voici un résumé de leurs caractéristiques
+      telles qu'elles sont définies dans <code>plantes.py</code> :
+    </p>
+
+    <table class="table-donnees">
+      <thead>
+        <tr>
+          <th>nom</th>
+          <th>espece</th>
+          <th>croissance (j)</th>
+          <th>taille (cm)</th>
+          <th>exposition</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>Basilic</td><td><em>Ocimum basilicum</em></td><td>60</td><td>40</td><td>plein soleil</td></tr>
+        <tr><td>Tomate</td><td><em>Solanum lycopersicum</em></td><td>80</td><td>100</td><td>plein soleil</td></tr>
+        <tr><td>Menthe</td><td><em>Mentha spicata</em></td><td>80</td><td>50</td><td>mi-ombre</td></tr>
+        <tr><td>Tournesol</td><td><em>Helianthus annuus</em></td><td>85</td><td>200</td><td>plein soleil</td></tr>
+        <tr><td>Fougère</td><td><em>Dryopteris filix-mas</em></td><td>90</td><td>80</td><td>ombre</td></tr>
+      </tbody>
+    </table>
+
+    <div class="encadre-conseil">
+      <span class="encadre-prefix">À noter</span>
+      <p style="margin:0">
+        La <strong>Fougère</strong> est présente dans la liste <code>plantes</code>,
+        mais elle n'a <strong>aucune mesure</strong> dans <code>mesures</code>.
+        Ce cas particulier est important à gérer correctement en Question 2.
+      </p>
+    </div>
+
+    <h3>Les mesures</h3>
+
+    <p>
+      Le fichier <code>mesures.py</code> contient une liste de dictionnaires.
+      Chaque dictionnaire représente un relevé journalier pour une plante précise :
+    </p>
+
+    <pre><code># Exemple de deux entrées dans mesures
+{'jour': 1, 'plante': 'Basilic',   'hauteur': 0.85, 'temperature': 29.3,  'humidite': 50.89}
+{'jour': 1, 'plante': 'Tournesol', 'hauteur': 2.29, 'temperature': 18.42, 'humidite': 49.3}</code></pre>
+
+    <table class="table-donnees">
+      <thead>
+        <tr><th>clé</th><th>type</th><th>description</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><code>'plante'</code></td><td>str</td><td>Nom de la plante mesurée</td></tr>
+        <tr><td><code>'jour'</code></td><td>int</td><td>Numéro du jour de culture</td></tr>
+        <tr><td><code>'hauteur'</code></td><td>float</td><td>Hauteur de la plante en cm</td></tr>
+        <tr><td><code>'temperature'</code></td><td>float</td><td>Température ambiante en °C</td></tr>
+        <tr><td><code>'humidite'</code></td><td>float</td><td>Taux d'humidité en %</td></tr>
+      </tbody>
+    </table>
+
+    <p>
+      Les mesures s'étendent sur <strong>85 jours</strong>. Le Basilic et la Menthe
+      ont des mesures jusqu'aux jours 60 et 80 respectivement (leur taille maximale étant atteinte),
+      puis leurs données s'arrêtent. Le Tournesol continue jusqu'au jour 85.
+    </p>
+  </section>
+
+  <hr class="sep">
+
+  <!-- QUESTION 1 -->
+  <section id="q1">
+    <h2>Question 1 — Moyenne de croissance</h2>
+
+    <div class="encadre-question">
+      <span class="encadre-prefix">Énoncé — Question 1</span>
+      <p>
+        <span class="badge-question">Q1</span>
+        Écrire une fonction <code>croissance_moyenne(plantes)</code> qui prend en paramètre
+        une liste d'instances de la classe <code>Plante</code> et renvoie la <strong>moyenne
+        des durées de croissance</strong> (attribut <code>croissance</code>) de l'ensemble des plantes.
+      </p>
+      <p style="margin:0">
+        Si la liste fournie est vide, la fonction doit renvoyer <code>None</code>.
+        Écrire au moins deux tests, dont un traitant le cas d'une liste vide.
+      </p>
+    </div>
+
+    <!-- INDICES -->
+    <div style="margin:.8rem 0;">
+      <button class="btn-tp-vert" onclick="toggleIndice('indice-q1-1', this)">▶ Indice 1 — Traiter le cas de la liste vide</button>
+    </div>
+    <div id="indice-q1-1" class="encadre-indice indice-bloc">
+      <span class="encadre-prefix">Indice 1</span>
+      <p style="margin:0">
+        La première chose à faire dans la fonction est de tester si la liste est vide.
+        En Python, une liste vide est <em>falsy</em> : <code>if not plantes:</code> est équivalent
+        à <code>if len(plantes) == 0:</code>. Si la liste est vide, retourne immédiatement <code>None</code>.
+      </p>
+    </div>
+
+    <div style="margin:.8rem 0;">
+      <button class="btn-tp-vert" onclick="toggleIndice('indice-q1-2', this)">▶ Indice 2 — Accéder à la durée de croissance</button>
+    </div>
+    <div id="indice-q1-2" class="encadre-indice indice-bloc">
+      <span class="encadre-prefix">Indice 2</span>
+      <p>
+        La durée de croissance de chaque plante est dans l'attribut <code>croissance</code>.
+        Pour calculer la somme de toutes les durées avec une compréhension de liste :
+      </p>
+      <pre style="margin:.3rem 0"><code>total = sum(p.croissance for p in plantes)</code></pre>
+      <p style="margin:0">
+        Il ne reste plus qu'à diviser par <code>len(plantes)</code>.
+      </p>
+    </div>
+
+    <!-- ÉDITEUR PYSCRIPT -->
+    <div class="encadre" style="margin-top:1.2rem;">
+      <span class="encadre-prefix">Éditeur Python — Complète la fonction</span>
+      <script type="py-editor" env="plantes">
+class Plante:
+    def __init__(self, nom, espece, croissance, taille, exposition):
+        self.nom        = nom
+        self.espece     = espece
+        self.croissance = croissance
+        self.taille     = taille
+        self.exposition = exposition
+
+plantes_test = [
+    Plante("Basilic",   "Ocimum basilicum",       60,  40, "plein soleil"),
+    Plante("Tomate",    "Solanum lycopersicum",    80, 100, "plein soleil"),
+    Plante("Menthe",    "Mentha spicata",          80,  50, "mi-ombre"),
+    Plante("Tournesol", "Helianthus annuus",       85, 200, "plein soleil"),
+    Plante("Fougere",   "Dryopteris filix-mas",    90,  80, "ombre"),
+]
+
+
+def croissance_moyenne(plantes):
+    '''Renvoie la moyenne des durées de croissance, ou None si la liste est vide.'''
+    # À toi de compléter !
+    pass
+
+
+def test_croissance_moyenne():
+    # Liste vide → None
+    assert croissance_moyenne([]) is None
+    # Une seule plante → croissance de cette plante
+    assert croissance_moyenne([plantes_test[0]]) == 60
+    # Toutes les plantes → (60+80+80+85+90)/5 = 79.0
+    assert croissance_moyenne(plantes_test) == 79.0
+    print("Les tests sont validés.")
+
+test_croissance_moyenne()
+      </script>
+    </div>
+
+    <!-- CORRECTION -->
+    <div style="margin:1rem 0;">
+      <button class="btn-tp-or" onclick="toggleCorrection('corr-q1', this)">&#128274; Afficher la correction</button>
+    </div>
+    <div id="corr-q1" class="correction-bloc encadre-conseil">
+      <span class="encadre-prefix">Correction — Question 1</span>
+      <script type="py-editor" env="plantes-corr1">
+class Plante:
+    def __init__(self, nom, espece, croissance, taille, exposition):
+        self.nom        = nom
+        self.espece     = espece
+        self.croissance = croissance
+        self.taille     = taille
+        self.exposition = exposition
+
+plantes_test = [
+    Plante("Basilic",   "Ocimum basilicum",       60,  40, "plein soleil"),
+    Plante("Tomate",    "Solanum lycopersicum",    80, 100, "plein soleil"),
+    Plante("Menthe",    "Mentha spicata",          80,  50, "mi-ombre"),
+    Plante("Tournesol", "Helianthus annuus",       85, 200, "plein soleil"),
+    Plante("Fougere",   "Dryopteris filix-mas",    90,  80, "ombre"),
+]
+
+
+def croissance_moyenne(plantes):
+    '''Renvoie la moyenne des durées de croissance, ou None si la liste est vide.'''
+    if not plantes:           # liste vide → None
+        return None
+    total = sum(p.croissance for p in plantes)
+    return total / len(plantes)
+
+
+def test_croissance_moyenne():
+    assert croissance_moyenne([]) is None
+    assert croissance_moyenne([plantes_test[0]]) == 60
+    assert croissance_moyenne(plantes_test) == 79.0
+    print("Les tests sont validés.")
+
+test_croissance_moyenne()
+      </script>
+      <div style="margin-top:.8rem;">
+        <p>
+          <strong>Explication :</strong> le garde <code>if not plantes</code> intercepte le cas vide
+          avant tout calcul, évitant une division par zéro. L'expression génératrice
+          <code>p.croissance for p in plantes</code> passe en revue tous les attributs
+          <code>croissance</code> sans construire de liste intermédiaire.
+          Le résultat est un <code>float</code> (division en Python 3).
+        </p>
+        <p style="margin:0">
+          <strong>Vérification manuelle :</strong>
+          \(\frac{60 + 80 + 80 + 85 + 90}{5} = \frac{395}{5} = 79{,}0\).
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <hr class="sep">
+
+  <!-- QUESTION 2 -->
+  <section id="q2">
+    <h2>Question 2 — Regrouper les mesures par plante</h2>
+
+    <div class="encadre-question">
+      <span class="encadre-prefix">Énoncé — Question 2</span>
+      <p>
+        <span class="badge-question">Q2</span>
+        Écrire une fonction <code>dictionnaire_mesure(plantes, mesures)</code> qui prend
+        la liste des plantes et la liste des mesures, et renvoie un dictionnaire où :
+      </p>
+      <ul>
+        <li>chaque <strong>clé</strong> est le <em>nom</em> d'une plante présente dans <code>plantes</code> ;</li>
+        <li>chaque <strong>valeur</strong> est la <em>liste</em> de toutes les mesures concernant cette plante.</li>
+      </ul>
+      <p style="margin:0">
+        Si une plante n'a aucune mesure associée, sa liste doit être <strong>vide</strong> (pas absente).
+        Concevoir une série de tests pertinente.
+      </p>
+    </div>
+
+    <div class="encadre">
+      <span class="encadre-prefix">Format attendu en sortie</span>
+      <pre style="margin:.3rem 0"><code>{
+  "Basilic": [
+    {'jour': 1, 'plante': 'Basilic', 'hauteur': 0.85, ...},
+    {'jour': 2, 'plante': 'Basilic', 'hauteur': 1.7,  ...},
+    ...
+  ],
+  "Tomate":    [...],
+  "Menthe":    [...],
+  "Tournesol": [...],
+  "Fougere":   []    # aucune mesure !
+}</code></pre>
+    </div>
+
+    <!-- INDICES -->
+    <div style="margin:.8rem 0;">
+      <button class="btn-tp-vert" onclick="toggleIndice('indice-q2-1', this)">▶ Indice 1 — Initialiser le dictionnaire</button>
+    </div>
+    <div id="indice-q2-1" class="encadre-indice indice-bloc">
+      <span class="encadre-prefix">Indice 1</span>
+      <p>
+        Commence par créer un dictionnaire avec une clé par plante, toutes initialisées
+        à une liste vide. Cela garantit que même les plantes sans mesure apparaissent dans le résultat :
+      </p>
+      <pre style="margin:.3rem 0"><code>resultat = {p.nom: [] for p in plantes}</code></pre>
+      <p style="margin:0">
+        Cette écriture compacte s'appelle une <em>compréhension de dictionnaire</em>.
+      </p>
+    </div>
+
+    <div style="margin:.8rem 0;">
+      <button class="btn-tp-vert" onclick="toggleIndice('indice-q2-2', this)">▶ Indice 2 — Remplir le dictionnaire</button>
+    </div>
+    <div id="indice-q2-2" class="encadre-indice indice-bloc">
+      <span class="encadre-prefix">Indice 2</span>
+      <p>
+        Parcours ensuite toutes les mesures. Pour chaque mesure, le champ <code>'plante'</code>
+        donne le nom de la plante concernée. Vérifie que ce nom est une clé du dictionnaire,
+        puis ajoute la mesure à la liste correspondante :
+      </p>
+      <pre style="margin:.3rem 0"><code>for m in mesures:
+    nom = m['plante']
+    if nom in resultat:
+        resultat[nom].append(m)</code></pre>
+      <p style="margin:0">
+        La condition <code>if nom in resultat</code> protège contre une mesure qui
+        concernerait une plante inconnue (non présente dans la liste <code>plantes</code>).
+      </p>
+    </div>
+
+    <!-- ÉDITEUR PYSCRIPT -->
+    <div class="encadre" style="margin-top:1.2rem;">
+      <span class="encadre-prefix">Éditeur Python — Complète la fonction</span>
+      <script type="py-editor" env="plantes-q2">
+class Plante:
+    def __init__(self, nom, espece, croissance, taille, exposition):
+        self.nom        = nom
+        self.espece     = espece
+        self.croissance = croissance
+        self.taille     = taille
+        self.exposition = exposition
+
+plantes_t = [
+    Plante("Basilic",   "Ocimum basilicum",     60,  40, "plein soleil"),
+    Plante("Tomate",    "Solanum lycopersicum",  80, 100, "plein soleil"),
+    Plante("Fougere",   "Dryopteris filix-mas",  90,  80, "ombre"),
+]
+
+mesures_t = [
+    {'jour': 1, 'plante': 'Basilic', 'hauteur': 0.85, 'temperature': 29.3,  'humidite': 50.89},
+    {'jour': 2, 'plante': 'Basilic', 'hauteur': 1.70, 'temperature': 17.44, 'humidite': 78.99},
+    {'jour': 1, 'plante': 'Tomate',  'hauteur': 1.27, 'temperature': 21.51, 'humidite': 47.19},
+]
+
+
+def dictionnaire_mesure(plantes, mesures):
+    '''Renvoie un dictionnaire {nom_plante: [mesures]} pour chaque plante.'''
+    # À toi de compléter !
+    pass
+
+
+def test_dictionnaire_mesure():
+    d = dictionnaire_mesure(plantes_t, mesures_t)
+    # Toutes les plantes sont des clés, même sans mesure
+    assert 'Basilic'  in d
+    assert 'Tomate'   in d
+    assert 'Fougere'  in d
+    # Fougère n'a aucune mesure → liste vide
+    assert d['Fougere'] == []
+    # Basilic a 2 mesures
+    assert len(d['Basilic']) == 2
+    # Tomate a 1 mesure
+    assert len(d['Tomate']) == 1
+    # Vérification d'une valeur concrète
+    assert d['Basilic'][0]['jour'] == 1
+    print("Les tests sont validés.")
+
+test_dictionnaire_mesure()
+      </script>
+    </div>
+
+    <!-- CORRECTION -->
+    <div style="margin:1rem 0;">
+      <button class="btn-tp-or" onclick="toggleCorrection('corr-q2', this)">&#128274; Afficher la correction</button>
+    </div>
+    <div id="corr-q2" class="correction-bloc encadre-conseil">
+      <span class="encadre-prefix">Correction — Question 2</span>
+      <script type="py-editor" env="plantes-corr2">
+class Plante:
+    def __init__(self, nom, espece, croissance, taille, exposition):
+        self.nom        = nom
+        self.espece     = espece
+        self.croissance = croissance
+        self.taille     = taille
+        self.exposition = exposition
+
+plantes_t = [
+    Plante("Basilic",   "Ocimum basilicum",     60,  40, "plein soleil"),
+    Plante("Tomate",    "Solanum lycopersicum",  80, 100, "plein soleil"),
+    Plante("Fougere",   "Dryopteris filix-mas",  90,  80, "ombre"),
+]
+
+mesures_t = [
+    {'jour': 1, 'plante': 'Basilic', 'hauteur': 0.85, 'temperature': 29.3,  'humidite': 50.89},
+    {'jour': 2, 'plante': 'Basilic', 'hauteur': 1.70, 'temperature': 17.44, 'humidite': 78.99},
+    {'jour': 1, 'plante': 'Tomate',  'hauteur': 1.27, 'temperature': 21.51, 'humidite': 47.19},
+]
+
+
+def dictionnaire_mesure(plantes, mesures):
+    '''Renvoie un dictionnaire {nom_plante: [mesures]} pour chaque plante.'''
+    # Étape 1 : initialiser toutes les clés à liste vide
+    resultat = {p.nom: [] for p in plantes}
+    # Étape 2 : distribuer chaque mesure dans la bonne liste
+    for m in mesures:
+        nom = m['plante']
+        if nom in resultat:
+            resultat[nom].append(m)
+    return resultat
+
+
+def test_dictionnaire_mesure():
+    d = dictionnaire_mesure(plantes_t, mesures_t)
+    assert 'Basilic'  in d
+    assert 'Tomate'   in d
+    assert 'Fougere'  in d
+    assert d['Fougere'] == []
+    assert len(d['Basilic']) == 2
+    assert len(d['Tomate'])  == 1
+    assert d['Basilic'][0]['jour'] == 1
+    print("Les tests sont validés.")
+
+test_dictionnaire_mesure()
+      </script>
+      <div style="margin-top:.8rem;">
+        <p>
+          <strong>Logique en deux étapes :</strong>
+          d'abord on prépare toutes les clés (une par plante, avec liste vide),
+          puis on distribue les mesures. Cette séparation garantit qu'aucune plante
+          n'est oubliée dans le résultat.
+        </p>
+        <p style="margin:0">
+          <strong>Complexité :</strong> l'algorithme est en \(\mathcal{O}(|\text{plantes}| + |\text{mesures}|)\) —
+          on parcourt chaque liste exactement une fois.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <hr class="sep">
+
+  <!-- QUESTION 3 -->
+  <section id="q3">
+    <h2>Question 3 — Analyser le bug</h2>
+
+    <div class="encadre-question">
+      <span class="encadre-prefix">Énoncé — Question 3</span>
+      <p>
+        <span class="badge-question">Q3</span>
+        La fonction <code>purger_mesures_extremes</code> ci-dessous est censée
+        <strong>retirer de la liste</strong> toutes les mesures dont la température
+        est strictement inférieure à 20°C ou strictement supérieure à 25°C.
+        Exécuter la fonction de test et analyser son code pour identifier
+        la source de l'erreur logique.
+      </p>
+    </div>
+
+    <p>Voici le code fourni dans <code>culture.py</code> :</p>
+
+    <pre><code>def purger_mesures_extremes(liste_mesures):
+    for mesure in liste_mesures:
+        if mesure['temperature'] &lt; 20 or mesure['temperature'] &gt; 25:
+            <span class="code-bug">liste_mesures.remove(mesure)  # ← BUG ici</span>
+    return liste_mesures
+
+
+def test_purger():
+    mesures_test = [
+        {'jour': 1, 'plante': 'Basilic', 'temperature': 18.0},
+        {'jour': 2, 'plante': 'Basilic', 'temperature': 19.0},
+        {'jour': 3, 'plante': 'Basilic', 'temperature': 22.0},
+        {'jour': 4, 'plante': 'Basilic', 'temperature': 28.0},
+        {'jour': 5, 'plante': 'Basilic', 'temperature': 29.0},
+    ]
+    purger_mesures_extremes(mesures_test)
+    for m in mesures_test:
+        print(f"Jour {m['jour']} : {m['temperature']}°C")</code></pre>
+
+    <p>
+      En exécutant ce test, tu remarqueras que la mesure du jour 2 (19°C) est encore présente
+      dans la liste après la purge. Pourquoi ?
+    </p>
+
+    <!-- INDICES -->
+    <div style="margin:.8rem 0;">
+      <button class="btn-tp-vert" onclick="toggleIndice('indice-q3-1', this)">▶ Indice 1 — Que fait Python lors d'un for ?</button>
+    </div>
+    <div id="indice-q3-1" class="encadre-indice indice-bloc">
+      <span class="encadre-prefix">Indice 1</span>
+      <p>
+        La boucle <code>for mesure in liste_mesures</code> utilise un <strong>indice interne</strong>
+        qui avance de 1 à chaque itération, même si des éléments ont été supprimés de la liste
+        entre-temps.
+      </p>
+      <p style="margin:0">
+        Trace mentalement ce qui se passe quand on supprime l'élément à l'indice 0 :
+        tous les éléments suivants <em>se décalent</em> d'une position vers la gauche.
+        L'indice interne passe ensuite à 1 — mais l'ancien élément 1 est maintenant à l'indice 0.
+        Il est donc <strong>sauté</strong>.
+      </p>
+    </div>
+
+    <div style="margin:.8rem 0;">
+      <button class="btn-tp-vert" onclick="toggleIndice('indice-q3-2', this)">▶ Indice 2 — Visualise le saut</button>
+    </div>
+    <div id="indice-q3-2" class="encadre-indice indice-bloc">
+      <span class="encadre-prefix">Indice 2 — Trace d'exécution</span>
+      <p>Liste de départ (indices 0 à 4) : <code>[18.0, 19.0, 22.0, 28.0, 29.0]</code></p>
+      <table class="table-donnees" style="font-size:.8rem;">
+        <thead>
+          <tr><th>Itération</th><th>Indice interne</th><th>Élément lu</th><th>Action</th><th>Liste après</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>1</td><td>0</td><td>18.0 → extrême</td><td>Suppression</td><td>[<strong>19.0</strong>, 22.0, 28.0, 29.0]</td></tr>
+          <tr><td>2</td><td>1</td><td><strong>22.0</strong> (saut !)</td><td>Conservé</td><td>[19.0, 22.0, 28.0, 29.0]</td></tr>
+          <tr><td>3</td><td>2</td><td>28.0 → extrême</td><td>Suppression</td><td>[19.0, 22.0, <strong>29.0</strong>]</td></tr>
+          <tr><td>4</td><td>3</td><td>hors bornes</td><td>Fin de boucle</td><td>[19.0, 22.0, 29.0]</td></tr>
+        </tbody>
+      </table>
+      <p style="margin:.5rem 0 0;">
+        Le 19.0 et le 29.0 survivent alors qu'ils devraient être supprimés.
+        C'est l'effet classique du <strong>décalage d'indices</strong> lors d'une modification
+        d'une liste pendant son parcours.
+      </p>
+    </div>
+
+    <!-- ÉDITEUR PYSCRIPT pour tester -->
+    <div class="encadre" style="margin-top:1.2rem;">
+      <span class="encadre-prefix">Éditeur Python — Exécute le test pour observer le bug</span>
+      <script type="py-editor" env="plantes-q3">
+def purger_mesures_extremes(liste_mesures):
+    """Version BUGUÉE — ne pas utiliser telle quelle."""
+    for mesure in liste_mesures:
+        if mesure['temperature'] < 20 or mesure['temperature'] > 25:
+            liste_mesures.remove(mesure)
+    return liste_mesures
+
+
+def test_purger():
+    mesures_test = [
+        {'jour': 1, 'plante': 'Basilic', 'temperature': 18.0},
+        {'jour': 2, 'plante': 'Basilic', 'temperature': 19.0},
+        {'jour': 3, 'plante': 'Basilic', 'temperature': 22.0},
+        {'jour': 4, 'plante': 'Basilic', 'temperature': 28.0},
+        {'jour': 5, 'plante': 'Basilic', 'temperature': 29.0},
+    ]
+    purger_mesures_extremes(mesures_test)
+    print("Résultat après la purge :")
+    for m in mesures_test:
+        print(f"  Jour {m['jour']} : {m['temperature']}°C")
+    print()
+    print("Attendu : seul le jour 3 (22°C) devrait rester.")
+    print("Obs. : les jours 2 (19°C) et 5 (29°C) subsistent — c'est le bug !")
+
+test_purger()
+      </script>
+    </div>
+
+    <!-- CORRECTION -->
+    <div style="margin:1rem 0;">
+      <button class="btn-tp-or" onclick="toggleCorrection('corr-q3', this)">&#128274; Afficher la correction</button>
+    </div>
+    <div id="corr-q3" class="correction-bloc encadre-conseil">
+      <span class="encadre-prefix">Correction — Question 3</span>
+      <p>
+        <strong>Source du bug :</strong> la fonction modifie la liste <code>liste_mesures</code>
+        <em>pendant</em> qu'elle la parcourt avec <code>for mesure in liste_mesures</code>.
+      </p>
+      <p>
+        En Python, la boucle <code>for</code> sur une liste utilise un compteur d'indice interne
+        qui s'incrémente de 1 à chaque tour. Quand on supprime un élément avec <code>.remove()</code>,
+        les éléments suivants se décalent d'un cran vers la gauche. Le compteur avance quand même,
+        ce qui fait <strong>sauter</strong> l'élément qui vient de prendre la place de l'élément supprimé.
+      </p>
+      <p>
+        Concrètement : après suppression du jour 1 (18°C), le jour 2 (19°C) passe à l'indice 0.
+        La boucle avance à l'indice 1 et lit le jour 3 (22°C) — le jour 2 n'est jamais examiné
+        et reste dans la liste.
+      </p>
+      <p style="margin:0">
+        <strong>Règle à retenir :</strong> <em>on ne doit jamais modifier une liste pendant qu'on la parcourt avec <code>for</code>.</em>
+      </p>
+    </div>
+  </section>
+
+  <hr class="sep">
+
+  <!-- QUESTION 4 -->
+  <section id="q4">
+    <h2>Question 4 — Corriger la fonction de purge</h2>
+
+    <div class="encadre-question">
+      <span class="encadre-prefix">Énoncé — Question 4</span>
+      <p>
+        <span class="badge-question">Q4</span>
+        Proposer une version <strong>corrigée</strong> de <code>purger_mesures_extremes</code>
+        qui supprime réellement toutes les mesures hors plage [20°C, 25°C].
+      </p>
+    </div>
+
+    <div class="encadre">
+      <span class="encadre-prefix">Rappel — Stratégies classiques</span>
+      <p>
+        Trois approches permettent d'éviter le bug de modification pendant le parcours :
+      </p>
+      <ul>
+        <li>
+          <strong>Construire une nouvelle liste</strong> en gardant uniquement les éléments conformes
+          (compréhension de liste ou boucle avec <code>append</code>). C'est l'approche la plus lisible.
+        </li>
+        <li>
+          <strong>Parcourir une copie</strong> de la liste avec <code>for m in liste_mesures[:]</code>
+          et supprimer les éléments indésirables de la liste originale.
+        </li>
+        <li>
+          <strong>Parcourir à rebours</strong> (<code>range(len(L)-1, -1, -1)</code>) pour que
+          les suppressions ne décalent que des éléments déjà traités.
+        </li>
+      </ul>
+      <p style="margin:0">
+        L'approche par <strong>nouvelle liste (filtrage)</strong> est la plus claire et la plus
+        recommandée en Python.
+      </p>
+    </div>
+
+    <!-- INDICES -->
+    <div style="margin:.8rem 0;">
+      <button class="btn-tp-vert" onclick="toggleIndice('indice-q4-1', this)">▶ Indice 1 — Filtrage par compréhension de liste</button>
+    </div>
+    <div id="indice-q4-1" class="encadre-indice indice-bloc">
+      <span class="encadre-prefix">Indice 1</span>
+      <p>
+        Une compréhension de liste peut filtrer directement :
+      </p>
+      <pre style="margin:.3rem 0"><code>valides = [m for m in liste_mesures if 20 &lt;= m['temperature'] &lt;= 25]</code></pre>
+      <p style="margin:0">
+        <code>valides</code> est une <em>nouvelle</em> liste ne contenant que les mesures
+        dans la plage souhaitée. La liste originale n'est pas modifiée pendant la création de <code>valides</code>.
+      </p>
+    </div>
+
+    <div style="margin:.8rem 0;">
+      <button class="btn-tp-vert" onclick="toggleIndice('indice-q4-2', this)">▶ Indice 2 — Modifier la liste en place</button>
+    </div>
+    <div id="indice-q4-2" class="encadre-indice indice-bloc">
+      <span class="encadre-prefix">Indice 2</span>
+      <p>
+        Si l'on souhaite que <code>liste_mesures</code> soit modifiée <em>en place</em>
+        (sans en changer la référence), on peut vider la liste et la remplir avec les éléments filtrés :
+      </p>
+      <pre style="margin:.3rem 0"><code>valides = [m for m in liste_mesures if 20 &lt;= m['temperature'] &lt;= 25]
+liste_mesures.clear()
+liste_mesures.extend(valides)</code></pre>
+      <p style="margin:0">
+        Ici, la fonction retourne la liste — mais elle a aussi modifié l'objet passé en paramètre,
+        ce qui peut être utile si d'autres variables référencent la même liste.
+      </p>
+    </div>
+
+    <!-- ÉDITEUR PYSCRIPT -->
+    <div class="encadre" style="margin-top:1.2rem;">
+      <span class="encadre-prefix">Éditeur Python — Implémente la version corrigée</span>
+      <script type="py-editor" env="plantes-q4">
+def purger_mesures_extremes(liste_mesures):
+    '''Version corrigée : supprime les mesures hors de [20°C, 25°C].'''
+    # À toi de compléter !
+    pass
+
+
+def test_purger_mesures_extremes():
+    # Cas standard du sujet
+    m1 = [
+        {'jour': 1, 'plante': 'Basilic', 'temperature': 18.0},
+        {'jour': 2, 'plante': 'Basilic', 'temperature': 19.0},
+        {'jour': 3, 'plante': 'Basilic', 'temperature': 22.0},
+        {'jour': 4, 'plante': 'Basilic', 'temperature': 28.0},
+        {'jour': 5, 'plante': 'Basilic', 'temperature': 29.0},
+    ]
+    resultat = purger_mesures_extremes(m1)
+    assert len(resultat) == 1
+    assert resultat[0]['jour'] == 3
+
+    # Limites exactes : 20 et 25 doivent être CONSERVÉS
+    m2 = [
+        {'jour': 1, 'plante': 'Basilic', 'temperature': 20.0},
+        {'jour': 2, 'plante': 'Basilic', 'temperature': 25.0},
+        {'jour': 3, 'plante': 'Basilic', 'temperature': 15.0},
+    ]
+    resultat2 = purger_mesures_extremes(m2)
+    assert len(resultat2) == 2
+
+    # Liste vide → reste vide
+    assert purger_mesures_extremes([]) == []
+
+    print("Les tests sont validés.")
+
+test_purger_mesures_extremes()
+      </script>
+    </div>
+
+    <!-- CORRECTION -->
+    <div style="margin:1rem 0;">
+      <button class="btn-tp-or" onclick="toggleCorrection('corr-q4', this)">&#128274; Afficher la correction</button>
+    </div>
+    <div id="corr-q4" class="correction-bloc encadre-conseil">
+      <span class="encadre-prefix">Correction — Question 4</span>
+      <script type="py-editor" env="plantes-corr4">
+# ── APPROCHE 1 : nouvelle liste (la plus claire) ──────────────────────────
+def purger_mesures_extremes(liste_mesures):
+    '''Version corrigée par filtrage : renvoie une nouvelle liste épurée.'''
+    return [m for m in liste_mesures if 20 <= m['temperature'] <= 25]
+
+
+# ── APPROCHE 2 : modification en place (si on veut garder la même référence)
+def purger_mesures_extremes_inplace(liste_mesures):
+    '''Modifie la liste originale en place.'''
+    valides = [m for m in liste_mesures if 20 <= m['temperature'] <= 25]
+    liste_mesures.clear()
+    liste_mesures.extend(valides)
+    return liste_mesures
+
+
+# ── APPROCHE 3 : parcours d'une copie ─────────────────────────────────────
+def purger_mesures_extremes_copie(liste_mesures):
+    '''Parcourt une copie, supprime dans l'originale.'''
+    for m in liste_mesures[:]:       # liste_mesures[:] = copie superficielle
+        if m['temperature'] < 20 or m['temperature'] > 25:
+            liste_mesures.remove(m)
+    return liste_mesures
+
+
+def test_purger_mesures_extremes():
+    m1 = [
+        {'jour': 1, 'plante': 'Basilic', 'temperature': 18.0},
+        {'jour': 2, 'plante': 'Basilic', 'temperature': 19.0},
+        {'jour': 3, 'plante': 'Basilic', 'temperature': 22.0},
+        {'jour': 4, 'plante': 'Basilic', 'temperature': 28.0},
+        {'jour': 5, 'plante': 'Basilic', 'temperature': 29.0},
+    ]
+    resultat = purger_mesures_extremes(m1)
+    assert len(resultat) == 1
+    assert resultat[0]['jour'] == 3
+
+    m2 = [
+        {'jour': 1, 'plante': 'Basilic', 'temperature': 20.0},
+        {'jour': 2, 'plante': 'Basilic', 'temperature': 25.0},
+        {'jour': 3, 'plante': 'Basilic', 'temperature': 15.0},
+    ]
+    resultat2 = purger_mesures_extremes(m2)
+    assert len(resultat2) == 2
+
+    assert purger_mesures_extremes([]) == []
+    print("Les tests sont validés.")
+
+test_purger_mesures_extremes()
+      </script>
+      <div style="margin-top:.8rem;">
+        <p>
+          <strong>Approche recommandée :</strong> la compréhension de liste (Approche 1)
+          est la plus idiomatique en Python. Elle ne modifie pas la liste d'entrée —
+          elle en crée une nouvelle, propre.
+        </p>
+        <p>
+          <strong>Point clé :</strong> la condition correcte est <code>20 &lt;= m['temperature'] &lt;= 25</code>
+          (on <em>garde</em> les valeurs dans la plage), et non
+          <code>m['temperature'] &lt; 20 or m['temperature'] &gt; 25</code>
+          (qui exprime les valeurs à <em>rejeter</em>). Les deux sont correctes si on adapte
+          ce qu'on fait du résultat, mais la première est plus lisible dans un filtre.
+        </p>
+        <p style="margin:0">
+          <strong>Pourquoi l'Approche 2 est utile :</strong> si d'autres variables Python
+          pointent sur <em>le même objet liste</em>, elles verront aussi la modification.
+          Avec l'Approche 1, la liste originale n'est pas touchée.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <hr class="sep">
+
+  <!-- PIÈGES FRÉQUENTS -->
+  <section id="pieges">
+    <h2>Pièges fréquents &amp; astuces de vérification</h2>
+
+    <div class="encadre-piege">
+      <span class="encadre-prefix">Piège 1 — Modifier une liste pendant son parcours</span>
+      <p style="margin:0">
+        C'est précisément le bug de la Question 3. En Python, une boucle <code>for</code>
+        sur une liste utilise un indice interne. Si on supprime des éléments pendant le parcours,
+        des éléments sont <strong>sautés silencieusement</strong>. Aucune erreur n'est levée —
+        le code tourne mais produit un résultat incorrect. Règle absolue : ne jamais appeler
+        <code>.remove()</code>, <code>.pop()</code> ou <code>del</code> sur une liste
+        pendant qu'on la parcourt avec <code>for</code>.
+      </p>
+    </div>
+
+    <div class="encadre-piege">
+      <span class="encadre-prefix">Piège 2 — Confondre attribut et clé de dictionnaire</span>
+      <p style="margin:0">
+        Les plantes sont des <strong>instances de classe</strong> → on accède à leurs données
+        avec la <em>notation pointée</em> : <code>p.croissance</code>, <code>p.nom</code>.<br>
+        Les mesures sont des <strong>dictionnaires</strong> → on accède à leurs valeurs
+        avec les <em>crochets</em> : <code>m['temperature']</code>, <code>m['jour']</code>.<br>
+        Inverser les deux notations provoque une <code>AttributeError</code> ou une <code>KeyError</code>.
+      </p>
+    </div>
+
+    <div class="encadre-piege">
+      <span class="encadre-prefix">Piège 3 — Oublier la Fougère dans le dictionnaire</span>
+      <p style="margin:0">
+        La Fougère est dans <code>plantes</code> mais n'a aucune mesure dans <code>mesures</code>.
+        Si tu construis le dictionnaire en parcourant seulement les mesures,
+        la Fougère sera absente du résultat — alors qu'elle doit y figurer avec une liste vide.
+        C'est pourquoi l'initialisation <code>{p.nom: [] for p in plantes}</code>
+        est indispensable.
+      </p>
+    </div>
+
+    <div class="encadre-piege">
+      <span class="encadre-prefix">Piège 4 — Division par zéro dans croissance_moyenne</span>
+      <p style="margin:0">
+        Si tu oublies de tester le cas de la liste vide avant de calculer la moyenne,
+        l'expression <code>total / len(plantes)</code> provoque une <code>ZeroDivisionError</code>.
+        Le sujet impose explicitement de renvoyer <code>None</code> dans ce cas.
+        Le test <code>if not plantes: return None</code> doit être la <strong>première ligne</strong>
+        de la fonction.
+      </p>
+    </div>
+
+    <!-- MINI-EXERCICES -->
+    <h3>Mini-exercices de vérification</h3>
+
+    <div class="encadre">
+      <span class="encadre-prefix">Mini-exercice A — Calcul mental</span>
+      <p>
+        Sans Python, calcule la moyenne des durées de croissance de ces trois plantes seulement :
+        Basilic (60 j), Tomate (80 j), Tournesol (85 j).
+      </p>
+      <button class="btn-secondaire" onclick="toggleCorrection('corr-mini-a', this)">Vérifier</button>
+      <div id="corr-mini-a" class="correction-bloc" style="margin-top:.6rem;">
+        <p style="margin:0">
+          \(\frac{60 + 80 + 85}{3} = \frac{225}{3} = 75{,}0\)
+        </p>
+      </div>
+    </div>
+
+    <div class="encadre">
+      <span class="encadre-prefix">Mini-exercice B — Trace du bug</span>
+      <p>
+        Trace pas à pas ce que fait la boucle buguée sur la liste
+        <code>[15.0, 22.0, 18.0, 24.0]</code>.
+        Quels éléments resteront-ils dans la liste après exécution ?
+      </p>
+      <button class="btn-secondaire" onclick="toggleCorrection('corr-mini-b', this)">Vérifier</button>
+      <div id="corr-mini-b" class="correction-bloc" style="margin-top:.6rem;">
+        <ul>
+          <li>Itération 1 (indice 0) : 15.0 → extrême → supprimé. Liste : <code>[22.0, 18.0, 24.0]</code>.</li>
+          <li>Itération 2 (indice 1) : 18.0 → extrême → supprimé. Liste : <code>[22.0, 24.0]</code>. Le 22.0 à l'indice 0 est sauté !</li>
+          <li>Itération 3 (indice 2) : hors bornes → fin de boucle.</li>
+        </ul>
+        <p style="margin:0">
+          Résultat : <code>[22.0, 24.0]</code>. Correct dans ce cas précis,
+          mais le 22.0 n'a jamais été vérifié (il était dans la plage, donc ça passe).
+          Le bug ne se voit pas toujours — c'est ce qui le rend dangereux.
+        </p>
+      </div>
+    </div>
+
+    <div class="encadre">
+      <span class="encadre-prefix">Mini-exercice C — Notation pointée vs crochets</span>
+      <p>
+        Parmi ces expressions, lesquelles sont correctes pour accéder à la température
+        d'une mesure <code>m</code> et au nom d'une plante <code>p</code> ?
+      </p>
+      <ol>
+        <li><code>m.temperature</code></li>
+        <li><code>m['temperature']</code></li>
+        <li><code>p['nom']</code></li>
+        <li><code>p.nom</code></li>
+      </ol>
+      <button class="btn-secondaire" onclick="toggleCorrection('corr-mini-c', this)">Vérifier</button>
+      <div id="corr-mini-c" class="correction-bloc" style="margin-top:.6rem;">
+        <p style="margin:0">
+          <strong>Correctes : 2 et 4.</strong><br>
+          <code>m</code> est un dictionnaire → notation crochets.<br>
+          <code>p</code> est une instance de <code>Plante</code> → notation pointée.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <hr class="sep">
+
+  <!-- RÉCAPITULATIF -->
+  <div class="encadre" style="margin-top:2rem;">
+    <span class="encadre-prefix">Récapitulatif – Ce que tu dois retenir</span>
+    <ul style="margin:0">
+      <li>Une instance de classe s'interroge avec la <strong>notation pointée</strong> (<code>obj.attribut</code>).</li>
+      <li>Un dictionnaire s'interroge avec les <strong>crochets</strong> (<code>d['cle']</code>).</li>
+      <li>Pour une moyenne, toujours tester la <strong>liste vide</strong> avant de diviser.</li>
+      <li>Pour grouper des données par catégorie, initialiser toutes les clés à <code>[]</code> avant de parcourir les données.</li>
+      <li><strong>Ne jamais modifier une liste pendant qu'on la parcourt</strong> avec <code>for</code> — utiliser le filtrage par compréhension de liste à la place.</li>
+      <li>La bonne condition pour filtrer : <code>20 &lt;= temp &lt;= 25</code> (on garde ce qui est dans la plage).</li>
+    </ul>
+  </div>
+
+</div><!-- /container-content -->
+
+<!-- PIED DE PAGE -->
+<footer style="text-align:center; font-family:'JetBrains Mono',monospace; font-size:.8rem;
+               color:var(--text-muted); padding:2rem 1rem 1rem; border-top:1px solid #d0d8e4;">
+  DarkSATHI Li
+</footer>
+
+<!-- SCRIPTS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+  /* ── RETOUR EN HAUT ── */
+  const btnTop = document.getElementById('btn-top');
+
+  window.addEventListener('scroll', function () {
+    btnTop.style.display = window.scrollY > 300 ? 'flex' : 'none';
+  });
+
+  btnTop.addEventListener('click', function () {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  });
+
+  /* ── TOGGLE INDICE ── */
+  function toggleIndice(id, btn) {
+    var el = document.getElementById(id);
+    if (!el) return;
+    if (el.classList.contains('visible')) {
+      el.classList.remove('visible');
+      btn.textContent = btn.textContent.replace('▼', '▶');
+    } else {
+      el.classList.add('visible');
+      btn.textContent = btn.textContent.replace('▶', '▼');
+    }
+  }
+
+  /* ── TOGGLE CORRECTION ── */
+  function toggleCorrection(id, btn) {
+    var el = document.getElementById(id);
+    if (!el) return;
+    if (el.classList.contains('visible')) {
+      el.classList.remove('visible');
+      btn.textContent = btn.textContent.replace('Masquer', 'Afficher').replace('Masquer', 'Vérifier');
+    } else {
+      el.classList.add('visible');
+      btn.textContent = btn.textContent.replace('Afficher', 'Masquer').replace('Vérifier', 'Masquer');
+    }
+  }
+</script>
+</body>
+</html>
