@@ -1,0 +1,1194 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Script Vidéo — RLE NSI · Sujet 01</title>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Mono:ital,wght@0,400;0,500;1,400&family=Lora:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg:       #0c0e14;
+      --surface:  #13161f;
+      --surface2: #1a1e2b;
+      --border:   #252a3a;
+      --blanc:    #eef1f8;
+      --gris:     #7a8199;
+      --bleu:     #4d9eff;
+      --or:       #f0a030;
+      --or2:      #ffd580;
+      --vert:     #3dd68c;
+      --rouge:    #ff5a5a;
+      --violet:   #b48bfa;
+      --cyan:     #3dd6d6;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { height: 100%; overflow: hidden; }
+
+    body {
+      background: var(--bg);
+      color: var(--blanc);
+      font-family: 'Lora', Georgia, serif;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ── TOPBAR ── */
+    .topbar {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      padding: .55rem 1.5rem;
+      background: rgba(12,14,20,.95);
+      border-bottom: 1px solid var(--border);
+      flex-shrink: 0;
+      z-index: 10;
+    }
+    .tb-logo {
+      font-family: 'DM Mono', monospace;
+      font-size: .68rem;
+      color: var(--or);
+      letter-spacing: .1em;
+      white-space: nowrap;
+    }
+    .tb-progress {
+      flex: 1;
+      height: 3px;
+      background: var(--border);
+      border-radius: 2px;
+      overflow: hidden;
+    }
+    .tb-bar {
+      height: 100%;
+      background: linear-gradient(90deg, var(--bleu), var(--vert));
+      border-radius: 2px;
+      transition: width .4s ease;
+    }
+    .tb-counter {
+      font-family: 'DM Mono', monospace;
+      font-size: .68rem;
+      color: var(--gris);
+      white-space: nowrap;
+    }
+    .tb-timer {
+      font-family: 'DM Mono', monospace;
+      font-size: .75rem;
+      color: var(--or2);
+      min-width: 48px;
+      text-align: right;
+    }
+    .tb-keys {
+      font-family: 'DM Mono', monospace;
+      font-size: .6rem;
+      color: var(--gris);
+      display: flex;
+      gap: .6rem;
+    }
+    .tb-keys kbd {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      padding: .1rem .4rem;
+      border-radius: 3px;
+      color: var(--blanc);
+    }
+
+    /* ── SLIDE AREA ── */
+    .stage {
+      flex: 1;
+      display: flex;
+      align-items: stretch;
+      overflow: hidden;
+      position: relative;
+    }
+
+    /* Side segment strip */
+    .segment-strip {
+      width: 200px;
+      flex-shrink: 0;
+      background: var(--surface);
+      border-right: 1px solid var(--border);
+      overflow-y: auto;
+      padding: .5rem 0;
+    }
+    .seg-item {
+      padding: .55rem 1rem;
+      font-family: 'DM Mono', monospace;
+      font-size: .65rem;
+      color: var(--gris);
+      cursor: pointer;
+      border-left: 2px solid transparent;
+      transition: all .15s;
+      line-height: 1.4;
+    }
+    .seg-item:hover { background: var(--surface2); color: var(--blanc); }
+    .seg-item.active {
+      border-left-color: var(--or);
+      color: var(--or2);
+      background: rgba(240,160,48,.07);
+    }
+    .seg-item .si-num {
+      display: block;
+      font-size: .58rem;
+      color: var(--border);
+      margin-bottom: .15rem;
+    }
+    .seg-item.active .si-num { color: var(--or); opacity: .7; }
+
+    /* ── MAIN SLIDE ── */
+    .slide-wrap {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .slide {
+      display: none;
+      flex-direction: column;
+      height: 100%;
+      padding: 2rem 2.5rem 1.5rem;
+      overflow-y: auto;
+      animation: slideIn .22s ease;
+    }
+    .slide.active { display: flex; }
+
+    @keyframes slideIn {
+      from { opacity: 0; transform: translateY(8px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Slide header */
+    .slide-type {
+      font-family: 'DM Mono', monospace;
+      font-size: .65rem;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+      margin-bottom: .6rem;
+      display: flex;
+      align-items: center;
+      gap: .7rem;
+    }
+    .slide-type::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--border);
+    }
+
+    .slide-title {
+      font-family: 'Syne', sans-serif;
+      font-size: clamp(1.4rem, 2.5vw, 2.2rem);
+      font-weight: 800;
+      line-height: 1.15;
+      margin-bottom: 1.2rem;
+      color: var(--blanc);
+    }
+
+    /* Speech content */
+    .speech {
+      font-size: clamp(1rem, 1.6vw, 1.25rem);
+      line-height: 1.85;
+      color: #c8d0e4;
+      max-width: 820px;
+    }
+    .speech p { margin-bottom: .9rem; }
+    .speech p:last-child { margin-bottom: 0; }
+
+    /* Emphasis zones */
+    .say {
+      color: var(--blanc);
+      font-style: italic;
+    }
+    .do {
+      display: inline-flex;
+      align-items: center;
+      gap: .3rem;
+      font-family: 'DM Mono', monospace;
+      font-size: .78em;
+      background: rgba(240,160,48,.1);
+      border: 1px solid rgba(240,160,48,.25);
+      color: var(--or2);
+      padding: .15rem .6rem;
+      border-radius: 4px;
+      white-space: nowrap;
+    }
+    .do::before { content: '▶ '; font-size: .7em; }
+
+    /* Code blocks */
+    .code-block {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--bleu);
+      border-radius: 6px;
+      padding: 1rem 1.2rem;
+      margin: .8rem 0;
+      font-family: 'DM Mono', monospace;
+      font-size: clamp(.75rem, 1.1vw, .9rem);
+      line-height: 1.7;
+      color: #b8c8e8;
+      overflow-x: auto;
+      white-space: pre;
+    }
+    .code-block .hl { color: var(--or2); font-weight: 500; }
+    .code-block .bug { color: var(--rouge); text-decoration: underline wavy var(--rouge); }
+    .code-block .fix { color: var(--vert); }
+    .code-block .cm { color: var(--gris); font-style: italic; }
+
+    /* Pause card */
+    .pause-card {
+      background: rgba(240,160,48,.06);
+      border: 1px solid rgba(240,160,48,.3);
+      border-radius: 8px;
+      padding: 1rem 1.4rem;
+      margin: .8rem 0;
+      display: flex;
+      align-items: flex-start;
+      gap: .8rem;
+    }
+    .pause-card .pc-icon {
+      font-size: 1.1rem;
+      flex-shrink: 0;
+      margin-top: .1rem;
+    }
+    .pause-card .pc-text {
+      font-family: 'DM Mono', monospace;
+      font-size: .82rem;
+      color: var(--or2);
+      line-height: 1.55;
+    }
+    .pause-card .pc-text strong { color: #fff; }
+
+    /* Piège card */
+    .piege-card {
+      background: rgba(255,90,90,.05);
+      border: 1px solid rgba(255,90,90,.25);
+      border-radius: 8px;
+      padding: .9rem 1.2rem;
+      margin: .6rem 0;
+      font-size: .88rem;
+      color: #f5b8b8;
+      line-height: 1.55;
+    }
+    .piege-card strong { color: var(--rouge); }
+
+    /* Result card */
+    .result-card {
+      background: rgba(61,214,140,.05);
+      border: 1px solid rgba(61,214,140,.2);
+      border-radius: 8px;
+      padding: .9rem 1.2rem;
+      margin: .6rem 0;
+      font-family: 'DM Mono', monospace;
+      font-size: .82rem;
+      color: #a8efd0;
+      line-height: 1.6;
+    }
+    .result-card strong { color: var(--vert); }
+
+    /* Inline code */
+    code {
+      font-family: 'DM Mono', monospace;
+      font-size: .88em;
+      background: rgba(255,255,255,.07);
+      padding: 1px 5px;
+      border-radius: 3px;
+      color: var(--or2);
+    }
+
+    /* Step list */
+    .steps {
+      list-style: none;
+      margin: .6rem 0;
+    }
+    .steps li {
+      display: flex;
+      gap: .8rem;
+      align-items: flex-start;
+      padding: .45rem 0;
+      border-bottom: 1px solid var(--border);
+      font-size: clamp(.88rem, 1.3vw, 1rem);
+      color: #c8d0e4;
+      line-height: 1.5;
+    }
+    .steps li:last-child { border-bottom: none; }
+    .steps .sn {
+      font-family: 'DM Mono', monospace;
+      font-size: .68rem;
+      background: var(--bleu);
+      color: #000;
+      width: 20px; height: 20px;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+      font-weight: 500;
+      margin-top: .15rem;
+    }
+
+    /* ── BOTTOM NAV ── */
+    .nav-bar {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      padding: .8rem 1.5rem;
+      background: var(--surface);
+      border-top: 1px solid var(--border);
+      flex-shrink: 0;
+    }
+    .nav-btn {
+      font-family: 'DM Mono', monospace;
+      font-size: .75rem;
+      padding: .5rem 1.2rem;
+      border-radius: 5px;
+      border: 1px solid var(--border);
+      background: var(--surface2);
+      color: var(--blanc);
+      cursor: pointer;
+      transition: all .15s;
+      display: flex;
+      align-items: center;
+      gap: .4rem;
+    }
+    .nav-btn:hover { background: var(--border); }
+    .nav-btn.primary {
+      background: var(--or);
+      border-color: var(--or);
+      color: #000;
+      font-weight: 500;
+    }
+    .nav-btn.primary:hover { background: var(--or2); }
+    .nav-btn:disabled { opacity: .3; cursor: default; }
+
+    .nav-center {
+      flex: 1;
+      text-align: center;
+      font-family: 'DM Mono', monospace;
+      font-size: .7rem;
+      color: var(--gris);
+    }
+    .nav-center strong {
+      color: var(--blanc);
+      font-size: .88rem;
+    }
+
+    /* Segment badge */
+    .seg-badge {
+      font-family: 'DM Mono', monospace;
+      font-size: .6rem;
+      padding: .12rem .55rem;
+      border-radius: 12px;
+      margin-left: .5rem;
+      vertical-align: middle;
+    }
+    .sb-intro    { background: rgba(74,158,255,.15); color: var(--bleu); }
+    .sb-rappel   { background: rgba(61,214,140,.12); color: var(--vert); }
+    .sb-cours    { background: rgba(240,160,48,.12); color: var(--or); }
+    .sb-pause    { background: rgba(167,139,250,.12); color: var(--violet); }
+    .sb-code     { background: rgba(74,158,255,.12); color: var(--bleu); }
+    .sb-correc   { background: rgba(61,214,140,.12); color: var(--vert); }
+    .sb-piege    { background: rgba(255,90,90,.12); color: var(--rouge); }
+    .sb-outro    { background: rgba(240,160,48,.15); color: var(--or2); }
+
+    /* Scrollbar */
+    .slide::-webkit-scrollbar, .segment-strip::-webkit-scrollbar { width: 4px; }
+    .slide::-webkit-scrollbar-track, .segment-strip::-webkit-scrollbar-track { background: transparent; }
+    .slide::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+    /* Shortcut overlay */
+    .shortcut-overlay {
+      display: none;
+      position: fixed; inset: 0; z-index: 100;
+      background: rgba(0,0,0,.7);
+      backdrop-filter: blur(4px);
+      align-items: center;
+      justify-content: center;
+    }
+    .shortcut-overlay.visible { display: flex; }
+    .sc-box {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 2rem 2.5rem;
+      max-width: 400px;
+      width: 90%;
+    }
+    .sc-box h3 {
+      font-family: 'Syne', sans-serif;
+      font-size: 1.1rem;
+      color: var(--or);
+      margin-bottom: 1.2rem;
+    }
+    .sc-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: .5rem 0;
+      border-bottom: 1px solid var(--border);
+      font-size: .85rem;
+      color: var(--gris);
+    }
+    .sc-row:last-child { border-bottom: none; }
+    .sc-row kbd {
+      font-family: 'DM Mono', monospace;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      padding: .15rem .6rem;
+      border-radius: 4px;
+      color: var(--blanc);
+      font-size: .75rem;
+    }
+  </style>
+</head>
+<body>
+
+<!-- TOPBAR -->
+<div class="topbar">
+  <span class="tb-logo">🎬 SUJET 01 · RLE</span>
+  <div class="tb-progress"><div class="tb-bar" id="tbBar"></div></div>
+  <span class="tb-counter" id="tbCounter">1 / 22</span>
+  <span class="tb-timer" id="tbTimer">0:00</span>
+  <div class="tb-keys">
+    <span><kbd>←</kbd><kbd>→</kbd> naviguer</span>
+    <span><kbd>?</kbd> aide</span>
+    <span><kbd>T</kbd> timer</span>
+  </div>
+</div>
+
+<div class="stage">
+
+  <!-- SEGMENT STRIP -->
+  <div class="segment-strip" id="strip"></div>
+
+  <!-- SLIDES -->
+  <div class="slide-wrap">
+    <div id="slides"></div>
+  </div>
+
+</div>
+
+<!-- BOTTOM NAV -->
+<div class="nav-bar">
+  <button class="nav-btn" id="btnPrev">← Préc.</button>
+  <div class="nav-center">
+    <strong id="navTitle">—</strong><br>
+    <span id="navSub"></span>
+  </div>
+  <button class="nav-btn primary" id="btnNext">Suiv. →</button>
+</div>
+
+<!-- SHORTCUT OVERLAY -->
+<div class="shortcut-overlay" id="scOverlay">
+  <div class="sc-box">
+    <h3>⌨️ Raccourcis clavier</h3>
+    <div class="sc-row"><span>Slide suivante</span><kbd>→</kbd> ou <kbd>Space</kbd></div>
+    <div class="sc-row"><span>Slide précédente</span><kbd>←</kbd></div>
+    <div class="sc-row"><span>Aller à l'intro</span><kbd>Home</kbd></div>
+    <div class="sc-row"><span>Aller à l'outro</span><kbd>End</kbd></div>
+    <div class="sc-row"><span>Démarrer/arrêter timer</span><kbd>T</kbd></div>
+    <div class="sc-row"><span>Remettre timer à zéro</span><kbd>R</kbd></div>
+    <div class="sc-row"><span>Fermer cette aide</span><kbd>?</kbd> ou <kbd>Esc</kbd></div>
+  </div>
+</div>
+
+<script>
+// ─────────────────────────────────────────────
+// DONNÉES DU SCRIPT
+// ─────────────────────────────────────────────
+const SLIDES = [
+
+  // ── INTRO ──────────────────────────────────
+  {
+    segment: "🎬 Intro",
+    type: "intro",
+    badge: "sb-intro",
+    title: "Générique d'ouverture",
+    speech: `
+      <p>
+        <span class="do">OBS : Scène TITRE — caméra pleine</span>
+      </p>
+      <p>
+        <span class="say">"Bonjour ! Aujourd'hui on attaque ensemble le Sujet 1 de l'épreuve pratique NSI,
+        session 2026 — le codage RLE, Run-Length Encoding.</span>
+      </p>
+      <p>
+        <span class="say">On va travailler question par question. À chaque fois que je marque une pause,
+        stoppe la vidéo, essaie toi-même — c'est comme ça qu'on progresse vraiment.
+        La fiche de révision est dans la description."</span>
+      </p>
+      <p>
+        <span class="do">OBS : basculer → Scène FICHE HTML, section Sommaire visible</span>
+      </p>
+      <p class="speech" style="font-size:.85em; color:var(--gris);">
+        Durée cible de ce segment : ~45 sec
+      </p>
+    `
+  },
+
+  // ── RAPPELS — IMAGES ───────────────────────
+  {
+    segment: "📚 Rappels",
+    type: "rappel",
+    badge: "sb-rappel",
+    title: "Images en niveaux de gris",
+    speech: `
+      <p>
+        <span class="do">OBS : Scène FICHE HTML — section "Rappels"</span>
+      </p>
+      <p>
+        <span class="say">"Avant d'écrire la moindre ligne de code, on doit comprendre de quoi on parle.
+        Une image en niveaux de gris, c'est simplement une grille de pixels.</span>
+      </p>
+      <p>
+        <span class="say">Chaque pixel est un entier entre 0 et 255.
+        0 c'est noir absolu, 255 c'est blanc pur, et tout ce qui est entre les deux, c'est un gris."</span>
+      </p>
+      <p>
+        <span class="do">Pointer le tableau 5×4 sur la fiche avec la souris</span>
+      </p>
+      <p>
+        <span class="say">"Ici on a une mini-image de 5 colonnes par 4 lignes.
+        Pour la stocker en Python, on l'aplatit ligne par ligne dans une simple liste.
+        La ligne 1, c'est les indices 0 à 4. La ligne 2, indices 5 à 9. Et ainsi de suite."</span>
+      </p>
+    `
+  },
+
+  // ── PRINCIPE RLE ───────────────────────────
+  {
+    segment: "💡 Principe RLE",
+    type: "cours",
+    badge: "sb-cours",
+    title: "Le codage RLE expliqué",
+    speech: `
+      <p>
+        <span class="do">OBS : Scène FICHE HTML — section "Le codage RLE"</span>
+      </p>
+      <p>
+        <span class="say">"Imaginez que je dois vous dicter cette liste au téléphone :"</span>
+      </p>
+      <div class="code-block">[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 255, 255, 255]</div>
+      <p>
+        <span class="say">"Plutôt que d'énoncer chaque valeur, je pourrais dire :
+        <em>douze zéros, puis trois deux-cent-cinquante-cinq</em>.
+        C'est exactement l'idée du RLE — Run-Length Encoding, codage par plages."</span>
+      </p>
+      <p>
+        <span class="say">"Chaque suite de valeurs identiques devient un couple : compte d'abord, valeur ensuite.
+        Et tous ces couples sont mis bout à bout dans une seule liste."</span>
+      </p>
+      <div class="code-block"><span class="hl">[4, 4, 4, 0, 5, 5]</span>  →  <span class="hl">[3, 4,  1, 0,  2, 5]</span>
+<span class="cm">  3×le4  1×le0  2×le5  →  compte/val  compte/val  compte/val</span></div>
+    `
+  },
+
+  // ── CODAGE_RLE à étudier ────────────────────
+  {
+    segment: "🔍 codage_rle",
+    type: "cours",
+    badge: "sb-cours",
+    title: "Analyse de codage_rle fourni",
+    speech: `
+      <p>
+        <span class="do">OBS : Scène IDE — ouvrir rle.py, sélectionner codage_rle</span>
+      </p>
+      <p>
+        <span class="say">"Le fichier rle.py vous donne déjà la fonction <code>codage_rle</code>.
+        On va l'analyser ensemble parce que c'est elle qui va nous guider pour écrire son inverse."</span>
+      </p>
+      <div class="code-block"><span class="cm">def codage_rle(liste_octets):</span>
+    liste_rle = []
+    i = 0
+    while i &lt; len(liste_octets):
+        c = liste_octets[i]        <span class="cm"># valeur courante</span>
+        <span class="hl">k = 1</span>                      <span class="cm"># compteur d'occurrences</span>
+        while i + k &lt; len(liste_octets) and liste_octets[i + k] == c:
+            <span class="hl">k += 1</span>
+        liste_rle.append(<span class="hl">k</span>)      <span class="cm"># compte en premier</span>
+        liste_rle.append(<span class="hl">c</span>)      <span class="cm"># valeur ensuite</span>
+        i += k                     <span class="cm"># on saute toute la plage</span>
+    return liste_rle</div>
+      <p>
+        <span class="say">"La boucle extérieure avance de plage en plage. La boucle intérieure
+        compte les répétitions. À la fin, k contient la longueur de la plage.
+        Le saut <code>i += k</code> est crucial — on ne re-scanne pas ce qu'on vient de compter."</span>
+      </p>
+    `
+  },
+
+  // ── PAUSE Q1 ───────────────────────────────
+  {
+    segment: "⏸ Pause Q1",
+    type: "pause",
+    badge: "sb-pause",
+    title: "⏸ PAUSE — Question 1",
+    speech: `
+      <p>
+        <span class="do">OBS : Scène PAUSE — carte noire + texte</span>
+      </p>
+      <div class="pause-card">
+        <span class="pc-icon">⏸</span>
+        <div class="pc-text">
+          <strong>STOP — Question 1</strong><br><br>
+          Voici la question. Avant de regarder la réponse, réfléchis :<br><br>
+          <em>La liste obtenue par codage RLE est-elle forcément de longueur inférieure ou égale à la liste de départ ?</em><br><br>
+          Pense à un contre-exemple si ta réponse est non.
+        </div>
+      </div>
+      <p>
+        <span class="say">"Stop. Question 1 : est-ce que la liste RLE est toujours plus courte que la liste originale ?
+        Mets la vidéo en pause, réfléchis, note ta réponse. Je t'attends."</span>
+      </p>
+      <p class="speech" style="font-size:.85em; color:var(--gris);">⏱️ Laisser ~3 secondes de silence avant de reprendre</p>
+    `
+  },
+
+  // ── Q1 RÉPONSE ─────────────────────────────
+  {
+    segment: "✅ Q1 Réponse",
+    type: "correc",
+    badge: "sb-correc",
+    title: "Question 1 — Réponse commentée",
+    speech: `
+      <p>
+        <span class="do">OBS : Scène FICHE HTML — section Q1 / ou IDE pour taper en direct</span>
+      </p>
+      <p>
+        <span class="say">"La réponse est non — la liste RLE n'est pas forcément plus courte."</span>
+      </p>
+      <p>
+        <span class="say">"Le contre-exemple classique, c'est une liste avec aucune répétition :"</span>
+      </p>
+      <div class="code-block"><span class="hl">[1, 2, 3, 4, 5]</span>
+→ RLE : <span class="hl">[1,1, 1,2, 1,3, 1,4, 1,5]</span>
+<span class="cm">   5 éléments    →    10 éléments  (×2 !)</span></div>
+      <p>
+        <span class="say">"Chaque valeur unique forme une plage de longueur 1.
+        Chaque plage génère deux éléments dans la liste RLE.
+        Donc une liste de n valeurs toutes différentes donne une liste RLE de 2n — le double !"</span>
+      </p>
+      <div class="result-card">
+        <strong>Règle :</strong> la liste RLE est plus courte si et seulement si les plages ont en moyenne ≥ 2 éléments.<br>
+        <strong>Conclusion :</strong> RLE est efficace sur des images avec de grandes zones uniformes (fond noir).
+      </div>
+    `
+  },
+
+  // ── PAUSE Q2 ───────────────────────────────
+  {
+    segment: "⏸ Pause Q2",
+    type: "pause",
+    badge: "sb-pause",
+    title: "⏸ PAUSE — Question 2",
+    speech: `
+      <p>
+        <span class="do">OBS : Scène PAUSE</span>
+      </p>
+      <div class="pause-card">
+        <span class="pc-icon">⏸</span>
+        <div class="pc-text">
+          <strong>STOP — Question 2 (la principale !)</strong><br><br>
+          Écrire le corps de la fonction <code>decodage_rle(liste_rle)</code><br>
+          qui réalise le décodage et renvoie la liste d'octets originale.<br><br>
+          Ouvre ton IDE. Essaie toi-même avant de regarder.
+        </div>
+      </div>
+      <p>
+        <span class="say">"Question 2 — c'est la plus importante du sujet.
+        Vous devez écrire <code>decodage_rle</code>, l'inverse de la fonction qu'on vient d'analyser.
+        Pause la vidéo, ouvre ton IDE, essaie. Je t'attends."</span>
+      </p>
+    `
+  },
+
+  // ── Q2 — SQUELETTE ──────────────────────────
+  {
+    segment: "🔧 Q2 Squelette",
+    type: "code",
+    badge: "sb-code",
+    title: "Question 2 — On pose le squelette",
+    speech: `
+      <p>
+        <span class="do">OBS : Scène IDE — taper en direct dans rle.py</span>
+      </p>
+      <p>
+        <span class="say">"On commence par le squelette commenté. Avant d'écrire le code, je dis ce que je veux faire :"</span>
+      </p>
+      <div class="code-block"><span class="cm">def decodage_rle(liste_rle):</span>
+    <span class="cm">'''Renvoie la liste d'octets à partir de la liste RLE.'''</span>
+    liste_octets = []
+    i = 0
+    while i &lt; len(liste_rle):
+        <span class="cm"># lire le compte k et la valeur c</span>
+        k = liste_rle[i]
+        c = liste_rle[i + 1]
+        <span class="cm"># ajouter k fois la valeur c</span>
+        liste_octets.extend([c] * k)
+        <span class="cm"># avancer de 2 (un couple)</span>
+        i += 2
+    return liste_octets</div>
+      <p>
+        <span class="say">"La logique est symétrique. Au lieu de compter les répétitions, on les lit.
+        Au lieu de produire des couples, on les consomme."</span>
+      </p>
+    `
+  },
+
+  // ── Q2 — ERREUR VOLONTAIRE ──────────────────
+  {
+    segment: "⚠️ Q2 Bug i+=1",
+    type: "code",
+    badge: "sb-code",
+    title: "Question 2 — Le bug classique",
+    speech: `
+      <p>
+        <span class="do">OBS : Scène IDE — modifier i += 2 en i += 1 volontairement</span>
+      </p>
+      <p>
+        <span class="say">"Voici l'erreur que tout le monde fait au moins une fois.
+        Regardez ce qui se passe si j'écris <code>i += 1</code> au lieu de <code>i += 2</code> :"</span>
+      </p>
+      <div class="code-block">        <span class="cm"># ERREUR : avancer de 1 au lieu de 2</span>
+        i += <span class="bug">1</span>   <span class="cm">← ICI le bug</span></div>
+      <p>
+        <span class="do">Lancer les tests — montrer l'erreur à l'écran</span>
+      </p>
+      <p>
+        <span class="say">"Au premier tour, on lit k à l'indice 0 et c à l'indice 1. Jusque-là ça va.
+        Au deuxième tour avec i=1, on lit k à l'indice 1 — mais c'était la valeur, pas le compte !
+        On lit les couples à l'envers. Le résultat est complètement faux."</span>
+      </p>
+      <div class="code-block">        <span class="cm"># CORRECT : on a lu un couple de 2 éléments</span>
+        i += <span class="fix">2</span>   <span class="cm">← correction</span></div>
+      <p>
+        <span class="do">Corriger et relancer les tests — afficher "Les tests sont validés."</span>
+      </p>
+    `
+  },
+
+  // ── Q2 — TEST ALLER-RETOUR ──────────────────
+  {
+    segment: "✅ Q2 Vérif",
+    type: "correc",
+    badge: "sb-correc",
+    title: "Question 2 — Test aller-retour",
+    speech: `
+      <p>
+        <span class="do">OBS : Scène IDE + Terminal split</span>
+      </p>
+      <p>
+        <span class="say">"Maintenant le test ultime — l'aller-retour :"</span>
+      </p>
+      <div class="code-block">liste = [0, 0, 0, 128, 128, 255]
+assert <span class="hl">decodage_rle(codage_rle(liste)) == liste</span>
+print("Aller-retour validé ✓")</div>
+      <p>
+        <span class="say">"Si ce test passe, vos deux fonctions sont cohérentes.
+        <code>codage_rle</code> et <code>decodage_rle</code> sont bien inverses l'une de l'autre.
+        C'est le seul test qui vous garantit ça."</span>
+      </p>
+      <div class="result-card">
+        <strong>Tests à mémoriser :</strong><br>
+        <code>decodage_rle([2,255, 1,0, 3,255])</code> → <code>[255,255, 0, 255,255,255]</code><br>
+        <code>decodage_rle([5, 0])</code> → <code>[0,0,0,0,0]</code><br>
+        <code>decodage_rle(codage_rle(liste)) == liste</code> → toujours vrai
+      </div>
+    `
+  },
+
+  // ── PAUSE Q3 ───────────────────────────────
+  {
+    segment: "⏸ Pause Q3",
+    type: "pause",
+    badge: "sb-pause",
+    title: "⏸ PAUSE — Question 3",
+    speech: `
+      <p>
+        <span class="do">OBS : Scène PAUSE</span>
+      </p>
+      <div class="pause-card">
+        <span class="pc-icon">⏸</span>
+        <div class="pc-text">
+          <strong>STOP — Question 3</strong><br><br>
+          Utilise <code>encoder_decoder_image</code> sur les deux images :<br>
+          — <code>bac_nsi_32.png</code> (32×32)<br>
+          — <code>bac_nsi_256.png</code> (256×256)<br><br>
+          Qu'est-ce qui se passe ? Pourquoi une image est corrompue et pas l'autre ?
+        </div>
+      </div>
+      <p>
+        <span class="say">"Question 3 — on teste sur de vraies images. On a deux images : une petite de 32×32 pixels
+        et une grande de 256×256. Essaie d'encoder puis décoder les deux. Qu'est-ce que tu observes ?"</span>
+      </p>
+    `
+  },
+
+  // ── Q3 RÉPONSE ─────────────────────────────
+  {
+    segment: "✅ Q3 Réponse",
+    type: "correc",
+    badge: "sb-correc",
+    title: "Question 3 — Pourquoi 256×256 pose problème",
+    speech: `
+      <p>
+        <span class="do">OBS : Scène IDE — lancer encoder_decoder_image sur les deux images</span>
+      </p>
+      <p>
+        <span class="say">"La 32×32 fonctionne parfaitement. La 256×256 donne une image corrompue.
+        Pourquoi ? À cause des octets."</span>
+      </p>
+      <ul class="steps">
+        <li><span class="sn">1</span>La liste RLE est enregistrée dans un fichier binaire. Chaque élément est stocké comme un <strong>octet</strong>.</li>
+        <li><span class="sn">2</span>Un octet ne peut contenir qu'une valeur entre <strong>0 et 255</strong>.</li>
+        <li><span class="sn">3</span>Sur une image de 256 pixels de large, la première ligne peut avoir <strong>256 pixels noirs consécutifs</strong>.</li>
+        <li><span class="sn">4</span>Le compte 256 est tronqué à 255 dans le fichier. Le décodeur lit 255 pixels au lieu de 256.</li>
+        <li><span class="sn">5</span>La liste est trop courte → l'image reconstruite est <strong>décalée ou corrompue</strong>.</li>
+      </ul>
+      <p>
+        <span class="say">"La 32×32 ne pose jamais ce problème : une ligne fait 32 pixels au maximum.
+        On ne dépasse jamais 255. C'est exactement ce que la Question 4 va corriger."</span>
+      </p>
+    `
+  },
+
+  // ── PAUSE Q4 ───────────────────────────────
+  {
+    segment: "⏸ Pause Q4",
+    type: "pause",
+    badge: "sb-pause",
+    title: "⏸ PAUSE — Question 4",
+    speech: `
+      <p>
+        <span class="do">OBS : Scène PAUSE</span>
+      </p>
+      <div class="pause-card">
+        <span class="pc-icon">⏸</span>
+        <div class="pc-text">
+          <strong>STOP — Question 4 (la plus subtile)</strong><br><br>
+          Un compte peut dépasser 255. Un octet ne peut pas stocker plus de 255.<br>
+          Comment représenter un compte de 300 en n'utilisant que des octets (valeurs 0–255) ?<br><br>
+          Réfléchis à une solution qui ne changerait <em>pas</em> le décodeur.
+        </div>
+      </div>
+      <p>
+        <span class="say">"Question 4 — le vrai défi. Un compte peut dépasser 255.
+        Comment stocker ça avec des octets ? Et est-ce qu'on peut éviter de modifier le décodeur ?
+        Pause, réfléchis."</span>
+      </p>
+    `
+  },
+
+  // ── Q4 — IDÉE ──────────────────────────────
+  {
+    segment: "💡 Q4 Idée",
+    type: "cours",
+    badge: "sb-cours",
+    title: "Question 4 — L'idée du découpage",
+    speech: `
+      <p>
+        <span class="do">OBS : Scène IDE ou tableau — écrire à la main</span>
+      </p>
+      <p>
+        <span class="say">"L'idée est élégante : on ne change pas le format, on découpe les grandes plages."</span>
+      </p>
+      <div class="code-block"><span class="cm"># Plage de 300 pixels noirs consécutifs</span>
+k = 300
+
+<span class="cm"># Division euclidienne :</span>
+300 = <span class="hl">1</span> × 255 + <span class="hl">45</span>
+
+<span class="cm"># On génère deux couples au lieu d'un :</span>
+(255, 0)   <span class="cm">← 255 pixels noirs</span>
+(45,  0)   <span class="cm">← 45 pixels noirs</span>
+
+<span class="cm"># Le décodeur lit les deux couples normalement → 255 + 45 = 300 ✓</span></div>
+      <p>
+        <span class="say">"Le décodeur n'a pas besoin d'être modifié. Il lit des couples, il les accumule.
+        Si deux couples consécutifs ont la même valeur, il ajoute simplement les deux comptes.
+        Le découpage est transparent."</span>
+      </p>
+    `
+  },
+
+  // ── Q4 — CODE ──────────────────────────────
+  {
+    segment: "🔧 Q4 Code",
+    type: "code",
+    badge: "sb-code",
+    title: "Question 4 — Écrire codage_rle_v2",
+    speech: `
+      <p>
+        <span class="do">OBS : Scène IDE — taper codage_rle_v2 en direct</span>
+      </p>
+      <p>
+        <span class="say">"On part du code de <code>codage_rle</code> et on change uniquement la partie
+        où on ajoute le compte. Au lieu d'un <code>append(k)</code>, on fait une boucle :"</span>
+      </p>
+      <div class="code-block"><span class="cm">def codage_rle_v2(liste_octets):</span>
+    liste_rle = []
+    i = 0
+    while i &lt; len(liste_octets):
+        c = liste_octets[i]
+        k = 1
+        while i + k &lt; len(liste_octets) and liste_octets[i + k] == c:
+            k += 1
+        <span class="hl">nb_pleins = k // 255   # morceaux entiers de 255
+        reste     = k %  255   # ce qui reste
+        for _ in range(nb_pleins):
+            liste_rle.append(255)
+            liste_rle.append(c)
+        if reste > 0:            # ← IMPORTANT : cas multiple exact de 255
+            liste_rle.append(reste)
+            liste_rle.append(c)</span>
+        i += k
+    return liste_rle</div>
+      <p>
+        <span class="say">"La condition <code>if reste > 0</code> est cruciale.
+        Si k est exactement 510, le reste est 0.
+        On ne doit pas ajouter le couple <code>(0, valeur)</code> — ça voudrait dire répéter 0 fois !"</span>
+      </p>
+    `
+  },
+
+  // ── Q4 — TESTS ─────────────────────────────
+  {
+    segment: "✅ Q4 Tests",
+    type: "correc",
+    badge: "sb-correc",
+    title: "Question 4 — Vérification par les tests",
+    speech: `
+      <p>
+        <span class="do">OBS : Scène IDE + Terminal — lancer les tests</span>
+      </p>
+      <div class="code-block"><span class="cm"># Test 1 : liste normale (≤ 255), doit être identique à v1</span>
+assert codage_rle_v2([255, 255, 0, 255, 255, 255]) == [2, 255, 1, 0, 3, 255]
+
+<span class="cm"># Test 2 : plage de 256 → deux couples (255+1)</span>
+assert codage_rle_v2([0] * 256) == [<span class="hl">255, 0, 1, 0</span>]
+
+<span class="cm"># Test 3 : plage de 300 → deux couples (255+45)</span>
+assert codage_rle_v2([128] * 300) == [<span class="hl">255, 128, 45, 128</span>]</div>
+      <p>
+        <span class="say">"Et maintenant on vérifie que l'aller-retour fonctionne sur la grande image :"</span>
+      </p>
+      <div class="code-block"><span class="cm"># Encoder la grande image avec la v2</span>
+encoder_decoder_image("bac_nsi_256.png")</div>
+      <p>
+        <span class="do">Ouvrir l'image reconstruite — montrer qu'elle est identique à l'originale</span>
+      </p>
+      <p>
+        <span class="say">"L'image est maintenant parfaitement reconstruite. Plus aucune corruption.
+        Et le décodeur n'a pas bougé d'une ligne."</span>
+      </p>
+    `
+  },
+
+  // ── PIÈGES ─────────────────────────────────
+  {
+    segment: "⚠️ Pièges",
+    type: "piege",
+    badge: "sb-piege",
+    title: "Les 4 pièges à éviter",
+    speech: `
+      <p>
+        <span class="do">OBS : Scène FICHE HTML — section "Pièges"</span>
+      </p>
+      <div class="piege-card">
+        <strong>Piège 1 — Compte et valeur inversés</strong><br>
+        L'ordre est toujours <em>compte d'abord, valeur ensuite</em>.
+        <code>[2, 255]</code> = « deux fois 255 », jamais « 255 fois 2 ».
+      </div>
+      <div class="piege-card">
+        <strong>Piège 2 — <code>i += 1</code> au lieu de <code>i += 2</code></strong><br>
+        La liste RLE se lit par paires. Le pas doit être 2. C'est le bug qu'on a montré plus tôt.
+      </div>
+      <div class="piege-card">
+        <strong>Piège 3 — Liste RLE de longueur impaire</strong><br>
+        Une liste RLE valide a toujours un nombre <em>pair</em> d'éléments.
+        Si c'est impair, <code>liste_rle[i+1]</code> lèvera une <code>IndexError</code>.
+      </div>
+      <div class="piege-card">
+        <strong>Piège 4 — Oublier <code>if reste > 0</code> dans la v2</strong><br>
+        Si k est un multiple de 255, le reste vaut 0. Ajouter le couple <code>(0, val)</code>
+        signifierait « répéter 0 fois » — c'est faux.
+      </div>
+    `
+  },
+
+  // ── RÉCAP ──────────────────────────────────
+  {
+    segment: "📌 Récap",
+    type: "correc",
+    badge: "sb-correc",
+    title: "Récapitulatif — Ce qu'il faut retenir",
+    speech: `
+      <p>
+        <span class="do">OBS : Scène FICHE HTML — section "Récapitulatif" ou cam pleine</span>
+      </p>
+      <p>
+        <span class="say">"En résumé, les six points clés de ce sujet :"</span>
+      </p>
+      <ul class="steps">
+        <li><span class="sn">1</span>RLE remplace chaque suite identique par le couple <strong>(compte, valeur)</strong>.</li>
+        <li><span class="sn">2</span>La liste RLE n'est <strong>pas toujours plus courte</strong> — pire cas : ×2.</li>
+        <li><span class="sn">3</span>Le décodage lit les couples <strong>deux par deux</strong> : toujours <code>i += 2</code>.</li>
+        <li><span class="sn">4</span>La limite de 255 vient du <strong>stockage sur un octet</strong>.</li>
+        <li><span class="sn">5</span>La solution : <strong>découper les grandes plages</strong> en sous-plages de 255 max.</li>
+        <li><span class="sn">6</span>Le <strong>décodeur reste identique</strong> — le découpage est transparent.</li>
+      </ul>
+    `
+  },
+
+  // ── OUTRO ──────────────────────────────────
+  {
+    segment: "🎬 Outro",
+    type: "outro",
+    badge: "sb-outro",
+    title: "Générique de fin",
+    speech: `
+      <p>
+        <span class="do">OBS : Scène CAM PLEINE</span>
+      </p>
+      <p>
+        <span class="say">"Voilà pour le Sujet 1 — Codage RLE.
+        On a fait les quatre questions, on a volontairement cassé le code pour comprendre les pièges,
+        et on a vu pourquoi la version v2 est indispensable sur les grandes images."</span>
+      </p>
+      <p>
+        <span class="say">"La fiche de révision complète avec tous les indices et les corrections est dans la description.
+        Si ce format vous aide, laissez un commentaire — ça m'aide à préparer les 22 sujets suivants.
+        À bientôt pour le Sujet 2 !"</span>
+      </p>
+      <p>
+        <span class="do">OBS : Scène TITRE FINAL animé avec la grille des 23 sujets</span>
+      </p>
+      <p class="speech" style="font-size:.85em; color:var(--gris);">
+        Durée cible de ce segment : ~45 sec
+      </p>
+    `
+  }
+
+];
+
+// ─────────────────────────────────────────────
+// MOTEUR
+// ─────────────────────────────────────────────
+let current = 0;
+let timerOn = false;
+let timerSec = 0;
+let timerInterval = null;
+
+const slidesEl = document.getElementById('slides');
+const stripEl  = document.getElementById('strip');
+const tbBar    = document.getElementById('tbBar');
+const tbCounter= document.getElementById('tbCounter');
+const tbTimer  = document.getElementById('tbTimer');
+const navTitle = document.getElementById('navTitle');
+const navSub   = document.getElementById('navSub');
+const btnPrev  = document.getElementById('btnPrev');
+const btnNext  = document.getElementById('btnNext');
+
+// Build slides + strip
+SLIDES.forEach((s, i) => {
+  // Slide
+  const div = document.createElement('div');
+  div.className = 'slide';
+  div.id = 'slide-' + i;
+  div.innerHTML = `
+    <div class="slide-type" style="color:var(--gris)">
+      <span>${s.type.toUpperCase()}</span>
+      <span class="seg-badge ${s.badge}">${s.segment}</span>
+    </div>
+    <div class="slide-title">${s.title}</div>
+    <div class="speech">${s.speech}</div>
+  `;
+  slidesEl.appendChild(div);
+
+  // Strip item
+  const seg = document.createElement('div');
+  seg.className = 'seg-item';
+  seg.id = 'seg-' + i;
+  seg.innerHTML = `<span class="si-num">${String(i+1).padStart(2,'0')}</span>${s.segment}`;
+  seg.onclick = () => goTo(i);
+  stripEl.appendChild(seg);
+});
+
+function goTo(idx) {
+  if (idx < 0 || idx >= SLIDES.length) return;
+
+  // Deactivate old
+  const oldSlide = document.getElementById('slide-' + current);
+  const oldSeg   = document.getElementById('seg-' + current);
+  if (oldSlide) oldSlide.classList.remove('active');
+  if (oldSeg)   oldSeg.classList.remove('active');
+
+  current = idx;
+
+  // Activate new
+  const newSlide = document.getElementById('slide-' + current);
+  const newSeg   = document.getElementById('seg-' + current);
+  if (newSlide) newSlide.classList.add('active');
+  if (newSeg) {
+    newSeg.classList.add('active');
+    newSeg.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+  }
+
+  // Update UI
+  const pct = Math.round((current + 1) / SLIDES.length * 100);
+  tbBar.style.width = pct + '%';
+  tbCounter.textContent = (current + 1) + ' / ' + SLIDES.length;
+  navTitle.textContent = SLIDES[current].title;
+  navSub.textContent = SLIDES[current].segment;
+
+  btnPrev.disabled = (current === 0);
+  btnNext.disabled = (current === SLIDES.length - 1);
+}
+
+// Timer
+function startTimer() {
+  if (timerInterval) return;
+  timerInterval = setInterval(() => {
+    timerSec++;
+    const m = Math.floor(timerSec / 60);
+    const s = timerSec % 60;
+    tbTimer.textContent = m + ':' + String(s).padStart(2,'0');
+  }, 1000);
+  timerOn = true;
+}
+function stopTimer() {
+  clearInterval(timerInterval);
+  timerInterval = null;
+  timerOn = false;
+}
+function resetTimer() {
+  stopTimer();
+  timerSec = 0;
+  tbTimer.textContent = '0:00';
+}
+
+// Event listeners
+btnPrev.addEventListener('click', () => goTo(current - 1));
+btnNext.addEventListener('click', () => goTo(current + 1));
+
+document.addEventListener('keydown', e => {
+  const overlay = document.getElementById('scOverlay');
+  if (overlay.classList.contains('visible')) {
+    if (e.key === '?' || e.key === 'Escape') overlay.classList.remove('visible');
+    return;
+  }
+  if (e.key === 'ArrowRight' || e.key === ' ') { e.preventDefault(); goTo(current + 1); }
+  if (e.key === 'ArrowLeft')  { e.preventDefault(); goTo(current - 1); }
+  if (e.key === 'Home')       { e.preventDefault(); goTo(0); }
+  if (e.key === 'End')        { e.preventDefault(); goTo(SLIDES.length - 1); }
+  if (e.key === 't' || e.key === 'T') {
+    timerOn ? stopTimer() : startTimer();
+    tbTimer.style.color = timerOn ? 'var(--or2)' : 'var(--vert)';
+  }
+  if (e.key === 'r' || e.key === 'R') { resetTimer(); tbTimer.style.color = 'var(--gris)'; }
+  if (e.key === '?') overlay.classList.add('visible');
+});
+
+// Init
+goTo(0);
+</script>
+</body>
+</html>
