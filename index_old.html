@@ -84,6 +84,12 @@
       color: #8b3a00;
     }
 
+    img {
+      width: max(50%, 400px);
+      display: block;
+      margin: 1.5rem auto;
+    }
+
     /* ── NAVIGATION ── */
     #navbar {
       position: sticky;
@@ -414,52 +420,6 @@
       color: var(--accent-or);
     }
 
-    /* ── SECTION VIDÉO ── */
-    .card-video {
-      display: flex;
-      align-items: center;
-      gap: .5rem;
-      padding-top: .55rem;
-      border-top: 1px dashed #d5dfe8;
-      margin-top: -.1rem;
-    }
-
-    .video-btn {
-      display: inline-flex;
-      align-items: center;
-      gap: .35rem;
-      font-family: 'JetBrains Mono', monospace;
-      font-size: .62rem;
-      padding: .22rem .7rem;
-      border-radius: 20px;
-      background: #fff0f0;
-      border: 1px solid #e57373;
-      color: #c62828;
-      text-decoration: none;
-      transition: all .2s;
-      white-space: nowrap;
-    }
-
-    .video-btn:hover {
-      background: #e53935;
-      border-color: #e53935;
-      color: #fff;
-    }
-
-    .video-btn svg {
-      width: 9px;
-      height: 9px;
-      fill: currentColor;
-      flex-shrink: 0;
-    }
-
-    .video-soon {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: .58rem;
-      color: #b0bcc8;
-      font-style: italic;
-    }
-
     @keyframes fadeUp {
       from {
         opacity: 0;
@@ -481,6 +441,22 @@
         font-size: 1.8rem;
       }
     }
+
+    .video-container {
+      position: relative;
+      padding-bottom: 56.25%;
+      /* ratio 16:9 */
+      height: 0;
+      overflow: hidden;
+    }
+
+    .video-container iframe {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+    }
   </style>
 </head>
 
@@ -488,7 +464,8 @@
 
   <!-- NAVBAR -->
   <nav id="navbar">
-    <a href="https://sujets.examens-concours.gouv.fr/delos/public/bgt/nsi" target="_blank">Banque nationale</a>
+    <a rel='noopener noreferrer' href="https://sujets.examens-concours.gouv.fr/delos/public/bgt/nsi"
+      target="_blank">Banque nationale</a>
     <span
       style="margin-right:0; margin-left:.5rem; background:#1a4a70; padding:.2rem .8rem; border-radius:4px; color:#fff;">BAC
       2026</span>
@@ -499,10 +476,7 @@
     <!-- HERO -->
     <div class="hero-block">
       <div class="video-container">
-        <iframe width="560" height="315" src="https://www.youtube.com/embed/B0kuXckOmQ0?si=rkl596b6bFtWtCGk"
-          title="YouTube video player" frameborder="0"
-          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-          referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+<iframe width="560" height="315" src="https://www.youtube.com/embed/B0kuXckOmQ0?si=rkl596b6bFtWtCGk" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
       </div>
       <h1>Fiches de révision<br>NSI Terminale</h1>
       <div class="hero-meta">
@@ -536,7 +510,8 @@
     <div class="grid" id="mainGrid">
 
       <!-- ── Sujet 1 ── -->
-<a class="card locked" href="sujet_1/fiche_rle_nsi_light.html" data-status="todo" style="--card-accent:#b5610a;" data-delay="5" data-video="">
+      <a rel='noopener noreferrer' class="card locked" href="sujet_1/fiche_rle_nsi_light.html" target="_blank"
+        data-status="done" style="--card-accent:#2a6496;" data-delay="0">
         <div class="card-num">SUJET 01</div>
         <div class="card-title">Traitement d'images en niveaux de gris</div>
         <div class="card-tags">
@@ -550,7 +525,8 @@
       </a>
 
       <!-- ── Sujet 2 ── -->
-<a class="card locked" href="sujet_2/fiche_salaires_nsi.html" data-status="todo" style="--card-accent:#b5610a;" data-delay="5" data-video="">
+      <a rel='noopener noreferrer' class="card locked" href="sujet_2/fiche_salaires_nsi.html" target="_blank"
+        data-status="done" style="--card-accent:#b5610a;" data-delay="1">
         <div class="card-num">SUJET 02</div>
         <div class="card-title">Écarts de salaires femmes / hommes</div>
         <div class="card-tags">
@@ -565,7 +541,8 @@
       </a>
 
       <!-- ── Sujet 3 ── -->
-<a class="card locked" href="sujet_3/fiche_cycle_menstruel_nsi.html" data-status="todo" style="--card-accent:#b5610a;" data-delay="5" data-video="">
+      <a rel='noopener noreferrer' class="card locked" href="sujet_3/fiche_cycle_menstruel_nsi.html" target="_blank"
+        data-status="done" style="--card-accent:#2e7d32;" data-delay="2">
         <div class="card-num">SUJET 03</div>
         <div class="card-title">Cycle menstruel — phases et ovulation</div>
         <div class="card-tags">
@@ -580,7 +557,8 @@
       </a>
 
       <!-- ── Sujet 4 ── -->
-<a class="card locked" href="sujet_4/fiche_plantes_nsi.html" data-status="todo" style="--card-accent:#b5610a;" data-delay="5" data-video="">
+      <a rel='noopener noreferrer' class="card locked" href="sujet_4/fiche_plantes_nsi.html" target="_blank"
+        data-status="done" style="--card-accent:#7b3fa8;" data-delay="3">
         <div class="card-num">SUJET 04</div>
         <div class="card-title">Croissance de plantes en serre</div>
         <div class="card-tags">
@@ -595,7 +573,8 @@
       </a>
 
       <!-- ── Sujet 5 ── -->
-        <a class="card locked" href="sujet_5/fiche_empreinte_nsi.html" data-status="todo" style="--card-accent:#b5610a;" data-delay="5" data-video="">
+      <a rel='noopener noreferrer' class="card locked" href="sujet_5/fiche_empreinte_nsi.html" target="_blank"
+        data-status="done" style="--card-accent:#2a6496;" data-delay="4">
         <div class="card-num">SUJET 05</div>
         <div class="card-title">Empreinte carbone — simulateur nosgestesclimat</div>
         <div class="card-tags">
@@ -610,7 +589,7 @@
       </a>
 
       <!-- ── Sujet 6 ── -->
-      <a class="card locked" href="#" data-status="todo" style="--card-accent:#b5610a;" data-delay="5" data-video="">
+      <a class="card locked" href="#" data-status="todo" style="--card-accent:#b5610a;" data-delay="5">
         <div class="card-num">SUJET 06</div>
         <div class="card-title">Recettes de smoothies — Maison des lycéens</div>
         <div class="card-tags">
@@ -625,7 +604,7 @@
       </a>
 
       <!-- ── Sujet 7 ── -->
-      <a class="card locked" href="#" data-status="todo" style="--card-accent:#2e7d32;" data-delay="6" data-video="">
+      <a class="card locked" href="#" data-status="todo" style="--card-accent:#2e7d32;" data-delay="6">
         <div class="card-num">SUJET 07</div>
         <div class="card-title">Coccinelles et régulation des pucerons</div>
         <div class="card-tags">
@@ -640,7 +619,7 @@
       </a>
 
       <!-- ── Sujet 8 ── -->
-      <a class="card locked" href="#" data-status="todo" style="--card-accent:#7b3fa8;" data-delay="7" data-video="">
+      <a class="card locked" href="#" data-status="todo" style="--card-accent:#7b3fa8;" data-delay="7">
         <div class="card-num">SUJET 08</div>
         <div class="card-title">Nombres flottants et valeurs monétaires</div>
         <div class="card-tags">
@@ -655,7 +634,7 @@
       </a>
 
       <!-- ── Sujet 9 ── -->
-      <a class="card locked" href="#" data-status="todo" style="--card-accent:#2a6496;" data-delay="8" data-video="">
+      <a class="card locked" href="#" data-status="todo" style="--card-accent:#2a6496;" data-delay="8">
         <div class="card-num">SUJET 09</div>
         <div class="card-title">Fichiers OBJ — modélisation 3D</div>
         <div class="card-tags">
@@ -670,7 +649,7 @@
       </a>
 
       <!-- ── Sujet 10 ── -->
-      <a class="card locked" href="#" data-status="todo" style="--card-accent:#b5610a;" data-delay="9" data-video="">
+      <a class="card locked" href="#" data-status="todo" style="--card-accent:#b5610a;" data-delay="9">
         <div class="card-num">SUJET 10</div>
         <div class="card-title">Compteurs d'eau connectés</div>
         <div class="card-tags">
@@ -685,7 +664,7 @@
       </a>
 
       <!-- ── Sujet 11 ── -->
-      <a class="card locked" href="#" data-status="todo" style="--card-accent:#2e7d32;" data-delay="10" data-video="">
+      <a class="card locked" href="#" data-status="todo" style="--card-accent:#2e7d32;" data-delay="10">
         <div class="card-num">SUJET 11</div>
         <div class="card-title">Le renard — habitat et protection (loi Biodiversité)</div>
         <div class="card-tags">
@@ -700,7 +679,7 @@
       </a>
 
       <!-- ── Sujet 12 ── -->
-      <a class="card locked" href="#" data-status="todo" style="--card-accent:#7b3fa8;" data-delay="11" data-video="">
+      <a class="card locked" href="#" data-status="todo" style="--card-accent:#7b3fa8;" data-delay="11">
         <div class="card-num">SUJET 12</div>
         <div class="card-title">Refuge de renards — base de données CSV</div>
         <div class="card-tags">
@@ -715,7 +694,7 @@
       </a>
 
       <!-- ── Sujet 13 ── -->
-      <a class="card locked" href="#" data-status="todo" style="--card-accent:#2a6496;" data-delay="12" data-video="">
+      <a class="card locked" href="#" data-status="todo" style="--card-accent:#2a6496;" data-delay="12">
         <div class="card-num">SUJET 13</div>
         <div class="card-title">Ballon sonde météo — données atmosphériques</div>
         <div class="card-tags">
@@ -730,7 +709,7 @@
       </a>
 
       <!-- ── Sujet 14 ── -->
-      <a class="card locked" href="#" data-status="todo" style="--card-accent:#b5610a;" data-delay="13" data-video="">
+      <a class="card locked" href="#" data-status="todo" style="--card-accent:#b5610a;" data-delay="13">
         <div class="card-num">SUJET 14</div>
         <div class="card-title">Normes de construction et évacuation des bâtiments</div>
         <div class="card-tags">
@@ -745,7 +724,7 @@
       </a>
 
       <!-- ── Sujet 15 ── -->
-      <a class="card locked" href="#" data-status="todo" style="--card-accent:#2e7d32;" data-delay="14" data-video="">
+      <a class="card locked" href="#" data-status="todo" style="--card-accent:#2e7d32;" data-delay="14">
         <div class="card-num">SUJET 15</div>
         <div class="card-title">Gestion clients et animaux — cabinet vétérinaire</div>
         <div class="card-tags">
@@ -760,7 +739,7 @@
       </a>
 
       <!-- ── Sujet 16 ── -->
-      <a class="card locked" href="#" data-status="todo" style="--card-accent:#7b3fa8;" data-delay="15" data-video="">
+      <a class="card locked" href="#" data-status="todo" style="--card-accent:#7b3fa8;" data-delay="15">
         <div class="card-num">SUJET 16</div>
         <div class="card-title">Évolution des températures et warming stripes</div>
         <div class="card-tags">
@@ -775,7 +754,7 @@
       </a>
 
       <!-- ── Sujet 17 ── -->
-      <a class="card locked" href="#" data-status="todo" style="--card-accent:#2a6496;" data-delay="16" data-video="">
+      <a class="card locked" href="#" data-status="todo" style="--card-accent:#2a6496;" data-delay="16">
         <div class="card-num">SUJET 17</div>
         <div class="card-title">Gestion d'un club de handball professionnel</div>
         <div class="card-tags">
@@ -789,7 +768,7 @@
       </a>
 
       <!-- ── Sujet 18 ── -->
-      <a class="card locked" href="#" data-status="todo" style="--card-accent:#b5610a;" data-delay="17" data-video="">
+      <a class="card locked" href="#" data-status="todo" style="--card-accent:#b5610a;" data-delay="17">
         <div class="card-num">SUJET 18</div>
         <div class="card-title">Températures de l'océan en Polynésie française</div>
         <div class="card-tags">
@@ -803,7 +782,7 @@
       </a>
 
       <!-- ── Sujet 19 ── -->
-      <a class="card locked" href="#" data-status="todo" style="--card-accent:#2e7d32;" data-delay="18" data-video="">
+      <a class="card locked" href="#" data-status="todo" style="--card-accent:#2e7d32;" data-delay="18">
         <div class="card-num">SUJET 19</div>
         <div class="card-title">Gestion des réserves d'eau en Polynésie française</div>
         <div class="card-tags">
@@ -817,7 +796,7 @@
       </a>
 
       <!-- ── Sujet 20 ── -->
-      <a class="card locked" href="#" data-status="todo" style="--card-accent:#7b3fa8;" data-delay="19" data-video="">
+      <a class="card locked" href="#" data-status="todo" style="--card-accent:#7b3fa8;" data-delay="19">
         <div class="card-num">SUJET 20</div>
         <div class="card-title">Numérique et émission de gaz à effet de serre</div>
         <div class="card-tags">
@@ -831,7 +810,7 @@
       </a>
 
       <!-- ── Sujet 21 ── -->
-      <a class="card locked" href="#" data-status="todo" style="--card-accent:#2a6496;" data-delay="20" data-video="">
+      <a class="card locked" href="#" data-status="todo" style="--card-accent:#2a6496;" data-delay="20">
         <div class="card-num">SUJET 21</div>
         <div class="card-title">Cartes mémoire Flashcards — support de révisions</div>
         <div class="card-tags">
@@ -845,7 +824,7 @@
       </a>
 
       <!-- ── Sujet 22 ── -->
-      <a class="card locked" href="#" data-status="todo" style="--card-accent:#b5610a;" data-delay="21" data-video="">
+      <a class="card locked" href="#" data-status="todo" style="--card-accent:#b5610a;" data-delay="21">
         <div class="card-num">SUJET 22</div>
         <div class="card-title">Génération et décodage de QR Codes</div>
         <div class="card-tags">
@@ -860,7 +839,7 @@
       </a>
 
       <!-- ── Sujet 23 ── -->
-      <a class="card locked" href="#" data-status="todo" style="--card-accent:#2e7d32;" data-delay="22" data-video="">
+      <a class="card locked" href="#" data-status="todo" style="--card-accent:#2e7d32;" data-delay="22">
         <div class="card-num">SUJET 23</div>
         <div class="card-title">Données environnementales et prévention de maladies dans les cultures</div>
         <div class="card-tags">
@@ -878,8 +857,8 @@
     <!-- FOOTER -->
     <footer>
       DarkSATHI Li &nbsp;·&nbsp; NSI Terminale 2025–2026
-      &nbsp;·&nbsp; Sujets officiels : <a href="https://sujets.examens-concours.gouv.fr/delos/public/bgt/nsi"
-        target="_blank">banque nationale</a>
+      &nbsp;·&nbsp; Sujets officiels : <a rel="noopener noreferrer"
+        href="https://sujets.examens-concours.gouv.fr/delos/public/bgt/nsi" target="_blank">banque nationale</a>
     </footer>
 
   </div><!-- /container-content -->
@@ -887,21 +866,6 @@
   <!-- SCRIPTS -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
   <script>
-    /* ── Section vidéo dynamique ── */
-    document.querySelectorAll('.card[data-video]').forEach(card => {
-      const url = (card.dataset.video || '').trim();
-      const section = document.createElement('div');
-      section.className = 'card-video';
-      if (url) {
-        section.innerHTML = `<a class="video-btn" href="${url}" target="_blank" rel="noopener" onclick="event.stopPropagation()">
-        <svg viewBox="0 0 10 10"><polygon points="2,1 9,5 2,9"/></svg>▶ Voir la vidéo
-      </a>`;
-      } else {
-        section.innerHTML = `<span class="video-soon">🎬 Vidéo à venir…</span>`;
-      }
-      card.appendChild(section);
-    });
-
     /* Animation staggered */
     document.querySelectorAll('.card').forEach((card, i) => {
       card.style.animationDelay = (i * 0.04) + 's';
