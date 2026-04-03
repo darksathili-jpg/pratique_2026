@@ -1,0 +1,1401 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Fiche – Empreinte carbone | NSI Terminale | BAC 2026</title>
+
+  <!-- Bootstrap 5.3.3 -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Rubik+Dirt&family=Source+Serif+4:ital,opsz,wght@0,8..60,300..900;1,8..60,300..900&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+
+  <!-- MathJax v3 -->
+  <script>
+    MathJax = {
+      tex: { inlineMath: [['\\(', '\\)'], ['$', '$']] },
+      options: { skipHtmlTags: ['script','noscript','style','textarea','pre'] }
+    };
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js" async></script>
+
+  <!-- PyScript 2026.3.1 -->
+  <script type="module" src="https://pyscript.net/releases/2026.3.1/core.js"></script>
+
+  <style>
+    :root {
+      --bg-main:    #f8f9fb;
+      --bg-panel:   #eef1f5;
+      --bg-cours:   #ffffff;
+      --accent:     #2a6496;
+      --py-editor-input: white;
+      --accent-or:  #b5610a;
+      --accent-vert:#2e7d32;
+      --text-main:  #1a1a1a;
+      --text-muted: #5a6470;
+      --rouge:      #c0392b;
+      --border-radius: 8px;
+    }
+
+    /* ── BASE ── */
+    *, *::before, *::after { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      background-color: var(--bg-main);
+      color: var(--text-main);
+      font-family: 'Source Serif 4', Georgia, serif;
+      font-size: 1.1rem;
+      line-height: 1.8;
+      margin: 0;
+      padding-bottom: 4rem;
+    }
+
+    h1, h2, h3, h4 {
+      font-family: 'Rubik Dirt', cursive;
+      color: var(--accent);
+      letter-spacing: 0.02em;
+    }
+
+    h1 { font-size: 2.2rem; color: #111; }
+    h2 { font-size: 1.55rem; border-bottom: 2px solid var(--accent); padding-bottom: .3rem; margin-top: 2.5rem; }
+    h3 { font-size: 1.25rem; color: var(--accent-or); margin-top: 1.8rem; }
+    h4 { font-size: 1.05rem; color: var(--accent-vert); }
+
+    p { margin-bottom: 1rem; }
+
+    code, pre, .mono {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.9em;
+    }
+
+    code {
+      background: #e8edf2;
+      padding: 2px 6px;
+      border-radius: 4px;
+      color: #8b3a00;
+    }
+
+    pre {
+      background: #f0f3f7;
+      border-left: 3px solid var(--accent);
+      padding: 1rem 1.2rem;
+      border-radius: var(--border-radius);
+      overflow-x: auto;
+      color: #1a1a1a;
+    }
+
+    a { color: var(--accent); text-decoration: underline dotted; }
+    a:hover { color: var(--accent-or); }
+
+    /* ── NAVIGATION ── */
+    #navbar {
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      background: #2a6496;
+      border-bottom: 2px solid #1a4a70;
+      padding: .5rem 1.5rem;
+      display: flex;
+      gap: .5rem;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    #navbar span {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: .8rem;
+      color: #ccddf0;
+      margin-right: auto;
+    }
+
+    #navbar a {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: .8rem;
+      color: #fff;
+      text-decoration: none;
+      padding: .25rem .7rem;
+      border: 1px solid #ccddf0;
+      border-radius: 4px;
+      transition: background .2s;
+    }
+
+    #navbar a:hover { background: #1a4a70; color: #fff; }
+
+    /* ── CONTENU ── */
+    .container-content {
+      max-width: 860px;
+      margin: 0 auto;
+      padding: 2rem 1.5rem;
+    }
+
+    /* ── ENCADRÉS ── */
+    .encadre,
+    .encadre-conseil,
+    .encadre-indice,
+    .encadre-question {
+      background: #ffffff;
+      border-radius: var(--border-radius);
+      padding: 1.1rem 1.4rem;
+      margin: 1.4rem 0;
+      position: relative;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+    }
+
+    .encadre          { border-left: 4px solid var(--accent); }
+    .encadre-conseil  { border-left: 4px solid var(--accent-or); background: #fff8f0; }
+    .encadre-indice   { border-left: 4px solid var(--accent-vert); background: #f0faf0; }
+    .encadre-question { border-left: 4px solid #7b3fa8; border-top: 1px solid #c8a8e820; background: #faf5ff; }
+
+    /* ── ENCADRÉ PIÈGE ── */
+    .encadre-piege {
+      background: #fff5f5;
+      border-left: 4px solid var(--rouge);
+      border-radius: var(--border-radius);
+      padding: 1rem 1.4rem;
+      margin: 1.2rem 0;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+    }
+
+    .encadre-prefix {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: .72rem;
+      font-variant: small-caps;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      margin-bottom: .4rem;
+      display: block;
+    }
+
+    .encadre          .encadre-prefix { color: var(--accent); }
+    .encadre-conseil  .encadre-prefix { color: var(--accent-or); }
+    .encadre-indice   .encadre-prefix { color: var(--accent-vert); }
+    .encadre-question .encadre-prefix { color: #7b3fa8; }
+    .encadre-piege    .encadre-prefix { color: var(--rouge); }
+
+    /* ── BOUTONS ── */
+    .btn-tp, .btn-tp-or, .btn-tp-vert, .btn-secondaire {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: .82rem;
+      border: none;
+      border-radius: 5px;
+      padding: .45rem 1.1rem;
+      cursor: pointer;
+      transition: opacity .2s, transform .1s;
+      margin: .3rem .2rem;
+    }
+
+    .btn-tp         { background: var(--accent);      color: #fff; }
+    .btn-tp-or      { background: var(--accent-or);   color: #fff; }
+    .btn-tp-vert    { background: var(--accent-vert); color: #fff; }
+    .btn-secondaire { background: #eef1f5; border: 1px solid var(--accent); color: var(--text-main); }
+
+    .btn-tp:hover, .btn-tp-or:hover, .btn-tp-vert:hover, .btn-secondaire:hover {
+      opacity: .85; transform: translateY(-1px);
+    }
+
+    /* ── BADGE QUESTION ── */
+    .badge-question {
+      display: inline-block;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: .8rem;
+      background: #7b3fa8;
+      color: #fff;
+      border-radius: 4px;
+      padding: .15rem .7rem;
+      margin-right: .5rem;
+      vertical-align: middle;
+    }
+
+    /* ── INDICES / CORRECTIONS CACHÉS ── */
+    .indice-bloc    { display: none; }
+    .correction-bloc { display: none; }
+    .indice-bloc.visible    { display: block; }
+    .correction-bloc.visible { display: block; }
+
+    /* ── SOMMAIRE ── */
+    #sommaire ol {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: .88rem;
+      line-height: 2.2;
+    }
+
+    #sommaire a { color: var(--accent); }
+    #sommaire a:hover { color: var(--accent-or); }
+
+    /* ── TABLEAU ── */
+    .table-donnees {
+      border-collapse: collapse;
+      width: 100%;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: .82rem;
+      margin: 1rem 0;
+    }
+
+    .table-donnees th {
+      background: #dce8f2;
+      color: var(--accent);
+      border: 1px solid var(--accent);
+      padding: .45rem .8rem;
+      text-align: left;
+    }
+
+    .table-donnees td {
+      border: 1px solid #c8d8e8;
+      padding: .4rem .8rem;
+      color: var(--text-main);
+    }
+
+    .table-donnees tr:nth-child(even) td { background: #f0f5fa; }
+
+    /* ── ARBRE JSON ── */
+    .json-tree {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: .85rem;
+      line-height: 1.8;
+      background: #f0f3f7;
+      border-radius: var(--border-radius);
+      padding: 1rem 1.4rem;
+      border-left: 3px solid var(--accent-or);
+    }
+
+    .json-key   { color: var(--accent); }
+    .json-num   { color: var(--accent-vert); }
+    .json-brace { color: var(--text-muted); }
+    .json-nest  { padding-left: 1.4rem; border-left: 1px dashed #c8d8e8; margin-left: .4rem; }
+
+    /* ── SÉPARATEUR ── */
+    .sep { border: none; border-top: 1px dashed var(--accent); margin: 2.5rem 0; opacity: .4; }
+
+    /* ── RETOUR EN HAUT ── */
+    #btn-top {
+      position: fixed;
+      bottom: 1.5rem;
+      right: 1.5rem;
+      z-index: 999;
+      background: var(--accent);
+      color: #fff;
+      border: none;
+      border-radius: 50%;
+      width: 44px;
+      height: 44px;
+      font-size: 1.2rem;
+      cursor: pointer;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      font-family: 'JetBrains Mono', monospace;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.18);
+      transition: opacity .2s;
+    }
+
+    #btn-top:hover { opacity: .8; }
+
+    /* ── BARRE CO2 ── */
+    .barre-co2 {
+      display: flex;
+      align-items: center;
+      gap: .7rem;
+      margin: .35rem 0;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: .82rem;
+    }
+
+    .barre-co2-label { width: 160px; color: var(--text-muted); flex-shrink: 0; }
+    .barre-co2-track { flex: 1; background: #dce8f2; border-radius: 4px; height: 14px; overflow: hidden; }
+    .barre-co2-fill  { height: 100%; border-radius: 4px; background: var(--accent); transition: width .5s; }
+    .barre-co2-val   { width: 55px; text-align: right; color: var(--accent-or); flex-shrink: 0; }
+
+    /* ── ANNOTATION CODE ── */
+    .code-bug { color: var(--rouge); }
+    .code-ok  { color: var(--accent-vert); }
+  </style>
+</head>
+<body>
+
+<!-- Bootstrap PyScript — force l'initialisation de Pyodide -->
+<div style="display:none">
+  <script type="py" env="empreinte">pass</script>
+</div>
+
+<!-- RETOUR EN HAUT -->
+<button id="btn-top" title="Retour en haut" aria-label="Retour en haut">▲</button>
+
+<!-- NAVIGATION STICKY -->
+<nav id="navbar">
+  <span>NSI Terminale – Empreinte carbone</span>
+  <a href="#s0">Intro</a>
+  <a href="#s1">Rappels</a>
+  <a href="#s2">Les données</a>
+  <a href="#q1">Q1</a>
+  <a href="#q2">Q2</a>
+  <a href="#q3">Q3</a>
+  <a href="#q4">Q4</a>
+  <a href="#pieges">Pièges</a>
+</nav>
+
+<!-- CONTENU PRINCIPAL -->
+<div class="container-content">
+
+  <!-- EN-TÊTE -->
+  <div style="text-align:center; padding: 2rem 0 1rem;">
+    <div style="font-family:'JetBrains Mono',monospace; font-size:.8rem; color:var(--text-muted); margin-bottom:.5rem;">
+      BAC NSI 2026 — Sujet n°5 — Partie pratique
+    </div>
+    <h1>Empreinte carbone<br>
+      <span style="font-size:1.1rem; color:var(--accent); font-family:'Source Serif 4',serif; font-style:italic; font-weight:300;">
+        Dictionnaires imbriqués · Récursivité · Tests
+      </span>
+    </h1>
+    <div style="font-family:'JetBrains Mono',monospace; font-size:.8rem; color:var(--text-muted); margin-top:.5rem;">
+      Terminale NSI &nbsp;·&nbsp; Algorithmique &amp; Programmation &nbsp;·&nbsp; Structures de données
+    </div>
+  </div>
+
+  <hr class="sep">
+
+  <!-- SOMMAIRE -->
+  <section id="s0">
+    <div id="sommaire" class="encadre">
+      <span class="encadre-prefix">Sommaire</span>
+      <ol>
+        <li><a href="#s1">Rappels de cours — Récursivité et dictionnaires</a></li>
+        <li><a href="#s2">Les données du sujet — empreinte carbone d'Ada</a></li>
+        <li><a href="#q1">Question 1 — Somme simple d'un dictionnaire agrégé</a></li>
+        <li><a href="#q2">Question 2 — Somme récursive de dictionnaires imbriqués</a></li>
+        <li><a href="#q3">Question 3 — Analyser et corriger le bug d'<code>alerte_valeur_aberrante</code></a></li>
+        <li><a href="#q4">Question 4 — Concevoir un jeu de tests robuste</a></li>
+        <li><a href="#pieges">Pièges fréquents &amp; astuces de vérification</a></li>
+      </ol>
+    </div>
+  </section>
+
+  <hr class="sep">
+
+  <!-- SECTION 1 : RAPPELS -->
+  <section id="s1">
+    <h2>1 — Rappels : dictionnaires et récursivité</h2>
+
+    <h3>Les dictionnaires Python</h3>
+
+    <p>
+      Un dictionnaire associe des <strong>clés</strong> à des <strong>valeurs</strong>.
+      En Python, les clés sont généralement des chaînes de caractères, et les valeurs peuvent être
+      n'importe quel objet — y compris… un autre dictionnaire. C'est précisément ce que tu vas manipuler ici.
+    </p>
+
+    <div class="encadre">
+      <span class="encadre-prefix">Rappel — Opérations de base sur un dictionnaire</span>
+      <pre style="margin:.3rem 0"><code># Accès à une valeur
+d = {"Logement": 2660, "Transport": 708}
+print(d["Logement"])      # 2660
+
+# Parcours clé/valeur
+for cle, val in d.items():
+    print(cle, "→", val)
+
+# Tester si une valeur est un dictionnaire
+isinstance(val, dict)     # True ou False</code></pre>
+    </div>
+
+    <h3>Rappel sur la récursivité</h3>
+
+    <p>
+      Une fonction est <strong>récursive</strong> quand elle s'appelle elle-même.
+      Pour éviter une boucle infinie, toute fonction récursive doit comporter :
+    </p>
+
+    <div class="encadre">
+      <span class="encadre-prefix">Structure d'une fonction récursive</span>
+      <ul style="margin:0">
+        <li>
+          Un <strong>cas de base</strong> — la situation la plus simple, résolue sans appel récursif.
+          C'est la condition d'arrêt.
+        </li>
+        <li>
+          Un <strong>appel récursif</strong> — la fonction se rappelle sur un problème
+          <em>strictement plus petit</em>, garantissant qu'on atteindra le cas de base.
+        </li>
+      </ul>
+    </div>
+
+    <div class="encadre-conseil">
+      <span class="encadre-prefix">Exemple — Somme récursive d'une liste</span>
+      <pre style="margin:.3rem 0"><code>def somme(liste):
+    if len(liste) == 0:     # cas de base : liste vide → somme = 0
+        return 0
+    return liste[0] + somme(liste[1:])   # appel récursif sur le reste</code></pre>
+      <p style="margin:.5rem 0 0">
+        Pour <code>somme([3, 1, 4])</code>, Python calcule :
+        <code>3 + somme([1, 4])</code> → <code>3 + 1 + somme([4])</code>
+        → <code>3 + 1 + 4 + somme([])</code> → <code>3 + 1 + 4 + 0 = 8</code>.
+      </p>
+    </div>
+
+    <h3>Récursivité sur des dictionnaires imbriqués</h3>
+
+    <p>
+      Quand les <em>valeurs</em> d'un dictionnaire peuvent elles-mêmes être des dictionnaires,
+      la récursivité est l'outil naturel : si la valeur est un dictionnaire, on rappelle la fonction
+      sur ce sous-dictionnaire ; sinon, on traite la valeur directement.
+    </p>
+
+    <div class="encadre-conseil">
+      <span class="encadre-prefix">Schéma général</span>
+      <pre style="margin:.3rem 0"><code>def traiter(dico):
+    resultat = 0
+    for cle, valeur in dico.items():
+        if isinstance(valeur, dict):     # valeur = sous-dictionnaire
+            resultat += traiter(valeur)  # appel récursif
+        else:                            # valeur = nombre
+            resultat += valeur           # cas de base
+    return resultat</code></pre>
+      <p style="margin:.5rem 0 0">
+        À chaque appel récursif, on « descend » d'un niveau dans l'arborescence.
+        Le cas de base est atteint quand la valeur n'est plus un dictionnaire — c'est une feuille de l'arbre.
+      </p>
+    </div>
+  </section>
+
+  <hr class="sep">
+
+  <!-- SECTION 2 : LES DONNÉES -->
+  <section id="s2">
+    <h2>2 — Les données du sujet</h2>
+
+    <p>
+      Ada a utilisé le simulateur <em>nosgestesclimat.fr</em> pour estimer son empreinte carbone annuelle.
+      Les résultats lui sont fournis sous deux formes.
+    </p>
+
+    <h3>Forme agrégée — <code>empreinte_ada_agr.json</code></h3>
+
+    <p>
+      La version simplifiée : un dictionnaire à un seul niveau, une valeur entière (en kg de CO₂) par grande catégorie.
+    </p>
+
+    <div class="encadre">
+      <span class="encadre-prefix">Contenu de empreinte_ada_agr.json</span>
+      <pre style="margin:.3rem 0"><code>{
+    "Logement":           2660,
+    "Alimentation":       1500,
+    "Transport":           708,
+    "Consommation":        893,
+    "Services societaux": 1491
+}</code></pre>
+      <p style="margin:.7rem 0 0; font-size:.9rem; color:var(--text-muted)">
+        Total : 2660 + 1500 + 708 + 893 + 1491 = <strong style="color:var(--accent-or)">7 252 kg</strong> de CO₂ par an.
+      </p>
+    </div>
+
+    <!-- Visualisation barres -->
+    <div class="encadre-conseil">
+      <span class="encadre-prefix">Visualisation — Répartition de l'empreinte d'Ada</span>
+      <div style="margin:.5rem 0;">
+        <div class="barre-co2">
+          <span class="barre-co2-label">Logement</span>
+          <div class="barre-co2-track"><div class="barre-co2-fill" style="width:100%"></div></div>
+          <span class="barre-co2-val">2 660 kg</span>
+        </div>
+        <div class="barre-co2">
+          <span class="barre-co2-label">Alimentation</span>
+          <div class="barre-co2-track"><div class="barre-co2-fill" style="width:56%"></div></div>
+          <span class="barre-co2-val">1 500 kg</span>
+        </div>
+        <div class="barre-co2">
+          <span class="barre-co2-label">Services soc.</span>
+          <div class="barre-co2-track"><div class="barre-co2-fill" style="width:56%"></div></div>
+          <span class="barre-co2-val">1 491 kg</span>
+        </div>
+        <div class="barre-co2">
+          <span class="barre-co2-label">Consommation</span>
+          <div class="barre-co2-track"><div class="barre-co2-fill" style="width:34%"></div></div>
+          <span class="barre-co2-val">893 kg</span>
+        </div>
+        <div class="barre-co2">
+          <span class="barre-co2-label">Transport</span>
+          <div class="barre-co2-track"><div class="barre-co2-fill" style="width:27%"></div></div>
+          <span class="barre-co2-val">708 kg</span>
+        </div>
+      </div>
+    </div>
+
+    <h3>Forme détaillée — <code>empreinte_ada.json</code></h3>
+
+    <p>
+      La version complète : les catégories sont décomposées en sous-catégories,
+      elles-mêmes parfois décomposées encore. On obtient un dictionnaire <strong>imbriqué</strong>
+      — une arborescence dont les « feuilles » sont les valeurs numériques.
+    </p>
+
+    <div class="encadre">
+      <span class="encadre-prefix">Extrait de empreinte_ada.json — structure imbriquée</span>
+      <div class="json-tree">
+        <span class="json-brace">{</span><br>
+        &nbsp;&nbsp;<span class="json-key">"Logement"</span>: <span class="json-brace">{</span>
+        <div class="json-nest">
+          <span class="json-key">"Energie"</span>: <span class="json-brace">{</span>
+          <div class="json-nest">
+            <span class="json-key">"Electricite"</span>: <span class="json-num">206</span>,<br>
+            <span class="json-key">"Cuisson"</span>: <span class="json-num">105</span>,<br>
+            <span class="json-key">"Chauffage individuel"</span>: <span class="json-num">1500</span>
+          </div>
+          <span class="json-brace">}</span>,<br>
+          <span class="json-key">"Construction"</span>: <span class="json-num">650</span>,<br>
+          <span class="json-key">"Location"</span>: <span class="json-num">37</span>,<br>
+          <span class="json-key">"Ameublement"</span>: <span class="json-num">162</span>
+        </div>
+        <span class="json-brace">}</span>,<br>
+        &nbsp;&nbsp;<span class="json-key">"Alimentation"</span>: <span class="json-brace">{</span>
+        <div class="json-nest">
+          <span class="json-key">"Repas"</span>: <span class="json-brace">{</span>
+          <div class="json-nest">
+            <span class="json-key">"Viande"</span>: <span class="json-brace">{</span>
+            <div class="json-nest">
+              <span class="json-key">"Blanche"</span>: <span class="json-num">296</span>,<br>
+              <span class="json-key">"Rouge"</span>: <span class="json-num">814</span>
+            </div>
+            <span class="json-brace">}</span>,<br>
+            <span class="json-key">"Autre"</span>: <span class="json-num">97</span>
+          </div>
+          <span class="json-brace">}</span>,<br>
+          <span class="json-key">"Dechets"</span>: <span class="json-num">152</span>,<br>
+          <span class="json-key">"Boisson"</span>: <span class="json-num">141</span>
+        </div>
+        <span class="json-brace">}</span>,<br>
+        &nbsp;&nbsp;<span style="color:var(--text-muted)">… (Transport, Consommation, Services societaux)</span><br>
+        <span class="json-brace">}</span>
+      </div>
+    </div>
+
+    <div class="encadre-conseil">
+      <span class="encadre-prefix">À noter — Profondeur variable</span>
+      <p style="margin:0">
+        Le chauffage individuel (1 500 kg) se trouve à la <strong>profondeur 3</strong> dans l'arbre :
+        <code>"Logement" → "Energie" → "Chauffage individuel"</code>.
+        La viande rouge (814 kg) est à la profondeur 4 :
+        <code>"Alimentation" → "Repas" → "Viande" → "Rouge"</code>.
+        Une fonction qui ne descend que d'un niveau ne les verra jamais — c'est exactement le bug de la Question 3.
+      </p>
+    </div>
+
+    <h3>Les fonctions utilitaires fournies</h3>
+
+    <table class="table-donnees">
+      <thead>
+        <tr><th>Fonction</th><th>Rôle</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>chargement_json(nom)</code></td>
+          <td>Lit un fichier JSON et renvoie le dictionnaire Python correspondant</td>
+        </tr>
+        <tr>
+          <td><code>sauvegarde_json(dico, nom)</code></td>
+          <td>Enregistre un dictionnaire dans un fichier JSON</td>
+        </tr>
+        <tr>
+          <td><code>est_dictionnaire(objet)</code></td>
+          <td>Renvoie <code>True</code> si <code>objet</code> est de type <code>dict</code></td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <hr class="sep">
+
+  <!-- QUESTION 1 -->
+  <section id="q1">
+    <h2>Question 1 — Somme des valeurs agrégées</h2>
+
+    <div class="encadre-question">
+      <span class="encadre-prefix">Énoncé — Question 1</span>
+      <p>
+        <span class="badge-question">Q1</span>
+        Compléter le corps de la fonction <code>total_simple(empreinte)</code> qui prend
+        en paramètre un dictionnaire <strong>à un seul niveau</strong> associant des catégories
+        à des entiers, et renvoie la <strong>somme</strong> de toutes les valeurs.
+      </p>
+      <p style="margin:0">
+        Ajouter ensuite un appel permettant d'afficher l'empreinte totale d'Ada
+        en chargeant le fichier agrégé.
+      </p>
+    </div>
+
+    <!-- INDICES -->
+    <div style="margin:.8rem 0;">
+      <button class="btn-tp-vert" onclick="toggleIndice('indice-q1-1', this)">▶ Indice 1 — Parcourir les valeurs</button>
+    </div>
+    <div id="indice-q1-1" class="encadre-indice indice-bloc">
+      <span class="encadre-prefix">Indice 1</span>
+      <p style="margin:0">
+        Pour n'obtenir que les valeurs d'un dictionnaire (sans les clés),
+        utilise <code>dico.values()</code>. Tu peux ensuite appeler directement
+        <code>sum()</code> dessus, ou bien faire une boucle <code>for</code>.
+      </p>
+    </div>
+
+    <div style="margin:.8rem 0;">
+      <button class="btn-tp-vert" onclick="toggleIndice('indice-q1-2', this)">▶ Indice 2 — La version en une ligne</button>
+    </div>
+    <div id="indice-q1-2" class="encadre-indice indice-bloc">
+      <span class="encadre-prefix">Indice 2</span>
+      <p style="margin:0">
+        Python permet d'écrire simplement : <code>return sum(empreinte.values())</code>.
+        Vérifie sur le dictionnaire agrégé d'Ada : la somme doit valoir
+        <strong>7 252</strong> (2660 + 1500 + 708 + 893 + 1491).
+      </p>
+    </div>
+
+    <!-- ÉDITEUR -->
+    <div class="encadre" style="margin-top:1.2rem;">
+      <span class="encadre-prefix">Éditeur Python — Complète la fonction</span>
+      <script type="py-editor" env="empreinte">
+# Dictionnaire agrégé d'Ada (reproduit ici pour les tests)
+empreinte_ada_agr = {
+    "Logement":          2660,
+    "Alimentation":      1500,
+    "Transport":          708,
+    "Consommation":       893,
+    "Services societaux":1491
+}
+
+
+def total_simple(empreinte):
+    """Renvoie la somme des valeurs d'un dictionnaire à un seul niveau."""
+    # À toi de compléter !
+    pass
+
+
+def test_total_simple():
+    assert total_simple({"a": 1, "b": 2, "c": 3}) == 6
+    assert total_simple({"x": 100})                == 100
+    assert total_simple(empreinte_ada_agr)          == 7252
+    print("Les tests sont validés.")
+
+test_total_simple()
+      </script>
+    </div>
+
+    <!-- CORRECTION -->
+    <div style="margin:1rem 0;">
+      <button class="btn-tp-or" onclick="toggleCorrection('corr-q1', this)">&#128274; Afficher la correction</button>
+    </div>
+    <div id="corr-q1" class="correction-bloc encadre-conseil">
+      <span class="encadre-prefix">Correction — Question 1</span>
+      <script type="py-editor" env="empreinte-corr1">
+empreinte_ada_agr = {
+    "Logement":          2660,
+    "Alimentation":      1500,
+    "Transport":          708,
+    "Consommation":       893,
+    "Services societaux":1491
+}
+
+
+def total_simple(empreinte):
+    """Renvoie la somme des valeurs d'un dictionnaire à un seul niveau."""
+    return sum(empreinte.values())
+
+
+def test_total_simple():
+    assert total_simple({"a": 1, "b": 2, "c": 3}) == 6
+    assert total_simple({"x": 100})                == 100
+    assert total_simple(empreinte_ada_agr)          == 7252
+    print("Les tests sont validés.")
+
+test_total_simple()
+
+# Affichage de l'empreinte totale d'Ada
+print(f"\nEmpreinte carbone totale d'Ada : {total_simple(empreinte_ada_agr)} kg de CO2/an")
+      </script>
+      <p style="margin-top:.8rem;">
+        <strong>Explication :</strong> <code>dico.values()</code> renvoie une vue sur toutes
+        les valeurs du dictionnaire. <code>sum()</code> les additionne en une seule expression.
+        Pour la forme agrégée, les valeurs sont toutes des entiers — pas de sous-dictionnaire —
+        donc pas besoin de récursivité ici.
+      </p>
+      <p style="margin:0;">
+        <strong>Vérification :</strong>
+        \(2660 + 1500 + 708 + 893 + 1491 = 7252\) kg de CO₂ par an.
+      </p>
+    </div>
+  </section>
+
+  <hr class="sep">
+
+  <!-- QUESTION 2 -->
+  <section id="q2">
+    <h2>Question 2 — Somme récursive des dictionnaires imbriqués</h2>
+
+    <div class="encadre-question">
+      <span class="encadre-prefix">Énoncé — Question 2</span>
+      <p>
+        <span class="badge-question">Q2</span>
+        Écrire le corps de la fonction <strong>récursive</strong> <code>total_rec(empreinte)</code>
+        qui calcule la somme de toutes les valeurs numériques présentes dans un dictionnaire
+        dont les valeurs peuvent elles-mêmes être des dictionnaires (imbrication quelconque).
+      </p>
+      <p style="margin:0">
+        Utiliser la fonction <code>est_dictionnaire(objet)</code> fournie pour tester la nature
+        de chaque valeur. Compléter les tests avec un cas proche de la structure réelle d'Ada.
+      </p>
+    </div>
+
+    <!-- INDICES -->
+    <div style="margin:.8rem 0;">
+      <button class="btn-tp-vert" onclick="toggleIndice('indice-q2-1', this)">▶ Indice 1 — Identifier les deux cas</button>
+    </div>
+    <div id="indice-q2-1" class="encadre-indice indice-bloc">
+      <span class="encadre-prefix">Indice 1</span>
+      <p>
+        Pour chaque paire <code>(cle, valeur)</code> du dictionnaire, il y a deux situations :
+      </p>
+      <ul style="margin:0">
+        <li><code>valeur</code> est un <strong>dictionnaire</strong> → appel récursif sur ce sous-dictionnaire.</li>
+        <li><code>valeur</code> est un <strong>nombre</strong> → c'est un cas de base, on l'ajoute directement.</li>
+      </ul>
+    </div>
+
+    <div style="margin:.8rem 0;">
+      <button class="btn-tp-vert" onclick="toggleIndice('indice-q2-2', this)">▶ Indice 2 — Trace sur un petit exemple</button>
+    </div>
+    <div id="indice-q2-2" class="encadre-indice indice-bloc">
+      <span class="encadre-prefix">Indice 2 — Trace d'exécution</span>
+      <p>Pour <code>{"a": {"b": 1, "c": 2}, "d": {"e": 3}}</code> :</p>
+      <pre style="margin:.3rem 0; font-size:.82rem;"><code>total_rec({"a": {"b":1,"c":2}, "d": {"e":3}})
+  → "a" est un dict → total_rec({"b":1,"c":2})
+      → "b" = 1 (nombre) → +1
+      → "c" = 2 (nombre) → +2
+      → retourne 3
+  → "d" est un dict → total_rec({"e":3})
+      → "e" = 3 (nombre) → +3
+      → retourne 3
+  → retourne 3 + 3 = 6 ✓</code></pre>
+    </div>
+
+    <!-- ÉDITEUR -->
+    <div class="encadre" style="margin-top:1.2rem;">
+      <span class="encadre-prefix">Éditeur Python — Complète la fonction récursive</span>
+      <script type="py-editor" env="empreinte-q2">
+def est_dictionnaire(objet):
+    """Teste si un objet est de type dictionnaire."""
+    return isinstance(objet, dict)
+
+
+def total_rec(empreinte):
+    """Renvoie la somme de toutes les valeurs numériques,
+    y compris dans les sous-dictionnaires imbriqués."""
+    # À toi de compléter !
+    pass
+
+
+def test_total_rec():
+    # Cas plat (pas d'imbrication)
+    assert total_rec({"a": 1, "d": 2}) == 3
+    # Un niveau d'imbrication
+    assert total_rec({"a": {"b": 1, "c": 2}, "d": {"e": 3}}) == 6
+    # Cas proche de la structure d'Ada : imbrication profonde + mélange
+    assert total_rec({"Logement": {"Energie": {"Elec": 206, "Chauf": 1500},
+                                   "Constr": 650}}) == 2356
+    print("Les tests sont validés.")
+
+test_total_rec()
+      </script>
+    </div>
+
+    <!-- CORRECTION -->
+    <div style="margin:1rem 0;">
+      <button class="btn-tp-or" onclick="toggleCorrection('corr-q2', this)">&#128274; Afficher la correction</button>
+    </div>
+    <div id="corr-q2" class="correction-bloc encadre-conseil">
+      <span class="encadre-prefix">Correction — Question 2</span>
+      <script type="py-editor" env="empreinte-corr2">
+def est_dictionnaire(objet):
+    return isinstance(objet, dict)
+
+
+def total_rec(empreinte):
+    """Renvoie la somme de toutes les valeurs numériques,
+    y compris dans les sous-dictionnaires imbriqués."""
+    total = 0
+    for cle, valeur in empreinte.items():
+        if est_dictionnaire(valeur):
+            total += total_rec(valeur)   # descente récursive
+        else:
+            total += valeur              # feuille : valeur numérique
+    return total
+
+
+def test_total_rec():
+    assert total_rec({"a": 1, "d": 2}) == 3
+    assert total_rec({"a": {"b": 1, "c": 2}, "d": {"e": 3}}) == 6
+    assert total_rec({"Logement": {"Energie": {"Elec": 206, "Chauf": 1500},
+                                   "Constr": 650}}) == 2356
+    print("Les tests sont validés.")
+
+test_total_rec()
+
+# Vérification sur les données complètes d'Ada
+empreinte_ada = {
+    "Logement":    {"Energie": {"Electricite": 206, "Cuisson": 105, "Chauffage individuel": 1500},
+                    "Construction": 650, "Location": 37, "Ameublement": 162},
+    "Alimentation":{"Repas": {"Viande": {"Blanche": 296, "Rouge": 814}, "Autre": 97},
+                    "Dechets": 152, "Boisson": 141},
+    "Transport":   {"Voiture": 563, "Avion": 92, "En commun": 29, "Velo": 10, "Train": 14},
+    "Consommation":{"Textile": 418, "Loisirs": 168, "Produits manufacturés neufs": 121,
+                    "Electronique": {"Electromenager": 70, "Numerique": 90},
+                    "Consommables": 26},
+    "Services societaux": {"Public": 1300, "Marchand": 191}
+}
+print(f"\nTotal Ada (détaillé) : {total_rec(empreinte_ada)} kg de CO2/an")
+print("(doit valoir 7 252 — identique à la forme agrégée)")
+      </script>
+      <div style="margin-top:.8rem;">
+        <p>
+          <strong>Structure de la solution :</strong> la variable <code>total</code> accumule les sommes.
+          Pour chaque paire clé/valeur, on teste si la valeur est un dictionnaire
+          (<code>est_dictionnaire</code>) — si oui, appel récursif ; si non, addition directe.
+        </p>
+        <p>
+          <strong>Vérification croisée :</strong> <code>total_rec</code> sur le dictionnaire détaillé
+          doit donner le même résultat que <code>total_simple</code> sur le dictionnaire agrégé :
+          <strong>7 252 kg</strong>. Si les deux ne concordent pas, c'est qu'une valeur est mal placée dans le JSON.
+        </p>
+        <p style="margin:0;">
+          <strong>Cas de base implicite :</strong> si le dictionnaire est vide (<code>{}</code>),
+          la boucle ne s'exécute pas et la fonction renvoie 0. Aucun test supplémentaire n'est nécessaire.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <hr class="sep">
+
+  <!-- QUESTION 3 -->
+  <section id="q3">
+    <h2>Question 3 — Analyser et corriger le bug</h2>
+
+    <div class="encadre-question">
+      <span class="encadre-prefix">Énoncé — Question 3</span>
+      <p>
+        <span class="badge-question">Q3</span>
+        La fonction <code>alerte_valeur_aberrante(empreinte, limite)</code> ci-dessous
+        est censée renvoyer <code>True</code> dès qu'une valeur numérique du dictionnaire
+        (à n'importe quelle profondeur) dépasse strictement la limite.
+      </p>
+      <p>
+        Exécutée sur le dictionnaire complet d'Ada avec <code>limite = 1000</code>,
+        elle renvoie <code>False</code> — alors que le chauffage individuel s'élève à 1 500 kg.
+      </p>
+      <p style="margin:0;">
+        Expliquer précisément l'origine de l'erreur, puis proposer une version corrigée.
+      </p>
+    </div>
+
+    <p>Voici le code fourni :</p>
+
+    <pre><code>def alerte_valeur_aberrante(empreinte, limite):
+    for categorie, valeur in empreinte.items():
+        if est_dictionnaire(valeur):
+            <span class="code-bug">return alerte_valeur_aberrante(valeur, limite)  # ← BUG</span>
+        else:
+            if valeur > limite:
+                return True
+    return False</code></pre>
+
+    <!-- INDICES -->
+    <div style="margin:.8rem 0;">
+      <button class="btn-tp-vert" onclick="toggleIndice('indice-q3-1', this)">▶ Indice 1 — Que fait return à l'intérieur d'une boucle ?</button>
+    </div>
+    <div id="indice-q3-1" class="encadre-indice indice-bloc">
+      <span class="encadre-prefix">Indice 1</span>
+      <p>
+        Quand Python rencontre <code>return</code> dans une boucle <code>for</code>,
+        il <strong>quitte immédiatement la fonction</strong> — la boucle s'arrête, même si
+        des éléments n'ont pas encore été examinés.
+      </p>
+      <p style="margin:0;">
+        Ici, dès que la <em>première</em> valeur du dictionnaire de niveau 0 est un sous-dictionnaire,
+        la fonction renvoie <em>directement</em> le résultat de l'appel récursif sur ce seul sous-dictionnaire
+        — sans jamais examiner les catégories suivantes.
+      </p>
+    </div>
+
+    <div style="margin:.8rem 0;">
+      <button class="btn-tp-vert" onclick="toggleIndice('indice-q3-2', this)">▶ Indice 2 — Trace d'exécution sur le dictionnaire d'Ada</button>
+    </div>
+    <div id="indice-q3-2" class="encadre-indice indice-bloc">
+      <span class="encadre-prefix">Indice 2 — Trace</span>
+      <p>
+        Le dictionnaire d'Ada commence par <code>"Logement"</code>, dont la valeur est un sous-dictionnaire.
+        Dès la première itération, la version buguée fait :
+      </p>
+      <pre style="font-size:.82rem; margin:.3rem 0"><code>return alerte_valeur_aberrante(empreinte["Logement"], 1000)</code></pre>
+      <p>
+        L'exécution plonge dans <code>"Logement"</code>. La première clé de ce sous-dictionnaire
+        est <code>"Energie"</code> (encore un dict), donc :
+      </p>
+      <pre style="font-size:.82rem; margin:.3rem 0"><code>return alerte_valeur_aberrante(empreinte["Logement"]["Energie"], 1000)</code></pre>
+      <p>
+        Là, <code>"Electricite"</code> = 206 ≤ 1000 (pas d'alerte),
+        <code>"Cuisson"</code> = 105 ≤ 1000 (pas d'alerte),
+        <code>"Chauffage individuel"</code> = 1500 &gt; 1000 → renvoie <code>True</code>.
+      </p>
+      <p>
+        Attends — dans ce cas précis, ça trouve bien le chauffage ! Le vrai problème
+        apparaît si la première catégorie ne contient aucune valeur aberrante :
+        la fonction renvoie <code>False</code> sans jamais regarder les autres catégories.
+      </p>
+      <p style="margin:0;">
+        Essaie avec <code>limite = 400</code> : seule la viande rouge (814), le chauffage (1500),
+        et quelques autres dépassent. La fonction buguée peut renvoyer <code>False</code>
+        si les valeurs aberrantes se trouvent dans les catégories examinées <em>après</em> le premier retour.
+      </p>
+    </div>
+
+    <!-- ÉDITEUR pour observer le bug -->
+    <div class="encadre" style="margin-top:1.2rem;">
+      <span class="encadre-prefix">Éditeur Python — Observe le comportement bugué</span>
+      <script type="py-editor" env="empreinte-q3">
+def est_dictionnaire(objet):
+    return isinstance(objet, dict)
+
+
+# ── Version BUGUÉE ──────────────────────────────────────────
+def alerte_valeur_aberrante_bug(empreinte, limite):
+    """Version défaillante — à analyser."""
+    for categorie, valeur in empreinte.items():
+        if est_dictionnaire(valeur):
+            return alerte_valeur_aberrante_bug(valeur, limite)  # BUG : return trop tôt
+        else:
+            if valeur > limite:
+                return True
+    return False
+
+
+# Dictionnaire où le bug est visible :
+# "A" contient un sous-dict sans valeur > 500
+# "B" contient un sous-dict avec une valeur > 500
+test_bug = {
+    "A": {"x": 100, "y": 200},   # max = 200, pas d'alerte
+    "B": {"z": 800},              # 800 > 500, devrait déclencher l'alerte
+}
+
+print("Avec limite = 500 :")
+print("Résultat bugué :", alerte_valeur_aberrante_bug(test_bug, 500))
+print("Résultat attendu : True (car B.z = 800 > 500)")
+print()
+print("Explication : la fonction s'arrête après 'A' et renvoie False,")
+print("sans jamais examiner 'B'.")
+      </script>
+    </div>
+
+    <!-- CORRECTION -->
+    <div style="margin:1rem 0;">
+      <button class="btn-tp-or" onclick="toggleCorrection('corr-q3', this)">&#128274; Afficher la correction</button>
+    </div>
+    <div id="corr-q3" class="correction-bloc encadre-conseil">
+      <span class="encadre-prefix">Correction — Question 3</span>
+      <p>
+        <strong>Origine du bug :</strong> la ligne
+        <code>return alerte_valeur_aberrante(valeur, limite)</code>
+        provoque un <strong>retour immédiat</strong> dès la première sous-catégorie rencontrée.
+        Si ce sous-dictionnaire ne contient pas de valeur aberrante, la fonction renvoie
+        <code>False</code> sans avoir examiné les catégories suivantes.
+      </p>
+      <p>
+        Il faut distinguer deux cas pour le résultat récursif :
+        si l'appel récursif renvoie <code>True</code>, on peut rentrer immédiatement ;
+        si il renvoie <code>False</code>, on doit <em>continuer</em> la boucle pour examiner
+        les catégories restantes.
+      </p>
+      <script type="py-editor" env="empreinte-corr3">
+def est_dictionnaire(objet):
+    return isinstance(objet, dict)
+
+
+# ── Version CORRIGÉE ────────────────────────────────────────
+def alerte_valeur_aberrante(empreinte, limite):
+    """Renvoie True si au moins une valeur dépasse limite, False sinon."""
+    for categorie, valeur in empreinte.items():
+        if est_dictionnaire(valeur):
+            if alerte_valeur_aberrante(valeur, limite):  # on ne renvoie True
+                return True                              # que si trouvé !
+        else:
+            if valeur > limite:
+                return True
+    return False   # aucune valeur aberrante trouvée dans tout le dictionnaire
+
+
+# Vérification sur le cas du bug
+test_bug = {
+    "A": {"x": 100, "y": 200},
+    "B": {"z": 800},
+}
+print("Bug corrigé, limite=500 :", alerte_valeur_aberrante(test_bug, 500))  # True
+
+# Vérification sur le dictionnaire d'Ada
+empreinte_ada = {
+    "Logement":    {"Energie": {"Electricite": 206, "Cuisson": 105, "Chauffage individuel": 1500},
+                    "Construction": 650, "Location": 37, "Ameublement": 162},
+    "Alimentation":{"Repas": {"Viande": {"Blanche": 296, "Rouge": 814}, "Autre": 97},
+                    "Dechets": 152, "Boisson": 141},
+    "Transport":   {"Voiture": 563, "Avion": 92, "En commun": 29, "Velo": 10, "Train": 14},
+    "Consommation":{"Textile": 418, "Loisirs": 168, "Produits neufs": 121,
+                    "Electronique": {"Electromenager": 70, "Numerique": 90},
+                    "Consommables": 26},
+    "Services societaux": {"Public": 1300, "Marchand": 191}
+}
+print("Ada, limite=1000 :", alerte_valeur_aberrante(empreinte_ada, 1000))  # True (chauffage = 1500)
+print("Ada, limite=1500 :", alerte_valeur_aberrante(empreinte_ada, 1500))  # False (rien > 1500)
+      </script>
+      <div style="margin-top:.8rem;">
+        <p>
+          <strong>La correction en un mot :</strong> remplacer
+          <code>return appel_recursif(...)</code>
+          par
+          <code>if appel_recursif(...): return True</code>.
+        </p>
+        <p style="margin:0;">
+          La subtilité : on ne peut rentrer immédiatement que si on a trouvé une alerte (<code>True</code>).
+          L'absence d'alerte dans un sous-dictionnaire (<code>False</code>) ne signifie pas que
+          tout le dictionnaire est correct — il faut continuer la boucle pour vérifier les autres branches.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <hr class="sep">
+
+  <!-- QUESTION 4 -->
+  <section id="q4">
+    <h2>Question 4 — Concevoir un jeu de tests robuste</h2>
+
+    <div class="encadre-question">
+      <span class="encadre-prefix">Énoncé — Question 4</span>
+      <p>
+        <span class="badge-question">Q4</span>
+        Proposer un jeu de tests pertinent pour la fonction <code>alerte_valeur_aberrante</code>
+        corrigée. Pour chaque cas de test, préciser :
+      </p>
+      <ul style="margin:0;">
+        <li>la structure du dictionnaire fourni en entrée,</li>
+        <li>le résultat attendu,</li>
+        <li>la particularité algorithmique que ce test vérifie.</li>
+      </ul>
+    </div>
+
+    <div class="encadre-conseil">
+      <span class="encadre-prefix">Méthode — Comment concevoir de bons tests ?</span>
+      <p>
+        Un bon jeu de tests doit couvrir les <strong>cas limites</strong> (valeur exactement égale à la limite,
+        dictionnaire vide, un seul élément) et les <strong>cas structuraux</strong> (valeur aberrante en surface,
+        en profondeur, dans la dernière branche). Il faut aussi un cas où la réponse est <code>False</code>
+        pour s'assurer que la fonction ne renvoie pas toujours <code>True</code>.
+      </p>
+      <p style="margin:0;">
+        Réfléchis à ce qui pourrait casser la fonction : une valeur exactement égale à la limite,
+        une valeur aberrante dans la dernière catégorie (pas la première), une imbrication profonde…
+      </p>
+    </div>
+
+    <!-- ÉDITEUR -->
+    <div class="encadre" style="margin-top:1.2rem;">
+      <span class="encadre-prefix">Éditeur Python — Rédige et exécute ton jeu de tests</span>
+      <script type="py-editor" env="empreinte-q4">
+def est_dictionnaire(objet):
+    return isinstance(objet, dict)
+
+
+def alerte_valeur_aberrante(empreinte, limite):
+    """Version corrigée."""
+    for categorie, valeur in empreinte.items():
+        if est_dictionnaire(valeur):
+            if alerte_valeur_aberrante(valeur, limite):
+                return True
+        else:
+            if valeur > limite:
+                return True
+    return False
+
+
+def test_alerte_valeur_aberrante():
+    # Complète les tests ci-dessous en ajoutant tes propres cas !
+
+    # Cas 1 : aucune valeur ne dépasse → False attendu
+    assert alerte_valeur_aberrante({"a": 100, "b": 200}, 500) == False
+
+    # Cas 2 : une valeur dépasse en surface → True attendu
+    assert alerte_valeur_aberrante({"a": 600, "b": 200}, 500) == True
+
+    # Cas 3 : valeur exactement égale à la limite → False (strictement supérieur)
+    assert alerte_valeur_aberrante({"a": 500}, 500) == False
+
+    # Cas 4 : valeur aberrante dans la DERNIÈRE branche (cas du bug corrigé)
+    # À toi d'ajouter d'autres cas !
+
+    print("Les tests sont validés.")
+
+test_alerte_valeur_aberrante()
+      </script>
+    </div>
+
+    <!-- CORRECTION -->
+    <div style="margin:1rem 0;">
+      <button class="btn-tp-or" onclick="toggleCorrection('corr-q4', this)">&#128274; Afficher la correction complète</button>
+    </div>
+    <div id="corr-q4" class="correction-bloc encadre-conseil">
+      <span class="encadre-prefix">Correction — Question 4</span>
+      <script type="py-editor" env="empreinte-corr4">
+def est_dictionnaire(objet):
+    return isinstance(objet, dict)
+
+
+def alerte_valeur_aberrante(empreinte, limite):
+    for categorie, valeur in empreinte.items():
+        if est_dictionnaire(valeur):
+            if alerte_valeur_aberrante(valeur, limite):
+                return True
+        else:
+            if valeur > limite:
+                return True
+    return False
+
+
+def test_alerte_valeur_aberrante():
+    # ── Cas 1 : dictionnaire vide ──────────────────────────────────────────
+    # Particularité : cas de base — aucune itération, doit renvoyer False
+    assert alerte_valeur_aberrante({}, 100) == False
+
+    # ── Cas 2 : aucune valeur ne dépasse ──────────────────────────────────
+    # Particularité : tous les retours sont False, résultat global False
+    assert alerte_valeur_aberrante({"a": 100, "b": 200}, 500) == False
+
+    # ── Cas 3 : valeur aberrante en surface (premier niveau) ──────────────
+    # Particularité : cas trivial, trouvé dès la première itération
+    assert alerte_valeur_aberrante({"a": 600, "b": 200}, 500) == True
+
+    # ── Cas 4 : valeur strictement égale à la limite ──────────────────────
+    # Particularité : la condition est strictement supérieure — ne doit PAS déclencher
+    assert alerte_valeur_aberrante({"a": 500}, 500) == False
+
+    # ── Cas 5 : valeur aberrante dans la DERNIÈRE branche ─────────────────
+    # Particularité : vérifie que la boucle ne s'arrête pas après la première catégorie
+    # C'est précisément le bug que la correction devait résoudre
+    assert alerte_valeur_aberrante({"A": {"x": 100}, "B": {"z": 800}}, 500) == True
+
+    # ── Cas 6 : valeur aberrante en profondeur (imbrication profonde) ──────
+    # Particularité : vérifie que la récursivité descend jusqu'aux feuilles
+    assert alerte_valeur_aberrante(
+        {"niveau1": {"niveau2": {"niveau3": 1500}}}, 1000
+    ) == True
+
+    # ── Cas 7 : aucune valeur ne dépasse, même en profondeur ──────────────
+    # Particularité : vérifie le False sur une structure imbriquée complète
+    assert alerte_valeur_aberrante(
+        {"L": {"E": {"el": 206, "ch": 105}, "co": 650}, "T": {"vo": 563}}, 1000
+    ) == False
+
+    # ── Cas 8 : valeur aberrante en profondeur 3, après une branche clean ─
+    # Particularité : combinaison du cas 5 et du cas 6
+    assert alerte_valeur_aberrante(
+        {"A": {"x": 50}, "B": {"y": {"z": 2000}}}, 1000
+    ) == True
+
+    print("Les tests sont validés.")
+
+test_alerte_valeur_aberrante()
+      </script>
+      <div style="margin-top:.8rem;">
+        <table class="table-donnees">
+          <thead>
+            <tr><th>Cas</th><th>Ce qu'il vérifie</th><th>Attendu</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>1 — Vide</td><td>Cas de base : aucune itération</td><td><code>False</code></td></tr>
+            <tr><td>2 — Aucun dépassement</td><td>Retour global <code>False</code> correct</td><td><code>False</code></td></tr>
+            <tr><td>3 — Surface</td><td>Détection immédiate, cas trivial</td><td><code>True</code></td></tr>
+            <tr><td>4 — Limite exacte</td><td>Condition « strictement supérieur »</td><td><code>False</code></td></tr>
+            <tr><td>5 — Dernière branche</td><td>Le bug corrigé : boucle complète</td><td><code>True</code></td></tr>
+            <tr><td>6 — Profondeur 3</td><td>Récursivité jusqu'aux feuilles</td><td><code>True</code></td></tr>
+            <tr><td>7 — Imbriqué, sans dépassement</td><td><code>False</code> sur structure complexe</td><td><code>False</code></td></tr>
+            <tr><td>8 — Branche clean puis alerte profonde</td><td>Combinaison cas 5 + cas 6</td><td><code>True</code></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <hr class="sep">
+
+  <!-- PIÈGES FRÉQUENTS -->
+  <section id="pieges">
+    <h2>Pièges fréquents &amp; astuces de vérification</h2>
+
+    <div class="encadre-piege">
+      <span class="encadre-prefix">Piège 1 — return dans une boucle coupe tout</span>
+      <p style="margin:0;">
+        C'est le cœur du bug de la Question 3. Dans une boucle <code>for</code>,
+        <code>return valeur</code> quitte immédiatement la fonction — même si des éléments
+        n'ont pas encore été visités. Pour un appel récursif qui peut valoir <code>False</code>,
+        il ne faut <strong>jamais</strong> écrire <code>return appel_recursif(...)</code>
+        directement dans la boucle. Il faut d'abord tester le résultat :
+        <code>if appel_recursif(...): return True</code>.
+      </p>
+    </div>
+
+    <div class="encadre-piege">
+      <span class="encadre-prefix">Piège 2 — Confondre « supérieur » et « supérieur ou égal »</span>
+      <p style="margin:0;">
+        L'énoncé dit « valeur <em>strictement</em> supérieure à la limite ».
+        La condition correcte est <code>valeur &gt; limite</code>, pas <code>valeur &gt;= limite</code>.
+        Une valeur exactement égale à la limite ne doit <em>pas</em> déclencher l'alerte.
+        C'est pour ça que le Cas 4 du jeu de tests est indispensable.
+      </p>
+    </div>
+
+    <div class="encadre-piege">
+      <span class="encadre-prefix">Piège 3 — Oublier le cas de base de la récursivité</span>
+      <p style="margin:0;">
+        Dans <code>total_rec</code>, le cas de base n'est pas explicitement écrit sous forme
+        de <code>if len(dico) == 0: return 0</code>. Il est <em>implicite</em> : si le dictionnaire
+        est vide, la boucle <code>for</code> ne s'exécute pas et la fonction renvoie <code>0</code>
+        (valeur initiale de <code>total</code>). Il faut comprendre pourquoi ça fonctionne.
+      </p>
+    </div>
+
+    <div class="encadre-piege">
+      <span class="encadre-prefix">Piège 4 — Utiliser sum() sur des dictionnaires imbriqués</span>
+      <p style="margin:0;">
+        <code>sum(empreinte.values())</code> fonctionne pour <code>total_simple</code>
+        car les valeurs sont toutes des entiers.
+        Pour <code>total_rec</code>, les valeurs peuvent être des dictionnaires :
+        <code>sum()</code> lèverait une <code>TypeError</code> en tentant d'additionner un entier
+        et un dictionnaire. La récursivité est obligatoire dès qu'il y a des niveaux imbriqués.
+      </p>
+    </div>
+
+    <!-- MINI-EXERCICES -->
+    <h3>Mini-exercices de vérification</h3>
+
+    <div class="encadre">
+      <span class="encadre-prefix">Mini-exercice A — Calcul mental récursif</span>
+      <p>Sans Python, calcule <code>total_rec(d)</code> pour :</p>
+      <pre><code>d = {"X": {"a": 10, "b": {"c": 5, "d": 3}}, "Y": 20}</code></pre>
+      <button class="btn-secondaire" onclick="toggleCorrection('corr-mini-a', this)">Vérifier</button>
+      <div id="corr-mini-a" class="correction-bloc" style="margin-top:.6rem;">
+        <p>
+          <code>d["X"]</code> est un dict → on descend :<br>
+          &nbsp;&nbsp;<code>"a"</code> = 10 (feuille)<br>
+          &nbsp;&nbsp;<code>"b"</code> est un dict → on descend :<br>
+          &nbsp;&nbsp;&nbsp;&nbsp;<code>"c"</code> = 5, <code>"d"</code> = 3 → 8<br>
+          &nbsp;&nbsp;sous-total X = 10 + 8 = 18<br>
+          <code>d["Y"]</code> = 20 (feuille)<br>
+          <strong>Total = 18 + 20 = 38</strong>
+        </p>
+      </div>
+    </div>
+
+    <div class="encadre">
+      <span class="encadre-prefix">Mini-exercice B — Identifier le comportement bugué</span>
+      <p>
+        Que renvoie la version <em>buguée</em> d'<code>alerte_valeur_aberrante</code>
+        sur ce dictionnaire avec <code>limite = 100</code> ?
+      </p>
+      <pre><code>{"A": {"x": 50, "y": 80}, "B": {"z": 200}}</code></pre>
+      <button class="btn-secondaire" onclick="toggleCorrection('corr-mini-b', this)">Vérifier</button>
+      <div id="corr-mini-b" class="correction-bloc" style="margin-top:.6rem;">
+        <p>
+          La version buguée examine <code>"A"</code> en premier.
+          <code>"A"</code> est un dict → <code>return alerte_valeur_aberrante({"x":50,"y":80}, 100)</code>.
+          50 ≤ 100, 80 ≤ 100 → renvoie <code>False</code>.
+          La boucle s'arrête — <code>"B"</code> n'est jamais examiné.
+        </p>
+        <p style="margin:0;">
+          Résultat bugué : <code>False</code>. Résultat correct : <code>True</code> (car 200 &gt; 100).
+        </p>
+      </div>
+    </div>
+
+    <div class="encadre">
+      <span class="encadre-prefix">Mini-exercice C — Choix de total_simple vs total_rec</span>
+      <p>
+        Pour chacun de ces dictionnaires, laquelle des deux fonctions
+        (<code>total_simple</code> ou <code>total_rec</code>) fonctionne correctement ?
+      </p>
+      <ol>
+        <li><code>{"a": 10, "b": 20}</code></li>
+        <li><code>{"a": {"b": 10}, "c": 20}</code></li>
+        <li><code>{"a": {"b": {"c": 5}}}</code></li>
+      </ol>
+      <button class="btn-secondaire" onclick="toggleCorrection('corr-mini-c', this)">Vérifier</button>
+      <div id="corr-mini-c" class="correction-bloc" style="margin-top:.6rem;">
+        <ol>
+          <li>Les deux fonctionnent — pas de sous-dictionnaire.</li>
+          <li>Seule <code>total_rec</code> fonctionne — <code>total_simple</code> essaierait d'additionner le dictionnaire <code>{"b": 10}</code> à 20, ce qui provoquerait une <code>TypeError</code>.</li>
+          <li>Seule <code>total_rec</code> fonctionne — imbrication de profondeur 3.</li>
+        </ol>
+      </div>
+    </div>
+  </section>
+
+  <hr class="sep">
+
+  <!-- RÉCAPITULATIF -->
+  <div class="encadre" style="margin-top:2rem;">
+    <span class="encadre-prefix">Récapitulatif — Ce que tu dois retenir</span>
+    <ul style="margin:0;">
+      <li><code>dico.values()</code> donne accès aux valeurs ; <code>dico.items()</code> donne les paires clé/valeur.</li>
+      <li>La récursivité sur dictionnaires imbriqués suit toujours le même schéma : tester si la valeur est un dict, et si oui, rappeler la fonction.</li>
+      <li>Dans un appel récursif booléen, ne jamais écrire <code>return appel_recursif(...)</code> dans une boucle — utiliser <code>if appel_recursif(...): return True</code>.</li>
+      <li>Un bon jeu de tests couvre : le cas vide, le cas trivial, la valeur exactement égale à la limite, la valeur dans la dernière branche, et l'imbrication profonde.</li>
+      <li><code>isinstance(objet, dict)</code> est le test fiable pour savoir si une valeur est un dictionnaire.</li>
+    </ul>
+  </div>
+
+</div><!-- /container-content -->
+
+<!-- PIED DE PAGE -->
+<footer style="text-align:center; font-family:'JetBrains Mono',monospace; font-size:.8rem;
+               color:var(--text-muted); padding:2rem 1rem 1rem; border-top:1px solid var(--bg-panel);">
+  DarkSATHI Li
+</footer>
+
+<!-- SCRIPTS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+  /* ── RETOUR EN HAUT ── */
+  const btnTop = document.getElementById('btn-top');
+  window.addEventListener('scroll', () => {
+    btnTop.style.display = window.scrollY > 300 ? 'flex' : 'none';
+  });
+  btnTop.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
+
+  /* ── TOGGLE INDICE ── */
+  function toggleIndice(id, btn) {
+    var el = document.getElementById(id);
+    if (!el) return;
+    el.classList.toggle('visible');
+    btn.textContent = el.classList.contains('visible')
+      ? btn.textContent.replace('▶', '▼')
+      : btn.textContent.replace('▼', '▶');
+  }
+
+  /* ── TOGGLE CORRECTION ── */
+  function toggleCorrection(id, btn) {
+    var el = document.getElementById(id);
+    if (!el) return;
+    el.classList.toggle('visible');
+    if (el.classList.contains('visible')) {
+      btn.textContent = btn.textContent.replace('Afficher', 'Masquer').replace('Vérifier', 'Masquer');
+    } else {
+      btn.textContent = btn.textContent.replace('Masquer', 'Afficher');
+    }
+  }
+</script>
+</body>
+</html>
