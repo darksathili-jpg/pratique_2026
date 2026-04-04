@@ -1,0 +1,1619 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Fiche – Boutique Smoothie | NSI Terminale | BAC 2026</title>
+
+  <!-- Bootstrap 5.3.3 -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Rubik+Dirt&family=Source+Serif+4:ital,opsz,wght@0,8..60,300..900;1,8..60,300..900&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+
+  <!-- MathJax v3 -->
+  <script>
+    MathJax = {
+      tex: { inlineMath: [['\\(', '\\)'], ['$', '$']] },
+      options: { skipHtmlTags: ['script','noscript','style','textarea','pre'] }
+    };
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js" async></script>
+
+  <!-- PyScript 2026.3.1 -->
+  <script type="module" src="https://pyscript.net/releases/2026.3.1/core.js"></script>
+
+  <style>
+    :root {
+      --bg-main:       #f8f9fb;
+      --bg-panel:      #eef1f5;
+      --bg-cours:      #ffffff;
+      --accent:        #2a6496;
+      --accent-or:     #b5610a;
+      --accent-vert:   #2e7d32;
+      --text-main:     #1a1a1a;
+      --text-muted:    #5a6470;
+      --rouge:         #c0392b;
+      --violet:        #7b3fa8;
+      --border-radius: 8px;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      background-color: var(--bg-main);
+      color: var(--text-main);
+      font-family: 'Source Serif 4', Georgia, serif;
+      font-size: 1.1rem;
+      line-height: 1.8;
+      margin: 0;
+      padding-bottom: 4rem;
+    }
+
+    h1, h2, h3, h4 {
+      font-family: 'Rubik Dirt', cursive;
+      color: var(--accent);
+      letter-spacing: .02em;
+    }
+
+    h1 { font-size: 2.2rem; color: #111; }
+    h2 { font-size: 1.55rem; border-bottom: 2px solid var(--accent); padding-bottom: .3rem; margin-top: 2.5rem; }
+    h3 { font-size: 1.25rem; color: var(--accent-or); margin-top: 1.8rem; }
+    h4 { font-size: 1.05rem; color: var(--accent-vert); }
+
+    p { margin-bottom: 1rem; }
+
+    code, pre {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: .9em;
+    }
+
+    code {
+      background: #e8edf2;
+      padding: 2px 6px;
+      border-radius: 4px;
+      color: #8b3a00;
+    }
+
+    pre {
+      background: #f0f3f7;
+      border-left: 3px solid var(--accent);
+      padding: 1rem 1.2rem;
+      border-radius: var(--border-radius);
+      overflow-x: auto;
+      color: #1a1a1a;
+    }
+
+    a { color: var(--accent); text-decoration: underline dotted; }
+    a:hover { color: var(--accent-or); }
+
+    /* ── NAVIGATION ── */
+    #navbar {
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      background: #2a6496;
+      border-bottom: 2px solid #1a4a70;
+      padding: .5rem 1.5rem;
+      display: flex;
+      gap: .5rem;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    #navbar span {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: .8rem;
+      color: #ccddf0;
+      margin-right: auto;
+    }
+
+    #navbar a {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: .8rem;
+      color: #fff;
+      text-decoration: none;
+      padding: .25rem .7rem;
+      border: 1px solid #ccddf0;
+      border-radius: 4px;
+      transition: background .2s;
+    }
+
+    #navbar a:hover { background: #1a4a70; }
+
+    /* ── CONTENU ── */
+    .container-content {
+      max-width: 860px;
+      margin: 0 auto;
+      padding: 2rem 1.5rem;
+    }
+
+    /* ── ENCADRÉS ── */
+    .encadre,
+    .encadre-conseil,
+    .encadre-indice,
+    .encadre-question,
+    .encadre-piege {
+      border-radius: var(--border-radius);
+      padding: 1.1rem 1.4rem;
+      margin: 1.4rem 0;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+    }
+
+    .encadre          { background: #fff;     border-left: 4px solid var(--accent); }
+    .encadre-conseil  { background: #fff8f0;  border-left: 4px solid var(--accent-or); }
+    .encadre-indice   { background: #f0faf0;  border-left: 4px solid var(--accent-vert); }
+    .encadre-question { background: #faf5ff;  border-left: 4px solid var(--violet); border-top: 1px solid #c8a8e820; }
+    .encadre-piege    { background: #fff5f5;  border-left: 4px solid var(--rouge); }
+
+    .encadre-prefix {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: .72rem;
+      font-variant: small-caps;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      margin-bottom: .4rem;
+      display: block;
+    }
+
+    .encadre          .encadre-prefix { color: var(--accent); }
+    .encadre-conseil  .encadre-prefix { color: var(--accent-or); }
+    .encadre-indice   .encadre-prefix { color: var(--accent-vert); }
+    .encadre-question .encadre-prefix { color: var(--violet); }
+    .encadre-piege    .encadre-prefix { color: var(--rouge); }
+
+    /* ── BOUTONS ── */
+    .btn-tp, .btn-tp-or, .btn-tp-vert, .btn-secondaire {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: .82rem;
+      border: none;
+      border-radius: 5px;
+      padding: .45rem 1.1rem;
+      cursor: pointer;
+      transition: opacity .2s, transform .1s;
+      margin: .3rem .2rem;
+    }
+
+    .btn-tp         { background: var(--accent);      color: #fff; }
+    .btn-tp-or      { background: var(--accent-or);   color: #fff; }
+    .btn-tp-vert    { background: var(--accent-vert); color: #fff; }
+    .btn-secondaire { background: #eef1f5; border: 1px solid var(--accent); color: var(--text-main); }
+
+    .btn-tp:hover, .btn-tp-or:hover, .btn-tp-vert:hover, .btn-secondaire:hover {
+      opacity: .85; transform: translateY(-1px);
+    }
+
+    /* ── BADGE QUESTION ── */
+    .badge-question {
+      display: inline-block;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: .8rem;
+      background: var(--violet);
+      color: #fff;
+      border-radius: 4px;
+      padding: .15rem .7rem;
+      margin-right: .5rem;
+      vertical-align: middle;
+    }
+
+    /* ── INDICES / CORRECTIONS ── */
+    .indice-bloc     { display: none; }
+    .correction-bloc { display: none; }
+    .indice-bloc.visible     { display: block; }
+    .correction-bloc.visible { display: block; }
+
+    /* ── SOMMAIRE ── */
+    #sommaire ol {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: .88rem;
+      line-height: 2.2;
+    }
+
+    #sommaire a { color: var(--accent); }
+    #sommaire a:hover { color: var(--accent-or); }
+
+    /* ── TABLEAU RECETTES ── */
+    .table-recettes {
+      border-collapse: collapse;
+      width: 100%;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: .85rem;
+      margin: 1rem 0;
+    }
+
+    .table-recettes th {
+      background: #dce8f2;
+      color: var(--accent);
+      border: 1px solid #b0c8e0;
+      padding: .45rem .9rem;
+      text-align: left;
+    }
+
+    .table-recettes td {
+      border: 1px solid #d0dce8;
+      padding: .4rem .9rem;
+    }
+
+    .table-recettes tr:nth-child(even) td { background: #f4f7fb; }
+
+    /* ── TABLEAU TRACE ── */
+    .table-trace {
+      border-collapse: collapse;
+      width: 100%;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: .82rem;
+      margin: .8rem 0;
+    }
+
+    .table-trace th {
+      background: #dce8f2;
+      color: var(--accent);
+      border: 1px solid #b0c8e0;
+      padding: .35rem .7rem;
+    }
+
+    .table-trace td {
+      border: 1px solid #d0dce8;
+      padding: .35rem .7rem;
+    }
+
+    .table-trace tr:nth-child(even) td { background: #f4f7fb; }
+
+    .td-bug  { color: var(--rouge); font-weight: 600; }
+    .td-ok   { color: var(--accent-vert); font-weight: 600; }
+
+    /* ── SÉPARATEUR ── */
+    .sep { border: none; border-top: 1px dashed #9ab0c8; margin: 2.5rem 0; opacity: .7; }
+
+    /* ── RETOUR EN HAUT ── */
+    #btn-top {
+      position: fixed;
+      bottom: 1.5rem;
+      right: 1.5rem;
+      z-index: 999;
+      background: var(--accent);
+      color: #fff;
+      border: none;
+      border-radius: 50%;
+      width: 44px; height: 44px;
+      font-size: 1.2rem;
+      cursor: pointer;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      font-family: 'JetBrains Mono', monospace;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.25);
+      transition: opacity .2s;
+    }
+
+    #btn-top:hover { opacity: .8; }
+
+    /* ── CHIPS FRUITS ── */
+    .chip {
+      display: inline-block;
+      background: #dce8f2;
+      color: var(--accent);
+      border-radius: 20px;
+      padding: .15rem .75rem;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: .78rem;
+      margin: .15rem .1rem;
+      border: 1px solid #b0c8e0;
+    }
+
+    .chip-ok  { background: #e0f5e0; color: var(--accent-vert); border-color: #a0d0a0; }
+    .chip-non { background: #fde8e8; color: var(--rouge);        border-color: #f0b0b0; }
+
+    /* ── ANNOTATION CODE ── */
+    .code-bug { color: var(--rouge); }
+    .code-ok  { color: var(--accent-vert); }
+  </style>
+</head>
+<body>
+
+<!-- Bootstrap PyScript — force l'initialisation de Pyodide -->
+<div style="display:none">
+  <script type="py" env="smoothie">pass</script>
+</div>
+
+<!-- RETOUR EN HAUT -->
+<button id="btn-top" title="Retour en haut" aria-label="Retour en haut">▲</button>
+
+<!-- NAVIGATION STICKY -->
+<nav id="navbar">
+  <span>NSI Terminale – Boutique Smoothie</span>
+  <a href="#s0">Intro</a>
+  <a href="#s1">Rappels POO</a>
+  <a href="#s2">Les données</a>
+  <a href="#q1">Q1</a>
+  <a href="#q2">Q2</a>
+  <a href="#q3">Q3</a>
+  <a href="#q4">Q4</a>
+  <a href="#q5">Q5</a>
+  <a href="#pieges">Pièges</a>
+</nav>
+
+<!-- CONTENU PRINCIPAL -->
+<div class="container-content">
+
+  <!-- EN-TÊTE -->
+  <div style="text-align:center; padding: 2rem 0 1rem;">
+    <div style="font-family:'JetBrains Mono',monospace; font-size:.8rem; color:var(--text-muted); margin-bottom:.5rem;">
+      BAC NSI 2026 — Sujet n°6 — Partie pratique
+    </div>
+    <h1>Boutique Smoothie 🥤<br>
+      <span style="font-size:1.05rem; color:var(--accent); font-family:'Source Serif 4',serif; font-style:italic; font-weight:300;">
+        POO · Méthodes · Listes · Débogage
+      </span>
+    </h1>
+    <div style="font-family:'JetBrains Mono',monospace; font-size:.8rem; color:var(--text-muted); margin-top:.5rem;">
+      Terminale NSI &nbsp;·&nbsp; Programmation Orientée Objet &nbsp;·&nbsp; Algorithmique
+    </div>
+  </div>
+
+  <hr class="sep">
+
+  <!-- SOMMAIRE -->
+  <section id="s0">
+    <div id="sommaire" class="encadre">
+      <span class="encadre-prefix">Sommaire</span>
+      <ol>
+        <li><a href="#s1">Rappels de cours — Programmation Orientée Objet</a></li>
+        <li><a href="#s2">Les données du sujet — la classe <code>Boutique_smoothie</code></a></li>
+        <li><a href="#q1">Question 1 — <code>smoothie_possible</code> : un smoothie est-il réalisable ?</a></li>
+        <li><a href="#q2">Question 2 — <code>liste_smoothies_possibles</code> : tous les smoothies du jour</a></li>
+        <li><a href="#q3">Question 3 — Tester <code>score_proximite</code></a></li>
+        <li><a href="#q4">Question 4 — Analyser et corriger <code>plus_proche_possible</code></a></li>
+        <li><a href="#q5">Question 5 — Mise en situation complète</a></li>
+        <li><a href="#pieges">Pièges fréquents &amp; astuces de vérification</a></li>
+      </ol>
+    </div>
+  </section>
+
+  <hr class="sep">
+
+  <!-- SECTION 1 : RAPPELS POO -->
+  <section id="s1">
+    <h2>1 — Rappels : Programmation Orientée Objet</h2>
+
+    <p>
+      Tu connais déjà les listes et les dictionnaires. Mais quand un objet du monde réel
+      possède à la fois des <em>données</em> (les fruits disponibles, la carte des recettes)
+      et des <em>comportements</em> (vérifier si un smoothie est faisable, lister les alternatives),
+      la POO permet de tout regrouper proprement dans une seule <strong>classe</strong>.
+    </p>
+
+    <div class="encadre">
+      <span class="encadre-prefix">Rappel — Classe et méthode</span>
+      <p>
+        Une <strong>classe</strong> est un modèle qui regroupe des données (<strong>attributs</strong>)
+        et des fonctions (<strong>méthodes</strong>) qui opèrent sur ces données.
+        Une <strong>instance</strong> est un objet concret créé d'après ce modèle.
+      </p>
+      <p style="margin:0">
+        Le premier paramètre de chaque méthode est toujours <code>self</code> — il désigne
+        l'instance elle-même et permet d'accéder à ses attributs depuis l'intérieur de la classe.
+      </p>
+    </div>
+
+    <div class="encadre-conseil">
+      <span class="encadre-prefix">Exemple minimal</span>
+      <pre style="margin:.3rem 0"><code>class Panier:
+    def __init__(self, fruits):
+        self.fruits = fruits          # attribut de l'instance
+
+    def contient(self, fruit):        # méthode
+        return fruit in self.fruits   # accès via self
+
+p = Panier(["Mangue", "Kiwi"])
+print(p.contient("Kiwi"))   # True
+print(p.contient("Fraise")) # False</code></pre>
+    </div>
+
+    <h3>Tester l'appartenance à une liste</h3>
+
+    <p>
+      Dans ce sujet, tu auras souvent besoin de vérifier si un fruit est présent
+      dans la liste des fruits disponibles. Python offre une syntaxe très lisible pour ça :
+    </p>
+
+    <div class="encadre">
+      <span class="encadre-prefix">L'opérateur in</span>
+      <pre style="margin:.3rem 0"><code>fruits_dispo = ["Mangue", "Ananas", "Banane"]
+
+"Mangue" in fruits_dispo   # True
+"Kiwi"   in fruits_dispo   # False</code></pre>
+      <p style="margin:.5rem 0 0">
+        Pour vérifier que <strong>tous</strong> les éléments d'une liste sont dans une autre,
+        la fonction <code>all()</code> combinée à une expression génératrice est très pratique :
+      </p>
+      <pre style="margin:.3rem 0"><code>recette = ["Mangue", "Ananas", "Banane"]
+dispo   = ["Mangue", "Ananas", "Banane", "Kiwi"]
+
+all(fruit in dispo for fruit in recette)   # True — tous les fruits sont là
+</code></pre>
+    </div>
+
+    <h3>Compter les éléments communs entre deux listes</h3>
+
+    <p>
+      Pour la notion d'alternative (Questions 3 et 4), tu devras compter combien de fruits
+      deux recettes ont en commun. La boucle suivante est le schéma de base :
+    </p>
+
+    <pre><code>def nb_communs(liste1, liste2):
+    compteur = 0
+    for element in liste1:
+        if element in liste2:
+            compteur += 1
+    return compteur</code></pre>
+
+    <div class="encadre-conseil">
+      <span class="encadre-prefix">Astuce — Version avec sum()</span>
+      <pre style="margin:.3rem 0"><code>sum(1 for f in liste1 if f in liste2)  # identique, plus compact</code></pre>
+      <p style="margin:0">Les deux approches sont correctes — utilise celle que tu trouves la plus lisible.</p>
+    </div>
+  </section>
+
+  <hr class="sep">
+
+  <!-- SECTION 2 : LES DONNÉES -->
+  <section id="s2">
+    <h2>2 — Les données du sujet</h2>
+
+    <h3>La classe <code>Boutique_smoothie</code></h3>
+
+    <p>
+      La MDL (maison des lycéens) veut une carte dynamique : selon les fruits disponibles
+      ce jour-là, certains smoothies peuvent être préparés, d'autres non.
+      La classe <code>Boutique_smoothie</code> modélise exactement cette logique.
+    </p>
+
+    <div class="encadre">
+      <span class="encadre-prefix">Structure de la classe</span>
+      <pre style="margin:.3rem 0"><code>class Boutique_smoothie:
+    def __init__(self, liste_fruits_disponibles):
+        self.liste_fruits_disponibles = liste_fruits_disponibles
+        self.db_smoothies = {
+            "Tropical":        ["Mangue", "Ananas", "Banane"],
+            "Rouge":           ["Fraise", "Framboise", "Cerise"],
+            ...
+        }
+    # méthodes à compléter ou corriger</code></pre>
+    </div>
+
+    <p>
+      L'attribut <code>self.db_smoothies</code> est un dictionnaire dont les clés sont les noms
+      des smoothies et les valeurs sont les listes de trois fruits nécessaires.
+      L'attribut <code>self.liste_fruits_disponibles</code> contient les fruits disponibles ce jour-là.
+    </p>
+
+    <h3>La carte complète des recettes</h3>
+
+    <table class="table-recettes">
+      <thead>
+        <tr><th>Smoothie</th><th>Fruit 1</th><th>Fruit 2</th><th>Fruit 3</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Tropical</td><td>Mangue</td><td>Ananas</td><td>Banane</td></tr>
+        <tr><td>Rouge</td><td>Fraise</td><td>Framboise</td><td>Cerise</td></tr>
+        <tr><td>Vert</td><td>Kiwi</td><td>Pomme verte</td><td>Menthe</td></tr>
+        <tr><td>Agrume</td><td>Orange</td><td>Citron</td><td>Pamplemousse</td></tr>
+        <tr><td>Exotique</td><td>Papaye</td><td>Fruit de la passion</td><td>Noix de coco</td></tr>
+        <tr><td>Tropical citron</td><td>Mangue</td><td>Ananas</td><td>Citron</td></tr>
+        <tr><td>Rouge kiwi</td><td>Fraise</td><td>Framboise</td><td>Kiwi</td></tr>
+        <tr><td>Exotique rouge</td><td>Papaye</td><td>Fraise</td><td>Fruit de la passion</td></tr>
+        <tr><td>Vert citron</td><td>Kiwi</td><td>Pomme verte</td><td>Citron</td></tr>
+        <tr><td>Soleil couchant</td><td>Mangue</td><td>Fraise</td><td>Pamplemousse</td></tr>
+      </tbody>
+    </table>
+
+    <div class="encadre-conseil">
+      <span class="encadre-prefix">Exemple concret</span>
+      <p>
+        Fruits disponibles : <span class="chip chip-ok">Mangue</span>
+        <span class="chip chip-ok">Pamplemousse</span>
+        <span class="chip chip-ok">Ananas</span>
+        <span class="chip chip-ok">Banane</span>
+      </p>
+      <p>
+        Smoothie « Tropical » (Mangue, Ananas, Banane) → <strong style="color:var(--accent-vert)">possible</strong> ✓<br>
+        Smoothie « Soleil couchant » (Mangue, <span class="chip chip-non">Fraise</span>, Pamplemousse) → <strong style="color:var(--rouge)">impossible</strong> — Fraise manquante.
+      </p>
+      <p style="margin:0">
+        La méthode <code>smoothie_possible</code> doit automatiser cette vérification.
+      </p>
+    </div>
+
+    <h3>Les méthodes fournies</h3>
+
+    <table class="table-recettes">
+      <thead>
+        <tr><th>Méthode</th><th>Rôle</th><th>Statut</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>smoothie_possible(nom)</code></td>
+          <td>Vérifie si un smoothie est réalisable</td>
+          <td style="color:var(--accent-or)">À compléter (Q1)</td>
+        </tr>
+        <tr>
+          <td><code>liste_smoothies_possibles()</code></td>
+          <td>Renvoie la liste des smoothies faisables</td>
+          <td style="color:var(--accent-or)">À compléter (Q2)</td>
+        </tr>
+        <tr>
+          <td><code>score_proximite(nom1, nom2)</code></td>
+          <td>Compte les fruits communs entre deux smoothies</td>
+          <td style="color:var(--accent-vert)">Fournie — à tester (Q3)</td>
+        </tr>
+        <tr>
+          <td><code>plus_proche_possible(nom_ref)</code></td>
+          <td>Renvoie le smoothie possible le plus proche</td>
+          <td style="color:var(--rouge)">Fournie mais buguée (Q4)</td>
+        </tr>
+        <tr>
+          <td><code>affichage_possibles()</code></td>
+          <td>Affiche les smoothies faisables et les alternatives</td>
+          <td style="color:var(--accent-vert)">Fournie (Q5)</td>
+        </tr>
+      </tbody>
+    </table>
+  </section>
+
+  <hr class="sep">
+
+  <!-- QUESTION 1 -->
+  <section id="q1">
+    <h2>Question 1 — <code>smoothie_possible</code></h2>
+
+    <div class="encadre-question">
+      <span class="encadre-prefix">Énoncé — Question 1</span>
+      <p>
+        <span class="badge-question">Q1</span>
+        Écrire la méthode <code>smoothie_possible(self, nom_smoothie)</code> qui prend en paramètre
+        le nom d'un smoothie et renvoie <code>True</code> si ce smoothie peut être préparé
+        avec les fruits disponibles, <code>False</code> sinon.
+      </p>
+      <p style="margin:0">
+        Un smoothie est possible si et seulement si <strong>chacun</strong> de ses fruits
+        figure dans <code>self.liste_fruits_disponibles</code>.
+      </p>
+    </div>
+
+    <!-- INDICES -->
+    <div style="margin:.8rem 0;">
+      <button class="btn-tp-vert" onclick="toggleIndice('indice-q1-1', this)">▶ Indice 1 — Accéder à la liste des fruits d'une recette</button>
+    </div>
+    <div id="indice-q1-1" class="encadre-indice indice-bloc">
+      <span class="encadre-prefix">Indice 1</span>
+      <p style="margin:0">
+        La liste des fruits du smoothie <code>nom_smoothie</code> se trouve dans
+        <code>self.db_smoothies[nom_smoothie]</code>.
+        Par exemple, pour « Tropical » : <code>["Mangue", "Ananas", "Banane"]</code>.
+        La liste des fruits disponibles est dans <code>self.liste_fruits_disponibles</code>.
+      </p>
+    </div>
+
+    <div style="margin:.8rem 0;">
+      <button class="btn-tp-vert" onclick="toggleIndice('indice-q1-2', this)">▶ Indice 2 — Vérifier que TOUS les fruits sont présents</button>
+    </div>
+    <div id="indice-q1-2" class="encadre-indice indice-bloc">
+      <span class="encadre-prefix">Indice 2</span>
+      <p>Deux approches équivalentes :</p>
+      <pre style="margin:.3rem 0"><code># Approche 1 : boucle avec retour anticipé
+for fruit in recette:
+    if fruit not in self.liste_fruits_disponibles:
+        return False   # un fruit manque → impossible
+return True            # tous les fruits trouvés
+
+# Approche 2 : all() en une ligne
+return all(fruit in self.liste_fruits_disponibles
+           for fruit in recette)</code></pre>
+    </div>
+
+    <!-- ÉDITEUR -->
+    <div class="encadre" style="margin-top:1.2rem;">
+      <span class="encadre-prefix">Éditeur Python — Complète la méthode</span>
+      <script type="py-editor" env="smoothie">
+class Boutique_smoothie:
+    def __init__(self, liste_fruits_disponibles):
+        self.liste_fruits_disponibles = liste_fruits_disponibles
+        self.db_smoothies = {
+            "Tropical":        ["Mangue", "Ananas", "Banane"],
+            "Rouge":           ["Fraise", "Framboise", "Cerise"],
+            "Vert":            ["Kiwi", "Pomme verte", "Menthe"],
+            "Agrume":          ["Orange", "Citron", "Pamplemousse"],
+            "Exotique":        ["Papaye", "Fruit de la passion", "Noix de coco"],
+            "Tropical citron": ["Mangue", "Ananas", "Citron"],
+            "Rouge kiwi":      ["Fraise", "Framboise", "Kiwi"],
+            "Exotique rouge":  ["Papaye", "Fraise", "Fruit de la passion"],
+            "Vert citron":     ["Kiwi", "Pomme verte", "Citron"],
+            "Soleil couchant": ["Mangue", "Fraise", "Pamplemousse"],
+        }
+
+    def smoothie_possible(self, nom_smoothie):
+        """Renvoie True si le smoothie peut être préparé, False sinon."""
+        # À toi de compléter !
+        pass
+
+
+def test_smoothie_possible():
+    b = Boutique_smoothie(["Mangue", "Ananas", "Banane", "Fraise", "Citron"])
+    # Tropical = Mangue + Ananas + Banane → tous présents
+    assert b.smoothie_possible("Tropical") == True
+    # Rouge = Fraise + Framboise + Cerise → Framboise et Cerise absentes
+    assert b.smoothie_possible("Rouge") == False
+    # Tropical citron = Mangue + Ananas + Citron → tous présents
+    assert b.smoothie_possible("Tropical citron") == True
+    # Agrume = Orange + Citron + Pamplemousse → Orange et Pamplemousse absents
+    assert b.smoothie_possible("Agrume") == False
+    print("Les tests sont validés.")
+
+test_smoothie_possible()
+      </script>
+    </div>
+
+    <!-- CORRECTION -->
+    <div style="margin:1rem 0;">
+      <button class="btn-tp-or" onclick="toggleCorrection('corr-q1', this)">&#128274; Afficher la correction</button>
+    </div>
+    <div id="corr-q1" class="correction-bloc encadre-conseil">
+      <span class="encadre-prefix">Correction — Question 1</span>
+      <script type="py-editor" env="smoothie-corr1">
+class Boutique_smoothie:
+    def __init__(self, liste_fruits_disponibles):
+        self.liste_fruits_disponibles = liste_fruits_disponibles
+        self.db_smoothies = {
+            "Tropical":        ["Mangue", "Ananas", "Banane"],
+            "Rouge":           ["Fraise", "Framboise", "Cerise"],
+            "Vert":            ["Kiwi", "Pomme verte", "Menthe"],
+            "Agrume":          ["Orange", "Citron", "Pamplemousse"],
+            "Exotique":        ["Papaye", "Fruit de la passion", "Noix de coco"],
+            "Tropical citron": ["Mangue", "Ananas", "Citron"],
+            "Rouge kiwi":      ["Fraise", "Framboise", "Kiwi"],
+            "Exotique rouge":  ["Papaye", "Fraise", "Fruit de la passion"],
+            "Vert citron":     ["Kiwi", "Pomme verte", "Citron"],
+            "Soleil couchant": ["Mangue", "Fraise", "Pamplemousse"],
+        }
+
+    def smoothie_possible(self, nom_smoothie):
+        """Renvoie True si le smoothie peut être préparé, False sinon."""
+        recette = self.db_smoothies[nom_smoothie]
+        for fruit in recette:
+            if fruit not in self.liste_fruits_disponibles:
+                return False   # un fruit manque → impossible
+        return True             # tous les fruits sont disponibles
+
+
+def test_smoothie_possible():
+    b = Boutique_smoothie(["Mangue", "Ananas", "Banane", "Fraise", "Citron"])
+    assert b.smoothie_possible("Tropical") == True
+    assert b.smoothie_possible("Rouge") == False
+    assert b.smoothie_possible("Tropical citron") == True
+    assert b.smoothie_possible("Agrume") == False
+    print("Les tests sont validés.")
+
+test_smoothie_possible()
+      </script>
+      <p style="margin-top:.8rem;">
+        <strong>Logique :</strong> dès qu'un fruit de la recette est absent de
+        <code>liste_fruits_disponibles</code>, on renvoie <code>False</code> immédiatement
+        (retour anticipé — inutile de continuer). Si la boucle se termine sans trouver
+        de fruit manquant, c'est que tous sont présents : on renvoie <code>True</code>.
+      </p>
+    </div>
+  </section>
+
+  <hr class="sep">
+
+  <!-- QUESTION 2 -->
+  <section id="q2">
+    <h2>Question 2 — <code>liste_smoothies_possibles</code></h2>
+
+    <div class="encadre-question">
+      <span class="encadre-prefix">Énoncé — Question 2</span>
+      <p>
+        <span class="badge-question">Q2</span>
+        Écrire la méthode <code>liste_smoothies_possibles(self)</code> qui ne prend
+        pas de paramètre (hormis <code>self</code>) et renvoie la <strong>liste</strong>
+        de tous les noms de smoothies réalisables avec les fruits disponibles.
+      </p>
+      <p style="margin:0">
+        Tu peux — et tu dois — réutiliser la méthode <code>smoothie_possible</code>
+        que tu viens d'écrire.
+      </p>
+    </div>
+
+    <!-- INDICES -->
+    <div style="margin:.8rem 0;">
+      <button class="btn-tp-vert" onclick="toggleIndice('indice-q2-1', this)">▶ Indice 1 — Parcourir tous les smoothies</button>
+    </div>
+    <div id="indice-q2-1" class="encadre-indice indice-bloc">
+      <span class="encadre-prefix">Indice 1</span>
+      <p style="margin:0">
+        Tous les noms de smoothies sont les clés de <code>self.db_smoothies</code>.
+        Pour les parcourir : <code>for nom in self.db_smoothies:</code>
+        (ou <code>self.db_smoothies.keys()</code>, c'est équivalent).
+      </p>
+    </div>
+
+    <div style="margin:.8rem 0;">
+      <button class="btn-tp-vert" onclick="toggleIndice('indice-q2-2', this)">▶ Indice 2 — Construire la liste résultat</button>
+    </div>
+    <div id="indice-q2-2" class="encadre-indice indice-bloc">
+      <span class="encadre-prefix">Indice 2</span>
+      <p>Schéma classique de filtrage :</p>
+      <pre style="margin:.3rem 0"><code>possibles = []
+for nom in self.db_smoothies:
+    if self.smoothie_possible(nom):
+        possibles.append(nom)
+return possibles</code></pre>
+      <p style="margin:0">Version compacte avec compréhension de liste :</p>
+      <pre style="margin:.3rem 0"><code>return [nom for nom in self.db_smoothies
+        if self.smoothie_possible(nom)]</code></pre>
+    </div>
+
+    <!-- ÉDITEUR -->
+    <div class="encadre" style="margin-top:1.2rem;">
+      <span class="encadre-prefix">Éditeur Python — Complète la méthode</span>
+      <script type="py-editor" env="smoothie-q2">
+class Boutique_smoothie:
+    def __init__(self, liste_fruits_disponibles):
+        self.liste_fruits_disponibles = liste_fruits_disponibles
+        self.db_smoothies = {
+            "Tropical":        ["Mangue", "Ananas", "Banane"],
+            "Rouge":           ["Fraise", "Framboise", "Cerise"],
+            "Vert":            ["Kiwi", "Pomme verte", "Menthe"],
+            "Agrume":          ["Orange", "Citron", "Pamplemousse"],
+            "Exotique":        ["Papaye", "Fruit de la passion", "Noix de coco"],
+            "Tropical citron": ["Mangue", "Ananas", "Citron"],
+            "Rouge kiwi":      ["Fraise", "Framboise", "Kiwi"],
+            "Exotique rouge":  ["Papaye", "Fraise", "Fruit de la passion"],
+            "Vert citron":     ["Kiwi", "Pomme verte", "Citron"],
+            "Soleil couchant": ["Mangue", "Fraise", "Pamplemousse"],
+        }
+
+    def smoothie_possible(self, nom_smoothie):
+        recette = self.db_smoothies[nom_smoothie]
+        for fruit in recette:
+            if fruit not in self.liste_fruits_disponibles:
+                return False
+        return True
+
+    def liste_smoothies_possibles(self):
+        """Renvoie la liste des smoothies réalisables."""
+        # À toi de compléter !
+        pass
+
+
+def test_liste_smoothies_possibles():
+    b1 = Boutique_smoothie(["Mangue", "Ananas", "Banane", "Fraise", "Citron"])
+    assert b1.liste_smoothies_possibles() == ["Tropical", "Tropical citron"]
+
+    b2 = Boutique_smoothie(["Fraise", "Framboise", "Kiwi", "Pomme verte", "Citron"])
+    assert b2.liste_smoothies_possibles() == ["Rouge kiwi", "Vert citron"]
+
+    b3 = Boutique_smoothie(["Orange", "Mangue", "Papaye"])
+    assert b3.liste_smoothies_possibles() == []
+
+    print("Les tests sont validés.")
+
+test_liste_smoothies_possibles()
+      </script>
+    </div>
+
+    <!-- CORRECTION -->
+    <div style="margin:1rem 0;">
+      <button class="btn-tp-or" onclick="toggleCorrection('corr-q2', this)">&#128274; Afficher la correction</button>
+    </div>
+    <div id="corr-q2" class="correction-bloc encadre-conseil">
+      <span class="encadre-prefix">Correction — Question 2</span>
+      <script type="py-editor" env="smoothie-corr2">
+class Boutique_smoothie:
+    def __init__(self, liste_fruits_disponibles):
+        self.liste_fruits_disponibles = liste_fruits_disponibles
+        self.db_smoothies = {
+            "Tropical":        ["Mangue", "Ananas", "Banane"],
+            "Rouge":           ["Fraise", "Framboise", "Cerise"],
+            "Vert":            ["Kiwi", "Pomme verte", "Menthe"],
+            "Agrume":          ["Orange", "Citron", "Pamplemousse"],
+            "Exotique":        ["Papaye", "Fruit de la passion", "Noix de coco"],
+            "Tropical citron": ["Mangue", "Ananas", "Citron"],
+            "Rouge kiwi":      ["Fraise", "Framboise", "Kiwi"],
+            "Exotique rouge":  ["Papaye", "Fraise", "Fruit de la passion"],
+            "Vert citron":     ["Kiwi", "Pomme verte", "Citron"],
+            "Soleil couchant": ["Mangue", "Fraise", "Pamplemousse"],
+        }
+
+    def smoothie_possible(self, nom_smoothie):
+        recette = self.db_smoothies[nom_smoothie]
+        for fruit in recette:
+            if fruit not in self.liste_fruits_disponibles:
+                return False
+        return True
+
+    def liste_smoothies_possibles(self):
+        """Renvoie la liste des smoothies réalisables."""
+        possibles = []
+        for nom in self.db_smoothies:
+            if self.smoothie_possible(nom):
+                possibles.append(nom)
+        return possibles
+
+
+def test_liste_smoothies_possibles():
+    b1 = Boutique_smoothie(["Mangue", "Ananas", "Banane", "Fraise", "Citron"])
+    assert b1.liste_smoothies_possibles() == ["Tropical", "Tropical citron"]
+
+    b2 = Boutique_smoothie(["Fraise", "Framboise", "Kiwi", "Pomme verte", "Citron"])
+    assert b2.liste_smoothies_possibles() == ["Rouge kiwi", "Vert citron"]
+
+    b3 = Boutique_smoothie(["Orange", "Mangue", "Papaye"])
+    assert b3.liste_smoothies_possibles() == []
+
+    print("Les tests sont validés.")
+
+test_liste_smoothies_possibles()
+      </script>
+      <p style="margin-top:.8rem;">
+        <strong>Réutilisation :</strong> la méthode délègue entièrement le test à
+        <code>smoothie_possible</code>. C'est le principe fondamental de la POO :
+        chaque méthode a une responsabilité précise, et les autres s'appuient dessus.
+        Si tu corriges <code>smoothie_possible</code> plus tard, <code>liste_smoothies_possibles</code>
+        en bénéficie automatiquement.
+      </p>
+    </div>
+  </section>
+
+  <hr class="sep">
+
+  <!-- QUESTION 3 -->
+  <section id="q3">
+    <h2>Question 3 — Tester <code>score_proximite</code></h2>
+
+    <div class="encadre-question">
+      <span class="encadre-prefix">Énoncé — Question 3</span>
+      <p>
+        <span class="badge-question">Q3</span>
+        La méthode <code>score_proximite(self, nom1, nom2)</code> est fournie : elle renvoie
+        le nombre de fruits communs entre deux smoothies.
+        Compléter la fonction <code>test_score_proximite</code> avec des tests pertinents.
+      </p>
+    </div>
+
+    <p>Voici le code de la méthode fournie :</p>
+
+    <pre><code>def score_proximite(self, nom1, nom2):
+    """Renvoie le nombre de fruits communs entre deux smoothies."""
+    nb = 0
+    fruits1 = self.db_smoothies[nom1]
+    fruits2 = self.db_smoothies[nom2]
+    for fruit in fruits1:
+        if fruit in fruits2:
+            nb += 1
+    return nb</code></pre>
+
+    <div class="encadre-conseil">
+      <span class="encadre-prefix">Exemples de scores à calculer à la main</span>
+      <table class="table-trace">
+        <thead>
+          <tr><th>Smoothie 1</th><th>Smoothie 2</th><th>Fruits communs</th><th>Score</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Tropical (Mangue, Ananas, Banane)</td>
+            <td>Tropical citron (Mangue, Ananas, Citron)</td>
+            <td>Mangue, Ananas</td>
+            <td><strong>2</strong></td>
+          </tr>
+          <tr>
+            <td>Tropical (Mangue, Ananas, Banane)</td>
+            <td>Rouge (Fraise, Framboise, Cerise)</td>
+            <td>aucun</td>
+            <td><strong>0</strong></td>
+          </tr>
+          <tr>
+            <td>Tropical (Mangue, Ananas, Banane)</td>
+            <td>Tropical (Mangue, Ananas, Banane)</td>
+            <td>tous</td>
+            <td><strong>3</strong></td>
+          </tr>
+          <tr>
+            <td>Rouge kiwi (Fraise, Framboise, Kiwi)</td>
+            <td>Vert citron (Kiwi, Pomme verte, Citron)</td>
+            <td>Kiwi</td>
+            <td><strong>1</strong></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- ÉDITEUR -->
+    <div class="encadre" style="margin-top:1.2rem;">
+      <span class="encadre-prefix">Éditeur Python — Complète les tests</span>
+      <script type="py-editor" env="smoothie-q3">
+class Boutique_smoothie:
+    def __init__(self, liste_fruits_disponibles):
+        self.liste_fruits_disponibles = liste_fruits_disponibles
+        self.db_smoothies = {
+            "Tropical":        ["Mangue", "Ananas", "Banane"],
+            "Rouge":           ["Fraise", "Framboise", "Cerise"],
+            "Vert":            ["Kiwi", "Pomme verte", "Menthe"],
+            "Agrume":          ["Orange", "Citron", "Pamplemousse"],
+            "Exotique":        ["Papaye", "Fruit de la passion", "Noix de coco"],
+            "Tropical citron": ["Mangue", "Ananas", "Citron"],
+            "Rouge kiwi":      ["Fraise", "Framboise", "Kiwi"],
+            "Exotique rouge":  ["Papaye", "Fraise", "Fruit de la passion"],
+            "Vert citron":     ["Kiwi", "Pomme verte", "Citron"],
+            "Soleil couchant": ["Mangue", "Fraise", "Pamplemousse"],
+        }
+
+    def score_proximite(self, nom1, nom2):
+        nb = 0
+        fruits1 = self.db_smoothies[nom1]
+        fruits2 = self.db_smoothies[nom2]
+        for fruit in fruits1:
+            if fruit in fruits2:
+                nb += 1
+        return nb
+
+
+def test_score_proximite():
+    b = Boutique_smoothie([])   # les fruits dispo n'importent pas pour ce test
+    # 2 fruits communs : Mangue et Ananas
+    assert b.score_proximite("Tropical", "Tropical citron") == 2
+    # 0 fruit commun
+    assert b.score_proximite("Tropical", "Rouge") == 0
+    # Un smoothie avec lui-même : score maximum = 3
+    assert b.score_proximite("Tropical", "Tropical") == 3
+    # Ajoute ici d'autres assertions pertinentes !
+    print("Les tests sont validés.")
+
+test_score_proximite()
+      </script>
+    </div>
+
+    <!-- CORRECTION -->
+    <div style="margin:1rem 0;">
+      <button class="btn-tp-or" onclick="toggleCorrection('corr-q3', this)">&#128274; Afficher la correction complète</button>
+    </div>
+    <div id="corr-q3" class="correction-bloc encadre-conseil">
+      <span class="encadre-prefix">Correction — Question 3</span>
+      <script type="py-editor" env="smoothie-corr3">
+class Boutique_smoothie:
+    def __init__(self, liste_fruits_disponibles):
+        self.liste_fruits_disponibles = liste_fruits_disponibles
+        self.db_smoothies = {
+            "Tropical":        ["Mangue", "Ananas", "Banane"],
+            "Rouge":           ["Fraise", "Framboise", "Cerise"],
+            "Vert":            ["Kiwi", "Pomme verte", "Menthe"],
+            "Agrume":          ["Orange", "Citron", "Pamplemousse"],
+            "Exotique":        ["Papaye", "Fruit de la passion", "Noix de coco"],
+            "Tropical citron": ["Mangue", "Ananas", "Citron"],
+            "Rouge kiwi":      ["Fraise", "Framboise", "Kiwi"],
+            "Exotique rouge":  ["Papaye", "Fraise", "Fruit de la passion"],
+            "Vert citron":     ["Kiwi", "Pomme verte", "Citron"],
+            "Soleil couchant": ["Mangue", "Fraise", "Pamplemousse"],
+        }
+
+    def score_proximite(self, nom1, nom2):
+        nb = 0
+        fruits1 = self.db_smoothies[nom1]
+        fruits2 = self.db_smoothies[nom2]
+        for fruit in fruits1:
+            if fruit in fruits2:
+                nb += 1
+        return nb
+
+
+def test_score_proximite():
+    b = Boutique_smoothie([])
+    # Score = 2 : Mangue, Ananas en commun
+    assert b.score_proximite("Tropical", "Tropical citron") == 2
+    # Score = 0 : aucun fruit en commun
+    assert b.score_proximite("Tropical", "Rouge") == 0
+    # Score = 3 : smoothie identique à lui-même
+    assert b.score_proximite("Tropical", "Tropical") == 3
+    # Score = 1 : seul Kiwi en commun
+    assert b.score_proximite("Rouge kiwi", "Vert citron") == 1
+    # Score = 2 : Papaye, Fruit de la passion en commun
+    assert b.score_proximite("Exotique", "Exotique rouge") == 2
+    # Commutativité : score(A,B) == score(B,A)
+    assert b.score_proximite("Soleil couchant", "Tropical citron") == b.score_proximite("Tropical citron", "Soleil couchant")
+    print("Les tests sont validés.")
+
+test_score_proximite()
+      </script>
+      <p style="margin-top:.8rem;">
+        <strong>Propriété utile :</strong> le score est commutatif — <code>score(A, B) == score(B, A)</code>
+        — car on compte les fruits en commun, indépendamment de l'ordre.
+        C'est un bon test supplémentaire à inclure systématiquement.
+      </p>
+    </div>
+  </section>
+
+  <hr class="sep">
+
+  <!-- QUESTION 4 -->
+  <section id="q4">
+    <h2>Question 4 — Corriger <code>plus_proche_possible</code></h2>
+
+    <div class="encadre-question">
+      <span class="encadre-prefix">Énoncé — Question 4</span>
+      <p>
+        <span class="badge-question">Q4</span>
+        Observer avec <code>test_plus_proche_possible</code> que le smoothie renvoyé
+        n'est pas le bon. Identifier le problème dans <code>plus_proche_possible</code>,
+        proposer une démarche de résolution et la mettre en œuvre.
+      </p>
+    </div>
+
+    <p>Voici le code fourni :</p>
+
+    <pre><code>def plus_proche_possible(self, nom_smoothie_ref):
+    max_communs = 0
+    smoothie_proche = None
+    for nom_smoothie in self.db_smoothies:
+        nb_communs = self.score_proximite(nom_smoothie_ref, nom_smoothie)
+        if nb_communs > max_communs:
+            max_communs = nb_communs
+            smoothie_proche = nom_smoothie
+    return smoothie_proche</code></pre>
+
+    <p>
+      Le test attendu : pour la boutique avec Mangue, Ananas, Banane, Fraise, Citron, Kiwi et Pomme verte,
+      le smoothie le plus proche du « Tropical » (Mangue, Ananas, Banane) parmi les
+      <em>smoothies possibles</em> devrait être « Tropical citron » (Mangue, Ananas, Citron) —
+      2 fruits en commun. Mais la fonction renvoie « Tropical » lui-même.
+    </p>
+
+    <!-- INDICES -->
+    <div style="margin:.8rem 0;">
+      <button class="btn-tp-vert" onclick="toggleIndice('indice-q4-1', this)">▶ Indice 1 — Quel smoothie a le score le plus élevé par rapport à lui-même ?</button>
+    </div>
+    <div id="indice-q4-1" class="encadre-indice indice-bloc">
+      <span class="encadre-prefix">Indice 1</span>
+      <p style="margin:0">
+        <code>score_proximite("Tropical", "Tropical")</code> renvoie <strong>3</strong>
+        (un smoothie partage 3 fruits avec lui-même).
+        La boucle trouve donc « Tropical » avec le score maximal 3 — et le renvoie,
+        même si « Tropical » n'est pas possible !
+        La fonction cherche le plus proche parmi <strong>tous</strong> les smoothies,
+        alors qu'elle devrait chercher parmi les smoothies <strong>possibles uniquement</strong>.
+      </p>
+    </div>
+
+    <div style="margin:.8rem 0;">
+      <button class="btn-tp-vert" onclick="toggleIndice('indice-q4-2', this)">▶ Indice 2 — La correction en une ligne</button>
+    </div>
+    <div id="indice-q4-2" class="encadre-indice indice-bloc">
+      <span class="encadre-prefix">Indice 2</span>
+      <p>
+        Il suffit de remplacer le parcours de <code>self.db_smoothies</code>
+        par un parcours de <code>self.liste_smoothies_possibles()</code> :
+      </p>
+      <pre style="margin:.3rem 0"><code># Avant (bugué) :
+for nom_smoothie in self.db_smoothies:
+
+# Après (corrigé) :
+for nom_smoothie in self.liste_smoothies_possibles():</code></pre>
+      <p style="margin:0">
+        Ainsi, le smoothie de référence lui-même n'est candidat que s'il est réalisable —
+        ce qui est cohérent avec l'objectif de la fonctionnalité « alternative ».
+      </p>
+    </div>
+
+    <!-- Trace du bug -->
+    <div class="encadre-conseil" style="margin-top:1rem;">
+      <span class="encadre-prefix">Trace du bug — Boutique avec Mangue, Ananas, Banane, Fraise, Citron, Kiwi, Pomme verte</span>
+      <p>Smoothies possibles : Tropical, Tropical citron, Vert citron, Rouge kiwi.</p>
+      <table class="table-trace">
+        <thead>
+          <tr>
+            <th>Candidat</th>
+            <th>Score vs Tropical</th>
+            <th>Possible ?</th>
+            <th>Version buguée</th>
+            <th>Version corrigée</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Tropical</td>
+            <td><strong>3</strong></td>
+            <td class="td-ok">Oui</td>
+            <td class="td-bug">Retenu (max = 3)</td>
+            <td class="td-ok">Retenu (max = 3)</td>
+          </tr>
+          <tr>
+            <td>Rouge</td>
+            <td>0</td>
+            <td class="td-bug">Non</td>
+            <td>Ignoré</td>
+            <td>Ignoré (non possible)</td>
+          </tr>
+          <tr>
+            <td>Tropical citron</td>
+            <td>2</td>
+            <td class="td-ok">Oui</td>
+            <td>Ignoré (3 &gt; 2)</td>
+            <td class="td-bug">Ignoré (3 &gt; 2) !</td>
+          </tr>
+          <tr>
+            <td>…</td><td>…</td><td>…</td><td>…</td><td>…</td>
+          </tr>
+        </tbody>
+      </table>
+      <p style="margin:.5rem 0 0; font-size:.9rem;">
+        La correction doit aussi <strong>exclure le smoothie de référence lui-même</strong>
+        de la liste des candidats — on cherche une <em>alternative</em>, pas le smoothie original.
+      </p>
+    </div>
+
+    <!-- ÉDITEUR -->
+    <div class="encadre" style="margin-top:1.2rem;">
+      <span class="encadre-prefix">Éditeur Python — Corrige la méthode</span>
+      <script type="py-editor" env="smoothie-q4">
+class Boutique_smoothie:
+    def __init__(self, liste_fruits_disponibles):
+        self.liste_fruits_disponibles = liste_fruits_disponibles
+        self.db_smoothies = {
+            "Tropical":        ["Mangue", "Ananas", "Banane"],
+            "Rouge":           ["Fraise", "Framboise", "Cerise"],
+            "Vert":            ["Kiwi", "Pomme verte", "Menthe"],
+            "Agrume":          ["Orange", "Citron", "Pamplemousse"],
+            "Exotique":        ["Papaye", "Fruit de la passion", "Noix de coco"],
+            "Tropical citron": ["Mangue", "Ananas", "Citron"],
+            "Rouge kiwi":      ["Fraise", "Framboise", "Kiwi"],
+            "Exotique rouge":  ["Papaye", "Fraise", "Fruit de la passion"],
+            "Vert citron":     ["Kiwi", "Pomme verte", "Citron"],
+            "Soleil couchant": ["Mangue", "Fraise", "Pamplemousse"],
+        }
+
+    def smoothie_possible(self, nom_smoothie):
+        recette = self.db_smoothies[nom_smoothie]
+        for fruit in recette:
+            if fruit not in self.liste_fruits_disponibles:
+                return False
+        return True
+
+    def liste_smoothies_possibles(self):
+        possibles = []
+        for nom in self.db_smoothies:
+            if self.smoothie_possible(nom):
+                possibles.append(nom)
+        return possibles
+
+    def score_proximite(self, nom1, nom2):
+        nb = 0
+        for fruit in self.db_smoothies[nom1]:
+            if fruit in self.db_smoothies[nom2]:
+                nb += 1
+        return nb
+
+    def plus_proche_possible(self, nom_smoothie_ref):
+        """Version à corriger — cherche parmi les smoothies possibles uniquement."""
+        max_communs = 0
+        smoothie_proche = None
+        # Remplace self.db_smoothies par la liste des possibles
+        # et exclut le smoothie de référence lui-même
+        for nom_smoothie in self.db_smoothies:  # ← ligne à corriger
+            nb_communs = self.score_proximite(nom_smoothie_ref, nom_smoothie)
+            if nb_communs > max_communs:
+                max_communs = nb_communs
+                smoothie_proche = nom_smoothie
+        return smoothie_proche
+
+
+def test_plus_proche_possible():
+    b = Boutique_smoothie(
+        ["Mangue", "Ananas", "Banane", "Fraise", "Citron", "Kiwi", "Pomme verte"])
+    # Tropical → Tropical citron (2 fruits communs : Mangue, Ananas)
+    assert b.plus_proche_possible("Tropical") == "Tropical citron"
+    # Exotique : aucun smoothie possible ne partage de fruits avec lui
+    assert b.plus_proche_possible("Exotique") is None
+    # Agrume → Vert citron ou Tropical citron (1 fruit : Citron)
+    assert b.plus_proche_possible("Agrume") in ["Vert citron", "Tropical citron"]
+    print("Les tests sont validés.")
+
+test_plus_proche_possible()
+      </script>
+    </div>
+
+    <!-- CORRECTION -->
+    <div style="margin:1rem 0;">
+      <button class="btn-tp-or" onclick="toggleCorrection('corr-q4', this)">&#128274; Afficher la correction</button>
+    </div>
+    <div id="corr-q4" class="correction-bloc encadre-conseil">
+      <span class="encadre-prefix">Correction — Question 4</span>
+      <script type="py-editor" env="smoothie-corr4">
+class Boutique_smoothie:
+    def __init__(self, liste_fruits_disponibles):
+        self.liste_fruits_disponibles = liste_fruits_disponibles
+        self.db_smoothies = {
+            "Tropical":        ["Mangue", "Ananas", "Banane"],
+            "Rouge":           ["Fraise", "Framboise", "Cerise"],
+            "Vert":            ["Kiwi", "Pomme verte", "Menthe"],
+            "Agrume":          ["Orange", "Citron", "Pamplemousse"],
+            "Exotique":        ["Papaye", "Fruit de la passion", "Noix de coco"],
+            "Tropical citron": ["Mangue", "Ananas", "Citron"],
+            "Rouge kiwi":      ["Fraise", "Framboise", "Kiwi"],
+            "Exotique rouge":  ["Papaye", "Fraise", "Fruit de la passion"],
+            "Vert citron":     ["Kiwi", "Pomme verte", "Citron"],
+            "Soleil couchant": ["Mangue", "Fraise", "Pamplemousse"],
+        }
+
+    def smoothie_possible(self, nom_smoothie):
+        recette = self.db_smoothies[nom_smoothie]
+        for fruit in recette:
+            if fruit not in self.liste_fruits_disponibles:
+                return False
+        return True
+
+    def liste_smoothies_possibles(self):
+        possibles = []
+        for nom in self.db_smoothies:
+            if self.smoothie_possible(nom):
+                possibles.append(nom)
+        return possibles
+
+    def score_proximite(self, nom1, nom2):
+        nb = 0
+        for fruit in self.db_smoothies[nom1]:
+            if fruit in self.db_smoothies[nom2]:
+                nb += 1
+        return nb
+
+    def plus_proche_possible(self, nom_smoothie_ref):
+        """Version corrigée : cherche parmi les smoothies possibles,
+        en excluant le smoothie de référence lui-même."""
+        max_communs = 0
+        smoothie_proche = None
+        for nom_smoothie in self.liste_smoothies_possibles():        # ← correction 1
+            if nom_smoothie == nom_smoothie_ref:                     # ← correction 2
+                continue                                             # on exclut le smoothie lui-même
+            nb_communs = self.score_proximite(nom_smoothie_ref, nom_smoothie)
+            if nb_communs > max_communs:
+                max_communs = nb_communs
+                smoothie_proche = nom_smoothie
+        return smoothie_proche
+
+
+def test_plus_proche_possible():
+    b = Boutique_smoothie(
+        ["Mangue", "Ananas", "Banane", "Fraise", "Citron", "Kiwi", "Pomme verte"])
+    assert b.plus_proche_possible("Tropical") == "Tropical citron"
+    assert b.plus_proche_possible("Exotique") is None
+    assert b.plus_proche_possible("Agrume") in ["Vert citron", "Tropical citron"]
+    print("Les tests sont validés.")
+
+test_plus_proche_possible()
+      </script>
+      <div style="margin-top:.8rem;">
+        <p>
+          <strong>Les deux corrections nécessaires :</strong>
+        </p>
+        <ol>
+          <li>
+            Remplacer <code>self.db_smoothies</code> par <code>self.liste_smoothies_possibles()</code> —
+            on ne propose comme alternative que des smoothies effectivement réalisables.
+          </li>
+          <li>
+            Exclure le smoothie de référence lui-même avec <code>if nom_smoothie == nom_smoothie_ref: continue</code> —
+            si le smoothie original est possible, il ne doit pas être sa propre « alternative ».
+          </li>
+        </ol>
+        <p style="margin:0">
+          <strong>Cas <code>None</code> :</strong> si aucun smoothie possible ne partage de fruit
+          avec le smoothie de référence, <code>max_communs</code> reste à 0 et
+          <code>smoothie_proche</code> reste à <code>None</code>. La fonction renvoie
+          correctement <code>None</code> dans ce cas.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <hr class="sep">
+
+  <!-- QUESTION 5 -->
+  <section id="q5">
+    <h2>Question 5 — Mise en situation complète</h2>
+
+    <div class="encadre-question">
+      <span class="encadre-prefix">Énoncé — Question 5</span>
+      <p>
+        <span class="badge-question">Q5</span>
+        Créer une boutique avec les ingrédients suivants :
+        Mangue, Ananas, Banane, Fraise, Citron, Kiwi et Pomme verte.
+        Utiliser la méthode <code>affichage_possibles()</code> pour déterminer
+        quel smoothie sera proposé si un client souhaite un smoothie « Agrume ».
+      </p>
+    </div>
+
+    <div class="encadre">
+      <span class="encadre-prefix">Rappel — Fruits disponibles et smoothies possibles</span>
+      <p>
+        Fruits : <span class="chip chip-ok">Mangue</span>
+        <span class="chip chip-ok">Ananas</span>
+        <span class="chip chip-ok">Banane</span>
+        <span class="chip chip-ok">Fraise</span>
+        <span class="chip chip-ok">Citron</span>
+        <span class="chip chip-ok">Kiwi</span>
+        <span class="chip chip-ok">Pomme verte</span>
+      </p>
+      <p>Smoothies réalisables :</p>
+      <ul style="margin:0">
+        <li><strong>Tropical</strong> : Mangue ✓, Ananas ✓, Banane ✓</li>
+        <li><strong>Tropical citron</strong> : Mangue ✓, Ananas ✓, Citron ✓</li>
+        <li><strong>Rouge kiwi</strong> : Fraise ✓, Framboise <span style="color:var(--rouge)">✗</span>… — non !</li>
+        <li><strong>Vert citron</strong> : Kiwi ✓, Pomme verte ✓, Citron ✓</li>
+        <li><strong>Soleil couchant</strong> : Mangue ✓, Fraise ✓, Pamplemousse <span style="color:var(--rouge)">✗</span> — non !</li>
+      </ul>
+      <p style="margin:.5rem 0 0">
+        Smoothies possibles : <strong>Tropical</strong>, <strong>Tropical citron</strong>, <strong>Vert citron</strong>.
+      </p>
+    </div>
+
+    <div class="encadre-conseil">
+      <span class="encadre-prefix">Analyse de l'alternative pour « Agrume »</span>
+      <p>
+        Agrume = Orange, Citron, Pamplemousse. Parmi les smoothies possibles,
+        lequel partage le plus de fruits avec Agrume ?
+      </p>
+      <table class="table-trace">
+        <thead>
+          <tr><th>Smoothie possible</th><th>Fruits communs avec Agrume</th><th>Score</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Tropical</td><td>aucun</td><td>0</td></tr>
+          <tr><td>Tropical citron</td><td>Citron</td><td>1</td></tr>
+          <tr><td>Vert citron</td><td>Citron</td><td>1</td></tr>
+        </tbody>
+      </table>
+      <p style="margin:.5rem 0 0">
+        Deux smoothies ont le même score (1). L'énoncé précise : « en cas d'égalité, retourner le premier trouvé ».
+        Le dictionnaire est parcouru dans l'ordre d'insertion — « Tropical citron » apparaît avant « Vert citron »
+        dans <code>db_smoothies</code>. L'alternative proposée est donc <strong>Tropical citron</strong>.
+      </p>
+    </div>
+
+    <!-- ÉDITEUR -->
+    <div class="encadre" style="margin-top:1.2rem;">
+      <span class="encadre-prefix">Éditeur Python — Exécute la situation complète</span>
+      <script type="py-editor" env="smoothie-q5">
+class Boutique_smoothie:
+    def __init__(self, liste_fruits_disponibles):
+        self.liste_fruits_disponibles = liste_fruits_disponibles
+        self.db_smoothies = {
+            "Tropical":        ["Mangue", "Ananas", "Banane"],
+            "Rouge":           ["Fraise", "Framboise", "Cerise"],
+            "Vert":            ["Kiwi", "Pomme verte", "Menthe"],
+            "Agrume":          ["Orange", "Citron", "Pamplemousse"],
+            "Exotique":        ["Papaye", "Fruit de la passion", "Noix de coco"],
+            "Tropical citron": ["Mangue", "Ananas", "Citron"],
+            "Rouge kiwi":      ["Fraise", "Framboise", "Kiwi"],
+            "Exotique rouge":  ["Papaye", "Fraise", "Fruit de la passion"],
+            "Vert citron":     ["Kiwi", "Pomme verte", "Citron"],
+            "Soleil couchant": ["Mangue", "Fraise", "Pamplemousse"],
+        }
+
+    def smoothie_possible(self, nom_smoothie):
+        for fruit in self.db_smoothies[nom_smoothie]:
+            if fruit not in self.liste_fruits_disponibles:
+                return False
+        return True
+
+    def liste_smoothies_possibles(self):
+        return [nom for nom in self.db_smoothies if self.smoothie_possible(nom)]
+
+    def score_proximite(self, nom1, nom2):
+        nb = 0
+        for fruit in self.db_smoothies[nom1]:
+            if fruit in self.db_smoothies[nom2]:
+                nb += 1
+        return nb
+
+    def plus_proche_possible(self, nom_smoothie_ref):
+        max_communs = 0
+        smoothie_proche = None
+        for nom_smoothie in self.liste_smoothies_possibles():
+            if nom_smoothie == nom_smoothie_ref:
+                continue
+            nb_communs = self.score_proximite(nom_smoothie_ref, nom_smoothie)
+            if nb_communs > max_communs:
+                max_communs = nb_communs
+                smoothie_proche = nom_smoothie
+        return smoothie_proche
+
+    def affichage_possibles(self):
+        smoothies = self.liste_smoothies_possibles()
+        print("Smoothies possibles avec les fruits disponibles :")
+        for smoothie in smoothies:
+            print(" ", smoothie)
+        print("\nAlternative aux autres smoothies :")
+        for smoothie in self.db_smoothies:
+            if smoothie not in smoothies:
+                proche = self.plus_proche_possible(smoothie)
+                if proche is not None:
+                    print(f"  Pour le smoothie {smoothie}, essayez {proche}.")
+                else:
+                    print(f"  Pour le smoothie {smoothie}, aucun smoothie proche disponible.")
+
+
+# Création de la boutique avec les fruits du sujet
+boutique = Boutique_smoothie(
+    ["Mangue", "Ananas", "Banane", "Fraise", "Citron", "Kiwi", "Pomme verte"]
+)
+boutique.affichage_possibles()
+      </script>
+    </div>
+  </section>
+
+  <hr class="sep">
+
+  <!-- PIÈGES FRÉQUENTS -->
+  <section id="pieges">
+    <h2>Pièges fréquents &amp; astuces de vérification</h2>
+
+    <div class="encadre-piege">
+      <span class="encadre-prefix">Piège 1 — Oublier self dans les méthodes</span>
+      <p style="margin:0">
+        Toute méthode d'une classe doit avoir <code>self</code> comme premier paramètre.
+        Pour accéder aux attributs depuis l'intérieur de la classe, il faut toujours
+        écrire <code>self.attribut</code> — jamais juste <code>attribut</code>.
+        Et pour appeler une autre méthode depuis la même classe :
+        <code>self.smoothie_possible(nom)</code>, pas juste <code>smoothie_possible(nom)</code>.
+      </p>
+    </div>
+
+    <div class="encadre-piege">
+      <span class="encadre-prefix">Piège 2 — Chercher dans tous les smoothies plutôt que dans les possibles</span>
+      <p style="margin:0">
+        C'est exactement le bug de la Question 4. Si tu cherches le « plus proche » parmi
+        <code>self.db_smoothies</code>, tu inclus des smoothies non réalisables — et le smoothie
+        de référence lui-même (score 3 avec lui-même, imbattable). Il faut toujours
+        restreindre la recherche à <code>self.liste_smoothies_possibles()</code>.
+      </p>
+    </div>
+
+    <div class="encadre-piege">
+      <span class="encadre-prefix">Piège 3 — Retourner True trop tôt dans smoothie_possible</span>
+      <p style="margin:0">
+        Le <code>return True</code> ne doit être atteint qu'<strong>après</strong>
+        avoir parcouru <em>toute</em> la recette sans trouver de fruit manquant.
+        Placer <code>return True</code> à l'intérieur de la boucle provoquerait
+        un retour dès le premier fruit trouvé — ce qui ne garantit pas que les autres sont présents.
+      </p>
+    </div>
+
+    <div class="encadre-piege">
+      <span class="encadre-prefix">Piège 4 — Ne pas gérer le cas None dans affichage_possibles</span>
+      <p style="margin:0">
+        Quand aucun smoothie possible ne partage de fruit avec un smoothie demandé,
+        <code>plus_proche_possible</code> renvoie <code>None</code>.
+        Il faut tester <code>if proche is not None:</code> avant d'afficher l'alternative —
+        sous peine d'afficher « essayez None » au client, ce qui n'est pas très élégant.
+      </p>
+    </div>
+
+    <!-- MINI-EXERCICES -->
+    <h3>Mini-exercices de vérification</h3>
+
+    <div class="encadre">
+      <span class="encadre-prefix">Mini-exercice A — Calcul de score à la main</span>
+      <p>Sans Python, calcule <code>score_proximite("Soleil couchant", "Tropical citron")</code>.</p>
+      <p style="font-size:.9rem; color:var(--text-muted)">
+        Soleil couchant = Mangue, Fraise, Pamplemousse &nbsp;|&nbsp;
+        Tropical citron = Mangue, Ananas, Citron
+      </p>
+      <button class="btn-secondaire" onclick="toggleCorrection('corr-mini-a', this)">Vérifier</button>
+      <div id="corr-mini-a" class="correction-bloc" style="margin-top:.6rem;">
+        <p style="margin:0">
+          Seule <strong>Mangue</strong> est commune aux deux recettes → score = <strong>1</strong>.
+        </p>
+      </div>
+    </div>
+
+    <div class="encadre">
+      <span class="encadre-prefix">Mini-exercice B — Smoothies possibles</span>
+      <p>
+        Avec uniquement Fraise, Framboise, Kiwi et Citron,
+        quels smoothies sont possibles parmi les dix de la carte ?
+      </p>
+      <button class="btn-secondaire" onclick="toggleCorrection('corr-mini-b', this)">Vérifier</button>
+      <div id="corr-mini-b" class="correction-bloc" style="margin-top:.6rem;">
+        <ul style="margin:0">
+          <li>Tropical : Mangue ✗ → non</li>
+          <li>Rouge : Cerise ✗ → non</li>
+          <li>Vert : Pomme verte ✗ → non</li>
+          <li>Agrume : Orange ✗ → non</li>
+          <li>Exotique : Papaye ✗ → non</li>
+          <li>Tropical citron : Mangue ✗ → non</li>
+          <li><strong>Rouge kiwi</strong> : Fraise ✓, Framboise ✓, Kiwi ✓ → <strong>possible</strong></li>
+          <li>Exotique rouge : Papaye ✗ → non</li>
+          <li>Vert citron : Pomme verte ✗ → non</li>
+          <li>Soleil couchant : Mangue ✗ → non</li>
+        </ul>
+        <p style="margin:.5rem 0 0">Un seul smoothie possible : <strong>Rouge kiwi</strong>.</p>
+      </div>
+    </div>
+
+    <div class="encadre">
+      <span class="encadre-prefix">Mini-exercice C — Trouver l'alternative</span>
+      <p>
+        Avec la boutique de l'exercice B (Fraise, Framboise, Kiwi, Citron),
+        quelle alternative sera proposée pour « Vert » (Kiwi, Pomme verte, Menthe) ?
+      </p>
+      <button class="btn-secondaire" onclick="toggleCorrection('corr-mini-c', this)">Vérifier</button>
+      <div id="corr-mini-c" class="correction-bloc" style="margin-top:.6rem;">
+        <p>
+          Seul « Rouge kiwi » est possible. Score entre Vert et Rouge kiwi :
+          Kiwi est commun → score = 1.
+        </p>
+        <p style="margin:0">
+          L'alternative proposée est <strong>Rouge kiwi</strong>.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <hr class="sep">
+
+  <!-- RÉCAPITULATIF -->
+  <div class="encadre" style="margin-top:2rem;">
+    <span class="encadre-prefix">Récapitulatif — Ce que tu dois retenir</span>
+    <ul style="margin:0">
+      <li>Dans une méthode, <code>self</code> est obligatoire en premier paramètre — il donne accès aux attributs et aux autres méthodes.</li>
+      <li><code>element in liste</code> renvoie <code>True</code> si l'élément est présent dans la liste.</li>
+      <li><code>all(condition for x in liste)</code> teste si la condition est vraie pour tous les éléments.</li>
+      <li>Le bug de <code>plus_proche_possible</code> : chercher dans tous les smoothies au lieu des smoothies possibles uniquement.</li>
+      <li>Ne jamais oublier d'exclure le smoothie de référence lui-même de la recherche d'alternative.</li>
+      <li>Toujours gérer le cas <code>None</code> quand une fonction peut ne rien trouver.</li>
+    </ul>
+  </div>
+
+</div><!-- /container-content -->
+
+<!-- PIED DE PAGE -->
+<footer>
+  Lycée Antoine Watteau — DarkSATHI Li
+</footer>
+
+<!-- SCRIPTS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+  /* ── RETOUR EN HAUT ── */
+  const btnTop = document.getElementById('btn-top');
+  window.addEventListener('scroll', () => {
+    btnTop.style.display = window.scrollY > 300 ? 'flex' : 'none';
+  });
+  btnTop.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
+
+  /* ── TOGGLE INDICE ── */
+  function toggleIndice(id, btn) {
+    var el = document.getElementById(id);
+    if (!el) return;
+    el.classList.toggle('visible');
+    btn.textContent = el.classList.contains('visible')
+      ? btn.textContent.replace('▶', '▼')
+      : btn.textContent.replace('▼', '▶');
+  }
+
+  /* ── TOGGLE CORRECTION ── */
+  function toggleCorrection(id, btn) {
+    var el = document.getElementById(id);
+    if (!el) return;
+    el.classList.toggle('visible');
+    if (el.classList.contains('visible')) {
+      btn.textContent = btn.textContent.replace('Afficher', 'Masquer').replace('Vérifier', 'Masquer');
+    } else {
+      btn.textContent = btn.textContent.replace('Masquer', 'Afficher');
+    }
+  }
+</script>
+</body>
+</html>
