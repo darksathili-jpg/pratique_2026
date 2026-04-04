@@ -1,0 +1,1318 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Fiche – Transmission DEMETER | NSI Terminale | BAC 2026</title>
+
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Rubik+Dirt&family=Source+Serif+4:ital,opsz,wght@0,8..60,300..900;1,8..60,300..900&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+
+  <script>
+    MathJax = {
+      tex: { inlineMath: [['\\(', '\\)'], ['$', '$']] },
+      options: { skipHtmlTags: ['script','noscript','style','textarea','pre'] }
+    };
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js" async></script>
+  <script type="module" src="https://pyscript.net/releases/2026.3.1/core.js"></script>
+
+  <style>
+    :root {
+      --bg-main:     #f8f9fb;
+      --bg-panel:    #eef1f5;
+      --accent:      #2a6496;
+      --accent-or:   #b5610a;
+      --accent-vert: #2e7d32;
+      --text-main:   #1a1a1a;
+      --text-muted:  #5a6470;
+      --rouge:       #c0392b;
+      --violet:      #7b3fa8;
+      --border-radius: 8px;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg-main);
+      color: var(--text-main);
+      font-family: 'Source Serif 4', Georgia, serif;
+      font-size: 1.05rem;
+      line-height: 1.8;
+      margin: 0;
+      padding-bottom: 4rem;
+    }
+
+    h1, h2, h3, h4 { font-family: 'Rubik Dirt', cursive; color: var(--accent); letter-spacing: .02em; }
+    h1 { font-size: 2.1rem; color: #111; }
+    h2 { font-size: 1.5rem; border-bottom: 2px solid var(--accent); padding-bottom: .3rem; margin-top: 2.5rem; }
+    h3 { font-size: 1.2rem; color: var(--accent-or); margin-top: 1.8rem; }
+    p  { margin-bottom: 1rem; }
+
+    code, pre { font-family: 'JetBrains Mono', monospace; font-size: .88em; }
+    code { background: #e8edf2; padding: 2px 6px; border-radius: 4px; color: #8b3a00; }
+    pre  { background: #f0f3f7; border-left: 3px solid var(--accent); padding: 1rem 1.2rem;
+           border-radius: var(--border-radius); overflow-x: auto; color: #1a1a1a; }
+
+    a { color: var(--accent); text-decoration: underline dotted; }
+    a:hover { color: var(--accent-or); }
+
+    /* NAV */
+    #navbar {
+      position: sticky; top: 0; z-index: 1000;
+      background: #2a6496; border-bottom: 2px solid #1a4a70;
+      padding: .5rem 1.5rem; display: flex; gap: .5rem; flex-wrap: wrap; align-items: center;
+    }
+    #navbar span { font-family: 'JetBrains Mono', monospace; font-size: .78rem; color: #ccddf0; margin-right: auto; }
+    #navbar a {
+      font-family: 'JetBrains Mono', monospace; font-size: .78rem; color: #fff;
+      text-decoration: none; padding: .22rem .65rem; border: 1px solid #ccddf0;
+      border-radius: 4px; transition: background .2s;
+    }
+    #navbar a:hover { background: #1a4a70; }
+
+    .container-content { max-width: 880px; margin: 0 auto; padding: 2rem 1.5rem; }
+
+    /* ENCADRÉS */
+    .encadre, .encadre-conseil, .encadre-indice, .encadre-question, .encadre-piege, .encadre-correction {
+      border-radius: var(--border-radius); padding: 1.1rem 1.4rem; margin: 1.3rem 0;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+    }
+    .encadre          { background: #fff;     border-left: 4px solid var(--accent); }
+    .encadre-conseil  { background: #fff8f0;  border-left: 4px solid var(--accent-or); }
+    .encadre-indice   { background: #f0faf0;  border-left: 4px solid var(--accent-vert); }
+    .encadre-question { background: #faf5ff;  border-left: 4px solid var(--violet); }
+    .encadre-piege    { background: #fff5f5;  border-left: 4px solid var(--rouge); }
+    .encadre-correction { background: #f0fff4; border-left: 4px solid var(--accent-vert); }
+
+    .encadre-prefix {
+      font-family: 'JetBrains Mono', monospace; font-size: .7rem;
+      font-variant: small-caps; letter-spacing: .12em; text-transform: uppercase;
+      margin-bottom: .4rem; display: block;
+    }
+    .encadre          .encadre-prefix { color: var(--accent); }
+    .encadre-conseil  .encadre-prefix { color: var(--accent-or); }
+    .encadre-indice   .encadre-prefix { color: var(--accent-vert); }
+    .encadre-question .encadre-prefix { color: var(--violet); }
+    .encadre-piege    .encadre-prefix { color: var(--rouge); }
+    .encadre-correction .encadre-prefix { color: var(--accent-vert); }
+
+    /* BOUTONS */
+    .btn-tp, .btn-tp-or, .btn-tp-vert, .btn-secondaire {
+      font-family: 'JetBrains Mono', monospace; font-size: .82rem;
+      border: none; border-radius: 5px; padding: .42rem 1rem;
+      cursor: pointer; transition: opacity .2s, transform .1s; margin: .3rem .2rem;
+    }
+    .btn-tp         { background: var(--accent);      color: #fff; }
+    .btn-tp-or      { background: var(--accent-or);   color: #fff; }
+    .btn-tp-vert    { background: var(--accent-vert); color: #fff; }
+    .btn-secondaire { background: #eef1f5; border: 1px solid var(--accent); color: var(--text-main); }
+    .btn-tp:hover, .btn-tp-or:hover, .btn-tp-vert:hover, .btn-secondaire:hover {
+      opacity: .85; transform: translateY(-1px);
+    }
+
+    .badge-question {
+      display: inline-block; font-family: 'JetBrains Mono', monospace; font-size: .8rem;
+      background: var(--violet); color: #fff; border-radius: 4px;
+      padding: .15rem .7rem; margin-right: .5rem; vertical-align: middle;
+    }
+
+    /* TRAME VISUELLE */
+    .trame-grid {
+      display: flex; font-family: 'JetBrains Mono', monospace; font-size: .78rem;
+      border: 2px solid var(--accent); border-radius: 6px; overflow: hidden; margin: 1rem 0;
+    }
+    .trame-bloc {
+      flex: 1; text-align: center; padding: .5rem .3rem;
+      border-right: 1px solid #b0c8e0;
+    }
+    .trame-bloc:last-child { border-right: none; }
+    .trame-bloc .tb-label { font-size: .65rem; color: var(--text-muted); display: block; margin-bottom: .2rem; }
+    .trame-bloc .tb-bits  { color: var(--accent); font-weight: 600; word-break: break-all; font-size: .72rem; }
+    .trame-bloc .tb-val   { font-size: .68rem; color: var(--accent-vert); margin-top: .2rem; display: block; }
+    .tb-id    { background: #dce8f2; }
+    .tb-cle   { background: #f5f0e8; }
+    .tb-temp  { background: #ffeee8; }
+    .tb-hum   { background: #eaf5ea; }
+    .tb-ctrl  { background: #f5eaff; }
+
+    /* TABLEAU */
+    .table-bits {
+      border-collapse: collapse; width: 100%;
+      font-family: 'JetBrains Mono', monospace; font-size: .83rem; margin: .8rem 0;
+    }
+    .table-bits th {
+      background: #dce8f2; color: var(--accent);
+      border: 1px solid #b0c8e0; padding: .4rem .8rem; text-align: left;
+    }
+    .table-bits td { border: 1px solid #d0dce8; padding: .38rem .8rem; }
+    .table-bits tr:nth-child(even) td { background: #f4f7fb; }
+    .td-ok  { color: var(--accent-vert); font-weight: 600; }
+    .td-bug { color: var(--rouge); font-weight: 600; }
+
+    /* PARITÉ SCHÉMA */
+    .parite-row { display: flex; gap: .3rem; align-items: center; margin: .3rem 0; font-family: 'JetBrains Mono', monospace; font-size: .82rem; }
+    .bit-cell { width: 22px; height: 22px; display: flex; align-items: center; justify-content: center;
+                border-radius: 3px; font-weight: 600; }
+    .bit-1 { background: #dce8f2; color: var(--accent); }
+    .bit-0 { background: #f0f3f7; color: var(--text-muted); }
+    .bit-ctrl-1 { background: #c8e6c9; color: var(--accent-vert); }
+    .bit-ctrl-0 { background: #e8f5e9; color: var(--accent-vert); }
+
+    /* INDICES / CORRECTIONS */
+    .indice-bloc     { display: none; }
+    .correction-bloc { display: none; }
+    .indice-bloc.visible     { display: block; }
+    .correction-bloc.visible { display: block; }
+
+    /* SOMMAIRE */
+    #sommaire ol { font-family: 'JetBrains Mono', monospace; font-size: .87rem; line-height: 2.2; }
+    #sommaire a { color: var(--accent); }
+    #sommaire a:hover { color: var(--accent-or); }
+
+    .sep { border: none; border-top: 1px dashed #9ab0c8; margin: 2.5rem 0; opacity: .7; }
+
+    #btn-top {
+      position: fixed; bottom: 1.5rem; right: 1.5rem; z-index: 999;
+      background: var(--accent); color: #fff; border: none; border-radius: 50%;
+      width: 44px; height: 44px; font-size: 1.2rem; cursor: pointer;
+      display: none; align-items: center; justify-content: center;
+      font-family: 'JetBrains Mono', monospace;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.25); transition: opacity .2s;
+    }
+    #btn-top:hover { opacity: .8; }
+
+    footer {
+      text-align: center; font-family: 'JetBrains Mono', monospace;
+      font-size: .8rem; color: var(--text-muted);
+      padding: 2rem 1rem 1rem; border-top: 1px solid #d0d8e4;
+    }
+
+    .badge-erreur {
+      display: inline-block; font-family: 'JetBrains Mono', monospace; font-size: .72rem;
+      background: var(--rouge); color: #fff; border-radius: 4px;
+      padding: .1rem .55rem; margin-left: .4rem; vertical-align: middle;
+    }
+    .badge-ok {
+      display: inline-block; font-family: 'JetBrains Mono', monospace; font-size: .72rem;
+      background: var(--accent-vert); color: #fff; border-radius: 4px;
+      padding: .1rem .55rem; margin-left: .4rem; vertical-align: middle;
+    }
+  </style>
+</head>
+<body>
+
+<div style="display:none"><script type="py" env="demeter">pass</script></div>
+<button id="btn-top" title="Retour en haut" aria-label="Retour en haut">▲</button>
+
+<nav id="navbar">
+  <span>NSI Terminale – Transmission DEMETER</span>
+  <a href="#s0">Intro</a>
+  <a href="#s1">Rappels</a>
+  <a href="#s2">La trame</a>
+  <a href="#q1">Q1</a>
+  <a href="#q2">Q2</a>
+  <a href="#q3">Q3</a>
+  <a href="#q4">Q4</a>
+  <a href="#pieges">Pièges</a>
+</nav>
+
+<div class="container-content">
+
+  <!-- EN-TÊTE -->
+  <div style="text-align:center; padding: 2rem 0 1rem;">
+    <div style="font-family:'JetBrains Mono',monospace; font-size:.78rem; color:var(--text-muted); margin-bottom:.5rem;">
+      BAC NSI 2026 — Sujet n°23 — Partie pratique
+    </div>
+    <h1>Module DEMETER<br>
+      <span style="font-size:1rem; color:var(--accent); font-family:'Source Serif 4',serif; font-style:italic; font-weight:300;">
+        POO · Encodage binaire · BCD · Parité · Robustesse
+      </span>
+    </h1>
+    <div style="font-family:'JetBrains Mono',monospace; font-size:.78rem; color:var(--text-muted); margin-top:.5rem;">
+      Terminale NSI &nbsp;·&nbsp; Représentation des données &nbsp;·&nbsp; Programmation Orientée Objet
+    </div>
+  </div>
+
+  <!-- NOTE ANALYSE CRITIQUE -->
+  <div class="encadre-correction" style="margin-top:0;">
+    <span class="encadre-prefix">Note d'analyse — Corrections apportées à l'énoncé original</span>
+    <p>
+      Après analyse du fichier <code>data.txt</code> fourni et du code <code>analyse.py</code>,
+      deux problèmes supplémentaires ont été identifiés, non mentionnés explicitement dans l'énoncé :
+    </p>
+    <ul>
+      <li>
+        <strong>Erreur dans <code>analyse.py</code> (ligne 2) :</strong>
+        <code>from Transmission import Transmission</code> utilise une majuscule,
+        alors que le fichier s'appelle <code>transmission.py</code> (minuscule).
+        Sur Linux et macOS, cette casse entraîne un <code>ModuleNotFoundError</code> immédiat.
+        C'est la première cause du plantage observé en Q3.
+      </li>
+      <li>
+        <strong>3 trames corrompues dans <code>data.txt</code> :</strong>
+        lignes 73 (41 bits), 111 (38 bits) et 126 (41 bits). La trame de 38 bits provoque
+        un <code>IndexError</code> dans toute implémentation de <code>est_valide</code>
+        qui accède à <code>trame[38]</code> ou <code>trame[39]</code>. C'est la deuxième cause de plantage.
+      </li>
+    </ul>
+    <p style="margin:0">
+      La Q4 demande de rendre la classe <strong>robuste</strong> face à ces deux types d'erreur.
+      Cette fiche intègre les deux corrections.
+    </p>
+  </div>
+
+  <hr class="sep">
+
+  <!-- SOMMAIRE -->
+  <section id="s0">
+    <div id="sommaire" class="encadre">
+      <span class="encadre-prefix">Sommaire</span>
+      <ol>
+        <li><a href="#s1">Rappels de cours — Binaire, BCD, parité</a></li>
+        <li><a href="#s2">La trame DEMETER — structure détaillée</a></li>
+        <li><a href="#q1">Question 1 — Décoder la température et l'humidité</a></li>
+        <li><a href="#q2">Question 2 — Valider une trame par contrôle de parité</a></li>
+        <li><a href="#q3">Question 3 — Analyser le plantage de <code>analyse.py</code></a></li>
+        <li><a href="#q4">Question 4 — Rendre la classe robuste</a></li>
+        <li><a href="#pieges">Pièges fréquents &amp; astuces de vérification</a></li>
+      </ol>
+    </div>
+  </section>
+
+  <hr class="sep">
+
+  <!-- SECTION 1 : RAPPELS -->
+  <section id="s1">
+    <h2>1 — Rappels : binaire, BCD et parité</h2>
+
+    <h3>Conversion binaire → décimal</h3>
+
+    <p>
+      En Python, <code>int(chaine, 2)</code> convertit une chaîne de caractères représentant
+      un nombre en binaire vers sa valeur décimale.
+    </p>
+
+    <div class="encadre">
+      <span class="encadre-prefix">Exemples</span>
+      <pre style="margin:.3rem 0"><code>int("00101010", 2)    # → 42
+int("010010001100", 2) # → 1164
+int("1010", 2)         # → 10
+int("0110", 2)         # → 6</code></pre>
+    </div>
+
+    <p>
+      Pour accéder à une portion d'une chaîne, on utilise le <strong>slicing</strong> :
+      <code>trame[a:b]</code> renvoie les caractères d'indice <code>a</code> inclus jusqu'à <code>b</code> exclu.
+    </p>
+
+    <pre><code>trame = "0010101011001000010010001100011000101101"
+trame[0:8]   # → "00101010"   (8 premiers bits = ID)
+trame[16:28] # → "010010001100" (12 bits = température)
+trame[28:36] # → "01100010"   (8 bits = humidité)</code></pre>
+
+    <h3>Le codage BCD (Décimal Codé Binaire)</h3>
+
+    <p>
+      En BCD, chaque <strong>chiffre décimal</strong> est codé indépendamment sur 4 bits.
+      Pour coder « 62 », on code « 6 » puis « 2 » séparément :
+    </p>
+
+    <div class="encadre-conseil">
+      <span class="encadre-prefix">Exemple — Décoder 01100010 en BCD</span>
+      <table class="table-bits" style="max-width:420px;">
+        <thead><tr><th>Groupe</th><th>Bits</th><th>Décimal</th></tr></thead>
+        <tbody>
+          <tr><td>Dizaines</td><td><code>0110</code></td><td>6</td></tr>
+          <tr><td>Unités</td><td><code>0010</code></td><td>2</td></tr>
+          <tr><td colspan="2"><strong>Résultat</strong></td><td><strong>62 %</strong></td></tr>
+        </tbody>
+      </table>
+      <pre style="margin:.5rem 0 0"><code>hum_bits = "01100010"
+d1 = int(hum_bits[0:4], 2)   # → 6  (dizaines)
+d2 = int(hum_bits[4:8], 2)   # → 2  (unités)
+humidite = d1 * 10 + d2       # → 62</code></pre>
+      <p style="margin:.5rem 0 0">
+        <strong>Cas particulier :</strong> 100 % est codé <code>10100000</code>
+        (ce qui donnerait 10 et 0, mais 10 n'est pas un chiffre BCD valide).
+        On traite ce cas séparément : <code>if hum_bits == "10100000": return 100</code>.
+      </p>
+    </div>
+
+    <h3>La parité — détecter les erreurs de transmission</h3>
+
+    <p>
+      Imagine que tu transmets un message par radio et qu'un parasite flip un bit en chemin.
+      Comment le destinataire peut-il s'en apercevoir ? En ajoutant un <strong>bit de parité</strong>
+      après chaque bloc de données.
+    </p>
+
+    <div class="encadre">
+      <span class="encadre-prefix">Définition — Bit de parité impaire</span>
+      <p>
+        Le bit de parité d'un bloc vaut <strong>1</strong> si le nombre de bits à 1 dans ce bloc
+        est <em>impair</em>, et <strong>0</strong> si ce nombre est <em>pair</em>.
+        Ainsi, le nombre total de 1 (bloc + bit de parité) est toujours pair.
+      </p>
+      <pre style="margin:.3rem 0"><code>def parite(bloc):
+    """Renvoie le bit de parité d'un bloc binaire."""
+    return 1 if bloc.count('1') % 2 == 1 else 0
+
+parite("00101010")   # 3 uns → impair → 1
+parite("11001000")   # 3 uns → impair → 1
+parite("010010001100") # 4 uns → pair → 0</code></pre>
+    </div>
+
+    <div class="encadre-conseil">
+      <span class="encadre-prefix">Vérification sur la trame exemple</span>
+      <table class="table-bits">
+        <thead>
+          <tr><th>Bloc</th><th>Bits</th><th>Nombre de 1</th><th>Parité attendue</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>ID</td><td><code>00101010</code></td><td>3 (impair)</td><td class="td-ok">1</td></tr>
+          <tr><td>Clé</td><td><code>11001000</code></td><td>3 (impair)</td><td class="td-ok">1</td></tr>
+          <tr><td>Température</td><td><code>010010001100</code></td><td>4 (pair)</td><td class="td-ok">0</td></tr>
+          <tr><td>Humidité</td><td><code>01100010</code></td><td>3 (impair)</td><td class="td-ok">1</td></tr>
+        </tbody>
+      </table>
+      <p style="margin:0">
+        Bits de contrôle calculés : <code>1101</code> — identiques aux bits <code>trame[36:40]</code> → trame valide ✓
+      </p>
+    </div>
+  </section>
+
+  <hr class="sep">
+
+  <!-- SECTION 2 : LA TRAME -->
+  <section id="s2">
+    <h2>2 — La trame DEMETER</h2>
+
+    <p>
+      Chaque module DEMETER envoie une trame de <strong>exactement 40 bits</strong>.
+      La trame est découpée en 5 blocs contigus :
+    </p>
+
+    <!-- TRAME VISUELLE -->
+    <div class="trame-grid">
+      <div class="trame-bloc tb-id">
+        <span class="tb-label">ID<br>[0:8]</span>
+        <span class="tb-bits">00101010</span>
+        <span class="tb-val">= 42</span>
+      </div>
+      <div class="trame-bloc tb-cle">
+        <span class="tb-label">Clé sécurité<br>[8:16]</span>
+        <span class="tb-bits">11001000</span>
+        <span class="tb-val">= 200</span>
+      </div>
+      <div class="trame-bloc tb-temp">
+        <span class="tb-label">Température<br>[16:28]</span>
+        <span class="tb-bits">010010001100</span>
+        <span class="tb-val">26,4 °C</span>
+      </div>
+      <div class="trame-bloc tb-hum">
+        <span class="tb-label">Humidité<br>[28:36]</span>
+        <span class="tb-bits">01100010</span>
+        <span class="tb-val">62 %</span>
+      </div>
+      <div class="trame-bloc tb-ctrl">
+        <span class="tb-label">Contrôle<br>[36:40]</span>
+        <span class="tb-bits">1101</span>
+        <span class="tb-val">parité</span>
+      </div>
+    </div>
+
+    <table class="table-bits">
+      <thead>
+        <tr><th>Champ</th><th>Indices</th><th>Taille</th><th>Encodage</th><th>Formule</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>ID</td><td><code>[0:8]</code></td><td>8 bits</td>
+          <td>Binaire classique</td>
+          <td><code>int(trame[0:8], 2)</code></td>
+        </tr>
+        <tr>
+          <td>Clé de sécurité</td><td><code>[8:16]</code></td><td>8 bits</td>
+          <td>Non décodée dans ce sujet</td><td>—</td>
+        </tr>
+        <tr>
+          <td>Température</td><td><code>[16:28]</code></td><td>12 bits</td>
+          <td>Binaire + offset</td>
+          <td><code>(int(trame[16:28], 2) − 900) / 10</code></td>
+        </tr>
+        <tr>
+          <td>Humidité</td><td><code>[28:36]</code></td><td>8 bits</td>
+          <td>BCD (4 bits + 4 bits)</td>
+          <td><code>d1×10 + d2</code></td>
+        </tr>
+        <tr>
+          <td>Contrôle</td><td><code>[36:40]</code></td><td>4 bits</td>
+          <td>Parité des 4 blocs</td>
+          <td>1 si nb de 1 impair, 0 sinon</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="encadre-conseil">
+      <span class="encadre-prefix">Vérification pas à pas — température</span>
+      <p>
+        Bits température : <code>010010001100</code><br>
+        Valeur binaire → décimal : \(0 \times 2^{11} + 1 \times 2^{10} + 0 \times 2^9 + \ldots = 1164\)<br>
+        Température en °C : \(\dfrac{1164 - 900}{10} = \dfrac{264}{10} = 26{,}4 \text{ °C}\)
+      </p>
+      <p style="margin:0">
+        La valeur 900 est un décalage (<em>offset</em>) qui permet de représenter des températures négatives.
+        La valeur minimale codée est \(\dfrac{0 - 900}{10} = -90 \text{ °C}\),
+        la maximale est \(\dfrac{4095 - 900}{10} = 319{,}5 \text{ °C}\).
+      </p>
+    </div>
+
+    <h3>La classe <code>Transmission</code></h3>
+
+    <div class="encadre">
+      <span class="encadre-prefix">Architecture de la classe</span>
+      <pre style="margin:.3rem 0"><code>class Transmission:
+    def __init__(self, trame):
+        self._id          = None
+        self._temperature = None
+        self._humidite    = None
+        self._trame       = trame
+        self.decoder()        # décode tout à la construction
+
+    def decoder(self):
+        self.decoder_id()          # bits [0:8]
+        self.decoder_temperature() # bits [16:28] — À COMPLÉTER
+        self.decoder_humidite()    # bits [28:36] — À COMPLÉTER
+
+    def decoder_id(self):
+        self._id = int(self._trame[0:8], 2)
+
+    def est_valide(self):
+        return False  # À COMPLÉTER</code></pre>
+    </div>
+  </section>
+
+  <hr class="sep">
+
+  <!-- QUESTION 1 -->
+  <section id="q1">
+    <h2>Question 1 — Décoder la température et l'humidité</h2>
+
+    <div class="encadre-question">
+      <span class="encadre-prefix">Énoncé — Question 1</span>
+      <p>
+        <span class="badge-question">Q1</span>
+        Écrire les méthodes <code>decoder_temperature(self)</code> et <code>decoder_humidite(self)</code>
+        de la classe <code>Transmission</code>.
+      </p>
+      <ul style="margin:0">
+        <li><code>decoder_temperature</code> doit stocker dans <code>self._temperature</code> la température en °C sous forme de flottant.</li>
+        <li><code>decoder_humidite</code> doit stocker dans <code>self._humidite</code> l'humidité en pourcentage sous forme d'entier, en tenant compte du cas spécial 100 %.</li>
+      </ul>
+      <p style="margin:.5rem 0 0">
+        Vérifier avec la trame d'exemple que les résultats sont bien 26,4 °C et 62 %.
+      </p>
+    </div>
+
+    <!-- INDICES -->
+    <div style="margin:.8rem 0;">
+      <button class="btn-tp-vert" onclick="toggleIndice('ind-q1-1', this)">▶ Indice 1 — Température</button>
+    </div>
+    <div id="ind-q1-1" class="encadre-indice indice-bloc">
+      <span class="encadre-prefix">Indice 1 — Température</span>
+      <p style="margin:0">
+        Les bits de température sont <code>self._trame[16:28]</code> (12 bits).
+        Convertir en entier avec <code>int(..., 2)</code>, soustraire 900, diviser par 10.
+        Le résultat est un <code>float</code>.
+      </p>
+    </div>
+
+    <div style="margin:.8rem 0;">
+      <button class="btn-tp-vert" onclick="toggleIndice('ind-q1-2', this)">▶ Indice 2 — Humidité BCD</button>
+    </div>
+    <div id="ind-q1-2" class="encadre-indice indice-bloc">
+      <span class="encadre-prefix">Indice 2 — Humidité BCD</span>
+      <pre style="margin:.3rem 0"><code>hum_bits = self._trame[28:36]
+if hum_bits == "10100000":        # cas spécial : 100 %
+    self._humidite = 100
+else:
+    d1 = int(hum_bits[0:4], 2)   # dizaines
+    d2 = int(hum_bits[4:8], 2)   # unités
+    self._humidite = d1 * 10 + d2</code></pre>
+    </div>
+
+    <div class="encadre" style="margin-top:1.2rem;">
+      <span class="encadre-prefix">Éditeur Python — Complète les deux méthodes</span>
+      <script type="py-editor" env="demeter">
+class Transmission:
+    def __init__(self, trame):
+        self._id          = None
+        self._temperature = None
+        self._humidite    = None
+        self._trame       = trame
+        self.decoder()
+
+    def decoder(self):
+        self.decoder_id()
+        self.decoder_temperature()
+        self.decoder_humidite()
+
+    def decoder_id(self):
+        self._id = int(self._trame[0:8], 2)
+
+    def decoder_temperature(self):
+        pass  # À compléter
+
+    def decoder_humidite(self):
+        pass  # À compléter
+
+    def get_id(self):          return self._id
+    def get_temperature(self): return self._temperature
+    def get_humidite(self):    return self._humidite
+
+    def __repr__(self):
+        return f"ID:{self._id} / Temp:{self._temperature}°C / Hum:{self._humidite}%"
+
+
+# Trame d'exemple de l'énoncé
+TRAME_EXEMPLE = "0010101011001000010010001100011000101101"
+
+
+def test_decodage():
+    t = Transmission(TRAME_EXEMPLE)
+    assert t.get_temperature() == 26.4,  f"Attendu 26.4, obtenu {t.get_temperature()}"
+    assert t.get_humidite()    == 62,    f"Attendu 62, obtenu {t.get_humidite()}"
+    assert t.get_id()          == 42,    f"Attendu 42, obtenu {t.get_id()}"
+    # Cas spécial 100 % : 10100000
+    trame_100 = "00101010" + "11001000" + "010010001100" + "10100000" + "1001"
+    t2 = Transmission(trame_100)
+    assert t2.get_humidite() == 100, f"Attendu 100, obtenu {t2.get_humidite()}"
+    print("Les tests sont validés.")
+
+test_decodage()
+      </script>
+    </div>
+
+    <div style="margin:1rem 0;">
+      <button class="btn-tp-or" onclick="toggleCorrection('corr-q1', this)">&#128274; Afficher la correction</button>
+    </div>
+    <div id="corr-q1" class="correction-bloc encadre-conseil">
+      <span class="encadre-prefix">Correction — Question 1</span>
+      <script type="py-editor" env="demeter-c1">
+class Transmission:
+    def __init__(self, trame):
+        self._id          = None
+        self._temperature = None
+        self._humidite    = None
+        self._trame       = trame
+        self.decoder()
+
+    def decoder(self):
+        self.decoder_id()
+        self.decoder_temperature()
+        self.decoder_humidite()
+
+    def decoder_id(self):
+        self._id = int(self._trame[0:8], 2)
+
+    def decoder_temperature(self):
+        valeur = int(self._trame[16:28], 2)
+        self._temperature = (valeur - 900) / 10
+
+    def decoder_humidite(self):
+        hum_bits = self._trame[28:36]
+        if hum_bits == "10100000":        # cas spécial : 100 %
+            self._humidite = 100
+        else:
+            d1 = int(hum_bits[0:4], 2)   # dizaines
+            d2 = int(hum_bits[4:8], 2)   # unités
+            self._humidite = d1 * 10 + d2
+
+    def get_id(self):          return self._id
+    def get_temperature(self): return self._temperature
+    def get_humidite(self):    return self._humidite
+
+    def __repr__(self):
+        return f"ID:{self._id} / Temp:{self._temperature}°C / Hum:{self._humidite}%"
+
+
+TRAME_EXEMPLE = "0010101011001000010010001100011000101101"
+
+
+def test_decodage():
+    t = Transmission(TRAME_EXEMPLE)
+    assert t.get_temperature() == 26.4
+    assert t.get_humidite()    == 62
+    assert t.get_id()          == 42
+    trame_100 = "00101010" + "11001000" + "010010001100" + "10100000" + "1001"
+    t2 = Transmission(trame_100)
+    assert t2.get_humidite() == 100
+    print("Les tests sont validés.")
+
+test_decodage()
+print(Transmission(TRAME_EXEMPLE))
+      </script>
+      <p style="margin-top:.8rem;">
+        <strong>Points clés :</strong> la division par 10 produit automatiquement un <code>float</code>
+        en Python 3. Le cas <code>10100000</code> pour 100 % doit être testé <em>avant</em>
+        le décodage BCD — car 10 en binaire vaut 10 en décimal, ce qui n'est pas un chiffre BCD valide.
+      </p>
+    </div>
+  </section>
+
+  <hr class="sep">
+
+  <!-- QUESTION 2 -->
+  <section id="q2">
+    <h2>Question 2 — Valider une trame par parité</h2>
+
+    <div class="encadre-question">
+      <span class="encadre-prefix">Énoncé — Question 2</span>
+      <p>
+        <span class="badge-question">Q2</span>
+        Écrire la méthode <code>est_valide(self)</code> qui renvoie <code>True</code>
+        si les 4 bits de contrôle <code>trame[36:40]</code> correspondent bien aux bits
+        de parité des 4 blocs de données, <code>False</code> sinon.
+      </p>
+    </div>
+
+    <div class="encadre-conseil">
+      <span class="encadre-prefix">Rappel — Les 4 blocs et leurs bits de contrôle</span>
+      <p style="margin:.3rem 0">
+        Bloc 1 → ID <code>[0:8]</code> → bit de contrôle <code>[36]</code><br>
+        Bloc 2 → Clé <code>[8:16]</code> → bit de contrôle <code>[37]</code><br>
+        Bloc 3 → Température <code>[16:28]</code> → bit de contrôle <code>[38]</code><br>
+        Bloc 4 → Humidité <code>[28:36]</code> → bit de contrôle <code>[39]</code>
+      </p>
+      <p style="margin:0">
+        Un bit de parité vaut 1 si le bloc contient un nombre <em>impair</em> de '1', 0 sinon.
+      </p>
+    </div>
+
+    <!-- INDICES -->
+    <div style="margin:.8rem 0;">
+      <button class="btn-tp-vert" onclick="toggleIndice('ind-q2-1', this)">▶ Indice 1 — Calculer la parité d'un bloc</button>
+    </div>
+    <div id="ind-q2-1" class="encadre-indice indice-bloc">
+      <span class="encadre-prefix">Indice 1</span>
+      <pre style="margin:.3rem 0"><code>def parite(bloc):
+    return '1' if bloc.count('1') % 2 == 1 else '0'</code></pre>
+      <p style="margin:0">
+        Attention : le bit de contrôle dans la trame est un <strong>caractère</strong>
+        (<code>'0'</code> ou <code>'1'</code>), pas un entier. Comparer des caractères entre eux.
+      </p>
+    </div>
+
+    <div style="margin:.8rem 0;">
+      <button class="btn-tp-vert" onclick="toggleIndice('ind-q2-2', this)">▶ Indice 2 — Structure de la vérification</button>
+    </div>
+    <div id="ind-q2-2" class="encadre-indice indice-bloc">
+      <span class="encadre-prefix">Indice 2</span>
+      <pre style="margin:.3rem 0"><code>blocs = [
+    self._trame[0:8],    # ID
+    self._trame[8:16],   # Clé
+    self._trame[16:28],  # Température
+    self._trame[28:36],  # Humidité
+]
+for i, bloc in enumerate(blocs):
+    bit_attendu = '1' if bloc.count('1') % 2 == 1 else '0'
+    if self._trame[36 + i] != bit_attendu:
+        return False
+return True</code></pre>
+    </div>
+
+    <div class="encadre" style="margin-top:1.2rem;">
+      <span class="encadre-prefix">Éditeur Python — Complète est_valide</span>
+      <script type="py-editor" env="demeter-q2">
+class Transmission:
+    def __init__(self, trame):
+        self._id          = None
+        self._temperature = None
+        self._humidite    = None
+        self._trame       = trame
+        self.decoder()
+
+    def decoder(self):
+        self.decoder_id()
+        self.decoder_temperature()
+        self.decoder_humidite()
+
+    def decoder_id(self):
+        self._id = int(self._trame[0:8], 2)
+
+    def decoder_temperature(self):
+        self._temperature = (int(self._trame[16:28], 2) - 900) / 10
+
+    def decoder_humidite(self):
+        hum_bits = self._trame[28:36]
+        if hum_bits == "10100000":
+            self._humidite = 100
+        else:
+            self._humidite = int(hum_bits[0:4], 2) * 10 + int(hum_bits[4:8], 2)
+
+    def est_valide(self):
+        pass  # À compléter
+
+    def get_id(self):          return self._id
+    def get_temperature(self): return self._temperature
+    def get_humidite(self):    return self._humidite
+
+
+TRAME_EXEMPLE = "0010101011001000010010001100011000101101"
+
+
+def test_est_valide():
+    # Trame valide de l'énoncé
+    assert Transmission(TRAME_EXEMPLE).est_valide() == True
+    # Trame avec un bit de contrôle corrompu (on change le dernier bit)
+    trame_ko = TRAME_EXEMPLE[:-1] + ('0' if TRAME_EXEMPLE[-1] == '1' else '1')
+    assert Transmission(trame_ko).est_valide() == False
+    # Trame avec un bit de données corrompu (on change un bit de l'ID)
+    t_list = list(TRAME_EXEMPLE)
+    t_list[0] = '1' if t_list[0] == '0' else '0'
+    trame_data_ko = "".join(t_list)
+    assert Transmission(trame_data_ko).est_valide() == False
+    print("Les tests sont validés.")
+
+test_est_valide()
+      </script>
+    </div>
+
+    <div style="margin:1rem 0;">
+      <button class="btn-tp-or" onclick="toggleCorrection('corr-q2', this)">&#128274; Afficher la correction</button>
+    </div>
+    <div id="corr-q2" class="correction-bloc encadre-conseil">
+      <span class="encadre-prefix">Correction — Question 2</span>
+      <script type="py-editor" env="demeter-c2">
+class Transmission:
+    def __init__(self, trame):
+        self._id = None; self._temperature = None
+        self._humidite = None; self._trame = trame
+        self.decoder()
+
+    def decoder(self):
+        self.decoder_id(); self.decoder_temperature(); self.decoder_humidite()
+
+    def decoder_id(self):
+        self._id = int(self._trame[0:8], 2)
+
+    def decoder_temperature(self):
+        self._temperature = (int(self._trame[16:28], 2) - 900) / 10
+
+    def decoder_humidite(self):
+        hum_bits = self._trame[28:36]
+        if hum_bits == "10100000":
+            self._humidite = 100
+        else:
+            self._humidite = int(hum_bits[0:4], 2) * 10 + int(hum_bits[4:8], 2)
+
+    def est_valide(self):
+        """Vérifie l'intégrité de la trame par contrôle de parité."""
+        blocs = [
+            self._trame[0:8],    # ID
+            self._trame[8:16],   # Clé
+            self._trame[16:28],  # Température
+            self._trame[28:36],  # Humidité
+        ]
+        for i, bloc in enumerate(blocs):
+            bit_attendu = '1' if bloc.count('1') % 2 == 1 else '0'
+            if self._trame[36 + i] != bit_attendu:
+                return False
+        return True
+
+    def get_id(self):          return self._id
+    def get_temperature(self): return self._temperature
+    def get_humidite(self):    return self._humidite
+
+
+TRAME_EXEMPLE = "0010101011001000010010001100011000101101"
+
+
+def test_est_valide():
+    assert Transmission(TRAME_EXEMPLE).est_valide() == True
+    trame_ko = TRAME_EXEMPLE[:-1] + ('0' if TRAME_EXEMPLE[-1] == '1' else '1')
+    assert Transmission(trame_ko).est_valide() == False
+    t_list = list(TRAME_EXEMPLE)
+    t_list[0] = '1' if t_list[0] == '0' else '0'
+    assert Transmission("".join(t_list)).est_valide() == False
+    print("Les tests sont validés.")
+
+test_est_valide()
+      </script>
+      <p style="margin-top:.8rem;">
+        <strong>Point de vigilance :</strong> <code>self._trame[36 + i]</code> renvoie
+        un <em>caractère</em> (<code>'0'</code> ou <code>'1'</code>).
+        Il faut comparer avec une chaîne, pas un entier.
+        C'est aussi pour cette raison que la version non robuste plantera sur une trame
+        de 38 bits à <code>i = 2</code> : <code>trame[38]</code> lèvera une <code>IndexError</code>.
+      </p>
+    </div>
+  </section>
+
+  <hr class="sep">
+
+  <!-- QUESTION 3 -->
+  <section id="q3">
+    <h2>Question 3 — Analyser le plantage</h2>
+
+    <div class="encadre-question">
+      <span class="encadre-prefix">Énoncé — Question 3</span>
+      <p>
+        <span class="badge-question">Q3</span>
+        Exécuter <code>analyse.py</code> et constater qu'il produit un message d'erreur.
+        Analyser ce plantage et identifier sa cause en observant notamment le contenu de <code>data.txt</code>.
+      </p>
+    </div>
+
+    <p>
+      Voici le contenu de <code>analyse.py</code> :
+    </p>
+
+    <pre><code>import matplotlib.pyplot as plt
+from Transmission import Transmission   <span style="color:var(--rouge)">← ERREUR ICI</span>
+
+with open("data.txt", "r") as f:
+    trames = f.read().split("\n")
+    trames.pop()
+
+transmissions = [Transmission(t) for t in trames]
+temperatures = [t.get_temperature() for t in transmissions if t.est_valide()]
+
+plt.plot(temperatures)
+plt.show()</code></pre>
+
+    <div class="encadre-piege">
+      <span class="encadre-prefix">Bug n°1 — Import avec mauvaise casse</span>
+      <p>
+        La ligne <code>from Transmission import Transmission</code> utilise une majuscule.
+        Or le fichier s'appelle <code>transmission.py</code> (minuscule).
+      </p>
+      <p>
+        Sur <strong>Windows</strong>, le système de fichiers est insensible à la casse — ça fonctionne.
+        Sur <strong>Linux et macOS</strong>, la casse est signifiante — Python lève immédiatement :
+      </p>
+      <pre style="margin:.3rem 0"><code>ModuleNotFoundError: No module named 'Transmission'</code></pre>
+      <p style="margin:0">
+        <strong>Correction :</strong> remplacer par <code>from transmission import Transmission</code> (tout en minuscules).
+      </p>
+    </div>
+
+    <div class="encadre-piege">
+      <span class="encadre-prefix">Bug n°2 — Trames de longueur incorrecte dans data.txt</span>
+      <p>
+        Le fichier <code>data.txt</code> contient 314 trames. Parmi elles, <strong>3 ont une longueur
+        différente de 40 bits</strong> :
+      </p>
+      <table class="table-bits" style="max-width:500px;">
+        <thead><tr><th>Ligne</th><th>Longueur</th><th>Anomalie</th></tr></thead>
+        <tbody>
+          <tr><td>73</td><td class="td-bug">41 bits</td><td>1 bit de trop</td></tr>
+          <tr><td>111</td><td class="td-bug">38 bits</td><td>2 bits manquants</td></tr>
+          <tr><td>126</td><td class="td-bug">41 bits</td><td>1 bit de trop</td></tr>
+        </tbody>
+      </table>
+      <p>
+        Avec la version naïve de <code>est_valide</code>, la trame de <strong>38 bits</strong> cause
+        un plantage fatal. À l'itération <code>i = 2</code>, le code tente d'accéder à
+        <code>trame[38]</code> — qui n'existe pas dans une chaîne de 38 caractères :
+      </p>
+      <pre style="margin:.3rem 0"><code>IndexError: string index out of range</code></pre>
+      <p style="margin:0">
+        Par ailleurs, 3 trames de 40 bits ont une parité incorrecte (erreur de transmission radio).
+        Au total, seules <strong>308 trames sur 314 sont valides</strong>.
+      </p>
+    </div>
+
+    <div class="encadre">
+      <span class="encadre-prefix">Résumé des anomalies détectées dans data.txt</span>
+      <table class="table-bits">
+        <thead><tr><th>Catégorie</th><th>Nombre</th><th>Cause</th></tr></thead>
+        <tbody>
+          <tr><td>Trames valides</td><td class="td-ok">308</td><td>Longueur 40 bits + parité correcte</td></tr>
+          <tr><td>Longueur incorrecte</td><td class="td-bug">3</td><td>Corruption lors de la transmission radio</td></tr>
+          <tr><td>Parité incorrecte</td><td class="td-bug">3</td><td>Bit(s) flippé(s) pendant la transmission</td></tr>
+          <tr><td><strong>Total</strong></td><td><strong>314</strong></td><td></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <hr class="sep">
+
+  <!-- QUESTION 4 -->
+  <section id="q4">
+    <h2>Question 4 — Rendre la classe robuste</h2>
+
+    <div class="encadre-question">
+      <span class="encadre-prefix">Énoncé — Question 4</span>
+      <p>
+        <span class="badge-question">Q4</span>
+        Proposer des corrections de la classe <code>Transmission</code> et du fichier <code>analyse.py</code>
+        permettant de les rendre robustes face aux anomalies identifiées en Q3,
+        afin de pouvoir effectuer l'analyse des 308 trames valides.
+      </p>
+    </div>
+
+    <div class="encadre-conseil">
+      <span class="encadre-prefix">Stratégie — Deux niveaux de robustesse</span>
+      <p><strong>Correction 1 — immédiate :</strong> corriger l'import dans <code>analyse.py</code>.</p>
+      <p><strong>Correction 2 — défensive :</strong> dans <code>Transmission</code>, vérifier
+        <code>len(self._trame) == 40</code> dès le constructeur.
+        Si ce n'est pas le cas, on ne décode rien et <code>est_valide()</code> renvoie <code>False</code>.
+        Les méthodes <code>get_*</code> renverront alors <code>None</code>, ce qui est filtré
+        par le <code>if t.est_valide()</code> dans <code>analyse.py</code>.
+      </p>
+      <p style="margin:0">
+        Cette approche est préférable à un <code>try/except</code> qui masquerait des erreurs
+        de programmation réelles.
+      </p>
+    </div>
+
+    <!-- INDICES -->
+    <div style="margin:.8rem 0;">
+      <button class="btn-tp-vert" onclick="toggleIndice('ind-q4-1', this)">▶ Indice 1 — Où placer la vérification de longueur ?</button>
+    </div>
+    <div id="ind-q4-1" class="encadre-indice indice-bloc">
+      <span class="encadre-prefix">Indice 1</span>
+      <p>
+        Le plus tôt possible : dans <code>__init__</code>, avant d'appeler <code>self.decoder()</code>.
+        Si la longueur est incorrecte, on n'appelle pas <code>decoder()</code> du tout —
+        les attributs restent à <code>None</code>.
+      </p>
+      <pre style="margin:.3rem 0"><code>def __init__(self, trame):
+    self._id = self._temperature = self._humidite = None
+    self._trame = trame
+    if len(trame) == 40:      # ← garde
+        self.decoder()        # décode seulement si la trame est complète</code></pre>
+    </div>
+
+    <div style="margin:.8rem 0;">
+      <button class="btn-tp-vert" onclick="toggleIndice('ind-q4-2', this)">▶ Indice 2 — Adapter est_valide</button>
+    </div>
+    <div id="ind-q4-2" class="encadre-indice indice-bloc">
+      <span class="encadre-prefix">Indice 2</span>
+      <p style="margin:0">
+        Si la trame n'a pas 40 bits, <code>est_valide</code> doit renvoyer <code>False</code>
+        sans même tenter d'accéder aux bits de contrôle. Ajouter un garde en début de méthode :
+      </p>
+      <pre style="margin:.3rem 0"><code>def est_valide(self):
+    if len(self._trame) != 40:
+        return False          # trame corrompue → rejetée
+    # ... vérification de parité habituelle</code></pre>
+    </div>
+
+    <div class="encadre" style="margin-top:1.2rem;">
+      <span class="encadre-prefix">Éditeur Python — Version robuste complète</span>
+      <script type="py-editor" env="demeter-q4">
+class Transmission:
+    def __init__(self, trame):
+        self._id          = None
+        self._temperature = None
+        self._humidite    = None
+        self._trame       = trame
+        if len(trame) == 40:        # garde : ne décoder que les trames complètes
+            self.decoder()
+
+    def decoder(self):
+        self.decoder_id()
+        self.decoder_temperature()
+        self.decoder_humidite()
+
+    def decoder_id(self):
+        self._id = int(self._trame[0:8], 2)
+
+    def decoder_temperature(self):
+        self._temperature = (int(self._trame[16:28], 2) - 900) / 10
+
+    def decoder_humidite(self):
+        hum_bits = self._trame[28:36]
+        if hum_bits == "10100000":
+            self._humidite = 100
+        else:
+            self._humidite = int(hum_bits[0:4], 2) * 10 + int(hum_bits[4:8], 2)
+
+    def est_valide(self):
+        if len(self._trame) != 40:  # trame incomplète ou trop longue → invalide
+            return False
+        blocs = [self._trame[0:8], self._trame[8:16],
+                 self._trame[16:28], self._trame[28:36]]
+        for i, bloc in enumerate(blocs):
+            bit_attendu = '1' if bloc.count('1') % 2 == 1 else '0'
+            if self._trame[36 + i] != bit_attendu:
+                return False
+        return True
+
+    def get_id(self):          return self._id
+    def get_temperature(self): return self._temperature
+    def get_humidite(self):    return self._humidite
+
+    def __repr__(self):
+        return f"ID:{self._id} / Temp:{self._temperature}°C / Hum:{self._humidite}%"
+
+
+def test_robustesse():
+    TRAME_EX = "0010101011001000010010001100011000101101"
+    # Trame normale → valide
+    assert Transmission(TRAME_EX).est_valide() == True
+    # Trame de 38 bits → ne plante pas, renvoie False
+    trame_38 = "00101010100000100100101101110110001010"
+    assert len(trame_38) == 38
+    assert Transmission(trame_38).est_valide() == False
+    # Trame de 41 bits → ne plante pas, renvoie False
+    trame_41 = "00101010000110010100111100110101100011111"
+    assert len(trame_41) == 41
+    assert Transmission(trame_41).est_valide() == False
+    # Trame avec parité incorrecte → False
+    trame_ko = TRAME_EX[:-1] + ('0' if TRAME_EX[-1] == '1' else '1')
+    assert Transmission(trame_ko).est_valide() == False
+    # Trame 38 bits : attributs restent None
+    t = Transmission(trame_38)
+    assert t.get_temperature() is None
+    assert t.get_humidite()    is None
+    print("Les tests sont validés.")
+
+test_robustesse()
+      </script>
+    </div>
+
+    <div style="margin:1rem 0;">
+      <button class="btn-tp-or" onclick="toggleCorrection('corr-q4', this)">&#128274; Afficher la correction complète</button>
+    </div>
+    <div id="corr-q4" class="correction-bloc encadre-conseil">
+      <span class="encadre-prefix">Correction — Question 4 (classe + analyse.py)</span>
+
+      <p><strong>Correction 1 — <code>analyse.py</code> ligne 2 :</strong></p>
+      <pre><code># AVANT (bugué sur Linux/macOS) :
+from Transmission import Transmission
+
+# APRÈS (correct) :
+from transmission import Transmission   # 't' minuscule</code></pre>
+
+      <p style="margin-top:.8rem;"><strong>Correction 2 — <code>transmission.py</code> :</strong></p>
+      <script type="py-editor" env="demeter-c4">
+class Transmission:
+    def __init__(self, trame):
+        self._id          = None
+        self._temperature = None
+        self._humidite    = None
+        self._trame       = trame
+        if len(trame) == 40:        # ← AJOUT : garde sur la longueur
+            self.decoder()
+
+    def decoder(self):
+        self.decoder_id()
+        self.decoder_temperature()
+        self.decoder_humidite()
+
+    def decoder_id(self):
+        self._id = int(self._trame[0:8], 2)
+
+    def decoder_temperature(self):
+        self._temperature = (int(self._trame[16:28], 2) - 900) / 10
+
+    def decoder_humidite(self):
+        hum_bits = self._trame[28:36]
+        if hum_bits == "10100000":
+            self._humidite = 100
+        else:
+            self._humidite = int(hum_bits[0:4], 2) * 10 + int(hum_bits[4:8], 2)
+
+    def est_valide(self):
+        if len(self._trame) != 40:  # ← AJOUT : trame de longueur incorrecte
+            return False
+        blocs = [self._trame[0:8], self._trame[8:16],
+                 self._trame[16:28], self._trame[28:36]]
+        for i, bloc in enumerate(blocs):
+            bit_attendu = '1' if bloc.count('1') % 2 == 1 else '0'
+            if self._trame[36 + i] != bit_attendu:
+                return False
+        return True
+
+    def get_id(self):          return self._id
+    def get_temperature(self): return self._temperature
+    def get_humidite(self):    return self._humidite
+
+    def __repr__(self):
+        return f"ID:{self._id} / Temp:{self._temperature}°C / Hum:{self._humidite}%"
+
+
+# Simulation de l'analyse sur les données de data.txt
+trames_exemple = [
+    "0010101011001000010010001100011000101101",  # valide
+    "00101010100000100100101101110110001010",     # 38 bits — corrompue
+    "00101010000110010100111100110101100011111",  # 41 bits — corrompue
+    "0010101010011111010010001010011000011001",  # valide
+]
+
+transmissions = [Transmission(t) for t in trames_exemple]
+temperatures  = [t.get_temperature() for t in transmissions if t.est_valide()]
+print(f"Températures extraites : {temperatures}")
+print(f"Trames valides : {sum(1 for t in transmissions if t.est_valide())} / {len(transmissions)}")
+      </script>
+      <div style="margin-top:.8rem;">
+        <p>
+          <strong>Pourquoi ne pas utiliser <code>try/except</code> ?</strong>
+          Le <code>try/except</code> masque toutes les exceptions — y compris les erreurs de logique
+          que tu n'as pas anticipées. La vérification explicite de longueur est plus précise
+          et plus lisible : elle dit exactement <em>pourquoi</em> la trame est rejetée.
+        </p>
+        <p style="margin:0">
+          <strong>Résultat attendu sur data.txt :</strong> 308 températures valides
+          sur 314 trames (3 de longueur incorrecte + 3 de parité incorrecte rejetées).
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <hr class="sep">
+
+  <!-- PIÈGES -->
+  <section id="pieges">
+    <h2>Pièges fréquents &amp; astuces de vérification</h2>
+
+    <div class="encadre-piege">
+      <span class="encadre-prefix">Piège 1 — Comparer un caractère avec un entier</span>
+      <p style="margin:0">
+        <code>self._trame[36]</code> renvoie le <em>caractère</em> <code>'1'</code> ou <code>'0'</code>,
+        pas l'entier 1 ou 0. Il faut donc comparer avec des chaînes :
+        <code>if self._trame[36 + i] != bit_attendu:</code> où <code>bit_attendu</code>
+        est <code>'1'</code> ou <code>'0'</code> (avec guillemets). Comparer avec
+        <code>!= 1</code> (entier) donnera toujours <code>True</code> et la trame sera toujours invalide.
+      </p>
+    </div>
+
+    <div class="encadre-piege">
+      <span class="encadre-prefix">Piège 2 — Oublier le cas spécial 100 % en BCD</span>
+      <p style="margin:0">
+        Le code <code>10100000</code> pour 100 % n'est pas valide en BCD standard
+        (le groupe <code>1010</code> vaut 10 en décimal, ce qui n'est pas un chiffre décimal).
+        Sans traitement particulier, on obtiendrait 100 par calcul — mais par hasard.
+        Il est préférable de le traiter explicitement pour la lisibilité et la robustesse,
+        et parce que la spécification de l'énoncé l'impose.
+      </p>
+    </div>
+
+    <div class="encadre-piege">
+      <span class="encadre-prefix">Piège 3 — Tester la validité avant d'utiliser get_temperature()</span>
+      <p style="margin:0">
+        Pour une trame corrompue (longueur incorrecte), <code>get_temperature()</code> renvoie
+        <code>None</code>. Si tu construis une liste de températures sans filtrer par
+        <code>est_valide()</code>, tu obtiendras des <code>None</code> dans la liste —
+        ce qui fera planter <code>matplotlib</code> lors du tracé.
+        Toujours filtrer : <code>[t.get_temperature() for t in transmissions if t.est_valide()]</code>.
+      </p>
+    </div>
+
+    <div class="encadre-piege">
+      <span class="encadre-prefix">Piège 4 — La casse des imports Python</span>
+      <p style="margin:0">
+        <code>from Transmission import Transmission</code> et
+        <code>from transmission import Transmission</code> sont équivalents sur Windows,
+        mais différents sur Linux et macOS. Toujours faire correspondre exactement la casse
+        du nom du fichier. C'est une source fréquente de bugs qui n'apparaissent qu'en production
+        (souvent sur serveur Linux) alors que tout fonctionnait en développement (sur Windows).
+      </p>
+    </div>
+
+    <!-- MINI-EXERCICES -->
+    <h3>Mini-exercices de vérification</h3>
+
+    <div class="encadre">
+      <span class="encadre-prefix">Mini-exercice A — Décodage manuel</span>
+      <p>
+        Décoder à la main la trame suivante (température et humidité) :
+      </p>
+      <pre><code>0010101010011111010010001010011000011001</code></pre>
+      <button class="btn-secondaire" onclick="toggleCorrection('corr-mini-a', this)">Vérifier</button>
+      <div id="corr-mini-a" class="correction-bloc" style="margin-top:.6rem;">
+        <p>Bits température <code>[16:28]</code> = <code>010010001010</code></p>
+        <p>Valeur binaire = \(2^{10} + 2^7 + 2^3 + 2^1 = 1024 + 128 + 8 + 2 = 1162\)</p>
+        <p>Température = \((1162 - 900) / 10 = 26{,}2 \text{ °C}\)</p>
+        <p>Bits humidité <code>[28:36]</code> = <code>01100001</code></p>
+        <p>BCD : <code>0110</code> = 6, <code>0001</code> = 1 → <strong>61 %</strong></p>
+        <p>Bits de contrôle <code>[36:40]</code> = <code>1001</code></p>
+      </div>
+    </div>
+
+    <div class="encadre">
+      <span class="encadre-prefix">Mini-exercice B — Calcul de parité</span>
+      <p>
+        Calculer le bit de parité du bloc température <code>010010001010</code>.
+      </p>
+      <button class="btn-secondaire" onclick="toggleCorrection('corr-mini-b', this)">Vérifier</button>
+      <div id="corr-mini-b" class="correction-bloc" style="margin-top:.6rem;">
+        <p>
+          Nombre de 1 dans <code>010010001010</code> :
+          positions 1, 4, 8, 10 → <strong>4 uns</strong> (pair) → bit de parité = <strong>0</strong>.
+        </p>
+      </div>
+    </div>
+
+    <div class="encadre">
+      <span class="encadre-prefix">Mini-exercice C — Identifier l'anomalie</span>
+      <p>
+        La trame suivante a-t-elle une longueur correcte ? Est-elle valide ?
+      </p>
+      <pre><code>00101010100000100100101101110110001010</code></pre>
+      <button class="btn-secondaire" onclick="toggleCorrection('corr-mini-c', this)">Vérifier</button>
+      <div id="corr-mini-c" class="correction-bloc" style="margin-top:.6rem;">
+        <p>
+          Longueur : 38 caractères → <strong>incorrecte</strong> (devrait être 40).
+          C'est la trame corrompue de la ligne 111 de <code>data.txt</code>.
+          Elle est rejetée par <code>est_valide()</code> sans provoquer d'erreur
+          grâce à la garde <code>if len(self._trame) != 40: return False</code>.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <hr class="sep">
+
+  <div class="encadre" style="margin-top:2rem;">
+    <span class="encadre-prefix">Récapitulatif — Ce que tu dois retenir</span>
+    <ul style="margin:0">
+      <li><code>int(chaine, 2)</code> convertit du binaire vers décimal — indispensable pour décoder les trames.</li>
+      <li>Le <strong>slicing</strong> <code>trame[a:b]</code> extrait les bits d'indice <code>a</code> à <code>b-1</code>.</li>
+      <li>En <strong>BCD</strong>, chaque chiffre décimal est codé sur 4 bits indépendamment.</li>
+      <li>Le <strong>bit de parité</strong> est 1 si le bloc contient un nombre impair de 1, 0 sinon.</li>
+      <li>Toujours vérifier <code>len(trame) == 40</code> avant d'accéder aux indices — sinon <code>IndexError</code>.</li>
+      <li>Sur Linux/macOS, la casse des noms de modules Python est signifiante.</li>
+      <li>Le filtrage <code>if t.est_valide()</code> dans la compréhension de liste élimine proprement les données corrompues.</li>
+    </ul>
+  </div>
+
+</div>
+
+<footer>Lycée Antoine Watteau — DarkSATHI Li</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+  const btnTop = document.getElementById('btn-top');
+  window.addEventListener('scroll', () => { btnTop.style.display = window.scrollY > 300 ? 'flex' : 'none'; });
+  btnTop.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
+
+  function toggleIndice(id, btn) {
+    var el = document.getElementById(id);
+    if (!el) return;
+    el.classList.toggle('visible');
+    btn.textContent = el.classList.contains('visible')
+      ? btn.textContent.replace('▶','▼') : btn.textContent.replace('▼','▶');
+  }
+
+  function toggleCorrection(id, btn) {
+    var el = document.getElementById(id);
+    if (!el) return;
+    el.classList.toggle('visible');
+    if (el.classList.contains('visible')) {
+      btn.textContent = btn.textContent.replace('Afficher','Masquer').replace('Vérifier','Masquer');
+    } else {
+      btn.textContent = btn.textContent.replace('Masquer','Afficher');
+    }
+  }
+</script>
+</body>
+</html>
