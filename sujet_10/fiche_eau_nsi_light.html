@@ -1,0 +1,1276 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Fiche – Analyse de consommation d'eau | NSI Terminale | BAC 2026</title>
+
+  <!-- Bootstrap 5.3.3 -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Rubik+Dirt&family=Source+Serif+4:ital,opsz,wght@0,8..60,300..900;1,8..60,300..900&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+
+  <!-- MathJax v3 -->
+  <script>
+    MathJax = {
+      tex: { inlineMath: [['\\(', '\\)'], ['$', '$']] },
+      options: { skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre'] }
+    };
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js" async></script>
+
+  <!-- PyScript 2026.3.1 -->
+  <script type="module" src="https://pyscript.net/releases/2026.3.1/core.js"></script>
+
+  <style>
+    :root {
+      --bg-main:    #f8f9fb;
+      --bg-panel:   #eef1f5;
+      --bg-cours:   #ffffff;
+      --accent:     #2a6496;
+      --py-editor-input: white;
+      --accent-or:  #b5610a;
+      --accent-vert:#2e7d32;
+      --text-main:  #1a1a1a;
+      --text-muted: #5a6470;
+      --border-radius: 8px;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      background-color: var(--bg-main);
+      color: var(--text-main);
+      font-family: 'Source Serif 4', Georgia, serif;
+      font-size: 1.1rem;
+      line-height: 1.8;
+      margin: 0;
+      padding-bottom: 4rem;
+    }
+
+    h1, h2, h3, h4 {
+      font-family: 'Rubik Dirt', cursive;
+      color: var(--accent);
+      letter-spacing: 0.02em;
+    }
+
+    h1 { font-size: 2.2rem; color: #111; }
+    h2 { font-size: 1.55rem; border-bottom: 2px solid var(--accent); padding-bottom: .3rem; margin-top: 2.5rem; }
+    h3 { font-size: 1.25rem; color: var(--accent-or); margin-top: 1.8rem; }
+    h4 { font-size: 1.05rem; color: var(--accent-vert); }
+
+    p { margin-bottom: 1rem; }
+
+    code, pre, .mono { font-family: 'JetBrains Mono', monospace; font-size: 0.9em; }
+
+    code {
+      background: #e8edf2;
+      padding: 2px 6px;
+      border-radius: 4px;
+      color: #8b3a00;
+    }
+
+    pre {
+      background: #f0f3f7;
+      border-left: 3px solid var(--accent);
+      padding: 1rem 1.2rem;
+      border-radius: var(--border-radius);
+      overflow-x: auto;
+      color: #1a1a1a;
+    }
+
+    a { color: var(--accent); text-decoration: underline dotted; }
+    a:hover { color: var(--accent-or); }
+
+    /* ── NAVIGATION ── */
+    #navbar {
+      position: sticky; top: 0; z-index: 1000;
+      background: #2a6496; border-bottom: 2px solid #1a4a70;
+      padding: .5rem 1.5rem;
+      display: flex; gap: .5rem; flex-wrap: wrap; align-items: center;
+    }
+    #navbar span { font-family: 'JetBrains Mono', monospace; font-size: .8rem; color: #ccddf0; margin-right: auto; }
+    #navbar a {
+      font-family: 'JetBrains Mono', monospace; font-size: .8rem;
+      color: #fff; text-decoration: none; padding: .25rem .7rem;
+      border: 1px solid #ccddf0; border-radius: 4px; transition: background .2s;
+    }
+    #navbar a:hover { background: #1a4a70; }
+
+    /* ── CONTENU ── */
+    .container-content { max-width: 860px; margin: 0 auto; padding: 2rem 1.5rem; }
+
+    /* ── ENCADRÉS ── */
+    .encadre, .encadre-conseil, .encadre-indice, .encadre-question {
+      background: #ffffff; border-radius: var(--border-radius);
+      padding: 1.1rem 1.4rem; margin: 1.4rem 0;
+      position: relative; box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+    }
+    .encadre          { border-left: 4px solid var(--accent); }
+    .encadre-conseil  { border-left: 4px solid var(--accent-or); background: #fff8f0; }
+    .encadre-indice   { border-left: 4px solid var(--accent-vert); background: #f0faf0; }
+    .encadre-question { border-left: 4px solid #7b3fa8; background: #faf5ff; }
+
+    .encadre-prefix {
+      font-family: 'JetBrains Mono', monospace; font-size: .72rem;
+      font-variant: small-caps; letter-spacing: .12em;
+      text-transform: uppercase; margin-bottom: .4rem; display: block;
+    }
+    .encadre          .encadre-prefix { color: var(--accent); }
+    .encadre-conseil  .encadre-prefix { color: var(--accent-or); }
+    .encadre-indice   .encadre-prefix { color: var(--accent-vert); }
+    .encadre-question .encadre-prefix { color: #7b3fa8; }
+
+    /* ── BOUTONS ── */
+    .btn-tp, .btn-tp-or, .btn-tp-vert, .btn-secondaire {
+      font-family: 'JetBrains Mono', monospace; font-size: .82rem;
+      border: none; border-radius: 5px; padding: .45rem 1.1rem;
+      cursor: pointer; transition: opacity .2s, transform .1s; margin: .3rem .2rem;
+    }
+    .btn-tp         { background: var(--accent);      color: #fff; }
+    .btn-tp-or      { background: var(--accent-or);   color: #fff; }
+    .btn-tp-vert    { background: var(--accent-vert); color: #fff; }
+    .btn-secondaire { background: #eef1f5; border: 1px solid var(--accent); color: var(--text-main); }
+    .btn-tp:hover, .btn-tp-or:hover, .btn-tp-vert:hover, .btn-secondaire:hover { opacity:.85; transform:translateY(-1px); }
+
+    /* ── BADGE QUESTION ── */
+    .badge-question {
+      display: inline-block; font-family: 'JetBrains Mono', monospace;
+      font-size: .8rem; background: #7b3fa8; color: #fff;
+      border-radius: 4px; padding: .15rem .7rem; margin-right: .5rem; vertical-align: middle;
+    }
+
+    /* ── TOGGLE BLOCS ── */
+    .indice-bloc    { display: none; }
+    .indice-bloc.visible    { display: block; }
+    .correction-bloc { display: none; }
+    .correction-bloc.visible { display: block; }
+
+    /* ── TABLE DONNÉES ── */
+    .table-data {
+      border-collapse: collapse;
+      margin: .8rem auto;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: .83rem;
+      width: 100%;
+    }
+    .table-data th, .table-data td {
+      border: 1px solid var(--accent); padding: .38rem .8rem; text-align: center;
+    }
+    .table-data th { background: #dce8f2; color: var(--accent); font-weight: 600; }
+    .table-data .nul  { color: var(--text-muted); }
+    .table-data .nonul { color: #c0392b; font-weight: 600; }
+    .table-data .consec { background: #fff0f0; }
+
+    /* ── PIED DE PAGE ── */
+    footer {
+      text-align: center; font-family: 'JetBrains Mono', monospace;
+      font-size: .8rem; color: var(--text-muted);
+      padding: 2rem 1rem 1rem; border-top: 1px solid #d0d8e4;
+    }
+
+    /* ── RETOUR EN HAUT ── */
+    #btn-top {
+      position: fixed; bottom: 1.5rem; right: 1.5rem; z-index: 999;
+      background: var(--accent); color: #fff; border: none; border-radius: 50%;
+      width: 44px; height: 44px; font-size: 1.2rem; cursor: pointer;
+      display: none; align-items: center; justify-content: center;
+      font-family: 'JetBrains Mono', monospace;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.25); transition: opacity .2s;
+    }
+    #btn-top:hover { opacity: .8; }
+
+    /* ── PIÈGE ── */
+    .encadre-piege {
+      background: #fff5f5; border-left: 4px solid #c0392b;
+      border-radius: var(--border-radius); padding: 1rem 1.4rem;
+      margin: 1.2rem 0; box-shadow: 0 1px 4px rgba(0,0,0,0.07);
+    }
+    .encadre-piege .encadre-prefix {
+      color: #c0392b; font-family: 'JetBrains Mono', monospace;
+      font-size: .72rem; font-variant: small-caps; letter-spacing: .12em;
+      display: block; margin-bottom: .3rem;
+    }
+
+    /* ── SOMMAIRE ── */
+    #sommaire ol { font-family: 'JetBrains Mono', monospace; font-size: .88rem; line-height: 2.2; }
+    #sommaire a { color: var(--accent); }
+    #sommaire a:hover { color: var(--accent-or); }
+
+    .sep { border: none; border-top: 1px dashed #9ab0c8; margin: 2.5rem 0; opacity: .7; }
+
+    /* py-editor */
+    py-editor { display: block; min-height: 100px; }
+
+    /* Visualiseur de lissage */
+    .lissage-row {
+      display: flex; align-items: center; gap: .5rem;
+      font-family: 'JetBrains Mono', monospace; font-size: .9rem;
+      margin: .4rem 0;
+    }
+    .lissage-val {
+      display: inline-flex; align-items: center; justify-content: center;
+      width: 2.8rem; height: 2.8rem;
+      border: 2px solid var(--accent); border-radius: 6px;
+      background: #fff; font-weight: 600;
+    }
+    .lissage-val.actif { background: #dce8f2; border-color: #2a6496; }
+    .lissage-val.bug   { background: #fff0f0; border-color: #c0392b; color: #c0392b; }
+    .lissage-val.ok    { background: #f0faf0; border-color: #2e7d32; color: #2e7d32; }
+  </style>
+</head>
+<body>
+
+<div id="pyinit" style="display:none">
+  <script type="py" env="eau">pass</script>
+</div>
+
+<button id="btn-top" title="Retour en haut" aria-label="Retour en haut">▲</button>
+
+<!-- NAVIGATION STICKY -->
+<nav id="navbar">
+  <span>NSI Terminale – Analyse eau</span>
+  <a href="#s0">Intro</a>
+  <a href="#s1">Rappels</a>
+  <a href="#s2">Données</a>
+  <a href="#q1">Q1</a>
+  <a href="#q2">Q2</a>
+  <a href="#q3">Q3</a>
+  <a href="#q4">Q4</a>
+  <a href="#pieges">Pièges</a>
+</nav>
+
+<!-- CONTENU PRINCIPAL -->
+<div class="container-content">
+
+  <!-- EN-TÊTE -->
+  <div style="text-align:center; padding: 2rem 0 1rem;">
+    <div style="font-family:'JetBrains Mono',monospace; font-size:.8rem; color:var(--text-muted); margin-bottom:.5rem;">
+      BAC NSI 2026 — Sujet n°10 — Partie pratique
+    </div>
+    <h1>Analyse de consommation d'eau<br>
+      <span style="font-size:1.1rem; color:var(--accent); font-family:'Source Serif 4',serif; font-style:italic; font-weight:300;">Fiche de révision guidée</span>
+    </h1>
+    <div style="font-family:'JetBrains Mono',monospace; font-size:.8rem; color:var(--text-muted); margin-top:.5rem;">
+      Terminale NSI &nbsp;·&nbsp; Traitement de données &nbsp;·&nbsp; Listes de dictionnaires &nbsp;·&nbsp; Débogage
+    </div>
+  </div>
+
+  <hr class="sep">
+
+  <!-- SOMMAIRE -->
+  <section id="s0">
+    <div id="sommaire" class="encadre">
+      <span class="encadre-prefix">Sommaire</span>
+      <ol>
+        <li><a href="#s1">Rappels – listes de dictionnaires et filtrage en Python</a></li>
+        <li><a href="#s2">Structure des données du sujet</a></li>
+        <li><a href="#q1">Question 1 – Écrire <code>total_conso</code></a></li>
+        <li><a href="#q2">Question 2 – Écrire <code>fuite_possible</code></a></li>
+        <li><a href="#q3">Question 3 – Analyser et corriger <code>lissage_conso</code></a></li>
+        <li><a href="#q4">Question 4 – Identifier et traiter le cas limite oublié</a></li>
+        <li><a href="#pieges">Pièges fréquents &amp; astuces de vérification</a></li>
+      </ol>
+    </div>
+  </section>
+
+  <hr class="sep">
+
+  <!-- SECTION 1 : RAPPELS -->
+  <section id="s1">
+    <h2>1 — Rappels : listes de dictionnaires</h2>
+
+    <p>
+      Imagine une feuille de tableur où chaque ligne est un relevé horodaté.
+      En Python, on représente cela par une <strong>liste de dictionnaires</strong> :
+      chaque dictionnaire est une ligne, chaque clé est un nom de colonne.
+    </p>
+
+    <div class="encadre">
+      <span class="encadre-prefix">Rappel – accéder aux données</span>
+      <pre style="margin:0"><code># Une liste de mesures
+mesures = [
+    {"jour": "2025-02-04", "heure": "06:00", "chaude": 4, "froide": 6},
+    {"jour": "2025-02-04", "heure": "07:00", "chaude": 6, "froide": 8},
+]
+
+# Parcourir toutes les mesures
+for m in mesures:
+    print(m["jour"], m["chaude"] + m["froide"])
+
+# Filtrer les mesures d'un jour précis
+for m in mesures:
+    if m["jour"] == "2025-02-04":
+        print(m)  # ne traiter que ce jour</code></pre>
+    </div>
+
+    <h3>Filtrer, accumuler, compter une séquence</h3>
+    <p>
+      Trois opérations reviennent constamment sur des listes de dictionnaires :
+    </p>
+
+    <div class="encadre-conseil">
+      <span class="encadre-prefix">Patron 1 – Somme conditionnelle</span>
+      <pre style="margin:0"><code>total = 0
+for m in donnees:
+    if m["jour"] == jour:
+        total += m["chaude"] + m["froide"]</code></pre>
+    </div>
+
+    <div class="encadre-conseil">
+      <span class="encadre-prefix">Patron 2 – Compteur de séquence consécutive</span>
+      <p>Pour détecter une suite d'éléments consécutifs vérifiant une condition :</p>
+      <pre style="margin:0"><code>compteur = 0          # nb de True consécutifs courants
+for valeur in liste:
+    if condition(valeur):
+        compteur += 1
+        if compteur >= 3:
+            return True   # seuil atteint !
+    else:
+        compteur = 0      # réinitialisation dès qu'on voit False
+return False</code></pre>
+      <p style="margin-top:.6rem; margin-bottom:0">
+        La clé : <strong>remettre le compteur à zéro</strong> dès qu'une valeur ne vérifie
+        pas la condition. Sans cette réinitialisation, on compterait des occurrences
+        non-consécutives.
+      </p>
+    </div>
+
+    <div class="encadre-conseil">
+      <span class="encadre-prefix">Patron 3 – Renvoyer None si aucune donnée</span>
+      <pre style="margin:0"><code>trouve = False
+total = 0
+for m in donnees:
+    if m["jour"] == jour:
+        total += m["chaude"] + m["froide"]
+        trouve = True
+if not trouve:
+    return None
+return total</code></pre>
+    </div>
+  </section>
+
+  <hr class="sep">
+
+  <!-- SECTION 2 : STRUCTURE DES DONNÉES -->
+  <section id="s2">
+    <h2>2 — Structure des données du sujet</h2>
+
+    <p>
+      Chaque mesure du compteur d'eau est un dictionnaire à quatre clés.
+      La liste est triée par jour et heure croissants.
+    </p>
+
+    <div class="encadre">
+      <span class="encadre-prefix">Structure d'une mesure</span>
+      <table class="table-data" style="width:auto; margin:.5rem 0">
+        <tr><th>Clé</th><th>Type</th><th>Exemple</th><th>Signification</th></tr>
+        <tr><td><code>"jour"</code></td><td>str</td><td><code>"2025-02-04"</code></td><td>Date au format AAAA-MM-JJ</td></tr>
+        <tr><td><code>"heure"</code></td><td>str</td><td><code>"08:00"</code></td><td>Heure au format HH:MM</td></tr>
+        <tr><td><code>"chaude"</code></td><td>int</td><td><code>5</code></td><td>Litres d'eau chaude depuis la mesure précédente</td></tr>
+        <tr><td><code>"froide"</code></td><td>int</td><td><code>8</code></td><td>Litres d'eau froide depuis la mesure précédente</td></tr>
+      </table>
+      <p style="margin-top:.7rem; margin-bottom:0">
+        La <strong>consommation totale</strong> d'une mesure = <code>m["chaude"] + m["froide"]</code>.
+      </p>
+    </div>
+
+    <h3>Données fournies dans analyse_eau.py</h3>
+
+    <div class="encadre-conseil">
+      <span class="encadre-prefix">Jeu de données – 2025-02-04 (8 mesures)</span>
+      <div style="overflow-x:auto">
+        <table class="table-data">
+          <tr><th>Heure</th><th>Chaude</th><th>Froide</th><th>Total</th></tr>
+          <tr><td>00:00</td><td>2</td><td>3</td><td class="nonul">5</td></tr>
+          <tr><td>01:00</td><td>1</td><td>2</td><td class="nonul">3</td></tr>
+          <tr><td>02:00</td><td>0</td><td>0</td><td class="nul">0</td></tr>
+          <tr><td>03:00</td><td>0</td><td>0</td><td class="nul">0</td></tr>
+          <tr><td>04:00</td><td>0</td><td>1</td><td class="nonul">1</td></tr>
+          <tr><td>05:00</td><td>0</td><td>0</td><td class="nul">0</td></tr>
+          <tr><td>06:00</td><td>4</td><td>6</td><td class="nonul">10</td></tr>
+          <tr><td>07:00</td><td>6</td><td>8</td><td class="nonul">14</td></tr>
+        </table>
+      </div>
+      <p style="margin-top:.5rem; margin-bottom:0">Total du jour : \(5+3+0+0+1+0+10+14 = 33\) litres.</p>
+    </div>
+
+    <div class="encadre-conseil">
+      <span class="encadre-prefix">Jeu de données – 2025-02-05 (6 mesures)</span>
+      <div style="overflow-x:auto">
+        <table class="table-data">
+          <tr><th>Heure</th><th>Chaude</th><th>Froide</th><th>Total</th></tr>
+          <tr><td>00:00</td><td>0</td><td>0</td><td class="nul">0</td></tr>
+          <tr><td>01:00</td><td>1</td><td>1</td><td class="nonul consec">2</td></tr>
+          <tr><td>02:00</td><td>1</td><td>1</td><td class="nonul consec">2</td></tr>
+          <tr><td>03:00</td><td>1</td><td>1</td><td class="nonul consec">2</td></tr>
+          <tr><td>04:00</td><td>0</td><td>0</td><td class="nul">0</td></tr>
+          <tr><td>05:00</td><td>0</td><td>0</td><td class="nul">0</td></tr>
+        </table>
+      </div>
+      <p style="margin-top:.5rem; margin-bottom:0">
+        Les cases en rouge indiquent 3 mesures consécutives non nulles entre 00:00 et 05:00 →
+        <strong>fuite possible</strong>.
+      </p>
+    </div>
+  </section>
+
+  <hr class="sep">
+
+  <!-- QUESTION 1 -->
+  <section id="q1">
+    <h2>Question 1 — Écrire <code>total_conso</code></h2>
+
+    <div class="encadre-question">
+      <span class="encadre-prefix">Énoncé — Question 1</span>
+      <p>
+        <span class="badge-question">Q1</span>
+        Écrire la fonction <code>total_conso(donnees, jour)</code> qui renvoie la consommation
+        totale d'eau (chaude + froide) pour toutes les mesures du jour donné.
+      </p>
+      <p style="margin:0">
+        Par convention : si aucune mesure n'existe pour ce jour, renvoyer <code>None</code>.
+      </p>
+      <pre style="margin-top:.8rem; margin-bottom:0"><code>&gt;&gt;&gt; total_conso(donnees, "2025-02-04")
+33
+&gt;&gt;&gt; total_conso(donnees, "2025-12-25")
+&gt;&gt;&gt;                           # renvoie None</code></pre>
+    </div>
+
+    <h3>Aide méthodologique</h3>
+
+    <div class="encadre-conseil">
+      <span class="encadre-prefix">Démarche pas à pas</span>
+      <ol style="margin:0">
+        <li>Initialiser <code>total = 0</code> et un booléen <code>trouve = False</code>.</li>
+        <li>Parcourir <code>donnees</code> avec une boucle <code>for</code>.</li>
+        <li>Pour chaque mesure, tester si <code>m["jour"] == jour</code>.</li>
+        <li>Si oui : ajouter <code>m["chaude"] + m["froide"]</code> à <code>total</code>, passer <code>trouve</code> à <code>True</code>.</li>
+        <li>Après la boucle : si <code>trouve</code> est <code>False</code>, renvoyer <code>None</code>, sinon renvoyer <code>total</code>.</li>
+      </ol>
+    </div>
+
+    <div style="margin:.8rem 0;">
+      <button class="btn-tp-vert" onclick="toggleIndice('ind1a', this)">▶ Indice 1 — Accéder aux valeurs du dictionnaire</button>
+    </div>
+    <div id="ind1a" class="encadre-indice indice-bloc">
+      <span class="encadre-prefix">Indice 1</span>
+      <p style="margin:0">
+        Pour accéder au jour d'une mesure <code>m</code> : <code>m["jour"]</code>.<br>
+        Pour calculer la consommation totale : <code>m["chaude"] + m["froide"]</code>.<br>
+        Attention aux guillemets : les clés sont des <em>chaînes de caractères</em>.
+      </p>
+    </div>
+
+    <div style="margin:.8rem 0;">
+      <button class="btn-tp-vert" onclick="toggleIndice('ind1b', this)">▶ Indice 2 — Gérer le cas None</button>
+    </div>
+    <div id="ind1b" class="encadre-indice indice-bloc">
+      <span class="encadre-prefix">Indice 2</span>
+      <p>
+        Une erreur fréquente : renvoyer <code>0</code> quand aucune mesure n'existe.
+        Or l'énoncé impose <code>None</code>. Utilise un drapeau booléen :
+      </p>
+      <pre style="margin:0"><code>trouve = False
+for m in donnees:
+    if m["jour"] == jour:
+        ...
+        trouve = True
+if not trouve:
+    return None
+return total</code></pre>
+    </div>
+
+    <div class="encadre" style="margin-top:1.2rem;">
+      <span class="encadre-prefix">Éditeur Python — Question 1</span>
+      <script type="py-editor" env="eau">
+donnees = [
+    {"jour": "2025-02-04", "heure": "00:00", "chaude": 2, "froide": 3},
+    {"jour": "2025-02-04", "heure": "01:00", "chaude": 1, "froide": 2},
+    {"jour": "2025-02-04", "heure": "02:00", "chaude": 0, "froide": 0},
+    {"jour": "2025-02-04", "heure": "03:00", "chaude": 0, "froide": 0},
+    {"jour": "2025-02-04", "heure": "04:00", "chaude": 0, "froide": 1},
+    {"jour": "2025-02-04", "heure": "05:00", "chaude": 0, "froide": 0},
+    {"jour": "2025-02-04", "heure": "06:00", "chaude": 4, "froide": 6},
+    {"jour": "2025-02-04", "heure": "07:00", "chaude": 6, "froide": 8},
+    {"jour": "2025-02-05", "heure": "00:00", "chaude": 0, "froide": 0},
+    {"jour": "2025-02-05", "heure": "01:00", "chaude": 1, "froide": 1},
+    {"jour": "2025-02-05", "heure": "02:00", "chaude": 1, "froide": 1},
+    {"jour": "2025-02-05", "heure": "03:00", "chaude": 1, "froide": 1},
+    {"jour": "2025-02-05", "heure": "04:00", "chaude": 0, "froide": 0},
+    {"jour": "2025-02-05", "heure": "05:00", "chaude": 0, "froide": 0},
+]
+
+def total_conso(donnees, jour):
+    # TODO : compléter
+    pass
+
+
+def test_total_conso():
+    assert total_conso(donnees, "2025-02-04") == 33
+    assert total_conso(donnees, "2025-02-05") == 6
+    assert total_conso(donnees, "2025-12-25") is None
+    print("Les tests sont validés.")
+
+test_total_conso()
+      </script>
+    </div>
+
+    <div style="margin:1rem 0;">
+      <button class="btn-tp-or" onclick="toggleCorrection('corr-q1', this)">&#128274; Afficher la correction</button>
+    </div>
+    <div id="corr-q1" class="correction-bloc encadre-conseil">
+      <span class="encadre-prefix">Correction — Question 1</span>
+      <script type="py-editor" env="eau-c1">
+donnees = [
+    {"jour": "2025-02-04", "heure": "00:00", "chaude": 2, "froide": 3},
+    {"jour": "2025-02-04", "heure": "01:00", "chaude": 1, "froide": 2},
+    {"jour": "2025-02-04", "heure": "02:00", "chaude": 0, "froide": 0},
+    {"jour": "2025-02-04", "heure": "03:00", "chaude": 0, "froide": 0},
+    {"jour": "2025-02-04", "heure": "04:00", "chaude": 0, "froide": 1},
+    {"jour": "2025-02-04", "heure": "05:00", "chaude": 0, "froide": 0},
+    {"jour": "2025-02-04", "heure": "06:00", "chaude": 4, "froide": 6},
+    {"jour": "2025-02-04", "heure": "07:00", "chaude": 6, "froide": 8},
+    {"jour": "2025-02-05", "heure": "00:00", "chaude": 0, "froide": 0},
+    {"jour": "2025-02-05", "heure": "01:00", "chaude": 1, "froide": 1},
+    {"jour": "2025-02-05", "heure": "02:00", "chaude": 1, "froide": 1},
+    {"jour": "2025-02-05", "heure": "03:00", "chaude": 1, "froide": 1},
+    {"jour": "2025-02-05", "heure": "04:00", "chaude": 0, "froide": 0},
+    {"jour": "2025-02-05", "heure": "05:00", "chaude": 0, "froide": 0},
+]
+
+def total_conso(donnees, jour):
+    total = 0
+    trouve = False
+    for m in donnees:
+        if m["jour"] == jour:
+            total += m["chaude"] + m["froide"]
+            trouve = True
+    if not trouve:
+        return None
+    return total
+
+
+def test_total_conso():
+    assert total_conso(donnees, "2025-02-04") == 33
+    assert total_conso(donnees, "2025-02-05") == 6
+    assert total_conso(donnees, "2025-12-25") is None
+    print("Les tests sont validés.")
+
+test_total_conso()
+      </script>
+      <div style="margin-top:.8rem;">
+        <p>
+          <strong>Vérification manuelle pour le 04 :</strong>
+          \((2+3) + (1+2) + 0 + 0 + (0+1) + 0 + (4+6) + (6+8) = 5+3+0+0+1+0+10+14 = 33\). ✓
+        </p>
+        <p style="margin:0">
+          <strong>Pourquoi un drapeau et pas juste <code>total == 0</code> ?</strong>
+          Parce qu'un jour avec des mesures <em>toutes nulles</em> renverrait
+          <code>total = 0</code> — ce n'est pas <code>None</code>. Les deux situations
+          sont différentes : « jour connu, mais aucune consommation » ≠ « jour inconnu ».
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <hr class="sep">
+
+  <!-- QUESTION 2 -->
+  <section id="q2">
+    <h2>Question 2 — Écrire <code>fuite_possible</code></h2>
+
+    <div class="encadre-question">
+      <span class="encadre-prefix">Énoncé — Question 2</span>
+      <p>
+        <span class="badge-question">Q2</span>
+        Écrire la fonction <code>fuite_possible(donnees, jour)</code> qui renvoie <code>True</code>
+        si au moins 3 mesures consécutives entre <code>"00:00"</code> et <code>"05:00"</code>
+        (inclus) ont une consommation totale non nulle, <code>False</code> sinon.
+      </p>
+      <p>Exemples de l'énoncé :</p>
+      <table class="table-data" style="width:auto">
+        <tr><th>Heure</th><th>00:00</th><th>01:00</th><th>02:00</th><th>03:00</th><th>Résultat</th></tr>
+        <tr><td>Conso</td><td>5</td><td>3</td><td class="nul">0</td><td>3</td><td>→ <strong>False</strong> (pas 3 consécutifs)</td></tr>
+        <tr><td>Conso</td><td class="nonul consec">2</td><td class="nonul consec">1</td><td class="nonul consec">1</td><td class="nul">0</td><td>→ <strong>True</strong> (3 consécutifs)</td></tr>
+      </table>
+    </div>
+
+    <h3>Aide méthodologique</h3>
+
+    <div class="encadre-conseil">
+      <span class="encadre-prefix">Démarche — Compteur de séquence</span>
+      <ol style="margin:0">
+        <li>Filtrer les mesures : garder uniquement celles du <code>jour</code> voulu ET dont l'heure est ≤ <code>"05:00"</code>.</li>
+        <li>Initialiser un compteur <code>consec = 0</code>.</li>
+        <li>Pour chaque mesure filtrée :
+          <ul>
+            <li>Si consommation totale > 0 : incrémenter <code>consec</code>. Si <code>consec >= 3</code>, renvoyer <code>True</code>.</li>
+            <li>Sinon : remettre <code>consec = 0</code> (<strong>réinitialisation indispensable</strong>).</li>
+          </ul>
+        </li>
+        <li>Après la boucle : renvoyer <code>False</code>.</li>
+      </ol>
+    </div>
+
+    <div class="encadre-conseil">
+      <span class="encadre-prefix">Pourquoi filtrer sur l'heure ?</span>
+      <p style="margin:0">
+        L'énoncé précise : mesures <strong>entre 00:00 et 05:00 inclus</strong>.
+        Comparer des chaînes <code>"HH:MM"</code> fonctionne ici car l'ordre lexicographique
+        coïncide avec l'ordre chronologique (toutes les heures sont sur 2 chiffres).
+        Donc <code>m["heure"] &lt;= "05:00"</code> est valide.
+      </p>
+    </div>
+
+    <div style="margin:.8rem 0;">
+      <button class="btn-tp-vert" onclick="toggleIndice('ind2a', this)">▶ Indice 1 — Filtrer jour ET heure simultanément</button>
+    </div>
+    <div id="ind2a" class="encadre-indice indice-bloc">
+      <span class="encadre-prefix">Indice 1</span>
+      <pre style="margin:0"><code>for m in donnees:
+    if m["jour"] == jour and m["heure"] &lt;= "05:00":
+        conso = m["chaude"] + m["froide"]
+        # tester conso ici</code></pre>
+    </div>
+
+    <div style="margin:.8rem 0;">
+      <button class="btn-tp-vert" onclick="toggleIndice('ind2b', this)">▶ Indice 2 — Structure complète avec réinitialisation</button>
+    </div>
+    <div id="ind2b" class="encadre-indice indice-bloc">
+      <span class="encadre-prefix">Indice 2</span>
+      <pre style="margin:0"><code>def fuite_possible(donnees, jour):
+    consec = 0
+    for m in donnees:
+        if m["jour"] == jour and m["heure"] &lt;= "05:00":
+            conso = m["chaude"] + m["froide"]
+            if conso > 0:
+                consec += 1
+                if consec >= 3:
+                    return True
+            else:
+                consec = 0    # ← ne pas oublier !
+    return False</code></pre>
+    </div>
+
+    <div class="encadre" style="margin-top:1.2rem;">
+      <span class="encadre-prefix">Éditeur Python — Question 2</span>
+      <script type="py-editor" env="eau">
+donnees = [
+    {"jour": "2025-02-04", "heure": "00:00", "chaude": 2, "froide": 3},
+    {"jour": "2025-02-04", "heure": "01:00", "chaude": 1, "froide": 2},
+    {"jour": "2025-02-04", "heure": "02:00", "chaude": 0, "froide": 0},
+    {"jour": "2025-02-04", "heure": "03:00", "chaude": 0, "froide": 0},
+    {"jour": "2025-02-04", "heure": "04:00", "chaude": 0, "froide": 1},
+    {"jour": "2025-02-04", "heure": "05:00", "chaude": 0, "froide": 0},
+    {"jour": "2025-02-04", "heure": "06:00", "chaude": 4, "froide": 6},
+    {"jour": "2025-02-04", "heure": "07:00", "chaude": 6, "froide": 8},
+    {"jour": "2025-02-05", "heure": "00:00", "chaude": 0, "froide": 0},
+    {"jour": "2025-02-05", "heure": "01:00", "chaude": 1, "froide": 1},
+    {"jour": "2025-02-05", "heure": "02:00", "chaude": 1, "froide": 1},
+    {"jour": "2025-02-05", "heure": "03:00", "chaude": 1, "froide": 1},
+    {"jour": "2025-02-05", "heure": "04:00", "chaude": 0, "froide": 0},
+    {"jour": "2025-02-05", "heure": "05:00", "chaude": 0, "froide": 0},
+]
+
+def fuite_possible(donnees, jour):
+    # TODO : compléter
+    pass
+
+
+def test_fuite_possible():
+    # Le 04 : pas 3 consécutifs (5,3,0,0,1,0) → False
+    assert fuite_possible(donnees, "2025-02-04") == False
+    # Le 05 : 0,2,2,2,0,0 → 3 consécutifs à partir de 01:00 → True
+    assert fuite_possible(donnees, "2025-02-05") == True
+    # Jour inexistant → False (aucune mesure)
+    assert fuite_possible(donnees, "2025-12-25") == False
+    print("Les tests sont validés.")
+
+test_fuite_possible()
+      </script>
+    </div>
+
+    <div style="margin:1rem 0;">
+      <button class="btn-tp-or" onclick="toggleCorrection('corr-q2', this)">&#128274; Afficher la correction</button>
+    </div>
+    <div id="corr-q2" class="correction-bloc encadre-conseil">
+      <span class="encadre-prefix">Correction — Question 2</span>
+      <script type="py-editor" env="eau-c2">
+donnees = [
+    {"jour": "2025-02-04", "heure": "00:00", "chaude": 2, "froide": 3},
+    {"jour": "2025-02-04", "heure": "01:00", "chaude": 1, "froide": 2},
+    {"jour": "2025-02-04", "heure": "02:00", "chaude": 0, "froide": 0},
+    {"jour": "2025-02-04", "heure": "03:00", "chaude": 0, "froide": 0},
+    {"jour": "2025-02-04", "heure": "04:00", "chaude": 0, "froide": 1},
+    {"jour": "2025-02-04", "heure": "05:00", "chaude": 0, "froide": 0},
+    {"jour": "2025-02-05", "heure": "00:00", "chaude": 0, "froide": 0},
+    {"jour": "2025-02-05", "heure": "01:00", "chaude": 1, "froide": 1},
+    {"jour": "2025-02-05", "heure": "02:00", "chaude": 1, "froide": 1},
+    {"jour": "2025-02-05", "heure": "03:00", "chaude": 1, "froide": 1},
+    {"jour": "2025-02-05", "heure": "04:00", "chaude": 0, "froide": 0},
+    {"jour": "2025-02-05", "heure": "05:00", "chaude": 0, "froide": 0},
+]
+
+def fuite_possible(donnees, jour):
+    consec = 0
+    for m in donnees:
+        if m["jour"] == jour and m["heure"] <= "05:00":
+            conso = m["chaude"] + m["froide"]
+            if conso > 0:
+                consec += 1
+                if consec >= 3:
+                    return True
+            else:
+                consec = 0
+    return False
+
+
+def test_fuite_possible():
+    assert fuite_possible(donnees, "2025-02-04") == False
+    assert fuite_possible(donnees, "2025-02-05") == True
+    assert fuite_possible(donnees, "2025-12-25") == False
+    print("Les tests sont validés.")
+
+test_fuite_possible()
+      </script>
+      <div style="margin-top:.8rem;">
+        <p>
+          <strong>Trace pour le 05/02 :</strong> les heures 00:00 à 05:00 donnent les totaux
+          <code>0, 2, 2, 2, 0, 0</code>. Compteur : 0 → 0 (réinit) → 1 → 2 → 3 ≥ 3 → <code>True</code>.
+        </p>
+        <p style="margin:0">
+          <strong>Pourquoi comparer les heures comme des chaînes ?</strong>
+          Le format <code>"HH:MM"</code> garantit que l'ordre alphabétique = ordre chronologique.
+          <code>"05:00" &lt; "06:00"</code> est vrai en Python. C'est une propriété du format ISO 8601.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <hr class="sep">
+
+  <!-- QUESTION 3 -->
+  <section id="q3">
+    <h2>Question 3 — Analyser et corriger <code>lissage_conso</code></h2>
+
+    <div class="encadre-question">
+      <span class="encadre-prefix">Énoncé — Question 3</span>
+      <p>
+        <span class="badge-question">Q3</span>
+        La fonction <code>lissage_conso</code> est censée calculer une moyenne glissante sur 3 valeurs.
+        Testée avec <code>[10, 20, 30, 40, 50]</code>, elle produit un résultat incorrect.
+        Identifier le bug et le corriger.
+      </p>
+      <p style="margin:0">
+        Règles attendues :<br>
+        — Élément du bord gauche (index 0) : moyenne du 1er et du 2e.<br>
+        — Élément du bord droit (dernier index) : moyenne du dernier et de l'avant-dernier.<br>
+        — Éléments intermédiaires : moyenne du précédent, de l'actuel et du suivant.
+      </p>
+    </div>
+
+    <h3>Qu'est-ce qu'une moyenne glissante ?</h3>
+    <p>
+      Imagine que tu veuilles « lisser » la courbe de consommation : au lieu d'afficher la valeur brute
+      de chaque heure, tu affiches la moyenne de cette heure avec ses voisines. Les pics ponctuels
+      sont atténués, la tendance générale devient plus lisible.
+    </p>
+
+    <div class="encadre-conseil">
+      <span class="encadre-prefix">Exemple attendu sur [10, 20, 30, 40, 50]</span>
+      <table class="table-data" style="width:auto; margin:.5rem 0">
+        <tr><th>Index</th><th>Calcul attendu</th><th>Résultat attendu</th></tr>
+        <tr><td>0 (bord gauche)</td><td>\(\frac{10 + 20}{2} = 15\)</td><td><code>15.0</code></td></tr>
+        <tr><td>1 (intermédiaire)</td><td>\(\frac{10 + 20 + 30}{3} = 20\)</td><td><code>20.0</code></td></tr>
+        <tr><td>2 (intermédiaire)</td><td>\(\frac{20 + 30 + 40}{3} = 30\)</td><td><code>30.0</code></td></tr>
+        <tr><td>3 (intermédiaire)</td><td>\(\frac{30 + 40 + 50}{3} = 40\)</td><td><code>40.0</code></td></tr>
+        <tr><td>4 (bord droit)</td><td>\(\frac{40 + 50}{2} = 45\)</td><td><code>45.0</code></td></tr>
+      </table>
+      <p style="margin-top:.5rem; margin-bottom:0">
+        Résultat attendu : <code>[15.0, 20.0, 30.0, 40.0, 45.0]</code>
+      </p>
+    </div>
+
+    <h3>Analyse du bug dans le code fourni</h3>
+
+    <p>
+      Voici le code fourni. Lis-le attentivement ligne par ligne avant de regarder l'explication :
+    </p>
+
+    <pre><code>def lissage_conso(valeurs):
+    lisse = []
+    for i in range(len(valeurs)):
+        if i == 0:
+            m = (valeurs[i] + valeurs[i+1]) / 2
+        elif i == len(valeurs)-1:
+            m = (valeurs[i-1] + valeurs[i]) / 2
+        else:
+            m = (valeurs[i-1] + valeurs[i] + valeurs[i+1]) / 2  ← BUG ICI
+        lisse.append(m)
+    return lisse</code></pre>
+
+    <div class="encadre-piege">
+      <span class="encadre-prefix">Identification du bug</span>
+      <p>
+        Le cas intermédiaire calcule la somme de <strong>3 valeurs</strong> mais divise par <strong>2</strong>
+        au lieu de <strong>3</strong>. Il additionne le précédent, l'actuel et le suivant — soit 3 termes —
+        mais le diviseur reste 2, celui des cas de bord.
+      </p>
+      <p style="margin:0">
+        <strong>Exemple concret avec <code>i = 2</code> (valeur 30) :</strong><br>
+        Code bugué : <code>(20 + 30 + 40) / 2 = 45.0</code> ← faux<br>
+        Attendu : <code>(20 + 30 + 40) / 3 = 30.0</code> ← juste
+      </p>
+    </div>
+
+    <div class="encadre-conseil">
+      <span class="encadre-prefix">Visualisation de l'erreur — index 2 sur [10, 20, 30, 40, 50]</span>
+      <div style="display:flex; align-items:center; gap:.4rem; flex-wrap:wrap; margin:.5rem 0; font-family:'JetBrains Mono',monospace; font-size:.9rem;">
+        <div class="lissage-val">10</div>
+        <div class="lissage-val actif">20</div>
+        <div class="lissage-val actif" style="border-color:#2e7d32; background:#f0faf0">30</div>
+        <div class="lissage-val actif">40</div>
+        <div class="lissage-val">50</div>
+        <span style="margin-left:1rem">← les 3 cases bleues/vertes sont additionnées</span>
+      </div>
+      <p style="margin-bottom:.3rem">Somme correcte : <code>20 + 30 + 40 = 90</code></p>
+      <p style="margin-bottom:.3rem; color:#c0392b">❌ Code bugué : <code>90 / 2 = 45.0</code></p>
+      <p style="margin:0; color:#2e7d32">✅ Code corrigé : <code>90 / 3 = 30.0</code></p>
+    </div>
+
+    <div style="margin:.8rem 0;">
+      <button class="btn-tp-vert" onclick="toggleIndice('ind3a', this)">▶ Indice — La correction en une ligne</button>
+    </div>
+    <div id="ind3a" class="encadre-indice indice-bloc">
+      <span class="encadre-prefix">Indice</span>
+      <p style="margin:0">
+        Il suffit de changer le diviseur du cas <code>else</code> de <code>2</code> à <code>3</code> :<br>
+        <code>m = (valeurs[i-1] + valeurs[i] + valeurs[i+1]) / 3</code>
+      </p>
+    </div>
+
+    <div class="encadre" style="margin-top:1.2rem;">
+      <span class="encadre-prefix">Éditeur Python — Question 3</span>
+      <script type="py-editor" env="eau">
+def lissage_conso(valeurs):
+    """
+    Calcule une moyenne glissante sur les valeurs.
+    - Bord gauche  : moyenne(valeur[0], valeur[1])
+    - Bord droit   : moyenne(valeur[-2], valeur[-1])
+    - Intermédiaire: moyenne(valeur[i-1], valeur[i], valeur[i+1])
+    """
+    lisse = []
+    for i in range(len(valeurs)):
+        if i == 0:
+            m = (valeurs[i] + valeurs[i+1]) / 2
+        elif i == len(valeurs)-1:
+            m = (valeurs[i-1] + valeurs[i]) / 2
+        else:
+            m = (valeurs[i-1] + valeurs[i] + valeurs[i+1]) / 2  # BUG à corriger
+        lisse.append(m)
+    return lisse
+
+
+def test_lissage():
+    # Test 1 : valeur intermédiaire — révèle le /2 au lieu de /3
+    assert lissage_conso([10, 20, 30, 40, 50]) == [15.0, 20.0, 30.0, 40.0, 45.0]
+    # Test 2 : bords seuls
+    assert lissage_conso([4, 8])[0] == 6.0    # bord gauche
+    assert lissage_conso([4, 8])[1] == 6.0    # bord droit
+    # Test 3 : valeurs identiques → lissage transparent
+    assert lissage_conso([5, 5, 5, 5]) == [5.0, 5.0, 5.0, 5.0]
+    print("Les tests sont validés.")
+
+test_lissage()
+      </script>
+    </div>
+
+    <div style="margin:1rem 0;">
+      <button class="btn-tp-or" onclick="toggleCorrection('corr-q3', this)">&#128274; Afficher la correction</button>
+    </div>
+    <div id="corr-q3" class="correction-bloc encadre-conseil">
+      <span class="encadre-prefix">Correction — Question 3</span>
+      <script type="py-editor" env="eau-c3">
+def lissage_conso(valeurs):
+    lisse = []
+    for i in range(len(valeurs)):
+        if i == 0:
+            m = (valeurs[i] + valeurs[i+1]) / 2
+        elif i == len(valeurs)-1:
+            m = (valeurs[i-1] + valeurs[i]) / 2
+        else:
+            m = (valeurs[i-1] + valeurs[i] + valeurs[i+1]) / 3  # /2 → /3
+        lisse.append(m)
+    return lisse
+
+
+def test_lissage():
+    assert lissage_conso([10, 20, 30, 40, 50]) == [15.0, 20.0, 30.0, 40.0, 45.0]
+    assert lissage_conso([4, 8])[0] == 6.0
+    assert lissage_conso([4, 8])[1] == 6.0
+    assert lissage_conso([5, 5, 5, 5]) == [5.0, 5.0, 5.0, 5.0]
+    print("Les tests sont validés.")
+
+test_lissage()
+      </script>
+      <div style="margin-top:.8rem;">
+        <p>
+          <strong>Une seule ligne change</strong> : <code>/ 2</code> → <code>/ 3</code> dans le bloc <code>else</code>.
+          C'est un bug discret mais aux conséquences importantes : toutes les valeurs intermédiaires
+          sont gonflées d'un facteur 1,5, ce qui rend la courbe lissée inexploitable.
+        </p>
+        <p style="margin:0">
+          <strong>Stratégie de test :</strong> le test avec <code>[5, 5, 5, 5]</code> (toutes les valeurs identiques)
+          est particulièrement robuste — le lissage ne doit rien changer. Si ce test échoue,
+          le bug est mathématiquement garanti de fausser tous les résultats.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <hr class="sep">
+
+  <!-- QUESTION 4 -->
+  <section id="q4">
+    <h2>Question 4 — Identifier et traiter le cas limite oublié</h2>
+
+    <div class="encadre-question">
+      <span class="encadre-prefix">Énoncé — Question 4</span>
+      <p>
+        <span class="badge-question">Q4</span>
+        La fonction <code>lissage_conso</code> gère déjà le cas où la liste contient exactement
+        deux valeurs. Identifier un <strong>autre cas limite</strong> non géré et proposer une correction.
+      </p>
+    </div>
+
+    <h3>Les cas limites d'une liste</h3>
+    <p>
+      Quand une fonction reçoit une liste en paramètre, elle doit se demander :
+      « Que se passe-t-il si la liste est vide ? Si elle a un seul élément ? »
+      Ces situations sont les <strong>cas limites</strong> (ou cas dégénérés) — les plus
+      susceptibles de provoquer des erreurs inattendues.
+    </p>
+
+    <div class="encadre-piege">
+      <span class="encadre-prefix">Cas limite oublié — liste vide <code>[]</code></span>
+      <p>
+        Avec une liste vide, <code>range(len([]))</code> = <code>range(0)</code> : la boucle
+        ne s'exécute pas. La fonction renvoie une liste vide <code>[]</code> sans erreur.
+        Cela peut sembler correct, mais le comportement n'est pas documenté et peut surprendre
+        l'appelant. Ce n'est pas le cas le plus critique.
+      </p>
+      <p>
+        Le vrai danger : <strong>liste à un seul élément <code>[x]</code></strong>.
+      </p>
+      <p style="margin:0">
+        Avec <code>[42]</code>, l'index <code>0</code> déclenche le cas <code>i == 0</code>,
+        qui calcule <code>(valeurs[0] + valeurs[1]) / 2</code>.
+        Mais <code>valeurs[1]</code> <strong>n'existe pas</strong> → <code>IndexError: list index out of range</code>.
+      </p>
+    </div>
+
+    <div class="encadre-conseil">
+      <span class="encadre-prefix">Trace d'exécution sur lissage_conso([42])</span>
+      <pre style="margin:0"><code>lissage_conso([42])
+# i = 0
+# i == 0 → m = (valeurs[0] + valeurs[1]) / 2
+#                              ↑
+#                   IndexError ! valeurs[1] n'existe pas
+#                   len(valeurs) == 1, indices valides : {0} uniquement</code></pre>
+    </div>
+
+    <h3>Solution : traiter les cas limites en entrée de fonction</h3>
+
+    <div style="margin:.8rem 0;">
+      <button class="btn-tp-vert" onclick="toggleIndice('ind4a', this)">▶ Indice 1 — Que renvoyer pour une liste vide ou singleton ?</button>
+    </div>
+    <div id="ind4a" class="encadre-indice indice-bloc">
+      <span class="encadre-prefix">Indice 1</span>
+      <p style="margin:0">
+        Pour une liste vide → renvoyer une liste vide.<br>
+        Pour une liste à un seul élément → la moyenne d'un seul élément, c'est l'élément lui-même.
+        Renvoyer <code>[float(valeurs[0])]</code>.
+      </p>
+    </div>
+
+    <div style="margin:.8rem 0;">
+      <button class="btn-tp-vert" onclick="toggleIndice('ind4b', this)">▶ Indice 2 — Gardes en début de fonction</button>
+    </div>
+    <div id="ind4b" class="encadre-indice indice-bloc">
+      <span class="encadre-prefix">Indice 2</span>
+      <pre style="margin:0"><code>def lissage_conso(valeurs):
+    if len(valeurs) == 0:
+        return []
+    if len(valeurs) == 1:
+        return [float(valeurs[0])]
+    # ... reste du code inchangé ...</code></pre>
+    </div>
+
+    <div class="encadre" style="margin-top:1.2rem;">
+      <span class="encadre-prefix">Éditeur Python — Question 4</span>
+      <script type="py-editor" env="eau">
+def lissage_conso(valeurs):
+    """
+    Version finale : corrige le /2→/3 ET gère les cas limites.
+    """
+    # TODO : ajouter les gardes pour liste vide et singleton
+    lisse = []
+    for i in range(len(valeurs)):
+        if i == 0:
+            m = (valeurs[i] + valeurs[i+1]) / 2
+        elif i == len(valeurs)-1:
+            m = (valeurs[i-1] + valeurs[i]) / 2
+        else:
+            m = (valeurs[i-1] + valeurs[i] + valeurs[i+1]) / 3
+        lisse.append(m)
+    return lisse
+
+
+def test_lissage_cas_limites():
+    # Cas limite vide
+    assert lissage_conso([]) == []
+    # Cas limite singleton
+    assert lissage_conso([42]) == [42.0]
+    # Cas classique (régression — ne pas casser l'existant)
+    assert lissage_conso([10, 20, 30, 40, 50]) == [15.0, 20.0, 30.0, 40.0, 45.0]
+    print("Les tests sont validés.")
+
+test_lissage_cas_limites()
+      </script>
+    </div>
+
+    <div style="margin:1rem 0;">
+      <button class="btn-tp-or" onclick="toggleCorrection('corr-q4', this)">&#128274; Afficher la correction</button>
+    </div>
+    <div id="corr-q4" class="correction-bloc encadre-conseil">
+      <span class="encadre-prefix">Correction — Question 4 (version finale complète)</span>
+      <script type="py-editor" env="eau-c4">
+def lissage_conso(valeurs):
+    """
+    Moyenne glissante — version finale corrigée.
+    Gère : liste vide, singleton, deux valeurs, liste générale.
+    """
+    if len(valeurs) == 0:         # cas limite : liste vide
+        return []
+    if len(valeurs) == 1:         # cas limite : un seul élément
+        return [float(valeurs[0])]
+
+    lisse = []
+    for i in range(len(valeurs)):
+        if i == 0:
+            m = (valeurs[i] + valeurs[i+1]) / 2
+        elif i == len(valeurs)-1:
+            m = (valeurs[i-1] + valeurs[i]) / 2
+        else:
+            m = (valeurs[i-1] + valeurs[i] + valeurs[i+1]) / 3  # /3 et non /2
+        lisse.append(m)
+    return lisse
+
+
+def test_lissage_cas_limites():
+    assert lissage_conso([]) == []
+    assert lissage_conso([42]) == [42.0]
+    assert lissage_conso([10, 20, 30, 40, 50]) == [15.0, 20.0, 30.0, 40.0, 45.0]
+    print("Les tests sont validés.")
+
+test_lissage_cas_limites()
+      </script>
+      <div style="margin-top:.8rem;">
+        <p>
+          Les deux gardes en tête de fonction (appelées <em>early returns</em>) permettent
+          de traiter les cas dégénérés <em>avant</em> la boucle principale.
+          Cela évite de complexifier la logique interne avec des conditions supplémentaires.
+        </p>
+        <p style="margin:0">
+          <strong>Bonne pratique :</strong> après avoir corrigé un bug, toujours relancer
+          les tests existants pour vérifier qu'on n'a rien cassé — c'est ce qu'on appelle
+          un <em>test de non-régression</em>. C'est pourquoi <code>test_lissage_cas_limites</code>
+          inclut à la fois les nouveaux cas <em>et</em> le cas classique de la Q3.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <hr class="sep">
+
+  <!-- PIÈGES FRÉQUENTS -->
+  <section id="pieges">
+    <h2>Pièges fréquents &amp; astuces de vérification</h2>
+
+    <div class="encadre-piege">
+      <span class="encadre-prefix">Piège 1 — Renvoyer 0 au lieu de None pour un jour inconnu</span>
+      <p style="margin:0">
+        Si aucune mesure n'existe pour un jour, la somme vaut <code>0</code> sans jamais
+        incrémenter le drapeau. Renvoyer <code>0</code> est sémantiquement faux :
+        cela signifierait « zéro litre consommé », alors que la réalité est « aucune donnée ».
+        Ce genre d'ambiguïté peut provoquer des bugs silencieux dans le code appelant.
+        La convention <code>None</code> oblige l'appelant à tester explicitement.
+      </p>
+    </div>
+
+    <div class="encadre-piege">
+      <span class="encadre-prefix">Piège 2 — Oublier de réinitialiser le compteur de séquence</span>
+      <p style="margin:0">
+        Dans <code>fuite_possible</code>, si tu oublies <code>consec = 0</code> quand la
+        consommation est nulle, le compteur continue d'accumuler des occurrences
+        <em>non-consécutives</em>. Sur les données du 04/02 (<code>5,3,0,0,1,0</code>),
+        le compteur atteindrait 3 (2 + réutilisation) et renverrait <code>True</code> à tort.
+      </p>
+    </div>
+
+    <div class="encadre-piege">
+      <span class="encadre-prefix">Piège 3 — Ne pas filtrer sur l'heure dans fuite_possible</span>
+      <p style="margin:0">
+        Les données du 04/02 incluent des mesures à 06:00 et 07:00 avec une forte consommation.
+        Sans le filtre <code>m["heure"] &lt;= "05:00"</code>, ces heures matinales seraient
+        prises en compte et pourraient déclencher un faux positif. La fuite nocturne ne concerne
+        que les heures de sommeil, pas le matin.
+      </p>
+    </div>
+
+    <div class="encadre-piege">
+      <span class="encadre-prefix">Piège 4 — Le bug du /2 dans lissage_conso est subtil</span>
+      <p style="margin:0">
+        Le code fourni donne des résultats <em>numériquement plausibles</em> — juste
+        trop grands — ce qui le rend difficile à repérer sans test rigoureux.
+        Seul un test avec une valeur attendue pré-calculée révèle l'erreur.
+        C'est pourquoi les tests de la Q3 doivent impérativement porter sur des éléments
+        <strong>intermédiaires</strong> (ni premier, ni dernier), car les bords sont calculés
+        correctement avec /2.
+      </p>
+    </div>
+
+    <div class="encadre-piege">
+      <span class="encadre-prefix">Piège 5 — Tester uniquement les cas normaux, oublier les extrêmes</span>
+      <p style="margin:0">
+        <code>lissage_conso([42])</code> lève une <code>IndexError</code>, mais si on ne
+        teste jamais un singleton, le bug reste invisible en production. La règle d'or :
+        toujours écrire au moins un test avec une liste vide, un singleton et deux éléments
+        pour toute fonction recevant une liste.
+      </p>
+    </div>
+
+    <!-- Astuces de vérification -->
+    <div class="encadre-conseil" style="margin-top:1.5rem;">
+      <span class="encadre-prefix">Astuces de vérification</span>
+      <ul style="margin:0">
+        <li>
+          <strong>Vérifier total_conso à la main :</strong> somme tous les chaudes et froides
+          du 04/02 dans les données : \(2+3+1+2+0+0+0+0+0+1+0+0+4+6+6+8 = 33\). Compte bien 16 valeurs pour 8 mesures.
+        </li>
+        <li>
+          <strong>Test symétrique pour lissage :</strong> une liste de valeurs identiques
+          <code>[k, k, k, k]</code> doit donner <code>[k.0, k.0, k.0, k.0]</code>.
+          Le lissage d'un signal constant doit laisser le signal inchangé.
+        </li>
+        <li>
+          <strong>Test de taille pour lissage :</strong>
+          <code>len(lissage_conso(v)) == len(v)</code> doit toujours être vrai,
+          quelle que soit la longueur de <code>v</code> — y compris pour <code>[]</code> et <code>[x]</code>.
+        </li>
+        <li>
+          <strong>Test de l'heure limite :</strong> vérifier que 05:00 est <em>inclus</em>
+          dans la détection (l'énoncé dit « entre 00:00 et 05:00 inclus »).
+          Construire un jeu avec 2 consécutifs avant 05:00 et un troisième <em>à</em> 05:00.
+        </li>
+      </ul>
+    </div>
+
+    <!-- Mini-exercices -->
+    <h3>Mini-exercices de vérification</h3>
+
+    <div class="encadre">
+      <span class="encadre-prefix">Mini-exercice A — Tracer la fuite à la main</span>
+      <p>
+        Pour la séquence de consommations nocturnes suivante,
+        dis si <code>fuite_possible</code> renvoie <code>True</code> ou <code>False</code> :
+      </p>
+      <ol>
+        <li><code>[0, 1, 2, 0, 3, 4, 5]</code></li>
+        <li><code>[1, 2, 3, 0, 0, 0]</code></li>
+        <li><code>[0, 0, 0, 1, 2, 3]</code></li>
+      </ol>
+      <button class="btn-secondaire" onclick="toggleCorrection('corr-mini-a', this)">Vérifier</button>
+      <div id="corr-mini-a" class="correction-bloc" style="margin-top:.7rem;">
+        <ol>
+          <li><strong>False</strong> — max consécutifs non nuls : 2 (positions 4-5 → 3,4 puis 5 ne compte pas car c'est la suite). Trace : 0→réinit, 1→1, 2→2, 0→réinit, 3→1, 4→2, 5→3. <strong>True !</strong> (3 consécutifs en fin)</li>
+          <li><strong>True</strong> — 1,2,3 : trois consécutifs dès le début. Compteur : 1→2→3 ≥ 3.</li>
+          <li><strong>True</strong> — 0→réinit, 0→0, 0→0, 1→1, 2→2, 3→3 ≥ 3.</li>
+        </ol>
+      </div>
+    </div>
+
+    <div class="encadre">
+      <span class="encadre-prefix">Mini-exercice B — Lissage mental</span>
+      <p>Calcule à la main le résultat de <code>lissage_conso([0, 6, 0])</code> (version corrigée) :</p>
+      <button class="btn-secondaire" onclick="toggleCorrection('corr-mini-b', this)">Vérifier</button>
+      <div id="corr-mini-b" class="correction-bloc" style="margin-top:.7rem;">
+        <ul style="margin:0">
+          <li>Index 0 (bord) : <code>(0 + 6) / 2 = 3.0</code></li>
+          <li>Index 1 (intermédiaire) : <code>(0 + 6 + 0) / 3 = 2.0</code></li>
+          <li>Index 2 (bord) : <code>(6 + 0) / 2 = 3.0</code></li>
+        </ul>
+        <p style="margin-top:.5rem; margin-bottom:0">Résultat : <code>[3.0, 2.0, 3.0]</code> — le pic à 6 est bien atténué.</p>
+      </div>
+    </div>
+  </section>
+
+  <hr class="sep">
+
+  <!-- RÉCAPITULATIF -->
+  <div class="encadre" style="margin-top:2rem;">
+    <span class="encadre-prefix">Récapitulatif — Ce que tu dois retenir</span>
+    <ul style="margin:0">
+      <li>Accéder aux données d'un dictionnaire : <code>m["clé"]</code> — guillemets obligatoires, casse exacte.</li>
+      <li>Renvoyer <code>None</code> (pas <code>0</code>) quand aucune donnée n'existe pour le jour demandé.</li>
+      <li>Compteur de séquence : incrémenter si condition vraie, <strong>remettre à zéro sinon</strong>.</li>
+      <li>Comparer des heures <code>"HH:MM"</code> comme des chaînes est valide (ordre lexicographique = ordre chronologique).</li>
+      <li>Bug de <code>lissage_conso</code> : division par 2 au lieu de 3 pour les éléments intermédiaires.</li>
+      <li>Cas limite oublié : liste à un seul élément → <code>IndexError</code> car <code>valeurs[1]</code> n'existe pas.</li>
+      <li>Toujours tester : liste vide, singleton, deux éléments, et cas général.</li>
+    </ul>
+  </div>
+
+</div><!-- /container-content -->
+
+<footer>
+  Lycée Antoine Watteau — DarkSATHI Li
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+  var btnTop = document.getElementById('btn-top');
+  window.addEventListener('scroll', function () {
+    btnTop.style.display = window.scrollY > 300 ? 'flex' : 'none';
+  });
+  btnTop.addEventListener('click', function () {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  });
+
+  function toggleIndice(id, btn) {
+    var el = document.getElementById(id);
+    if (!el) return;
+    el.classList.toggle('visible');
+    btn.textContent = el.classList.contains('visible')
+      ? btn.textContent.replace('▶', '▼')
+      : btn.textContent.replace('▼', '▶');
+  }
+
+  function toggleCorrection(id, btn) {
+    var el = document.getElementById(id);
+    if (!el) return;
+    el.classList.toggle('visible');
+    if (el.classList.contains('visible')) {
+      btn.textContent = btn.textContent.replace('Afficher', 'Masquer').replace('Vérifier', 'Masquer');
+    } else {
+      btn.textContent = btn.textContent.replace('Masquer', 'Afficher');
+    }
+  }
+</script>
+</body>
+</html>

@@ -1,0 +1,1454 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Fiche – Codage BCD et addition | NSI Terminale | BAC 2026</title>
+
+  <!-- Bootstrap 5.3.3 -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Rubik+Dirt&family=Source+Serif+4:ital,opsz,wght@0,8..60,300..900;1,8..60,300..900&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+
+  <!-- MathJax v3 -->
+  <script>
+    MathJax = {
+      tex: { inlineMath: [['\\(', '\\)'], ['$', '$']] },
+      options: { skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre'] }
+    };
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js" async></script>
+
+  <!-- PyScript 2026.3.1 -->
+  <script type="module" src="https://pyscript.net/releases/2026.3.1/core.js"></script>
+
+  <style>
+    :root {
+      --bg-main:    #f8f9fb;
+      --bg-panel:   #eef1f5;
+      --bg-cours:   #ffffff;
+      --accent:     #2a6496;
+      --py-editor-input: white;
+      --accent-or:  #b5610a;
+      --accent-vert:#2e7d32;
+      --text-main:  #1a1a1a;
+      --text-muted: #5a6470;
+      --border-radius: 8px;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      background-color: var(--bg-main);
+      color: var(--text-main);
+      font-family: 'Source Serif 4', Georgia, serif;
+      font-size: 1.1rem;
+      line-height: 1.8;
+      margin: 0;
+      padding-bottom: 4rem;
+    }
+
+    h1, h2, h3, h4 {
+      font-family: 'Rubik Dirt', cursive;
+      color: var(--accent);
+      letter-spacing: 0.02em;
+    }
+
+    h1 { font-size: 2.2rem; color: #111; }
+    h2 { font-size: 1.55rem; border-bottom: 2px solid var(--accent); padding-bottom: .3rem; margin-top: 2.5rem; }
+    h3 { font-size: 1.25rem; color: var(--accent-or); margin-top: 1.8rem; }
+    h4 { font-size: 1.05rem; color: var(--accent-vert); }
+
+    p { margin-bottom: 1rem; }
+
+    code, pre, .mono {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.9em;
+    }
+
+    code {
+      background: #e8edf2;
+      padding: 2px 6px;
+      border-radius: 4px;
+      color: #8b3a00;
+    }
+
+    pre {
+      background: #f0f3f7;
+      border-left: 3px solid var(--accent);
+      padding: 1rem 1.2rem;
+      border-radius: var(--border-radius);
+      overflow-x: auto;
+      color: #1a1a1a;
+    }
+
+    a { color: var(--accent); text-decoration: underline dotted; }
+    a:hover { color: var(--accent-or); }
+
+    /* ── NAVIGATION ── */
+    #navbar {
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      background: #2a6496;
+      border-bottom: 2px solid #1a4a70;
+      padding: .5rem 1.5rem;
+      display: flex;
+      gap: .5rem;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    #navbar span {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: .8rem;
+      color: #ccddf0;
+      margin-right: auto;
+    }
+
+    #navbar a {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: .8rem;
+      color: #fff;
+      text-decoration: none;
+      padding: .25rem .7rem;
+      border: 1px solid #ccddf0;
+      border-radius: 4px;
+      transition: background .2s;
+    }
+
+    #navbar a:hover { background: #1a4a70; color: #fff; }
+
+    /* ── CONTENU ── */
+    .container-content {
+      max-width: 860px;
+      margin: 0 auto;
+      padding: 2rem 1.5rem;
+    }
+
+    /* ── ENCADRÉS ── */
+    .encadre,
+    .encadre-conseil,
+    .encadre-indice,
+    .encadre-question {
+      background: #ffffff;
+      border-radius: var(--border-radius);
+      padding: 1.1rem 1.4rem;
+      margin: 1.4rem 0;
+      position: relative;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+    }
+
+    .encadre          { border-left: 4px solid var(--accent); }
+    .encadre-conseil  { border-left: 4px solid var(--accent-or); background: #fff8f0; }
+    .encadre-indice   { border-left: 4px solid var(--accent-vert); background: #f0faf0; }
+    .encadre-question { border-left: 4px solid #7b3fa8; border-top: 1px solid #c8a8e820; background: #faf5ff; }
+
+    .encadre-prefix {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: .72rem;
+      font-variant: small-caps;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      margin-bottom: .4rem;
+      display: block;
+    }
+
+    .encadre          .encadre-prefix { color: var(--accent); }
+    .encadre-conseil  .encadre-prefix { color: var(--accent-or); }
+    .encadre-indice   .encadre-prefix { color: var(--accent-vert); }
+    .encadre-question .encadre-prefix { color: #7b3fa8; }
+
+    /* ── BOUTONS ── */
+    .btn-tp, .btn-tp-or, .btn-tp-vert, .btn-secondaire {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: .82rem;
+      border: none;
+      border-radius: 5px;
+      padding: .45rem 1.1rem;
+      cursor: pointer;
+      transition: opacity .2s, transform .1s;
+      margin: .3rem .2rem;
+    }
+
+    .btn-tp         { background: var(--accent);      color: #fff; }
+    .btn-tp-or      { background: var(--accent-or);   color: #fff; }
+    .btn-tp-vert    { background: var(--accent-vert); color: #fff; }
+    .btn-secondaire { background: #eef1f5; border: 1px solid var(--accent); color: var(--text-main); }
+
+    .btn-tp:hover, .btn-tp-or:hover, .btn-tp-vert:hover, .btn-secondaire:hover {
+      opacity: .85; transform: translateY(-1px);
+    }
+
+    /* ── BADGE QUESTION ── */
+    .badge-question {
+      display: inline-block;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: .8rem;
+      background: #7b3fa8;
+      color: #fff;
+      border-radius: 4px;
+      padding: .15rem .7rem;
+      margin-right: .5rem;
+      vertical-align: middle;
+    }
+
+    /* ── INDICES ET CORRECTIONS CACHÉS ── */
+    .indice-bloc { display: none; }
+    .indice-bloc.visible { display: block; }
+    .correction-bloc { display: none; }
+    .correction-bloc.visible { display: block; }
+
+    /* ── TABLE BCD ── */
+    .table-bcd {
+      border-collapse: collapse;
+      margin: 1rem auto;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: .85rem;
+    }
+
+    .table-bcd td, .table-bcd th {
+      border: 1px solid var(--accent);
+      padding: .4rem .9rem;
+      text-align: center;
+    }
+
+    .table-bcd .hdr {
+      background: #dce8f2;
+      color: var(--accent);
+      font-weight: 600;
+    }
+
+    .table-bcd .quartet {
+      background: #f0faf0;
+      color: var(--accent-vert);
+      letter-spacing: .08em;
+    }
+
+    /* ── PIED DE PAGE ── */
+    footer {
+      text-align: center;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: .8rem;
+      color: var(--text-muted);
+      padding: 2rem 1rem 1rem;
+      border-top: 1px solid #d0d8e4;
+    }
+
+    /* ── RETOUR EN HAUT ── */
+    #btn-top {
+      position: fixed;
+      bottom: 1.5rem;
+      right: 1.5rem;
+      z-index: 999;
+      background: var(--accent);
+      color: #fff;
+      border: none;
+      border-radius: 50%;
+      width: 44px;
+      height: 44px;
+      font-size: 1.2rem;
+      cursor: pointer;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      font-family: 'JetBrains Mono', monospace;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.25);
+      transition: opacity .2s;
+    }
+
+    #btn-top:hover { opacity: .8; }
+
+    /* ── PIÈGE / ASTUCE ── */
+    .encadre-piege {
+      background: #fff5f5;
+      border-left: 4px solid #c0392b;
+      border-radius: var(--border-radius);
+      padding: 1rem 1.4rem;
+      margin: 1.2rem 0;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.07);
+    }
+
+    .encadre-piege .encadre-prefix {
+      color: #c0392b;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: .72rem;
+      font-variant: small-caps;
+      letter-spacing: .12em;
+      display: block;
+      margin-bottom: .3rem;
+    }
+
+    /* ── SOMMAIRE ── */
+    #sommaire ol {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: .88rem;
+      line-height: 2.2;
+    }
+
+    #sommaire a { color: var(--accent); }
+    #sommaire a:hover { color: var(--accent-or); }
+
+    /* Séparateur sections */
+    .sep { border: none; border-top: 1px dashed #9ab0c8; margin: 2.5rem 0; opacity: .7; }
+
+    /* py-editor */
+    py-editor { display: block; min-height: 100px; }
+    .py-editor-input { background: var(--py-editor-input); color: #1a1a1a; border: 1px solid var(--accent); border-radius: 4px; padding: .8rem; font-family: 'JetBrains Mono', monospace; font-size: .9rem; }
+
+    /* Mise en évidence des bits dans un quartet */
+    .bit-0 { color: #1a1a1a; }
+    .bit-1 { color: #c0392b; font-weight: 600; }
+  </style>
+</head>
+<body>
+
+<!-- Initialisation PyScript -->
+<div id="pyinit" style="display:none">
+  <script type="py" env="bcd">
+    pass
+  </script>
+</div>
+
+<!-- BOUTON RETOUR EN HAUT -->
+<button id="btn-top" title="Retour en haut" aria-label="Retour en haut">▲</button>
+
+<!-- NAVIGATION STICKY -->
+<nav id="navbar">
+  <span>NSI Terminale – Codage BCD</span>
+  <a href="#s0">Intro</a>
+  <a href="#s1">Flottants</a>
+  <a href="#s2">BCD</a>
+  <a href="#q1">Q1</a>
+  <a href="#q2">Q2</a>
+  <a href="#q3">Q3</a>
+  <a href="#q4">Q4</a>
+  <a href="#pieges">Pièges</a>
+</nav>
+
+<!-- CONTENU PRINCIPAL -->
+<div class="container-content">
+
+  <!-- EN-TÊTE -->
+  <div style="text-align:center; padding: 2rem 0 1rem;">
+    <div style="font-family:'JetBrains Mono',monospace; font-size:.8rem; color:var(--text-muted); margin-bottom:.5rem;">
+      BAC NSI 2026 — Sujet n°8 — Partie pratique
+    </div>
+    <h1>Codage BCD<br><span style="font-size:1.1rem; color:var(--accent); font-family:'Source Serif 4',serif; font-style:italic; font-weight:300;">Fiche de révision guidée</span></h1>
+    <div style="font-family:'JetBrains Mono',monospace; font-size:.8rem; color:var(--text-muted); margin-top:.5rem;">
+      Terminale NSI &nbsp;·&nbsp; Représentation des données &nbsp;·&nbsp; Arithmétique binaire
+    </div>
+  </div>
+
+  <hr class="sep">
+
+  <!-- SOMMAIRE -->
+  <section id="s0">
+    <div id="sommaire" class="encadre">
+      <span class="encadre-prefix">Sommaire</span>
+      <ol>
+        <li><a href="#s1">Rappels – le problème des flottants en informatique</a></li>
+        <li><a href="#s2">Le codage BCD – principe et convention monétaire</a></li>
+        <li><a href="#q1">Question 1 – Mettre en évidence l'erreur d'arrondi</a></li>
+        <li><a href="#q2">Question 2 – Convertir BCD vers décimal</a></li>
+        <li><a href="#q3">Question 3 – Corriger l'addition BCD</a></li>
+        <li><a href="#q4">Question 4 – Aligner des nombres de longueurs différentes</a></li>
+        <li><a href="#pieges">Pièges fréquents &amp; astuces de vérification</a></li>
+      </ol>
+    </div>
+  </section>
+
+  <hr class="sep">
+
+  <!-- SECTION 1 : RAPPELS FLOTTANTS -->
+  <section id="s1">
+    <h2>1 — Rappels : pourquoi les flottants posent problème</h2>
+
+    <p>
+      Tape <code>0.1 + 0.2</code> dans un interpréteur Python. Qu'obtiens-tu ? Pas <code>0.3</code>.
+      Tu obtiens <code>0.30000000000000004</code>. Ce n'est pas un bug de Python — c'est une limite
+      fondamentale de la façon dont les ordinateurs stockent les nombres décimaux.
+    </p>
+
+    <div class="encadre">
+      <span class="encadre-prefix">Définition – Nombre flottant</span>
+      <p>
+        Un <strong>nombre flottant</strong> (type <code>float</code> en Python) est stocké en mémoire
+        en base 2, suivant la norme IEEE 754. Chaque nombre occupe 64 bits.
+      </p>
+      <p style="margin:0">
+        Le problème : certains nombres décimaux simples, comme <code>0.1</code>, n'ont pas de
+        représentation binaire <em>finie</em>. Leur écriture en base 2 est périodique, comme
+        <code>1/3 = 0.333…</code> en base 10. L'ordinateur est donc contraint de les arrondir.
+      </p>
+    </div>
+
+    <p>
+      Dans la vie courante, un arrondi au quinzième décimal ne se remarque pas. Mais en comptabilité,
+      si tu additionnes des centaines de milliers de prix, ces minuscules erreurs <em>s'accumulent</em>
+      et finissent par fausser le total.
+    </p>
+
+    <div class="encadre-conseil">
+      <span class="encadre-prefix">Exemple concret – l'erreur qui s'accumule</span>
+      <p>
+        Considère un prix de <code>0.10 €</code>. En binaire IEEE 754, ce n'est pas exactement
+        <code>0.1</code> mais quelque chose comme <code>0.1000000000000000055511…</code>
+        — un excès de l'ordre de \(5 \times 10^{-17}\).
+      </p>
+      <p style="margin:0">
+        Si tu répètes cette addition 500 000 fois (500 restaurants × 1 000 menus),
+        l'erreur cumulée peut dépasser le centime. Dans un bilan comptable, c'est inacceptable.
+      </p>
+    </div>
+
+    <h3>La solution historique : coder chaque chiffre séparément</h3>
+    <p>
+      L'idée est simple : plutôt que de convertir <em>tout</em> le nombre en binaire d'un coup,
+      on convertit <strong>chaque chiffre décimal indépendamment</strong>.
+      Ainsi, <code>9.27</code> ne devient jamais un grand entier binaire — chaque chiffre
+      (<code>9</code>, <code>2</code>, <code>7</code>) est codé séparément sur 4 bits.
+      C'est le principe du codage <strong>BCD</strong>.
+    </p>
+  </section>
+
+  <hr class="sep">
+
+  <!-- SECTION 2 : LE BCD -->
+  <section id="s2">
+    <h2>2 — Le codage BCD : principe</h2>
+
+    <p>
+      BCD signifie <em>Binary Coded Decimal</em> (décimal codé en binaire).
+      L'idée centrale : chaque chiffre décimal (de 0 à 9) est représenté par
+      son écriture binaire sur <strong>4 bits</strong>, appelée un <strong>quartet</strong>.
+    </p>
+
+    <div class="encadre">
+      <span class="encadre-prefix">Définition – Quartet BCD</span>
+      <p>
+        Un <strong>quartet</strong> (ou <em>nibble</em>) est une séquence de 4 bits.
+        Il permet de représenter les valeurs de <code>0000</code> (0) à <code>1111</code> (15).
+      </p>
+      <p style="margin:0">
+        En BCD, on n'utilise que les 10 premières valeurs (<code>0000</code> à <code>1001</code>)
+        pour représenter les chiffres 0 à 9. Les valeurs <code>1010</code> à <code>1111</code>
+        sont <strong>invalides</strong> en BCD.
+      </p>
+    </div>
+
+    <div class="encadre-conseil">
+      <span class="encadre-prefix">Exemple – Correspondance chiffre / quartet BCD</span>
+      <div style="overflow-x:auto">
+        <table class="table-bcd">
+          <tr>
+            <th class="hdr">Chiffre</th>
+            <td>0</td><td>1</td><td>2</td><td>3</td><td>4</td><td>5</td><td>6</td><td>7</td><td>8</td><td>9</td>
+          </tr>
+          <tr>
+            <th class="hdr">Quartet BCD</th>
+            <td class="quartet">0000</td>
+            <td class="quartet">0001</td>
+            <td class="quartet">0010</td>
+            <td class="quartet">0011</td>
+            <td class="quartet">0100</td>
+            <td class="quartet">0101</td>
+            <td class="quartet">0110</td>
+            <td class="quartet">0111</td>
+            <td class="quartet">1000</td>
+            <td class="quartet">1001</td>
+          </tr>
+        </table>
+      </div>
+    </div>
+
+    <h3>Convention monétaire : la virgule implicite</h3>
+    <p>
+      Dans ce sujet, les sommes représentent des euros et des centimes.
+      La virgule n'est <strong>pas</strong> codée dans la liste — on utilise une <strong>convention</strong> :
+      les deux derniers quartets représentent toujours les centimes.
+      Il faut donc au minimum 3 quartets pour représenter la moindre somme.
+    </p>
+
+    <div class="encadre-conseil">
+      <span class="encadre-prefix">Exemples – Montants en BCD</span>
+      <div style="overflow-x:auto">
+        <table class="table-bcd">
+          <tr>
+            <th class="hdr">Montant (€)</th>
+            <th class="hdr">Quartets BCD</th>
+            <th class="hdr">Lecture</th>
+          </tr>
+          <tr>
+            <td>59.00</td>
+            <td class="quartet">['0101', '1001', '0000', '0000']</td>
+            <td>5 — 9 — 0 — 0 → 59<strong>,</strong>00 €</td>
+          </tr>
+          <tr>
+            <td>1.75</td>
+            <td class="quartet">['0001', '0111', '0101']</td>
+            <td>1 — 7 — 5 → 1<strong>,</strong>75 €</td>
+          </tr>
+          <tr>
+            <td>0.23</td>
+            <td class="quartet">['0000', '0010', '0011']</td>
+            <td>0 — 2 — 3 → 0<strong>,</strong>23 €</td>
+          </tr>
+        </table>
+      </div>
+      <p style="margin-top:.7rem; margin-bottom:0">
+        Pour reconstituer la valeur décimale, il faut décaler la virgule
+        de deux positions depuis la droite. Formule :
+        \[ \text{valeur} = \frac{\text{entier formé par tous les chiffres}}{100} \]
+      </p>
+    </div>
+
+    <h3>Architecture du code fourni</h3>
+    <p>
+      Le fichier <code>addition_BCD.py</code> contient plusieurs fonctions.
+      Voici leur rôle avant que tu les étudies en détail :
+    </p>
+
+    <div class="encadre">
+      <span class="encadre-prefix">Architecture du code</span>
+      <table style="width:100%; border-collapse:collapse; font-size:.9rem;">
+        <tr>
+          <td style="padding:.4rem .8rem; border-bottom:1px solid var(--accent); width:55%">
+            <code>convertir_dec_vers_BCD(decimal)</code>
+          </td>
+          <td style="padding:.4rem .8rem; border-bottom:1px solid var(--accent); color:var(--text-muted)">
+            Fournie — convertit un décimal en liste de quartets BCD
+          </td>
+        </tr>
+        <tr>
+          <td style="padding:.4rem .8rem; border-bottom:1px solid var(--accent)">
+            <code>additionner_binaire_quartets(q1, q2, r)</code>
+          </td>
+          <td style="padding:.4rem .8rem; border-bottom:1px solid var(--accent); color:var(--text-muted)">
+            Fournie — additionne deux quartets bit à bit
+          </td>
+        </tr>
+        <tr>
+          <td style="padding:.4rem .8rem; border-bottom:1px solid var(--accent)">
+            <code>corriger_BCD(somme, retenue)</code>
+          </td>
+          <td style="padding:.4rem .8rem; border-bottom:1px solid var(--accent); color:var(--text-muted)">
+            Fournie — applique la correction <code>+6</code> si nécessaire
+          </td>
+        </tr>
+        <tr>
+          <td style="padding:.4rem .8rem; border-bottom:1px solid var(--accent)">
+            <code>aligner_quartets(q1, q2)</code>
+          </td>
+          <td style="padding:.4rem .8rem; border-bottom:1px solid var(--accent); color:var(--text-muted)">
+            <strong style="color:var(--accent-or)">À compléter (Q4)</strong> — égalise les longueurs
+          </td>
+        </tr>
+        <tr>
+          <td style="padding:.4rem .8rem; border-bottom:1px solid var(--accent)">
+            <code>additionner_nombres_format_BCD(a, b)</code>
+          </td>
+          <td style="padding:.4rem .8rem; border-bottom:1px solid var(--accent); color:var(--text-muted)">
+            Fournie mais <strong style="color:#c0392b">buguée</strong> — à corriger (Q3)
+          </td>
+        </tr>
+        <tr>
+          <td style="padding:.4rem .8rem">
+            <code>calcul_recettes()</code> &amp; <code>convertir_BCD_vers_decimal(l)</code>
+          </td>
+          <td style="padding:.4rem .8rem; color:var(--text-muted)">
+            <strong style="color:var(--accent-or)">À écrire (Q1 &amp; Q2)</strong>
+          </td>
+        </tr>
+      </table>
+    </div>
+  </section>
+
+  <hr class="sep">
+
+  <!-- QUESTION 1 -->
+  <section id="q1">
+    <h2>Question 1 — Mettre en évidence l'erreur d'arrondi</h2>
+
+    <div class="encadre-question">
+      <span class="encadre-prefix">Énoncé — Question 1</span>
+      <p>
+        <span class="badge-question">Q1</span>
+        La chaîne <em>RESTO NSI</em> comprend 1 000 restaurants, chacun servant 500 menus par jour.
+        Un menu coûte : entrée <code>2.27 €</code> + plat <code>5.19 €</code> + dessert <code>1.81 €</code>.
+      </p>
+      <p>
+        Écrire la fonction <code>calcul_recettes()</code> qui additionne le prix de chaque menu
+        vendu dans la journée en utilisant une boucle. Afficher le résultat.
+        La valeur théorique exacte est <strong>4 635 000 €</strong>.
+        Justifier le comportement observé.
+      </p>
+    </div>
+
+    <h3>Aide méthodologique</h3>
+
+    <div class="encadre-conseil">
+      <span class="encadre-prefix">Démarche</span>
+      <ol style="margin:0">
+        <li>Calcule le prix d'un menu : <code>prix_menu = 2.27 + 5.19 + 1.81</code></li>
+        <li>Le nombre total de menus vendus est \(1000 \times 500 = 500\,000\).</li>
+        <li>Dans une boucle <code>for</code>, accumule ce prix dans une variable <code>total</code>.</li>
+        <li>Affiche <code>total</code> et compare avec <code>4635000</code>.</li>
+        <li>Pour justifier : explique pourquoi <code>2.27 + 5.19 + 1.81</code> ne donne pas exactement <code>9.27</code> en virgule flottante.</li>
+      </ol>
+    </div>
+
+    <button class="btn-tp" onclick="toggleIndice('ind1a', this)">▶ Indice 1 – Prix d'un menu</button>
+    <div id="ind1a" class="indice-bloc">
+      <div class="encadre-indice" style="margin-top:.6rem">
+        <span class="encadre-prefix">Indice 1</span>
+        <p style="margin:0">
+          Commence par vérifier dans la console Python : <code>2.27 + 5.19 + 1.81</code>.
+          Tu obtiens probablement <code>9.27</code> — mais stocké en mémoire, ce n'est pas
+          exactement <code>9.27</code>. La différence est infime, mais elle se voit sur 500 000 additions.
+        </p>
+      </div>
+    </div>
+
+    <button class="btn-tp" onclick="toggleIndice('ind1b', this)">▶ Indice 2 – Structure de la boucle</button>
+    <div id="ind1b" class="indice-bloc">
+      <div class="encadre-indice" style="margin-top:.6rem">
+        <span class="encadre-prefix">Indice 2</span>
+        <pre style="margin:0"><code>def calcul_recettes():
+    prix_menu = 2.27 + 5.19 + 1.81
+    total = 0.0
+    for _ in range(1000 * 500):
+        total += prix_menu
+    return total</code></pre>
+      </div>
+    </div>
+
+    <h4>Éditeur Python — Question 1</h4>
+    <script type="py-editor" env="bcd">
+# Question 1 — calcul_recettes()
+# La valeur theorique exacte est 4 635 000 euros.
+
+def calcul_recettes():
+    # prix d'un menu (entree + plat + dessert)
+    prix_menu = 2.27 + 5.19 + 1.81
+    total = 0.0
+    # 1000 restaurants, 500 menus chacun
+    for _ in range(1000 * 500):
+        total += prix_menu
+    return total
+
+
+def test_calcul_recettes():
+    resultat = calcul_recettes()
+    # Le resultat ne doit PAS etre exactement 4635000
+    assert resultat != 4635000, "Etrange : le resultat est exactement juste !"
+    # L'ecart doit etre infime (moins de 1 centime)
+    assert abs(resultat - 4635000) < 0.01, "L'ecart est trop grand !"
+    # Le resultat doit etre proche de 4635000
+    assert 4634999.99 < resultat < 4635000.01
+    print("Les tests sont valides.")
+    print(f"Resultat obtenu : {resultat}")
+    print(f"Valeur theorique : 4635000")
+    print(f"Ecart : {resultat - 4635000}")
+
+
+test_calcul_recettes()
+    </script>
+
+    <button class="btn-tp-or" onclick="toggleCorrection('corr-q1', this)">Afficher la correction Q1</button>
+    <div id="corr-q1" class="correction-bloc">
+      <div class="encadre" style="margin-top:.7rem;">
+        <span class="encadre-prefix">Correction — Question 1</span>
+        <pre><code>def calcul_recettes():
+    prix_menu = 2.27 + 5.19 + 1.81
+    total = 0.0
+    for _ in range(1000 * 500):
+        total += prix_menu
+    return total
+
+print(calcul_recettes())  # ex : 4634999.999999... ou 4635000.000000...x
+
+def test_calcul_recettes():
+    resultat = calcul_recettes()
+    assert resultat != 4635000, "Etrange : le resultat est exactement juste !"
+    assert abs(resultat - 4635000) < 0.01, "L'ecart est trop grand !"
+    assert 4634999.99 < resultat < 4635000.01
+    print("Les tests sont valides.")</code></pre>
+        <p>
+          <strong>Justification :</strong> <code>2.27</code>, <code>5.19</code> et <code>1.81</code>
+          ne sont pas représentables exactement en binaire IEEE 754. Leur somme <code>9.27</code>
+          est stockée avec un minuscule écart. Multiplié par 500 000 additions, cet écart
+          devient visible et fausse le total comptable.
+        </p>
+        <p style="margin:0">
+          <strong>Remède :</strong> on peut utiliser le module <code>decimal</code> de Python,
+          ou — comme dans ce sujet — le codage BCD.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <hr class="sep">
+
+  <!-- QUESTION 2 -->
+  <section id="q2">
+    <h2>Question 2 — Convertir BCD vers décimal</h2>
+
+    <div class="encadre-question">
+      <span class="encadre-prefix">Énoncé — Question 2</span>
+      <p>
+        <span class="badge-question">Q2</span>
+        Écrire la fonction <code>convertir_BCD_vers_decimal(liste_quartets)</code> qui prend
+        en paramètre une liste de chaînes de 4 bits et renvoie la valeur décimale
+        correspondante (type <code>float</code>), en tenant compte de la convention
+        « virgule implicite deux rangs avant la fin ».
+      </p>
+      <p style="margin:0">
+        Ajouter l'assertion : <code>convertir_BCD_vers_decimal(['0001', '0011', '0101', '0110'])</code>
+        doit renvoyer <code>13.56</code>.
+      </p>
+    </div>
+
+    <h3>Aide méthodologique</h3>
+
+    <div class="encadre-conseil">
+      <span class="encadre-prefix">Démarche</span>
+      <ol style="margin:0">
+        <li>Pour chaque quartet, convertis les 4 bits en entier décimal :
+          <code>int(quartet, 2)</code> fait exactement cela.</li>
+        <li>Reconstitue l'entier formé par tous les chiffres :
+          parcours la liste, multiplie le total courant par 10 et ajoute le chiffre.</li>
+        <li>Divise le résultat final par <code>100</code> pour placer la virgule.</li>
+      </ol>
+    </div>
+
+    <div class="encadre-conseil">
+      <span class="encadre-prefix">Exemple pas à pas — ['0001', '0011', '0101', '0110']</span>
+      <table style="width:100%; border-collapse:collapse; font-size:.9rem;">
+        <tr>
+          <th style="text-align:left; padding:.3rem .6rem; border-bottom:1px solid var(--accent)">Étape</th>
+          <th style="text-align:left; padding:.3rem .6rem; border-bottom:1px solid var(--accent)">Quartet</th>
+          <th style="text-align:center; padding:.3rem .6rem; border-bottom:1px solid var(--accent)">Chiffre</th>
+          <th style="text-align:center; padding:.3rem .6rem; border-bottom:1px solid var(--accent)">Entier courant</th>
+        </tr>
+        <tr>
+          <td style="padding:.3rem .6rem">Début</td>
+          <td style="padding:.3rem .6rem">—</td>
+          <td style="padding:.3rem .6rem; text-align:center">—</td>
+          <td style="padding:.3rem .6rem; text-align:center"><code>0</code></td>
+        </tr>
+        <tr>
+          <td style="padding:.3rem .6rem">Quartet 1</td>
+          <td style="padding:.3rem .6rem"><code class="quartet">0001</code></td>
+          <td style="padding:.3rem .6rem; text-align:center">1</td>
+          <td style="padding:.3rem .6rem; text-align:center"><code>0×10 + 1 = 1</code></td>
+        </tr>
+        <tr>
+          <td style="padding:.3rem .6rem">Quartet 2</td>
+          <td style="padding:.3rem .6rem"><code class="quartet">0011</code></td>
+          <td style="padding:.3rem .6rem; text-align:center">3</td>
+          <td style="padding:.3rem .6rem; text-align:center"><code>1×10 + 3 = 13</code></td>
+        </tr>
+        <tr>
+          <td style="padding:.3rem .6rem">Quartet 3</td>
+          <td style="padding:.3rem .6rem"><code class="quartet">0101</code></td>
+          <td style="padding:.3rem .6rem; text-align:center">5</td>
+          <td style="padding:.3rem .6rem; text-align:center"><code>13×10 + 5 = 135</code></td>
+        </tr>
+        <tr>
+          <td style="padding:.3rem .6rem">Quartet 4</td>
+          <td style="padding:.3rem .6rem"><code class="quartet">0110</code></td>
+          <td style="padding:.3rem .6rem; text-align:center">6</td>
+          <td style="padding:.3rem .6rem; text-align:center"><code>135×10 + 6 = 1356</code></td>
+        </tr>
+        <tr style="background:#dce8f2">
+          <td style="padding:.3rem .6rem"><strong>Résultat</strong></td>
+          <td colspan="2" style="padding:.3rem .6rem">Division par 100</td>
+          <td style="padding:.3rem .6rem; text-align:center"><code>1356 / 100 = <strong>13.56</strong></code></td>
+        </tr>
+      </table>
+    </div>
+
+    <button class="btn-tp" onclick="toggleIndice('ind2a', this)">▶ Indice 1 – Conversion d'un quartet</button>
+    <div id="ind2a" class="indice-bloc">
+      <div class="encadre-indice" style="margin-top:.6rem">
+        <span class="encadre-prefix">Indice 1</span>
+        <p style="margin:0">
+          <code>int('0101', 2)</code> renvoie <code>5</code>.
+          La fonction <code>int(chaine, base)</code> convertit une chaîne de bits en entier.
+        </p>
+      </div>
+    </div>
+
+    <button class="btn-tp" onclick="toggleIndice('ind2b', this)">▶ Indice 2 – Squelette de la fonction</button>
+    <div id="ind2b" class="indice-bloc">
+      <div class="encadre-indice" style="margin-top:.6rem">
+        <span class="encadre-prefix">Indice 2</span>
+        <pre style="margin:0"><code>def convertir_BCD_vers_decimal(liste_quartets):
+    entier = 0
+    for quartet in liste_quartets:
+        chiffre = int(quartet, 2)   # quartet -> chiffre 0-9
+        entier = entier * 10 + chiffre
+    return entier / 100             # virgule implicite</code></pre>
+      </div>
+    </div>
+
+    <h4>Éditeur Python — Question 2</h4>
+    <script type="py-editor" env="bcd">
+# Question 2 — convertir_BCD_vers_decimal(liste_quartets)
+
+def convertir_BCD_vers_decimal(liste_quartets):
+    """
+    Convertit une liste de quartets BCD en valeur decimale (float).
+    Convention : virgule implicite avant les deux derniers quartets.
+    """
+    entier = 0
+    for quartet in liste_quartets:
+        # TODO : convertir le quartet en chiffre 0-9 et accumuler
+        pass
+    # TODO : diviser par 100 pour placer la virgule
+    return 0.0
+
+
+def test_convertir_BCD_vers_decimal():
+    assert convertir_BCD_vers_decimal(['0001', '0011', '0101', '0110']) == 13.56
+    assert convertir_BCD_vers_decimal(['0101', '1001', '0000', '0000']) == 59.00
+    assert convertir_BCD_vers_decimal(['0001', '0111', '0101']) == 1.75
+    print("Les tests sont valides.")
+
+
+test_convertir_BCD_vers_decimal()
+    </script>
+
+    <button class="btn-tp-or" onclick="toggleCorrection('corr-q2', this)">Afficher la correction Q2</button>
+    <div id="corr-q2" class="correction-bloc">
+      <div class="encadre" style="margin-top:.7rem;">
+        <span class="encadre-prefix">Correction — Question 2</span>
+        <pre><code>def convertir_BCD_vers_decimal(liste_quartets):
+    entier = 0
+    for quartet in liste_quartets:
+        chiffre = int(quartet, 2)
+        entier = entier * 10 + chiffre
+    return entier / 100
+
+
+def test_convertir_BCD_vers_decimal():
+    assert convertir_BCD_vers_decimal(['0001', '0011', '0101', '0110']) == 13.56
+    assert convertir_BCD_vers_decimal(['0101', '1001', '0000', '0000']) == 59.00
+    assert convertir_BCD_vers_decimal(['0001', '0111', '0101']) == 1.75
+    print("Les tests sont valides.")</code></pre>
+        <p style="margin:0">
+          La clé est la technique d'accumulation <code>entier = entier * 10 + chiffre</code>,
+          aussi appelée <em>schéma de Horner</em>, qui construit l'entier décimal chiffre par chiffre.
+          La division finale par <code>100</code> place la virgule implicite.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <hr class="sep">
+
+  <!-- QUESTION 3 -->
+  <section id="q3">
+    <h2>Question 3 — Corriger l'addition BCD</h2>
+
+    <div class="encadre-question">
+      <span class="encadre-prefix">Énoncé — Question 3</span>
+      <p>
+        <span class="badge-question">Q3</span>
+        La fonction <code>additionner_nombres_format_BCD('27', '35')</code>
+        devrait renvoyer une liste représentant <code>62</code>, mais le résultat est faux.
+      </p>
+      <p style="margin:0">
+        Analyser le code fourni. Identifier l'oubli de l'étape de correction BCD,
+        puis insérer un appel à <code>corriger_BCD</code> au bon endroit.
+        Valider en relançant le test.
+      </p>
+    </div>
+
+    <h3>Rappel – pourquoi faut-il corriger ?</h3>
+
+    <p>
+      Quand on additionne deux quartets BCD, la somme binaire peut dépasser
+      <code>1001</code> (soit 9 en décimal). Par exemple, <code>7 + 8 = 15</code>
+      s'écrit <code>1111</code> en binaire pur — ce qui n'est pas un quartet BCD valide
+      (les quartets valides vont de <code>0000</code> à <code>1001</code>).
+    </p>
+
+    <div class="encadre-conseil">
+      <span class="encadre-prefix">Exemple – Addition de 7 et 8 en BCD</span>
+      <p>Sans correction :</p>
+      <pre style="margin:.3rem 0"><code>  0111  (7)
++ 1000  (8)
+──────
+  1111  ← invalide en BCD !</code></pre>
+      <p>Avec correction (+6 = <code>0110</code>) :</p>
+      <pre style="margin:.3rem 0"><code>  1111  (résultat invalide)
++ 0110  (correction)
+──────
+1 0101  → retenue = 1, quartet = 0101 → résultat : 15</code></pre>
+      <p style="margin:0">
+        Le quartet <code>0101</code> avec une retenue de 1 donne bien <strong>15</strong>
+        (1 de retenue × 10 + 5).
+      </p>
+    </div>
+
+    <div class="encadre-conseil">
+      <span class="encadre-prefix">Exemple – Addition 27 + 35</span>
+      <p>Quartets de <code>27</code> : <code>['0010', '0111']</code> | Quartets de <code>35</code> : <code>['0011', '0101']</code></p>
+      <table style="width:100%; border-collapse:collapse; font-size:.9rem;">
+        <tr>
+          <th style="padding:.3rem .6rem; border-bottom:1px solid var(--accent); text-align:left">Quartet</th>
+          <th style="padding:.3rem .6rem; border-bottom:1px solid var(--accent); text-align:center">A</th>
+          <th style="padding:.3rem .6rem; border-bottom:1px solid var(--accent); text-align:center">B</th>
+          <th style="padding:.3rem .6rem; border-bottom:1px solid var(--accent); text-align:center">Somme brute</th>
+          <th style="padding:.3rem .6rem; border-bottom:1px solid var(--accent); text-align:center">Après correction</th>
+        </tr>
+        <tr>
+          <td style="padding:.3rem .6rem">Unités</td>
+          <td style="padding:.3rem .6rem; text-align:center"><code>0111</code> (7)</td>
+          <td style="padding:.3rem .6rem; text-align:center"><code>0101</code> (5)</td>
+          <td style="padding:.3rem .6rem; text-align:center"><code>1100</code> ← invalide !</td>
+          <td style="padding:.3rem .6rem; text-align:center"><code>0010</code> r=1 (→ 2, retenue)</td>
+        </tr>
+        <tr>
+          <td style="padding:.3rem .6rem">Dizaines</td>
+          <td style="padding:.3rem .6rem; text-align:center"><code>0010</code> (2)</td>
+          <td style="padding:.3rem .6rem; text-align:center"><code>0011</code> (3)</td>
+          <td style="padding:.3rem .6rem; text-align:center"><code>0110</code> (6) + r=1</td>
+          <td style="padding:.3rem .6rem; text-align:center"><code>0110</code> r=0 (→ 6)</td>
+        </tr>
+        <tr style="background:#dce8f2">
+          <td colspan="4" style="padding:.3rem .6rem"><strong>Résultat attendu :</strong></td>
+          <td style="padding:.3rem .6rem; text-align:center"><code>['0110', '0010']</code> → 62</td>
+        </tr>
+      </table>
+    </div>
+
+    <h3>Aide méthodologique – où insérer la correction ?</h3>
+
+    <div class="encadre">
+      <span class="encadre-prefix">Localisation du bug</span>
+      <p>
+        Dans la fonction <code>additionner_nombres_format_BCD</code>, la boucle
+        appelle <code>additionner_binaire_quartets</code> pour obtenir <code>somme</code> et <code>retenue</code>,
+        mais n'appelle <strong>jamais</strong> <code>corriger_BCD</code>.
+        Il faut ajouter un appel juste après l'addition binaire, avant d'insérer dans <code>resultat</code>.
+      </p>
+      <pre style="margin:0"><code># Avant correction (bugué) :
+somme, retenue = additionner_binaire_quartets(...)
+resultat.insert(0, somme)
+
+# Après correction :
+somme, retenue = additionner_binaire_quartets(...)
+somme, retenue = corriger_BCD(somme, retenue)   # ← à insérer
+resultat.insert(0, somme)</code></pre>
+    </div>
+
+    <button class="btn-tp" onclick="toggleIndice('ind3a', this)">▶ Indice – Ligne exacte à modifier</button>
+    <div id="ind3a" class="indice-bloc">
+      <div class="encadre-indice" style="margin-top:.6rem">
+        <span class="encadre-prefix">Indice</span>
+        <p style="margin:0">
+          Dans la boucle <code>for i in range(longueur_max)</code>, après la ligne
+          <code>somme, retenue = additionner_binaire_quartets(...)</code>,
+          insère : <code>somme, retenue = corriger_BCD(somme, retenue)</code>.
+        </p>
+      </div>
+    </div>
+
+    <h4>Éditeur Python — Question 3</h4>
+    <script type="py-editor" env="bcd">
+# Question 3 — Corriger additionner_nombres_format_BCD
+# Copie la fonction depuis addition_BCD.py et insere l'appel a corriger_BCD
+
+def additionner_binaire_quartets(quartet1, quartet2, retenue):
+    somme = ""
+    for i in range(4):
+        bit1 = int(quartet1[3 - i])
+        bit2 = int(quartet2[3 - i])
+        total = bit1 + bit2 + retenue
+        if total == 0:   somme = '0' + somme; retenue = 0
+        elif total == 1: somme = '1' + somme; retenue = 0
+        elif total == 2: somme = '0' + somme; retenue = 1
+        elif total == 3: somme = '1' + somme; retenue = 1
+    return somme, retenue
+
+def corriger_BCD(somme, retenue):
+    if somme[0] == '1' and (somme[1] == '1' or somme[2] == '1'):
+        somme, retenue = additionner_binaire_quartets(somme, '0110', 0)
+        return somme, retenue
+    if retenue == 1:
+        somme, _ = additionner_binaire_quartets(somme, '0110', 0)
+        return somme, retenue
+    return somme, retenue
+
+def convertir_dec_vers_BCD(decimal):
+    ajouter_zero = False
+    liste_quartets = []
+    if '.' not in decimal:
+        decimal = decimal + '.00'
+    for i in range(len(decimal)):
+        if decimal[i] != '.':
+            quartet = bin(int(decimal[i]))[2:].zfill(4)
+            liste_quartets.append(quartet)
+        if decimal[i] == '.' and i == len(decimal) - 2:
+            ajouter_zero = True
+    if ajouter_zero:
+        liste_quartets.append('0000')
+    return liste_quartets
+
+def aligner_quartets(q1, q2):
+    return q1, q2
+
+def additionner_nombres_format_BCD(a, b):
+    liste_quartets1 = convertir_dec_vers_BCD(a)
+    liste_quartets2 = convertir_dec_vers_BCD(b)
+    liste_quartets1, liste_quartets2 = aligner_quartets(liste_quartets1, liste_quartets2)
+    retenue = 0
+    resultat = []
+    longueur_max = max(len(liste_quartets1), len(liste_quartets2))
+    for i in range(longueur_max):
+        index = longueur_max - i - 1
+        somme, retenue = additionner_binaire_quartets(
+            liste_quartets1[index], liste_quartets2[index], retenue)
+        # TODO : ajouter l'appel a corriger_BCD ici
+        resultat.insert(0, somme)
+    if retenue == 1:
+        resultat.insert(0, '0001')
+    return resultat
+
+def convertir_BCD_vers_decimal(liste_quartets):
+    entier = 0
+    for quartet in liste_quartets:
+        entier = entier * 10 + int(quartet, 2)
+    return entier / 100
+
+
+def test_additionner_nombres_format_BCD():
+    assert convertir_BCD_vers_decimal(additionner_nombres_format_BCD('27', '35')) == 62.00
+    assert convertir_BCD_vers_decimal(additionner_nombres_format_BCD('59', '1.75')) == 60.75
+    assert convertir_BCD_vers_decimal(additionner_nombres_format_BCD('0.99', '0.01')) == 1.00
+    print("Les tests sont valides.")
+
+test_additionner_nombres_format_BCD()
+    </script>
+
+    <button class="btn-tp-or" onclick="toggleCorrection('corr-q3', this)">Afficher la correction Q3</button>
+    <div id="corr-q3" class="correction-bloc">
+      <div class="encadre" style="margin-top:.7rem;">
+        <span class="encadre-prefix">Correction — Question 3</span>
+        <p>La seule modification nécessaire est l'ajout d'une ligne dans la boucle :</p>
+        <pre><code>for i in range(longueur_max):
+    index = longueur_max - i - 1
+    somme, retenue = additionner_binaire_quartets(
+        liste_quartets1[index], liste_quartets2[index], retenue)
+    somme, retenue = corriger_BCD(somme, retenue)   # ← ligne ajoutée
+    resultat.insert(0, somme)
+
+def test_additionner_nombres_format_BCD():
+    assert convertir_BCD_vers_decimal(additionner_nombres_format_BCD('27', '35')) == 62.00
+    assert convertir_BCD_vers_decimal(additionner_nombres_format_BCD('59', '1.75')) == 60.75
+    assert convertir_BCD_vers_decimal(additionner_nombres_format_BCD('0.99', '0.01')) == 1.00
+    print("Les tests sont valides.")</code></pre>
+        <p style="margin:0">
+          Sans cet appel, les résultats dépassant 9 pour un quartet restent sous forme binaire invalide.
+          La correction BCD ramène chaque quartet dans l'intervalle <code>0000–1001</code>
+          en ajoutant <code>0110</code> (6) quand c'est nécessaire.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <hr class="sep">
+
+  <!-- QUESTION 4 -->
+  <section id="q4">
+    <h2>Question 4 — Aligner des nombres de longueurs différentes</h2>
+
+    <div class="encadre-question">
+      <span class="encadre-prefix">Énoncé — Question 4</span>
+      <p>
+        <span class="badge-question">Q4</span>
+        Tester l'addition de <code>23</code> et <code>4</code> avec le code corrigé à la Q3.
+        Observer et décrire le problème. Modifier la fonction <code>aligner_quartets(q1, q2)</code>
+        pour qu'elle ajoute des quartets <code>'0000'</code> au début du nombre le plus court
+        jusqu'à ce que les deux listes aient la même longueur.
+        Effectuer à nouveau des tests.
+      </p>
+    </div>
+
+    <h3>Pourquoi l'alignement est-il nécessaire ?</h3>
+
+    <p>
+      <code>23</code> se représente en BCD par 4 quartets : <code>['0010', '0011', '0000', '0000']</code>.
+      Mais <code>4</code> n'a que 3 quartets : <code>['0000', '0100', '0000']</code> (car
+      <code>convertir_dec_vers_BCD</code> ajoute toujours les deux quartets de centimes).
+    </p>
+    <p>
+      La boucle d'addition parcourt les listes <em>de droite à gauche</em> par leur index.
+      Si les deux listes n'ont pas la même longueur, les indices ne correspondent plus —
+      tu additionnes des quartets qui ne sont pas au même rang !
+    </p>
+
+    <div class="encadre-conseil">
+      <span class="encadre-prefix">Illustration du problème</span>
+      <table style="width:auto; border-collapse:collapse; font-size:.9rem; margin: .5rem auto;">
+        <tr>
+          <th class="hdr" style="padding:.3rem .8rem">Index</th>
+          <td style="padding:.3rem .8rem; text-align:center">0</td>
+          <td style="padding:.3rem .8rem; text-align:center">1</td>
+          <td style="padding:.3rem .8rem; text-align:center">2</td>
+          <td style="padding:.3rem .8rem; text-align:center">3</td>
+        </tr>
+        <tr>
+          <th class="hdr" style="padding:.3rem .8rem">23 (4 quartets)</th>
+          <td class="quartet" style="padding:.3rem .8rem">0010</td>
+          <td class="quartet" style="padding:.3rem .8rem">0011</td>
+          <td class="quartet" style="padding:.3rem .8rem">0000</td>
+          <td class="quartet" style="padding:.3rem .8rem">0000</td>
+        </tr>
+        <tr>
+          <th class="hdr" style="padding:.3rem .8rem"> 4 (3 quartets)</th>
+          <td style="padding:.3rem .8rem; background:#fff5f5; color:#c0392b">— manquant —</td>
+          <td class="quartet" style="padding:.3rem .8rem">0000</td>
+          <td class="quartet" style="padding:.3rem .8rem">0100</td>
+          <td class="quartet" style="padding:.3rem .8rem">0000</td>
+        </tr>
+      </table>
+      <p style="margin:0">
+        L'index 0 de <code>4</code> est <code>'0000'</code> (unités d'euros) alors que l'index 0 de <code>23</code>
+        est <code>'0010'</code> (dizaines d'euros). Sans alignement, on additionne des rangs différents !
+      </p>
+    </div>
+
+    <h3>Aide méthodologique – compléter aligner_quartets</h3>
+
+    <div class="encadre-conseil">
+      <span class="encadre-prefix">Démarche</span>
+      <ol style="margin:0">
+        <li>Calcule la différence de longueur : <code>diff = len(q1) - len(q2)</code>.</li>
+        <li>Si <code>diff &gt; 0</code> : <code>q1</code> est plus longue — ajoute <code>diff</code>
+          fois <code>'0000'</code> <strong>au début</strong> de <code>q2</code>.</li>
+        <li>Si <code>diff &lt; 0</code> : c'est l'inverse — complète <code>q1</code> à gauche.</li>
+        <li>Renvoie le couple <code>(q1, q2)</code> maintenant de même longueur.</li>
+      </ol>
+    </div>
+
+    <button class="btn-tp" onclick="toggleIndice('ind4a', this)">▶ Indice 1 – Ajouter des éléments à gauche</button>
+    <div id="ind4a" class="indice-bloc">
+      <div class="encadre-indice" style="margin-top:.6rem">
+        <span class="encadre-prefix">Indice 1</span>
+        <p style="margin:0">
+          Pour ajouter <code>n</code> fois <code>'0000'</code> au début d'une liste :
+          <code>q = ['0000'] * n + q</code>.
+        </p>
+      </div>
+    </div>
+
+    <button class="btn-tp" onclick="toggleIndice('ind4b', this)">▶ Indice 2 – Squelette complet</button>
+    <div id="ind4b" class="indice-bloc">
+      <div class="encadre-indice" style="margin-top:.6rem">
+        <span class="encadre-prefix">Indice 2</span>
+        <pre style="margin:0"><code>def aligner_quartets(q1, q2):
+    diff = len(q1) - len(q2)
+    if diff > 0:
+        q2 = ['0000'] * diff + q2
+    elif diff < 0:
+        q1 = ['0000'] * (-diff) + q1
+    return q1, q2</code></pre>
+      </div>
+    </div>
+
+    <h4>Éditeur Python — Question 4</h4>
+    <script type="py-editor" env="bcd">
+# Question 4 — aligner_quartets(q1, q2)
+
+def aligner_quartets(q1, q2):
+    """
+    Ajoute des quartets '0000' au debut de la liste la plus courte
+    pour que q1 et q2 aient la meme longueur.
+    """
+    # TODO : calculer la difference de longueur et completer la liste la plus courte
+    return q1, q2
+
+
+def test_aligner_quartets():
+    q1, q2 = aligner_quartets(['0010', '0011', '0000', '0000'],
+                               ['0000', '0100', '0000'])
+    assert q1 == ['0010', '0011', '0000', '0000']
+    assert q2 == ['0000', '0000', '0100', '0000']
+    assert len(q1) == len(q2)
+    q3, q4 = aligner_quartets(['0001'], ['0001', '0010', '0011'])
+    assert len(q3) == len(q4)
+    assert q3 == ['0000', '0000', '0001']
+    q5, q6 = aligner_quartets(['0001', '0010'], ['0001', '0010'])
+    assert q5 == q6
+    print("Les tests sont valides.")
+
+
+test_aligner_quartets()
+    </script>
+
+    <button class="btn-tp-or" onclick="toggleCorrection('corr-q4', this)">Afficher la correction Q4</button>
+    <div id="corr-q4" class="correction-bloc">
+      <div class="encadre" style="margin-top:.7rem;">
+        <span class="encadre-prefix">Correction — Question 4</span>
+        <pre><code>def aligner_quartets(q1, q2):
+    diff = len(q1) - len(q2)
+    if diff > 0:
+        q2 = ['0000'] * diff + q2
+    elif diff < 0:
+        q1 = ['0000'] * (-diff) + q1
+    return q1, q2
+
+
+def test_aligner_quartets():
+    q1, q2 = aligner_quartets(['0010', '0011', '0000', '0000'],
+                               ['0000', '0100', '0000'])
+    assert q1 == ['0010', '0011', '0000', '0000']
+    assert q2 == ['0000', '0000', '0100', '0000']
+    assert len(q1) == len(q2)
+    q3, q4 = aligner_quartets(['0001'], ['0001', '0010', '0011'])
+    assert len(q3) == len(q4)
+    assert q3 == ['0000', '0000', '0001']
+    q5, q6 = aligner_quartets(['0001', '0010'], ['0001', '0010'])
+    assert q5 == q6
+    print("Les tests sont valides.")</code></pre>
+        <p style="margin:0">
+          La syntaxe <code>['0000'] * diff + q</code> crée une liste de zéros de la bonne longueur
+          et la concatène <em>avant</em> la liste existante — ce qui correspond bien à l'ajout à gauche
+          (rangs de poids fort).
+        </p>
+      </div>
+    </div>
+
+    <h3>Vérification finale – addition complète</h3>
+
+    <div class="encadre-conseil">
+      <span class="encadre-prefix">Test intégration – tout le pipeline</span>
+      <p>
+        Avec <code>aligner_quartets</code> et <code>corriger_BCD</code> correctement intégrés,
+        teste ces additions et vérifie les résultats :
+      </p>
+      <table style="width:100%; border-collapse:collapse; font-size:.9rem;">
+        <tr>
+          <th style="padding:.3rem .8rem; border-bottom:1px solid var(--accent); text-align:left">Appel</th>
+          <th style="padding:.3rem .8rem; border-bottom:1px solid var(--accent); text-align:center">Résultat attendu</th>
+        </tr>
+        <tr>
+          <td style="padding:.3rem .8rem"><code>additionner_nombres_format_BCD('23', '4')</code></td>
+          <td style="padding:.3rem .8rem; text-align:center">27.00</td>
+        </tr>
+        <tr>
+          <td style="padding:.3rem .8rem"><code>additionner_nombres_format_BCD('2.27', '5.19')</code></td>
+          <td style="padding:.3rem .8rem; text-align:center">7.46</td>
+        </tr>
+        <tr>
+          <td style="padding:.3rem .8rem"><code>additionner_nombres_format_BCD('99.99', '0.01')</code></td>
+          <td style="padding:.3rem .8rem; text-align:center">100.00</td>
+        </tr>
+      </table>
+    </div>
+  </section>
+
+  <hr class="sep">
+
+  <!-- PIÈGES FRÉQUENTS -->
+  <section id="pieges">
+    <h2>Pièges fréquents &amp; astuces de vérification</h2>
+
+    <div class="encadre-piege">
+      <span class="encadre-prefix">Piège 1 — Confondre le quartet BCD et la valeur binaire</span>
+      <p style="margin:0">
+        Un quartet BCD représente un <em>chiffre</em> (0 à 9), pas n'importe quelle valeur 4 bits.
+        <code>'1111'</code> vaut 15 en binaire pur, mais est <strong>invalide</strong> en BCD.
+        Si une addition produit un quartet <code>≥ 1010</code>, il faut impérativement appliquer
+        la correction <code>+6</code>.
+      </p>
+    </div>
+
+    <div class="encadre-piege">
+      <span class="encadre-prefix">Piège 2 — Oublier la propagation de la retenue après correction</span>
+      <p style="margin:0">
+        Quand <code>corriger_BCD</code> ajoute <code>0110</code>, cette addition peut elle-même
+        générer une nouvelle retenue. La fonction <code>corriger_BCD</code> fournie gère ce cas —
+        c'est pourquoi elle renvoie aussi la retenue et qu'il faut bien récupérer les deux valeurs :
+        <code>somme, retenue = corriger_BCD(somme, retenue)</code>.
+      </p>
+    </div>
+
+    <div class="encadre-piege">
+      <span class="encadre-prefix">Piège 3 — Ajouter les zéros à droite au lieu de gauche</span>
+      <p style="margin:0">
+        Dans <code>aligner_quartets</code>, les zéros doivent être ajoutés <strong>à gauche</strong>
+        (en tête de liste), car ils représentent des rangs de poids fort.
+        <code>q + ['0000'] * n</code> ajoute à droite et décale la virgule — résultat faux.
+        La forme correcte est : <code>['0000'] * n + q</code>.
+      </p>
+    </div>
+
+    <div class="encadre-piege">
+      <span class="encadre-prefix">Piège 4 — Oublier la convention « virgule implicite »</span>
+      <p style="margin:0">
+        Toutes les représentations BCD du sujet utilisent la convention : les deux derniers quartets
+        sont toujours les centimes. Si tu oublies de diviser par <code>100</code> dans
+        <code>convertir_BCD_vers_decimal</code>, ton résultat est centuplé.
+        Vérifie toujours : <code>['0000', '0001', '0000']</code> doit donner <code>0.10</code>, pas <code>10</code>.
+      </p>
+    </div>
+
+    <div class="encadre-piege">
+      <span class="encadre-prefix">Piège 5 — Comparer un float issu de BCD avec ==</span>
+      <p style="margin:0">
+        Même si BCD évite les erreurs d'arrondi lors de l'<em>addition</em>,
+        la conversion finale par <code>/ 100</code> en Python recrée un flottant.
+        <code>1356 / 100</code> vaut exactement <code>13.56</code> en Python (heureux hasard),
+        mais pour sécuriser tes tests, préfère <code>abs(valeur - attendu) &lt; 1e-9</code>
+        ou compare l'entier avant division : <code>entier == 1356</code>.
+      </p>
+    </div>
+
+    <!-- Astuces de vérification -->
+    <div class="encadre-conseil" style="margin-top:1.5rem;">
+      <span class="encadre-prefix">Astuces de vérification</span>
+      <ul style="margin:0">
+        <li>
+          <strong>Aller-retour :</strong> <code>convertir_BCD_vers_decimal(convertir_dec_vers_BCD(x)) == float(x)</code>
+          doit toujours être vrai. C'est le test de cohérence ultime des deux fonctions.
+        </li>
+        <li>
+          <strong>Addition commutative :</strong>
+          <code>additionner_nombres_format_BCD('a', 'b')</code> et
+          <code>additionner_nombres_format_BCD('b', 'a')</code>
+          doivent donner le même résultat.
+        </li>
+        <li>
+          <strong>Cas avec retenue globale :</strong> teste <code>additionner_nombres_format_BCD('99.99', '0.01')</code>
+          — le résultat doit contenir 5 quartets et représenter <code>100.00</code>.
+        </li>
+        <li>
+          <strong>Longueurs égales après alignement :</strong> après tout appel à <code>aligner_quartets</code>,
+          vérifie <code>len(q1) == len(q2)</code> avec une assertion.
+        </li>
+      </ul>
+    </div>
+
+    <!-- Mini-exercices -->
+    <h3>Mini-exercices de vérification</h3>
+
+    <div class="encadre">
+      <span class="encadre-prefix">Mini-exercice A — Conversion manuelle BCD</span>
+      <p>Sans ordinateur, convertis ces montants en liste de quartets BCD :</p>
+      <ol>
+        <li><code>7.50 €</code></li>
+        <li><code>12.09 €</code></li>
+        <li><code>0.01 €</code></li>
+      </ol>
+      <button class="btn-secondaire" onclick="toggleCorrection('corr-mini-a', this)">Vérifier</button>
+      <div id="corr-mini-a" class="correction-bloc" style="margin-top:.7rem;">
+        <ol>
+          <li><code>['0111', '0101', '0000']</code> — 3 quartets : 7, 5, 0 → 7,50 €</li>
+          <li><code>['0001', '0010', '0000', '1001']</code> — 4 quartets : 1, 2, 0, 9 → 12,09 €</li>
+          <li><code>['0000', '0000', '0001']</code> — 3 quartets : 0, 0, 1 → 0,01 €</li>
+        </ol>
+      </div>
+    </div>
+
+    <div class="encadre">
+      <span class="encadre-prefix">Mini-exercice B — Détection de quartet invalide</span>
+      <p>
+        Parmi ces quartets, lesquels sont <strong>invalides</strong> en BCD ?
+        Que faut-il faire pour les corriger ?
+      </p>
+      <ol>
+        <li><code>'1010'</code></li>
+        <li><code>'0111'</code></li>
+        <li><code>'1100'</code></li>
+        <li><code>'1001'</code></li>
+      </ol>
+      <button class="btn-secondaire" onclick="toggleCorrection('corr-mini-b', this)">Vérifier</button>
+      <div id="corr-mini-b" class="correction-bloc" style="margin-top:.7rem;">
+        <ol>
+          <li><code>'1010'</code> = 10 → <strong>invalide</strong>. Correction : <code>1010 + 0110 = 10000</code> → quartet <code>0000</code>, retenue 1.</li>
+          <li><code>'0111'</code> = 7 → <strong>valide</strong>. Pas de correction nécessaire.</li>
+          <li><code>'1100'</code> = 12 → <strong>invalide</strong>. Correction : <code>1100 + 0110 = 10010</code> → quartet <code>0010</code>, retenue 1.</li>
+          <li><code>'1001'</code> = 9 → <strong>valide</strong>. Pas de correction nécessaire.</li>
+        </ol>
+      </div>
+    </div>
+  </section>
+
+  <hr class="sep">
+
+  <!-- RÉCAPITULATIF -->
+  <div class="encadre" style="margin-top:2rem;">
+    <span class="encadre-prefix">Récapitulatif — Ce que tu dois retenir</span>
+    <ul style="margin:0">
+      <li>Les flottants accumulent des erreurs d'arrondi sur de nombreuses additions — inacceptable en comptabilité.</li>
+      <li>Le BCD code chaque chiffre décimal séparément sur 4 bits (un quartet de <code>'0000'</code> à <code>'1001'</code>).</li>
+      <li>La convention « virgule implicite deux rangs avant la fin » évite de coder le séparateur décimal.</li>
+      <li>Tout quartet résultant d'une addition et dépassant 9 (ou générant une retenue) doit être corrigé en ajoutant <code>0110</code> (6).</li>
+      <li>Avant d'additionner, les deux listes doivent être <strong>alignées à droite</strong> en complétant la plus courte par des <code>'0000'</code> à gauche.</li>
+    </ul>
+  </div>
+
+</div><!-- /container-content -->
+
+<!-- PIED DE PAGE -->
+<footer>
+  Lycée Antoine Watteau — DarkSATHI Li
+</footer>
+
+<!-- SCRIPTS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+  /* ── RETOUR EN HAUT ── */
+  var btnTop = document.getElementById('btn-top');
+
+  window.addEventListener('scroll', function () {
+    if (window.scrollY > 300) {
+      btnTop.style.display = 'flex';
+    } else {
+      btnTop.style.display = 'none';
+    }
+  });
+
+  btnTop.addEventListener('click', function () {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  });
+
+  /* ── TOGGLE INDICE ── */
+  function toggleIndice(id, btn) {
+    var el = document.getElementById(id);
+    if (!el) return;
+    if (el.classList.contains('visible')) {
+      el.classList.remove('visible');
+      btn.textContent = btn.textContent.replace('▼', '▶');
+    } else {
+      el.classList.add('visible');
+      btn.textContent = btn.textContent.replace('▶', '▼');
+    }
+  }
+
+  /* ── TOGGLE CORRECTION ── */
+  function toggleCorrection(id, btn) {
+    var el = document.getElementById(id);
+    if (!el) return;
+    if (el.classList.contains('visible')) {
+      el.classList.remove('visible');
+      btn.textContent = btn.textContent.replace('Masquer', 'Afficher').replace('Vérifier', 'Vérifier');
+    } else {
+      el.classList.add('visible');
+      if (btn.textContent.includes('Afficher')) {
+        btn.textContent = btn.textContent.replace('Afficher', 'Masquer');
+      }
+    }
+  }
+</script>
+</body>
+</html>
