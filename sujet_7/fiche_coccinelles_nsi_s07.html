@@ -1,0 +1,1324 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Fiche – Simulation Coccinelles | NSI Terminale | BAC 2026</title>
+
+  <!-- Bootstrap 5.3.3 -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Rubik+Dirt&family=Source+Serif+4:ital,opsz,wght@0,8..60,300..900;1,8..60,300..900&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+
+  <!-- MathJax v3 -->
+  <script>
+    MathJax = {
+      tex: { inlineMath: [['\\(', '\\)'], ['$', '$']] },
+      options: { skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre'] }
+    };
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js" async></script>
+
+  <!-- PyScript 2026.3.1 -->
+  <script type="module" src="https://pyscript.net/releases/2026.3.1/core.js"></script>
+
+  <style>
+    :root {
+      --bg-main:       #f8f9fb;
+      --bg-panel:      #eef1f5;
+      --bg-cours:      #ffffff;
+      --accent:        #2a6496;
+      --py-editor-input: white;
+      --accent-or:     #b5610a;
+      --accent-vert:   #2e7d32;
+      --text-main:     #1a1a1a;
+      --text-muted:    #5a6470;
+      --border-radius: 8px;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      background-color: var(--bg-main);
+      color: var(--text-main);
+      font-family: 'Source Serif 4', Georgia, serif;
+      font-size: 1.1rem;
+      line-height: 1.8;
+      margin: 0;
+      padding-bottom: 4rem;
+    }
+
+    h1, h2, h3, h4 {
+      font-family: 'Rubik Dirt', cursive;
+      color: var(--accent);
+      letter-spacing: 0.02em;
+    }
+
+    h1 { font-size: 2.2rem; color: #111; }
+    h2 { font-size: 1.55rem; border-bottom: 2px solid var(--accent); padding-bottom: .3rem; margin-top: 2.5rem; }
+    h3 { font-size: 1.25rem; color: var(--accent-or); margin-top: 1.8rem; }
+    h4 { font-size: 1.05rem; color: var(--accent-vert); }
+
+    p { margin-bottom: 1rem; }
+
+    code, pre, .mono {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.9em;
+    }
+
+    code {
+      background: #e8edf2;
+      padding: 2px 6px;
+      border-radius: 4px;
+      color: #8b3a00;
+    }
+
+    pre {
+      background: #f0f3f7;
+      border-left: 3px solid var(--accent);
+      padding: 1rem 1.2rem;
+      border-radius: var(--border-radius);
+      overflow-x: auto;
+      color: #1a1a1a;
+    }
+
+    a { color: var(--accent); text-decoration: underline dotted; }
+    a:hover { color: var(--accent-or); }
+
+    /* ── NAVIGATION ── */
+    #navbar {
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      background: #2a6496;
+      border-bottom: 2px solid #1a4a70;
+      padding: .5rem 1.5rem;
+      display: flex;
+      gap: .5rem;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    #navbar span {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: .8rem;
+      color: #ccddf0;
+      margin-right: auto;
+    }
+
+    #navbar a {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: .8rem;
+      color: #fff;
+      text-decoration: none;
+      padding: .25rem .7rem;
+      border: 1px solid #ccddf0;
+      border-radius: 4px;
+      transition: background .2s;
+    }
+
+    #navbar a:hover { background: #1a4a70; color: #fff; }
+
+    /* ── CONTENU ── */
+    .container-content {
+      max-width: 860px;
+      margin: 0 auto;
+      padding: 2rem 1.5rem;
+    }
+
+    /* ── ENCADRÉS ── */
+    .encadre,
+    .encadre-conseil,
+    .encadre-indice,
+    .encadre-question {
+      background: #ffffff;
+      border-radius: var(--border-radius);
+      padding: 1.1rem 1.4rem;
+      margin: 1.4rem 0;
+      position: relative;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+    }
+
+    .encadre          { border-left: 4px solid var(--accent); }
+    .encadre-conseil  { border-left: 4px solid var(--accent-or); background: #fff8f0; }
+    .encadre-indice   { border-left: 4px solid var(--accent-vert); background: #f0faf0; }
+    .encadre-question { border-left: 4px solid #7b3fa8; border-top: 1px solid #c8a8e820; background: #faf5ff; }
+
+    .encadre-prefix {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: .72rem;
+      font-variant: small-caps;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      margin-bottom: .4rem;
+      display: block;
+    }
+
+    .encadre          .encadre-prefix { color: var(--accent); }
+    .encadre-conseil  .encadre-prefix { color: var(--accent-or); }
+    .encadre-indice   .encadre-prefix { color: var(--accent-vert); }
+    .encadre-question .encadre-prefix { color: #7b3fa8; }
+
+    /* ── BOUTONS ── */
+    .btn-tp, .btn-tp-or, .btn-tp-vert, .btn-secondaire {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: .82rem;
+      border: none;
+      border-radius: 5px;
+      padding: .45rem 1.1rem;
+      cursor: pointer;
+      transition: opacity .2s, transform .1s;
+      margin: .3rem .2rem;
+    }
+
+    .btn-tp         { background: var(--accent);      color: #fff; }
+    .btn-tp-or      { background: var(--accent-or);   color: #fff; }
+    .btn-tp-vert    { background: var(--accent-vert); color: #fff; }
+    .btn-secondaire { background: #eef1f5; border: 1px solid var(--accent); color: var(--text-main); }
+
+    .btn-tp:hover, .btn-tp-or:hover, .btn-tp-vert:hover, .btn-secondaire:hover {
+      opacity: .85; transform: translateY(-1px);
+    }
+
+    /* ── BADGE QUESTION ── */
+    .badge-question {
+      display: inline-block;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: .8rem;
+      background: #7b3fa8;
+      color: #fff;
+      border-radius: 4px;
+      padding: .15rem .7rem;
+      margin-right: .5rem;
+      vertical-align: middle;
+    }
+
+    /* ── INDICES / CORRECTIONS CACHÉS ── */
+    .indice-bloc    { display: none; }
+    .indice-bloc.visible { display: block; }
+    .correction-bloc { display: none; }
+    .correction-bloc.visible { display: block; }
+
+    /* ── PIED DE PAGE ── */
+    footer {
+      text-align: center;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: .8rem;
+      color: var(--text-muted);
+      padding: 2rem 1rem 1rem;
+      border-top: 1px solid #d0d8e4;
+    }
+
+    /* ── RETOUR EN HAUT ── */
+    #btn-top {
+      position: fixed;
+      bottom: 1.5rem;
+      right: 1.5rem;
+      z-index: 999;
+      background: var(--accent);
+      color: #fff;
+      border: none;
+      border-radius: 50%;
+      width: 44px;
+      height: 44px;
+      font-size: 1.2rem;
+      cursor: pointer;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      font-family: 'JetBrains Mono', monospace;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.25);
+      transition: opacity .2s;
+    }
+
+    #btn-top:hover { opacity: .8; }
+
+    /* ── PIÈGE ── */
+    .encadre-piege {
+      background: #fff5f5;
+      border-left: 4px solid #c0392b;
+      border-radius: var(--border-radius);
+      padding: 1rem 1.4rem;
+      margin: 1.2rem 0;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.07);
+    }
+
+    .encadre-piege .encadre-prefix {
+      color: #c0392b;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: .72rem;
+      font-variant: small-caps;
+      letter-spacing: .12em;
+      display: block;
+      margin-bottom: .3rem;
+    }
+
+    /* ── SCHEMA ATTRIBUTS ── */
+    .table-attrs {
+      border-collapse: collapse;
+      width: 100%;
+      font-size: .92rem;
+      margin: 1rem 0;
+    }
+
+    .table-attrs th {
+      background: #dce8f2;
+      color: var(--accent);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: .8rem;
+      padding: .5rem .9rem;
+      border: 1px solid #b5c9dc;
+      text-align: left;
+    }
+
+    .table-attrs td {
+      border: 1px solid #b5c9dc;
+      padding: .45rem .9rem;
+    }
+
+    .table-attrs tr:nth-child(even) td { background: #f4f7fb; }
+
+    /* sommaire */
+    #sommaire ol {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: .88rem;
+      line-height: 2.2;
+    }
+
+    #sommaire a { color: var(--accent); }
+    #sommaire a:hover { color: var(--accent-or); }
+
+    /* separateur */
+    .sep { border: none; border-top: 1px dashed #9ab0c8; margin: 2.5rem 0; opacity: .7; }
+
+    /* py-editor */
+    py-editor { display: block; min-height: 100px; }
+    .py-editor-input {
+      background: var(--py-editor-input);
+      color: #1a1a1a;
+      border: 1px solid var(--accent);
+      border-radius: 4px;
+      padding: .8rem;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: .9rem;
+    }
+
+    /* schema ecosystem */
+    .ecosysteme {
+      display: flex;
+      gap: 1.2rem;
+      flex-wrap: wrap;
+      justify-content: center;
+      margin: 1.2rem 0;
+    }
+
+    .eco-card {
+      flex: 1;
+      min-width: 180px;
+      border-radius: 8px;
+      padding: 1rem 1.2rem;
+      text-align: center;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: .82rem;
+      box-shadow: 0 1px 6px rgba(0,0,0,0.1);
+    }
+
+    .eco-coccinelle { background: #fce4ec; border: 2px solid #e91e63; color: #880e4f; }
+    .eco-puceron    { background: #e8f5e9; border: 2px solid #4caf50; color: #1b5e20; }
+    .eco-card .eco-icon { font-size: 2rem; display: block; margin-bottom: .4rem; }
+    .eco-card strong { display: block; font-size: .95rem; margin-bottom: .2rem; }
+
+    /* fleche */
+    .eco-arrow {
+      display: flex;
+      align-items: center;
+      font-size: 1.5rem;
+      color: var(--accent);
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+
+<!-- Initialisation PyScript silencieuse -->
+<div id="pyinit" style="display:none">
+  <script type="py" env="cocci">
+    pass
+  </script>
+</div>
+
+<!-- BOUTON RETOUR EN HAUT -->
+<button id="btn-top" title="Retour en haut" aria-label="Retour en haut">▲</button>
+
+<!-- NAVIGATION STICKY -->
+<nav id="navbar">
+  <span>NSI Terminale – Simulation Coccinelles</span>
+  <a href="#s0">Intro</a>
+  <a href="#s1">Rappels</a>
+  <a href="#q1">Q1</a>
+  <a href="#q2">Q2</a>
+  <a href="#q3">Q3</a>
+  <a href="#q4">Q4</a>
+  <a href="#pieges">Pièges</a>
+</nav>
+
+<!-- CONTENU PRINCIPAL -->
+<div class="container-content">
+
+  <!-- EN-TÊTE -->
+  <div style="text-align:center; padding: 2rem 0 1rem;">
+    <div style="font-family:'JetBrains Mono',monospace; font-size:.8rem; color:var(--text-muted); margin-bottom:.5rem;">
+      BAC NSI 2026 — Sujet n°7 — Partie pratique
+    </div>
+    <h1>Simulation Coccinelles<br><span style="font-size:1.1rem; color:var(--accent); font-family:'Source Serif 4',serif; font-style:italic; font-weight:300;">Fiche de révision guidée</span></h1>
+    <div style="font-family:'JetBrains Mono',monospace; font-size:.8rem; color:var(--text-muted); margin-top:.5rem;">
+      Terminale NSI &nbsp;·&nbsp; Programmation Orientée Objet &nbsp;·&nbsp; Simulation d'écosystème
+    </div>
+  </div>
+
+  <hr class="sep">
+
+  <!-- SOMMAIRE -->
+  <section id="s0">
+    <div id="sommaire" class="encadre">
+      <span class="encadre-prefix">Sommaire</span>
+      <ol>
+        <li><a href="#s1">Introduction &amp; Rappels — POO, attributs, méthodes</a></li>
+        <li><a href="#q1">Question 1 — Créer la population initiale et simuler 5 jours</a></li>
+        <li><a href="#q2">Question 2 — Écrire <code>simulation_simple</code></a></li>
+        <li><a href="#q3">Question 3 — Documenter <code>chasser</code></a></li>
+        <li><a href="#q4">Question 4 — Améliorer le modèle biologique</a></li>
+        <li><a href="#pieges">Pièges fréquents</a></li>
+      </ol>
+    </div>
+  </section>
+
+  <hr class="sep">
+
+  <!-- SECTION 1 : INTRODUCTION ET RAPPELS -->
+  <section id="s1">
+    <h2>1 — Introduction &amp; Rappels de cours</h2>
+
+    <h3>Le contexte : une serre sous attaque</h3>
+
+    <p>
+      Un producteur de tomates sous serre fait face à une invasion de pucerons.
+      Pour éviter les pesticides, il lâche des coccinelles — leurs prédatrices naturelles.
+      Ton rôle : <strong>modéliser cet écosystème en Python</strong> pour prédire ce qui va se passer.
+    </p>
+
+    <div class="ecosysteme">
+      <div class="eco-card eco-coccinelle">
+        <span class="eco-icon">🐞</span>
+        <strong>Coccinelles</strong>
+        Chassent, vieillissent, se reproduisent
+      </div>
+      <div class="eco-arrow">→ mange →</div>
+      <div class="eco-card eco-puceron">
+        <span class="eco-icon">🦟</span>
+        <strong>Pucerons</strong>
+        Prolifèrent de +20% par jour
+      </div>
+    </div>
+
+    <p>
+      Chaque journée, la simulation effectue dans cet ordre : la <strong>chasse</strong> (les coccinelles mangent des pucerons),
+      la <strong>reproduction</strong> (les femelles bien nourries pondent), le <strong>vieillissement</strong> (certaines meurent),
+      puis la <strong>croissance des pucerons</strong> (+20 %).
+    </p>
+
+    <hr class="sep">
+
+    <h3>Rappel — La Programmation Orientée Objet (POO)</h3>
+
+    <p>
+      Imagine que chaque coccinelle est une <strong>fiche individuelle</strong> qui contient ses informations
+      personnelles et ses actions possibles. En Python, on appelle ça un <strong>objet</strong>.
+      Le modèle de cette fiche (ce qu'elle contient) est défini par une <strong>classe</strong>.
+    </p>
+
+    <div class="encadre">
+      <span class="encadre-prefix">Vocabulaire POO essentiel</span>
+      <table class="table-attrs">
+        <thead>
+          <tr><th>Terme</th><th>Définition</th><th>Exemple dans ce sujet</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>classe</code></td>
+            <td>Le modèle (le plan de construction)</td>
+            <td><code>class Coccinelle</code></td>
+          </tr>
+          <tr>
+            <td><code>objet</code> / instance</td>
+            <td>Un exemplaire concret de la classe</td>
+            <td><code>c = Coccinelle("femelle", 10, 2)</code></td>
+          </tr>
+          <tr>
+            <td><code>attribut</code></td>
+            <td>Une donnée propre à chaque objet</td>
+            <td><code>c.age</code>, <code>c.sexe</code>, <code>c.niv_nutrition</code></td>
+          </tr>
+          <tr>
+            <td><code>méthode</code></td>
+            <td>Une fonction appartenant à la classe</td>
+            <td><code>c.chasser(200, 3)</code>, <code>c.reproduction()</code></td>
+          </tr>
+          <tr>
+            <td><code>__init__</code></td>
+            <td>Le constructeur (appelé à la création)</td>
+            <td><code>Coccinelle("femelle", 10, 2)</code></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3>La classe <code>Coccinelle</code> en détail</h3>
+
+    <p>
+      Chaque coccinelle possède quatre attributs définis dans <code>__init__</code> :
+    </p>
+
+    <div class="encadre-conseil">
+      <span class="encadre-prefix">Les attributs d'une Coccinelle</span>
+      <ul style="margin:0">
+        <li><code>age</code> — âge en jours. Une coccinelle meurt quand <code>age &gt;= esperance_de_vie</code>.</li>
+        <li><code>esperance_de_vie</code> — durée de vie maximale, tirée aléatoirement entre 200 et 350 jours.</li>
+        <li><code>sexe</code> — <code>"male"</code> ou <code>"femelle"</code>.</li>
+        <li><code>niv_nutrition</code> — nombre de jours consécutifs bien nourris. Monte si elle mange ≥ 10 proies, descend sinon (minimum 0).</li>
+      </ul>
+    </div>
+
+    <h3>Les méthodes à connaître</h3>
+
+    <p>Voici un aperçu des méthodes déjà fournies dans <code>coccinelles.py</code> :</p>
+
+    <div class="encadre">
+      <span class="encadre-prefix">Architecture du code fourni</span>
+      <table style="width:100%; border-collapse:collapse; font-size:.9rem;">
+        <tr>
+          <td style="padding:.4rem .8rem; border-bottom:1px solid var(--accent); width:50%"><code>Coccinelle.__init__(sexe, age, niv_nutrition)</code></td>
+          <td style="padding:.4rem .8rem; border-bottom:1px solid var(--accent); color:var(--text-muted)">Crée une coccinelle avec ses attributs de départ</td>
+        </tr>
+        <tr>
+          <td style="padding:.4rem .8rem; border-bottom:1px solid var(--accent)"><code>chasser(nb_proies, nb_coccinelles)</code></td>
+          <td style="padding:.4rem .8rem; border-bottom:1px solid var(--accent); color:var(--text-muted)">Chasse et renvoie le nouveau nombre de proies. Mise à jour de <code>niv_nutrition</code>.</td>
+        </tr>
+        <tr>
+          <td style="padding:.4rem .8rem; border-bottom:1px solid var(--accent)"><code>reproduction()</code></td>
+          <td style="padding:.4rem .8rem; border-bottom:1px solid var(--accent); color:var(--text-muted)">Renvoie une liste de 2 descendants si femelle bien nourrie, sinon liste vide</td>
+        </tr>
+        <tr>
+          <td style="padding:.4rem .8rem; border-bottom:1px solid var(--accent)"><code>a_survecu()</code></td>
+          <td style="padding:.4rem .8rem; border-bottom:1px solid var(--accent); color:var(--text-muted)">Incrémente l'âge et renvoie <code>True</code> si elle est encore en vie</td>
+        </tr>
+        <tr>
+          <td style="padding:.4rem .8rem"><code>evolution(population, nb_proies)</code></td>
+          <td style="padding:.4rem .8rem; color:var(--text-muted)">Simule <strong>une journée</strong> complète et renvoie <code>(population_suivante, nouveau_nb_proies)</code></td>
+        </tr>
+      </table>
+    </div>
+
+    <div class="encadre-conseil">
+      <span class="encadre-prefix">Comment créer un objet Coccinelle</span>
+      <pre style="margin:0"><code># Syntaxe : Coccinelle(sexe, age, niv_nutrition)
+c1 = Coccinelle("femelle", 10, 2)
+c2 = Coccinelle("male", 10, 2)
+print(c1.age)    # affiche 10
+print(c1.sexe)   # affiche "femelle"
+
+# La méthode __repr__ permet un affichage lisible :
+print(c1)
+# → Coccinelle femelle, âge: 10/274, niv_nutrition: 2</code></pre>
+    </div>
+
+    <p>
+      Remarque que l'espérance de vie (<code>274</code> dans l'exemple) est <strong>aléatoire</strong> à chaque création —
+      donc tes résultats numériques varieront d'une exécution à l'autre.
+      C'est tout à fait normal pour un modèle de simulation.
+    </p>
+
+  </section>
+
+  <hr class="sep">
+
+  <!-- QUESTION 1 -->
+  <section id="q1">
+    <h2>Question 1 — Population initiale &amp; 5 jours de simulation</h2>
+
+    <div class="encadre-question">
+      <span class="encadre-prefix">Énoncé — Question 1</span>
+      <p>
+        <span class="badge-question">Q1</span>
+        Créer une population initiale contenant <strong>3 coccinelles</strong> (2 femelles et 1 mâle),
+        toutes âgées de 10 jours et ayant un niveau de nutrition de 2.
+        Le nombre initial de pucerons est fixé à <strong>200</strong>.
+      </p>
+      <p style="margin:0">
+        Écrire une séquence d'instructions (utilisant une boucle) permettant de simuler l'évolution
+        de ce petit écosystème sur <strong>5 jours consécutifs</strong>, en appelant la fonction <code>evolution</code>.
+        Afficher le nombre de coccinelles et de pucerons à la fin de chaque journée.<br>
+        ✋ <em>Appel professeur — présente ta réponse ou sollicite de l'aide.</em>
+      </p>
+    </div>
+
+    <h3>Comment lire les résultats d'<code>evolution</code> ?</h3>
+
+    <p>
+      La fonction <code>evolution</code> renvoie un <strong>tuple à deux éléments</strong> :
+      la nouvelle liste de coccinelles et le nouveau nombre de pucerons.
+      Pour récupérer les deux valeurs, on peut utiliser le <em>déballage</em> :
+    </p>
+
+    <pre><code>population, nb_proies = evolution(population, nb_proies)
+# Maintenant population et nb_proies sont mis à jour</code></pre>
+
+    <div style="margin:.8rem 0;">
+      <button class="btn-tp-vert" onclick="toggleIndice('indice-q1-1', this)">▶ Indice 1 — Créer la liste initiale</button>
+    </div>
+    <div id="indice-q1-1" class="encadre-indice indice-bloc">
+      <span class="encadre-prefix">Indice 1</span>
+      <pre style="margin:0"><code>population = [
+    Coccinelle("femelle", 10, 2),
+    Coccinelle("femelle", 10, 2),
+    Coccinelle("male", 10, 2)
+]
+nb_proies = 200</code></pre>
+    </div>
+
+    <div style="margin:.8rem 0;">
+      <button class="btn-tp-vert" onclick="toggleIndice('indice-q1-2', this)">▶ Indice 2 — Structure de la boucle</button>
+    </div>
+    <div id="indice-q1-2" class="encadre-indice indice-bloc">
+      <span class="encadre-prefix">Indice 2</span>
+      <pre style="margin:0"><code>for jour in range(1, 6):   # 5 jours : jour 1, 2, 3, 4, 5
+    population, nb_proies = evolution(population, nb_proies)
+    print(f"Jour {jour} : {len(population)} coccinelles, {nb_proies} pucerons")</code></pre>
+    </div>
+
+    <h4>Essaie dans l'éditeur :</h4>
+
+    <div class="encadre" style="margin-top:1.2rem;">
+      <span class="encadre-prefix">Éditeur Python — Question 1</span>
+      <script type="py-editor" env="cocci">
+import random
+
+class Coccinelle:
+    def __init__(self, sexe, age, niv_nutrition):
+        self.age = age
+        self.esperance_de_vie = random.randint(200, 350)
+        self.sexe = sexe
+        self.niv_nutrition = niv_nutrition
+
+    def chasser(self, nb_proies, nb_coccinelles):
+        if nb_coccinelles == 0:
+            return nb_proies
+        proies_par_cocci = nb_proies / nb_coccinelles
+        if proies_par_cocci > 20:
+            consomme = random.randint(12, 20)
+        elif proies_par_cocci > 10:
+            consomme = random.randint(8, 15)
+        else:
+            consomme = random.randint(3, 8)
+        consomme = min(consomme, nb_proies)
+        if consomme >= 10:
+            self.niv_nutrition += 1
+        else:
+            self.niv_nutrition = max(0, self.niv_nutrition - 1)
+        return nb_proies - consomme
+
+    def reproduction(self):
+        descendants = []
+        if self.sexe == "femelle" and self.niv_nutrition >= 2:
+            descendants.append(Coccinelle("male", 0, 0))
+            descendants.append(Coccinelle("femelle", 0, 0))
+            self.niv_nutrition = 0
+        return descendants
+
+    def a_survecu(self):
+        self.age = self.age + 1
+        return self.age < self.esperance_de_vie
+
+    def __repr__(self):
+        return f"Coccinelle {self.sexe}, âge: {self.age}/{self.esperance_de_vie}, niv_nutrition: {self.niv_nutrition}"
+
+def evolution(population, nb_proies):
+    population_suivante = []
+    nouveau_nes = []
+    nb_coccinelles = len(population)
+    for coccinelle in population:
+        nb_proies = coccinelle.chasser(nb_proies, nb_coccinelles)
+        if coccinelle.a_survecu():
+            population_suivante.append(coccinelle)
+        nouveau_nes += coccinelle.reproduction()
+    nb_proies = int(nb_proies * 1.2)
+    population_suivante += nouveau_nes
+    return population_suivante, nb_proies
+
+# --- À toi de jouer : crée la population et la boucle de 5 jours ---
+population = [
+    Coccinelle("femelle", 10, 2),
+    Coccinelle("femelle", 10, 2),
+    Coccinelle("male",    10, 2)
+]
+nb_proies = 200
+
+for jour in range(1, 6):
+    population, nb_proies = evolution(population, nb_proies)
+    print(f"Jour {jour} : {len(population)} coccinelle(s), {nb_proies} puceron(s)")
+      </script>
+    </div>
+
+    <div style="margin:1rem 0;">
+      <button class="btn-tp-or" onclick="toggleCorrection('corr-q1', this)">🔒 Afficher la correction</button>
+    </div>
+    <div id="corr-q1" class="correction-bloc encadre-conseil">
+      <span class="encadre-prefix">Correction — Question 1</span>
+      <pre><code># Création de la population initiale
+population = [
+    Coccinelle("femelle", 10, 2),
+    Coccinelle("femelle", 10, 2),
+    Coccinelle("male", 10, 2)
+]
+nb_proies = 200
+
+# Boucle sur 5 jours
+for jour in range(1, 6):
+    population, nb_proies = evolution(population, nb_proies)
+    print(f"Jour {jour} : {len(population)} coccinelle(s), {nb_proies} puceron(s)")</code></pre>
+      <p style="margin:0">
+        Les résultats sont <strong>aléatoires</strong> (car <code>random.randint</code> est utilisé dans
+        <code>chasser</code> et <code>__init__</code>). Plusieurs exécutions donneront des valeurs différentes.
+        C'est le propre d'un modèle de simulation.
+      </p>
+    </div>
+
+  </section>
+
+  <hr class="sep">
+
+  <!-- QUESTION 2 -->
+  <section id="q2">
+    <h2>Question 2 — La fonction <code>simulation_simple</code></h2>
+
+    <div class="encadre-question">
+      <span class="encadre-prefix">Énoncé — Question 2</span>
+      <p>
+        <span class="badge-question">Q2</span>
+        Écrire une fonction <code>simulation_simple(population, nb_proies)</code> qui automatise
+        ce processus sur une <strong>durée maximale de 30 jours</strong>.
+      </p>
+      <p>
+        Cette fonction doit s'interrompre prématurément si la population de coccinelles
+        ou de pucerons <strong>tombe à zéro</strong>.
+      </p>
+      <p style="margin:0">
+        Elle doit renvoyer un <strong>triplet (tuple)</strong> contenant :
+        le nombre final de coccinelles, le nombre final de pucerons, et le nombre de jours effectivement simulés.
+        Tester avec la même population initiale face à <strong>1 000 pucerons</strong>.<br>
+        ✋ <em>Appel professeur — présente ta réponse ou sollicite de l'aide.</em>
+      </p>
+    </div>
+
+    <h3>Comment structurer cette fonction ?</h3>
+
+    <p>
+      Il faut une boucle qui tourne <strong>au maximum 30 fois</strong>, mais qui peut s'arrêter avant
+      si une condition de fin est atteinte. La boucle <code>while</code> est parfaite pour ça.
+    </p>
+
+    <div class="encadre">
+      <span class="encadre-prefix">Structure générale à compléter</span>
+      <pre style="margin:0"><code>def simulation_simple(population, nb_proies):
+    jour = 0
+    while jour &lt; 30 and len(population) > 0 and nb_proies > 0:
+        population, nb_proies = evolution(population, nb_proies)
+        jour += 1
+    return (len(population), nb_proies, jour)</code></pre>
+    </div>
+
+    <div style="margin:.8rem 0;">
+      <button class="btn-tp-vert" onclick="toggleIndice('indice-q2-1', this)">▶ Indice — Pourquoi un tuple en retour ?</button>
+    </div>
+    <div id="indice-q2-1" class="encadre-indice indice-bloc">
+      <span class="encadre-prefix">Indice</span>
+      <p>
+        Renvoyer plusieurs valeurs à la fois se fait naturellement avec un tuple en Python.
+        L'appelant peut ensuite déballer : <code>nb_cocci, nb_pucerons, nb_jours = simulation_simple(...)</code>
+      </p>
+      <pre style="margin:0"><code>resultat = simulation_simple(population, nb_proies)
+print(f"Résultat : {resultat[0]} coccinelles, {resultat[1]} pucerons après {resultat[2]} jours")</code></pre>
+    </div>
+
+    <h4>Essaie dans l'éditeur :</h4>
+
+    <div class="encadre" style="margin-top:1.2rem;">
+      <span class="encadre-prefix">Éditeur Python — Question 2</span>
+      <script type="py-editor" env="cocci">
+# La classe Coccinelle et evolution sont déjà disponibles dans cet éditeur.
+# Complète la fonction simulation_simple.
+
+def simulation_simple(population, nb_proies):
+    """
+    Simule l'écosystème sur au maximum 30 jours.
+    S'arrête si la population ou les pucerons tombent à zéro.
+    Renvoie (nb_coccinelles, nb_pucerons, nb_jours).
+    """
+    jour = 0
+    while jour < 30 and len(population) > 0 and nb_proies > 0:
+        population, nb_proies = evolution(population, nb_proies)
+        jour += 1
+    return (len(population), nb_proies, jour)
+
+def test_simulation_simple():
+    # Test 1 : avec 3 coccinelles et seulement 5 pucerons,
+    # les pucerons devraient disparaître rapidement
+    pop = [Coccinelle("femelle", 10, 2), Coccinelle("femelle", 10, 2), Coccinelle("male", 10, 2)]
+    nb_cocci, nb_puce, nb_jours = simulation_simple(pop, 5)
+    assert nb_jours <= 30, "La simulation ne doit pas dépasser 30 jours"
+    assert nb_cocci >= 0 and nb_puce >= 0, "Les valeurs sont positives"
+
+    # Test 2 : simulation sur 1000 pucerons (énoncé)
+    pop2 = [Coccinelle("femelle", 10, 2), Coccinelle("femelle", 10, 2), Coccinelle("male", 10, 2)]
+    nb_cocci2, nb_puce2, nb_jours2 = simulation_simple(pop2, 1000)
+    print(f"Résultat : {nb_cocci2} coccinelle(s), {nb_puce2} puceron(s) après {nb_jours2} jour(s)")
+    assert isinstance(nb_cocci2, int) and isinstance(nb_puce2, int) and isinstance(nb_jours2, int)
+
+    # Test 3 : vérifier que la fonction renvoie bien un tuple de 3 éléments
+    pop3 = [Coccinelle("femelle", 10, 2)]
+    resultat = simulation_simple(pop3, 1000)
+    assert len(resultat) == 3, "Le retour doit être un triplet"
+
+    print("Les tests sont validés.")
+
+test_simulation_simple()
+      </script>
+    </div>
+
+    <div style="margin:1rem 0;">
+      <button class="btn-tp-or" onclick="toggleCorrection('corr-q2', this)">🔒 Afficher la correction</button>
+    </div>
+    <div id="corr-q2" class="correction-bloc encadre-conseil">
+      <span class="encadre-prefix">Correction — Question 2</span>
+      <pre><code>def simulation_simple(population, nb_proies):
+    """
+    Simule l'écosystème sur au maximum 30 jours.
+    S'arrête si la population de coccinelles ou le nombre de pucerons
+    tombe à zéro.
+    Renvoie un triplet (nb_coccinelles, nb_pucerons, nb_jours_simules).
+    """
+    jour = 0
+    while jour &lt; 30 and len(population) > 0 and nb_proies > 0:
+        population, nb_proies = evolution(population, nb_proies)
+        jour += 1
+    return (len(population), nb_proies, jour)
+
+# Test avec 1000 pucerons
+population = [
+    Coccinelle("femelle", 10, 2),
+    Coccinelle("femelle", 10, 2),
+    Coccinelle("male", 10, 2)
+]
+nb_cocci, nb_puce, nb_jours = simulation_simple(population, 1000)
+print(f"Fin après {nb_jours} jour(s) : {nb_cocci} coccinelle(s), {nb_puce} puceron(s)")</code></pre>
+      <p style="margin:0">
+        La condition de la boucle <code>while</code> cumule trois gardes :
+        ne pas dépasser 30 jours, avoir encore des coccinelles, avoir encore des pucerons.
+        Dès qu'une condition est fausse, la simulation s'arrête et renvoie l'état courant.
+      </p>
+    </div>
+
+  </section>
+
+  <hr class="sep">
+
+  <!-- QUESTION 3 -->
+  <section id="q3">
+    <h2>Question 3 — Documenter la méthode <code>chasser</code></h2>
+
+    <div class="encadre-question">
+      <span class="encadre-prefix">Énoncé — Question 3</span>
+      <p>
+        <span class="badge-question">Q3</span>
+        Écrire la <strong>documentation</strong> (docstring) et les <strong>commentaires</strong>
+        de la méthode <code>chasser</code>.
+      </p>
+      <p style="margin:0">
+        La documentation doit expliquer ce que fait la méthode, ses paramètres, et ce qu'elle renvoie.
+        Les commentaires inline doivent expliquer les parties non évidentes du code.
+      </p>
+    </div>
+
+    <h3>Qu'est-ce qu'une docstring ?</h3>
+
+    <p>
+      Une <strong>docstring</strong> est une chaîne de caractères placée juste après l'en-tête d'une fonction
+      ou méthode, entre triples guillemets. Elle décrit le contrat de la fonction : ce qu'elle fait,
+      ce qu'elle attend, ce qu'elle renvoie.
+    </p>
+
+    <div class="encadre">
+      <span class="encadre-prefix">Structure d'une bonne docstring</span>
+      <pre style="margin:0"><code>def ma_fonction(param1, param2):
+    """
+    Description générale en une phrase.
+
+    param1 : type et rôle du premier paramètre
+    param2 : type et rôle du second paramètre
+
+    Renvoie : type et signification de la valeur renvoyée
+    """
+    ...</code></pre>
+    </div>
+
+    <h3>Le code de <code>chasser</code> à documenter</h3>
+
+    <p>
+      Lis attentivement le code ci-dessous, puis écris la docstring et les commentaires
+      qui permettraient à quelqu'un ne connaissant pas le sujet de comprendre la méthode.
+    </p>
+
+    <pre><code>def chasser(self, nb_proies, nb_coccinelles):
+    if nb_coccinelles == 0:
+        return nb_proies
+
+    proies_par_cocci = nb_proies / nb_coccinelles
+
+    if proies_par_cocci > 20:
+        consomme = random.randint(12, 20)
+    elif proies_par_cocci > 10:
+        consomme = random.randint(8, 15)
+    else:
+        consomme = random.randint(3, 8)
+
+    consomme = min(consomme, nb_proies)
+
+    if consomme >= 10:
+        self.niv_nutrition += 1
+    else:
+        self.niv_nutrition = max(0, self.niv_nutrition - 1)
+
+    return nb_proies - consomme</code></pre>
+
+    <div style="margin:.8rem 0;">
+      <button class="btn-tp-vert" onclick="toggleIndice('indice-q3-1', this)">▶ Indice — Analyse bloc par bloc</button>
+    </div>
+    <div id="indice-q3-1" class="encadre-indice indice-bloc">
+      <span class="encadre-prefix">Indice — Que fait chaque bloc ?</span>
+      <ul style="margin:0">
+        <li><strong>Bloc 1</strong> (<code>if nb_coccinelles == 0</code>) : cas de sécurité pour éviter une division par zéro.</li>
+        <li><strong>Bloc 2</strong> (<code>proies_par_cocci</code>) : calcule la disponibilité en nourriture par coccinelle.</li>
+        <li><strong>Bloc 3</strong> (les trois <code>if/elif/else</code>) : plus il y a de proies par coccinelle, plus elle mange.</li>
+        <li><strong>Bloc 4</strong> (<code>min(consomme, nb_proies)</code>) : on ne peut pas manger plus qu'il n'en reste.</li>
+        <li><strong>Bloc 5</strong> (mise à jour de <code>niv_nutrition</code>) : bon repas → monte, mauvais repas → descend (plancher à 0).</li>
+        <li><strong>Bloc 6</strong> (<code>return</code>) : renvoie le nombre de proies restantes après la chasse.</li>
+      </ul>
+    </div>
+
+    <div style="margin:.8rem 0;">
+      <button class="btn-tp-or" onclick="toggleCorrection('corr-q3', this)">🔒 Afficher la correction</button>
+    </div>
+    <div id="corr-q3" class="correction-bloc encadre-conseil">
+      <span class="encadre-prefix">Correction — Question 3</span>
+      <pre><code>def chasser(self, nb_proies, nb_coccinelles):
+    """
+    Simule la chasse d'une coccinelle pour la journée.
+
+    La quantité de proies consommées dépend de la densité de nourriture
+    disponible par coccinelle. Un bon repas (>= 10 proies) améliore le
+    niveau de nutrition ; un mauvais repas le diminue (plancher à 0).
+
+    nb_proies      : int — nombre de proies disponibles dans la serre
+    nb_coccinelles : int — nombre de coccinelles présentes (pour partager)
+
+    Renvoie : int — nombre de proies restantes après la chasse de cette coccinelle
+    """
+    # Cas de sécurité : évite une division par zéro si la population est vide
+    if nb_coccinelles == 0:
+        return nb_proies
+
+    # Densité de nourriture disponible par coccinelle
+    proies_par_cocci = nb_proies / nb_coccinelles
+
+    # Plus la densité est élevée, plus la coccinelle mange
+    if proies_par_cocci > 20:
+        consomme = random.randint(12, 20)   # abondance : repas copieux
+    elif proies_par_cocci > 10:
+        consomme = random.randint(8, 15)    # nourriture suffisante
+    else:
+        consomme = random.randint(3, 8)     # pénurie : repas maigre
+
+    # Garde-fou : on ne peut pas manger plus qu'il n'en reste
+    consomme = min(consomme, nb_proies)
+
+    # Mise à jour du niveau de nutrition
+    if consomme >= 10:
+        self.niv_nutrition += 1           # bon repas → niveau monte
+    else:
+        self.niv_nutrition = max(0, self.niv_nutrition - 1)  # mauvais repas → descend (min. 0)
+
+    return nb_proies - consomme           # proies restantes après la chasse</code></pre>
+    </div>
+
+  </section>
+
+  <hr class="sep">
+
+  <!-- QUESTION 4 -->
+  <section id="q4">
+    <h2>Question 4 — Améliorer le modèle biologique</h2>
+
+    <div class="encadre-question">
+      <span class="encadre-prefix">Énoncé — Question 4</span>
+      <p>
+        <span class="badge-question">Q4</span>
+        Le producteur constate deux limites biologiques dans le modèle actuel :
+      </p>
+      <ol>
+        <li>
+          <strong>Maturité sexuelle absente :</strong> le modèle permet la reproduction dès la naissance,
+          alors qu'en réalité elle n'est possible qu'<strong>à partir de 20 jours de vie</strong>.
+        </li>
+        <li>
+          <strong>Impact du manque de nourriture sous-estimé :</strong> quand <code>niv_nutrition == 0</code>,
+          la coccinelle a en réalité <strong>1 chance sur 3 (environ 33 %)</strong> de ne pas survivre à la journée.
+        </li>
+      </ol>
+      <p style="margin:0">
+        Modifier les méthodes <code>reproduction</code> et <code>a_survecu</code> pour intégrer ces deux règles.
+        Tester à nouveau la simulation pour observer les changements.<br>
+        ✋ <em>Appel professeur — présente ta réponse ou sollicite de l'aide.</em>
+      </p>
+    </div>
+
+    <h3>Modification 1 — La maturité sexuelle dans <code>reproduction</code></h3>
+
+    <p>
+      Actuellement, la méthode <code>reproduction</code> vérifie seulement le sexe et le niveau de nutrition.
+      Il faut ajouter une condition : <code>self.age >= 20</code>.
+    </p>
+
+    <div class="encadre">
+      <span class="encadre-prefix">Code actuel de <code>reproduction</code></span>
+      <pre style="margin:0"><code>def reproduction(self):
+    descendants = []
+    if self.sexe == "femelle" and self.niv_nutrition >= 2:
+        descendants.append(Coccinelle("male", 0, 0))
+        descendants.append(Coccinelle("femelle", 0, 0))
+        self.niv_nutrition = 0
+    return descendants</code></pre>
+    </div>
+
+    <div style="margin:.8rem 0;">
+      <button class="btn-tp-vert" onclick="toggleIndice('indice-q4-1', this)">▶ Indice — Quelle ligne modifier ?</button>
+    </div>
+    <div id="indice-q4-1" class="encadre-indice indice-bloc">
+      <span class="encadre-prefix">Indice</span>
+      <p style="margin:0">
+        Il suffit d'ajouter <code>and self.age >= 20</code> dans la condition du <code>if</code> :
+      </p>
+      <pre style="margin:.5rem 0 0"><code>if self.sexe == "femelle" and self.niv_nutrition >= 2 and self.age >= 20:</code></pre>
+    </div>
+
+    <h3>Modification 2 — Le risque de mort par faim dans <code>a_survecu</code></h3>
+
+    <p>
+      Actuellement, <code>a_survecu</code> ne regarde que l'âge.
+      Il faut ajouter une chance de mourir si <code>niv_nutrition == 0</code>.
+      Pour simuler une probabilité de 1/3, on utilise <code>random.random()</code>
+      qui renvoie un flottant entre 0 et 1 — la probabilité d'obtenir une valeur inférieure à 1/3
+      est exactement 1/3.
+    </p>
+
+    <div class="encadre">
+      <span class="encadre-prefix">Code actuel de <code>a_survecu</code></span>
+      <pre style="margin:0"><code>def a_survecu(self):
+    self.age = self.age + 1
+    return self.age &lt; self.esperance_de_vie</code></pre>
+    </div>
+
+    <div style="margin:.8rem 0;">
+      <button class="btn-tp-vert" onclick="toggleIndice('indice-q4-2', this)">▶ Indice — Simuler une probabilité avec <code>random.random()</code></button>
+    </div>
+    <div id="indice-q4-2" class="encadre-indice indice-bloc">
+      <span class="encadre-prefix">Indice</span>
+      <p>
+        <code>random.random()</code> renvoie un flottant entre 0 inclus et 1 exclu.
+        La probabilité que ce flottant soit strictement inférieur à <code>1/3</code> est exactement 33 %.
+      </p>
+      <pre style="margin:0"><code>if self.niv_nutrition == 0 and random.random() &lt; 1/3:
+    return False   # meurt de faim</code></pre>
+      <p style="margin:.5rem 0 0">
+        Ce bloc doit être placé <strong>après</strong> la mise à jour de l'âge, mais <strong>avant</strong> le <code>return</code> final.
+      </p>
+    </div>
+
+    <h4>Essaie dans l'éditeur :</h4>
+
+    <div class="encadre" style="margin-top:1.2rem;">
+      <span class="encadre-prefix">Éditeur Python — Question 4 (méthodes à modifier)</span>
+      <script type="py-editor" env="cocci">
+# Copie ici les méthodes reproduction et a_survecu corrigées,
+# puis relance une simulation pour observer les changements.
+
+# Version à modifier :
+def reproduction_v2(self):
+    """
+    Reproduction avec maturité sexuelle à 20 jours.
+    """
+    descendants = []
+    # Ajoute la condition self.age >= 20 ici
+    if self.sexe == "femelle" and self.niv_nutrition >= 2 and self.age >= 20:
+        descendants.append(Coccinelle("male", 0, 0))
+        descendants.append(Coccinelle("femelle", 0, 0))
+        self.niv_nutrition = 0
+    return descendants
+
+def a_survecu_v2(self):
+    """
+    Vieillissement avec risque de mort par faim (niv_nutrition == 0 → 33% de risque).
+    """
+    self.age = self.age + 1
+    # Ajoute le risque de mort par faim ici
+    if self.niv_nutrition == 0 and random.random() < 1/3:
+        return False
+    return self.age < self.esperance_de_vie
+
+# Patch dynamique pour tester sans réécrire toute la classe
+Coccinelle.reproduction = reproduction_v2
+Coccinelle.a_survecu = a_survecu_v2
+
+# Nouvelle simulation
+population = [
+    Coccinelle("femelle", 10, 2),
+    Coccinelle("femelle", 10, 2),
+    Coccinelle("male",    10, 2)
+]
+nb_cocci, nb_puce, nb_jours = simulation_simple(population, 1000)
+print(f"Modèle amélioré — après {nb_jours} jour(s) : {nb_cocci} coccinelle(s), {nb_puce} puceron(s)")
+
+def test_ameliorations():
+    # Test maturité sexuelle : une femelle âgée de 5 jours ne doit pas se reproduire
+    c_jeune = Coccinelle("femelle", 5, 3)
+    assert c_jeune.reproduction() == [], "Une femelle de 5 jours ne doit pas se reproduire"
+
+    # Test maturité sexuelle : une femelle âgée de 20 jours bien nourrie doit se reproduire
+    c_mature = Coccinelle("femelle", 20, 2)
+    assert len(c_mature.reproduction()) == 2, "Une femelle de 20 jours bien nourrie doit avoir 2 descendants"
+
+    # Test a_survecu : une coccinelle de 10 jours avec bonne nutrition doit survivre
+    c_saine = Coccinelle("femelle", 10, 2)
+    c_saine.a_survecu()  # vieillit d'un jour
+    assert c_saine.age == 11, "L'âge doit avoir été incrémenté"
+
+    print("Les tests sont validés.")
+
+test_ameliorations()
+      </script>
+    </div>
+
+    <div style="margin:1rem 0;">
+      <button class="btn-tp-or" onclick="toggleCorrection('corr-q4', this)">🔒 Afficher la correction</button>
+    </div>
+    <div id="corr-q4" class="correction-bloc encadre-conseil">
+      <span class="encadre-prefix">Correction — Question 4</span>
+      <pre><code>def reproduction(self):
+    """
+    Une femelle d'au moins 20 jours avec un niveau de nutrition >= 2
+    engendre exactement deux descendants : un mâle et une femelle.
+    La maturité sexuelle (age >= 20) est désormais requise.
+    """
+    descendants = []
+    if self.sexe == "femelle" and self.niv_nutrition >= 2 and self.age >= 20:
+        descendants.append(Coccinelle("male", 0, 0))
+        descendants.append(Coccinelle("femelle", 0, 0))
+        self.niv_nutrition = 0
+    return descendants
+
+
+def a_survecu(self):
+    """
+    Met à jour l'âge de la coccinelle et indique si elle est encore en vie.
+    Si niv_nutrition == 0, la coccinelle a 1 chance sur 3 de mourir de faim.
+    """
+    self.age = self.age + 1
+    # Risque de mort par sous-nutrition (probabilité 1/3)
+    if self.niv_nutrition == 0 and random.random() &lt; 1/3:
+        return False
+    return self.age &lt; self.esperance_de_vie
+
+
+def test_ameliorations():
+    # Test 1 : femelle trop jeune → pas de reproduction
+    c_jeune = Coccinelle("femelle", 5, 3)
+    assert c_jeune.reproduction() == []
+
+    # Test 2 : femelle mature et bien nourrie → 2 descendants
+    c_mature = Coccinelle("femelle", 20, 2)
+    assert len(c_mature.reproduction()) == 2
+
+    # Test 3 : après reproduction, niv_nutrition est remis à 0
+    c_mature2 = Coccinelle("femelle", 25, 3)
+    c_mature2.reproduction()
+    assert c_mature2.niv_nutrition == 0
+
+    print("Les tests sont validés.")</code></pre>
+      <p>
+        <strong>Effet attendu sur la simulation :</strong> avec la maturité sexuelle, les nouveau-nés
+        ne se reproduisent pas avant 20 jours — la croissance de la population est donc plus lente.
+        Avec le risque de mort par faim, les périodes de pénurie de pucerons causent davantage de mortalité.
+        Le modèle devient plus réaliste biologiquement.
+      </p>
+    </div>
+
+  </section>
+
+  <hr class="sep">
+
+  <!-- PIÈGES FRÉQUENTS -->
+  <section id="pieges">
+    <h2>Pièges fréquents &amp; points de vigilance</h2>
+
+    <div class="encadre-piege">
+      <span class="encadre-prefix">Piège 1 — Oublier <code>self</code> dans les méthodes</span>
+      <p style="margin:0">
+        Chaque méthode d'une classe doit avoir <code>self</code> comme premier paramètre.
+        Si tu écris <code>def reproduction()</code> au lieu de <code>def reproduction(self)</code>,
+        Python lèvera une <code>TypeError</code> dès que tu appelleras <code>c.reproduction()</code>.
+        Le <code>self</code> représente l'objet lui-même — c'est lui qui permet d'accéder à <code>self.age</code>, etc.
+      </p>
+    </div>
+
+    <div class="encadre-piege">
+      <span class="encadre-prefix">Piège 2 — Modifier la liste pendant qu'on la parcourt</span>
+      <p style="margin:0">
+        Dans la fonction <code>evolution</code>, on construit une <code>population_suivante</code> distincte
+        au lieu de modifier <code>population</code> directement. C'est indispensable : supprimer des éléments
+        d'une liste pendant un <code>for … in liste</code> saute des éléments et produit des résultats incorrects.
+      </p>
+    </div>
+
+    <div class="encadre-piege">
+      <span class="encadre-prefix">Piège 3 — Confondre <code>len(population)</code> et <code>nb_coccinelles</code></span>
+      <p style="margin:0">
+        Dans <code>evolution</code>, <code>nb_coccinelles</code> est capturé <em>avant</em> la boucle de chasse —
+        c'est le nombre de coccinelles au <em>début</em> de la journée. Si tu utilisais <code>len(population_suivante)</code>
+        à la place, tu diviserais par un nombre qui change en cours de boucle, faussant le calcul de <code>proies_par_cocci</code>.
+      </p>
+    </div>
+
+    <div class="encadre-piege">
+      <span class="encadre-prefix">Piège 4 — Oublier la condition d'arrêt dans <code>simulation_simple</code></span>
+      <p style="margin:0">
+        La boucle <code>while</code> doit tester simultanément trois conditions :
+        <code>jour &lt; 30</code>, <code>len(population) > 0</code> et <code>nb_proies > 0</code>.
+        Oublier l'une d'elles peut mener à une division par zéro dans <code>chasser</code>
+        (si <code>nb_coccinelles</code> vaut 0 mais que la boucle continue)
+        ou à une boucle infinie si le critère de temps n'est pas vérifié.
+      </p>
+    </div>
+
+    <div class="encadre-piege">
+      <span class="encadre-prefix">Piège 5 — Les résultats aléatoires ne sont pas reproductibles</span>
+      <p style="margin:0">
+        Les fonctions <code>random.randint</code> et <code>random.random</code> produisent des résultats
+        différents à chaque exécution. Les tests portant sur les <em>valeurs numériques</em> exactes
+        (nombre de pucerons, de coccinelles) ne peuvent donc pas utiliser des valeurs littérales.
+        Teste plutôt des <em>propriétés</em> : la valeur est positive, le tuple a 3 éléments,
+        le nombre de jours est ≤ 30, etc.
+      </p>
+    </div>
+
+    <div class="encadre-conseil" style="margin-top:1.5rem;">
+      <span class="encadre-prefix">Astuces de vérification</span>
+      <ul style="margin:0">
+        <li>
+          <strong>Tester <code>reproduction</code> directement :</strong>
+          crée une femelle avec <code>niv_nutrition = 2</code> et <code>age = 20</code>, appelle <code>reproduction()</code>
+          — tu dois obtenir une liste de 2 éléments.
+        </li>
+        <li>
+          <strong>Tester le garde-fou de <code>chasser</code> :</strong>
+          appelle <code>c.chasser(100, 0)</code> — la méthode doit renvoyer <code>100</code> sans erreur.
+        </li>
+        <li>
+          <strong>Valider le retour de <code>simulation_simple</code> :</strong>
+          vérifie toujours que c'est bien un tuple et que <code>nb_jours &lt;= 30</code>.
+        </li>
+        <li>
+          <strong>Fixer la graine aléatoire pour des tests reproductibles :</strong>
+          <code>random.seed(42)</code> avant ton test garantit que <code>random.randint</code>
+          produira toujours la même séquence — utile pour comparer deux versions du code.
+        </li>
+      </ul>
+    </div>
+
+  </section>
+
+  <hr class="sep">
+
+  <!-- RÉCAPITULATIF -->
+  <div class="encadre" style="margin-top:2rem;">
+    <span class="encadre-prefix">Ce que tu dois retenir</span>
+    <ul style="margin:0">
+      <li>Une <strong>classe</strong> définit un modèle d'objet avec des attributs (<code>self.age</code>) et des méthodes (<code>self.chasser()</code>).</li>
+      <li>Le constructeur <code>__init__</code> initialise les attributs à la création de l'objet.</li>
+      <li>On ne modifie pas une liste pendant qu'on la parcourt — on en construit une nouvelle.</li>
+      <li>Un <code>while</code> avec plusieurs conditions garde est la bonne structure pour une simulation bornée.</li>
+      <li><code>random.random() &lt; p</code> simule un événement aléatoire de probabilité <code>p</code>.</li>
+      <li>Les tests sur code aléatoire portent sur des <em>propriétés structurelles</em>, pas sur des valeurs exactes.</li>
+    </ul>
+  </div>
+
+</div><!-- /container-content -->
+
+<!-- PIED DE PAGE -->
+<footer>
+  Lycée Antoine Watteau — DarkSATHI Li &nbsp;·&nbsp; NSI Terminale &nbsp;·&nbsp; Session Pratique 2026 &nbsp;·&nbsp; Sujet n°7
+</footer>
+
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+  /* ── RETOUR EN HAUT ── */
+  const btnTop = document.getElementById('btn-top');
+  window.addEventListener('scroll', function () {
+    btnTop.style.display = window.scrollY > 300 ? 'flex' : 'none';
+  });
+  btnTop.addEventListener('click', function () {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  });
+
+  /* ── TOGGLE INDICE ── */
+  function toggleIndice(id, btn) {
+    var el = document.getElementById(id);
+    if (!el) return;
+    if (el.classList.contains('visible')) {
+      el.classList.remove('visible');
+      btn.textContent = btn.textContent.replace('▼', '▶');
+    } else {
+      el.classList.add('visible');
+      btn.textContent = btn.textContent.replace('▶', '▼');
+    }
+  }
+
+  /* ── TOGGLE CORRECTION ── */
+  function toggleCorrection(id, btn) {
+    var el = document.getElementById(id);
+    if (!el) return;
+    if (el.classList.contains('visible')) {
+      el.classList.remove('visible');
+      if (btn) btn.textContent = btn.textContent.replace('Masquer', 'Afficher');
+    } else {
+      el.classList.add('visible');
+      if (btn) btn.textContent = btn.textContent.replace('Afficher', 'Masquer');
+    }
+  }
+</script>
+</body>
+</html>
