@@ -1,3 +1,5 @@
+![Pratique Image](pratique_picture.png)
+
 # 🎓 NSI Terminale — Fiches BAC 2026
 
 [![NSI](https://img.shields.io/badge/Discipline-NSI-blue.svg)](https://eduscol.education.fr/1715/numerique-et-sciences-informatiques-bac-general)

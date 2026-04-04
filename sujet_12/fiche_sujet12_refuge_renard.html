@@ -1,0 +1,1246 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Fiche – Refuge Renards POO | NSI Terminale | BAC 2026 Sujet 12</title>
+
+  <!-- Bootstrap 5.3.3 -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Rubik+Dirt&family=Source+Serif+4:ital,opsz,wght@0,8..60,300..900;1,8..60,300..900&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+
+  <!-- MathJax v3 -->
+  <script>
+    MathJax = {
+      tex: { inlineMath: [['\\(', '\\)'], ['$', '$']] },
+      options: { skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre'] }
+    };
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js" async></script>
+
+  <!-- PyScript 2026.3.1 -->
+  <script type="module" src="https://pyscript.net/releases/2026.3.1/core.js"></script>
+
+  <style>
+    :root {
+      --bg-main:    #f8f9fb;
+      --bg-panel:   #eef1f5;
+      --bg-cours:   #ffffff;
+      --accent:     #2a6496;
+      --py-editor-input: white;
+      --accent-or:  #b5610a;
+      --accent-vert:#2e7d32;
+      --text-main:  #1a1a1a;
+      --text-muted: #5a6470;
+      --border-radius: 8px;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      background-color: var(--bg-main);
+      color: var(--text-main);
+      font-family: 'Source Serif 4', Georgia, serif;
+      font-size: 1.1rem;
+      line-height: 1.8;
+      margin: 0;
+      padding-bottom: 4rem;
+    }
+
+    h1, h2, h3, h4 {
+      font-family: 'Rubik Dirt', cursive;
+      color: var(--accent);
+      letter-spacing: 0.02em;
+    }
+
+    h1 { font-size: 2.2rem; color: #111; }
+    h2 { font-size: 1.55rem; border-bottom: 2px solid var(--accent); padding-bottom: .3rem; margin-top: 2.5rem; }
+    h3 { font-size: 1.25rem; color: var(--accent-or); margin-top: 1.8rem; }
+    h4 { font-size: 1.05rem; color: var(--accent-vert); }
+
+    p { margin-bottom: 1rem; }
+
+    code, pre, .mono {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.9em;
+    }
+
+    code {
+      background: #e8edf2;
+      padding: 2px 6px;
+      border-radius: 4px;
+      color: #8b3a00;
+    }
+
+    pre {
+      background: #f0f3f7;
+      border-left: 3px solid var(--accent);
+      padding: 1rem 1.2rem;
+      border-radius: var(--border-radius);
+      overflow-x: auto;
+      color: #1a1a1a;
+    }
+
+    a { color: var(--accent); text-decoration: underline dotted; }
+    a:hover { color: var(--accent-or); }
+
+    /* ── NAVIGATION ── */
+    #navbar {
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      background: #2a6496;
+      border-bottom: 2px solid #1a4a70;
+      padding: .5rem 1.5rem;
+      display: flex;
+      gap: .5rem;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    #navbar span {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: .8rem;
+      color: #ccddf0;
+      margin-right: auto;
+    }
+
+    #navbar a {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: .8rem;
+      color: #fff;
+      text-decoration: none;
+      padding: .25rem .7rem;
+      border: 1px solid #ccddf0;
+      border-radius: 4px;
+      transition: background .2s;
+    }
+
+    #navbar a:hover { background: #1a4a70; color: #fff; }
+
+    /* ── CONTENU ── */
+    .container-content {
+      max-width: 860px;
+      margin: 0 auto;
+      padding: 2rem 1.5rem;
+    }
+
+    /* ── ENCADRÉS ── */
+    .encadre,
+    .encadre-conseil,
+    .encadre-indice,
+    .encadre-question {
+      background: #ffffff;
+      border-radius: var(--border-radius);
+      padding: 1.1rem 1.4rem;
+      margin: 1.4rem 0;
+      position: relative;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+    }
+
+    .encadre          { border-left: 4px solid var(--accent); }
+    .encadre-conseil  { border-left: 4px solid var(--accent-or); background: #fff8f0; }
+    .encadre-indice   { border-left: 4px solid var(--accent-vert); background: #f0faf0; }
+    .encadre-question { border-left: 4px solid #7b3fa8; background: #faf5ff; }
+
+    .encadre-prefix {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: .72rem;
+      font-variant: small-caps;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      margin-bottom: .4rem;
+      display: block;
+    }
+
+    .encadre          .encadre-prefix { color: var(--accent); }
+    .encadre-conseil  .encadre-prefix { color: var(--accent-or); }
+    .encadre-indice   .encadre-prefix { color: var(--accent-vert); }
+    .encadre-question .encadre-prefix { color: #7b3fa8; }
+
+    /* ── BOUTONS ── */
+    .btn-tp, .btn-tp-or, .btn-tp-vert, .btn-secondaire {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: .82rem;
+      border: none;
+      border-radius: 5px;
+      padding: .45rem 1.1rem;
+      cursor: pointer;
+      transition: opacity .2s, transform .1s;
+      margin: .3rem .2rem;
+    }
+
+    .btn-tp         { background: var(--accent);      color: #fff; }
+    .btn-tp-or      { background: var(--accent-or);   color: #fff; }
+    .btn-tp-vert    { background: var(--accent-vert); color: #fff; }
+    .btn-secondaire { background: #eef1f5; border: 1px solid var(--accent); color: var(--text-main); }
+
+    .btn-tp:hover, .btn-tp-or:hover, .btn-tp-vert:hover, .btn-secondaire:hover {
+      opacity: .85; transform: translateY(-1px);
+    }
+
+    /* ── BADGE QUESTION ── */
+    .badge-question {
+      display: inline-block;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: .8rem;
+      background: #7b3fa8;
+      color: #fff;
+      border-radius: 4px;
+      padding: .15rem .7rem;
+      margin-right: .5rem;
+      vertical-align: middle;
+    }
+
+    /* ── INDICES / CORRECTIONS ── */
+    .indice-bloc    { display: none; }
+    .indice-bloc.visible { display: block; }
+    .correction-bloc { display: none; }
+    .correction-bloc.visible { display: block; }
+
+    /* ── PIÈGE ── */
+    .encadre-piege {
+      background: #fff5f5;
+      border-left: 4px solid #c0392b;
+      border-radius: var(--border-radius);
+      padding: 1rem 1.4rem;
+      margin: 1.2rem 0;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.07);
+    }
+
+    .encadre-piege .encadre-prefix {
+      color: #c0392b;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: .72rem;
+      font-variant: small-caps;
+      letter-spacing: .12em;
+      display: block;
+      margin-bottom: .3rem;
+    }
+
+    /* ── SOMMAIRE ── */
+    #sommaire ol {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: .88rem;
+      line-height: 2.2;
+    }
+
+    #sommaire a { color: var(--accent); }
+    #sommaire a:hover { color: var(--accent-or); }
+
+    .sep { border: none; border-top: 1px dashed #9ab0c8; margin: 2.5rem 0; opacity: .7; }
+
+    /* py-editor */
+    py-editor { display: block; min-height: 100px; }
+
+    /* ── RETOUR EN HAUT ── */
+    #btn-top {
+      position: fixed;
+      bottom: 1.5rem;
+      right: 1.5rem;
+      z-index: 999;
+      background: var(--accent);
+      color: #fff;
+      border: none;
+      border-radius: 50%;
+      width: 44px;
+      height: 44px;
+      font-size: 1.2rem;
+      cursor: pointer;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      font-family: 'JetBrains Mono', monospace;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.25);
+      transition: opacity .2s;
+    }
+
+    #btn-top:hover { opacity: .8; }
+
+    /* ── TABLE CSV ── */
+    .table-csv {
+      border-collapse: collapse;
+      margin: 1rem auto;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: .85rem;
+      width: 100%;
+    }
+
+    .table-csv th, .table-csv td {
+      border: 1px solid #b0c4d8;
+      padding: .35rem .7rem;
+      text-align: center;
+    }
+
+    .table-csv th {
+      background: #dce8f2;
+      color: var(--accent);
+      font-weight: 600;
+    }
+
+    .table-csv tr.peu-corpulent { background: #fff3cd; }
+    .table-csv tr:nth-child(even):not(.peu-corpulent) { background: #f4f7fb; }
+
+    /* ── SCHÉMA POO ── */
+    .schema-poo {
+      background: #f0f3f7;
+      border: 2px solid var(--accent);
+      border-radius: var(--border-radius);
+      padding: 1.2rem;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: .85rem;
+      margin: 1rem 0;
+    }
+
+    .schema-poo .classe-titre {
+      background: var(--accent);
+      color: #fff;
+      padding: .3rem .8rem;
+      border-radius: 4px;
+      font-weight: 600;
+      display: inline-block;
+      margin-bottom: .5rem;
+    }
+
+    .schema-poo ul {
+      margin: .3rem 0 .3rem 1rem;
+      padding: 0;
+    }
+
+    /* ── PIED DE PAGE ── */
+    footer {
+      text-align: center;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: .8rem;
+      color: var(--text-muted);
+      padding: 2rem 1rem 1rem;
+      border-top: 1px solid #d0d8e4;
+    }
+  </style>
+</head>
+<body>
+
+<div id="pyinit" style="display:none">
+  <script type="py" env="refuge">
+pass
+  </script>
+</div>
+
+<!-- BOUTON RETOUR EN HAUT -->
+<button id="btn-top" title="Retour en haut" aria-label="Retour en haut">▲</button>
+
+<!-- NAVIGATION STICKY -->
+<nav id="navbar">
+  <span>NSI Terminale – Sujet 12 – POO &amp; Refuge</span>
+  <a href="#s0">Intro</a>
+  <a href="#s1">POO</a>
+  <a href="#s2">CSV</a>
+  <a href="#q1">Q1</a>
+  <a href="#q2">Q2</a>
+  <a href="#q3">Q3</a>
+  <a href="#q4">Q4</a>
+  <a href="#pieges">Pièges</a>
+</nav>
+
+<!-- CONTENU PRINCIPAL -->
+<div class="container-content">
+
+  <!-- EN-TÊTE -->
+  <div style="text-align:center; padding: 2rem 0 1rem;">
+    <div style="font-family:'JetBrains Mono',monospace; font-size:.8rem; color:var(--text-muted); margin-bottom:.5rem;">
+      BAC NSI 2026 — Sujet n°12 — Partie pratique
+    </div>
+    <h1>Gestion d'un refuge pour renards<br>
+      <span style="font-size:1.1rem; color:var(--accent); font-family:'Source Serif 4',serif; font-style:italic; font-weight:300;">
+        Programmation orientée objet &amp; fichiers CSV — Fiche de révision guidée
+      </span>
+    </h1>
+    <div style="font-family:'JetBrains Mono',monospace; font-size:.8rem; color:var(--text-muted); margin-top:.5rem;">
+      Terminale NSI &nbsp;·&nbsp; POO &nbsp;·&nbsp; Fichiers CSV &nbsp;·&nbsp; Classes &amp; Méthodes
+    </div>
+  </div>
+
+  <hr class="sep">
+
+  <!-- SOMMAIRE -->
+  <section id="s0">
+    <div id="sommaire" class="encadre">
+      <span class="encadre-prefix">Sommaire</span>
+      <ol>
+        <li><a href="#s1">Rappels – Programmation orientée objet en Python</a></li>
+        <li><a href="#s2">Rappels – Lecture d'un fichier CSV avec le module <code>csv</code></a></li>
+        <li><a href="#q1">Question 1 – Écrire le constructeur <code>__init__</code> de <code>Renard</code></a></li>
+        <li><a href="#q2">Question 2 – Écrire la méthode <code>__str__</code> et tester</a></li>
+        <li><a href="#q3">Question 3 – Identifier et corriger le bug de <code>importer_donnees</code></a></li>
+        <li><a href="#q4">Question 4 – Analyser la corpulence et justifier le pourcentage</a></li>
+        <li><a href="#pieges">Pièges fréquents &amp; astuces de vérification</a></li>
+      </ol>
+    </div>
+  </section>
+
+  <hr class="sep">
+
+  <!-- SECTION 1 : RAPPELS POO -->
+  <section id="s1">
+    <h2>1 — Rappels : Programmation orientée objet (POO)</h2>
+
+    <p>
+      Imagine que tu veux modéliser un animal dans ton programme. Tu pourrais utiliser des variables séparées
+      (<code>nom = "Zorro"</code>, <code>poids = 6.5</code>…), mais dès que tu as 30 animaux, c'est le chaos.
+      La POO résout ça : on crée un <strong>moule</strong> (la <em>classe</em>) qui décrit la forme de l'objet,
+      puis on fabrique autant d'objets qu'on veut à partir de ce moule.
+    </p>
+
+    <div class="encadre">
+      <span class="encadre-prefix">Définition – Classe et objet</span>
+      <p style="margin:0">
+        Une <strong>classe</strong> est un modèle qui définit les <em>attributs</em> (données) et les
+        <em>méthodes</em> (fonctions) d'un type d'objet. Un <strong>objet</strong> (ou instance) est
+        un exemplaire concret créé à partir d'une classe.
+      </p>
+    </div>
+
+    <h3>La structure d'une classe Python</h3>
+
+    <pre>class Renard:
+    def __init__(self, nom, poids):   # constructeur : appelé à la création
+        self.nom   = nom              # attribut d'instance
+        self.poids = poids
+
+    def __str__(self):                # appelé par print() et str()
+        return f"Renard : {self.nom}, {self.poids} kg"
+
+    def est_adulte(self):             # méthode ordinaire
+        return self.poids >= 6.0
+
+# Créer un objet (instancier la classe) :
+r = Renard("Zorro", 6.5)
+print(r)            # → Renard : Zorro, 6.5 kg
+print(r.nom)        # → Zorro
+print(r.est_adulte()) # → True</pre>
+
+    <h3>Le rôle de <code>self</code></h3>
+
+    <p>
+      <code>self</code> désigne l'objet lui-même. C'est le premier paramètre de toute méthode d'instance.
+      Quand tu écris <code>self.nom = nom</code> dans <code>__init__</code>, tu crées un attribut
+      <em>attaché à cet objet précis</em>, distinct de la variable locale <code>nom</code>.
+    </p>
+
+    <div class="encadre-conseil">
+      <span class="encadre-prefix">Règle d'or</span>
+      <p style="margin:0">
+        Dans <code>__init__</code>, chaque paramètre reçu doit être sauvegardé dans un attribut avec
+        <code>self.nom_attribut = parametre</code>. Sinon, la valeur est perdue à la fin du constructeur.
+      </p>
+    </div>
+
+    <h3>Les méthodes spéciales <code>__init__</code> et <code>__str__</code></h3>
+
+    <div class="encadre">
+      <span class="encadre-prefix">Méthodes spéciales (« dunder »)</span>
+      <p><strong><code>__init__(self, ...)</code></strong> — Le constructeur. Python l'appelle automatiquement
+      quand tu écris <code>Renard(...)</code>. Il initialise les attributs de l'objet.</p>
+      <p style="margin:0"><strong><code>__str__(self)</code></strong> — Appelé automatiquement par <code>print(objet)</code>
+      et <code>str(objet)</code>. Doit retourner une <em>chaîne de caractères</em> (pas autre chose).</p>
+    </div>
+
+    <h3>Schéma des deux classes du sujet</h3>
+
+    <div class="schema-poo">
+      <div>
+        <span class="classe-titre">Renard</span>
+        <ul>
+          <li><strong>Attributs :</strong> identifiant (int), nom (str), poids (float), date_arrivee (str)</li>
+          <li><strong>Méthodes :</strong> <code>__init__</code>, <code>__str__</code></li>
+        </ul>
+      </div>
+      <div style="margin-top:1rem;">
+        <span class="classe-titre">Refuge</span>
+        <ul>
+          <li><strong>Attributs :</strong> nom (str), adresse (str), liste_renards (list)</li>
+          <li><strong>Méthodes :</strong> <code>recueillir</code>, <code>lister_peu_corpulents</code>,
+              <code>pourcentage_peu_corpulents</code>, <code>importer_donnees</code></li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <hr class="sep">
+
+  <!-- SECTION 2 : RAPPELS CSV -->
+  <section id="s2">
+    <h2>2 — Rappels : lire un fichier CSV avec le module <code>csv</code></h2>
+
+    <p>
+      Un fichier CSV (<em>Comma-Separated Values</em>) stocke des données tabulaires sous forme de texte brut,
+      avec un séparateur entre les colonnes. Dans ce sujet, le séparateur est le <strong>point-virgule</strong> (<code>;</code>).
+    </p>
+
+    <h3>Le fichier <code>donnees_renards.csv</code> — extrait</h3>
+
+    <table class="table-csv">
+      <tr><th>id</th><th>nom</th><th>poids</th><th>date_arrivee</th></tr>
+      <tr><td>101</td><td>Zorro</td><td>6.5</td><td>2023-01-15</td></tr>
+      <tr><td>102</td><td>Roxy</td><td>5.8</td><td>2023-02-10</td></tr>
+      <tr><td>103</td><td>Filou</td><td>7.2</td><td>2023-03-05</td></tr>
+      <tr><td>104</td><td>Kira</td><td>4.9</td><td>2024-11-20</td></tr>
+      <tr><td colspan="4" style="color:var(--text-muted); font-style:italic;">… 26 autres lignes …</td></tr>
+      <tr><td>130</td><td>Loup</td><td>5.2</td><td>2023-09-01</td></tr>
+    </table>
+
+    <div class="encadre-conseil">
+      <span class="encadre-prefix">Point crucial du sujet</span>
+      <p style="margin:0">
+        Toutes les données lues depuis un fichier CSV arrivent sous forme de <strong>chaînes de caractères</strong>
+        (<code>str</code>), même si la valeur ressemble à un nombre. Il faut <strong>convertir explicitement</strong>
+        <code>id</code> en <code>int</code> et <code>poids</code> en <code>float</code>. C'est exactement
+        le bug de la Question 3.
+      </p>
+    </div>
+
+    <h3>Comment fonctionne <code>csv.DictReader</code></h3>
+
+    <pre>import csv
+
+with open('fichier.csv', 'r', encoding='utf-8') as f:
+    lignes = csv.DictReader(f, delimiter=';')
+    for ligne in lignes:
+        # 'ligne' est un dictionnaire {colonne: valeur}
+        # TOUTES les valeurs sont des str !
+        print(ligne['id'])     # → '101'  (str, pas int)
+        print(ligne['poids'])  # → '6.5'  (str, pas float)</pre>
+
+    <p>
+      Pour convertir, on utilise <code>int(ligne['id'])</code> et <code>float(ligne['poids'])</code>.
+    </p>
+  </section>
+
+  <hr class="sep">
+
+  <!-- QUESTION 1 -->
+  <section id="q1">
+    <h2>3 — <span class="badge-question">Q1</span> Écrire le constructeur <code>__init__</code></h2>
+
+    <div class="encadre-question">
+      <span class="encadre-prefix">Énoncé de la question 1</span>
+      <p style="margin:0">
+        Écrire le code du constructeur <code>__init__</code> de la classe <code>Renard</code>.
+        Un renard possède quatre attributs : <code>identifiant</code> (entier),
+        <code>nom</code> (chaîne), <code>poids</code> (flottant), <code>date_arrivee</code> (chaîne).
+      </p>
+    </div>
+
+    <h3>Aide méthodologique</h3>
+
+    <p>
+      Le constructeur reçoit les quatre valeurs en paramètres et doit les mémoriser dans des attributs
+      d'instance. Voici la correspondance exacte attendue :
+    </p>
+
+    <table class="table-csv" style="width:auto; margin:0 0 1rem 0;">
+      <tr><th>Paramètre reçu</th><th>Attribut à créer</th><th>Type</th></tr>
+      <tr><td><code>identifiant</code></td><td><code>self.identifiant</code></td><td>int</td></tr>
+      <tr><td><code>nom</code></td><td><code>self.nom</code></td><td>str</td></tr>
+      <tr><td><code>poids</code></td><td><code>self.poids</code></td><td>float</td></tr>
+      <tr><td><code>date_arrivee</code></td><td><code>self.date_arrivee</code></td><td>str</td></tr>
+    </table>
+
+    <div class="encadre-indice">
+      <span class="encadre-prefix">Indice niveau 1</span>
+      <button class="btn-secondaire" onclick="toggleBloc('ind1a')">Afficher / masquer</button>
+      <div id="ind1a" class="indice-bloc">
+        <p style="margin-top:.7rem; margin-bottom:0">
+          Un constructeur ressemble toujours à ceci :
+        </p>
+        <pre>def __init__(self, param1, param2, ...):
+    self.attribut1 = param1
+    self.attribut2 = param2
+    ...</pre>
+      </div>
+    </div>
+
+    <div class="encadre-indice">
+      <span class="encadre-prefix">Indice niveau 2 — squelette complet</span>
+      <button class="btn-secondaire" onclick="toggleBloc('ind1b')">Afficher / masquer</button>
+      <div id="ind1b" class="indice-bloc">
+        <pre>def __init__(self, identifiant, nom, poids, date_arrivee):
+    self.identifiant  = identifiant
+    self.nom          = nom
+    self.poids        = poids
+    self.date_arrivee = date_arrivee</pre>
+      </div>
+    </div>
+
+    <h3>Éditeur Python — à toi de jouer !</h3>
+
+    <script type="py-editor" env="refuge">
+class Renard:
+    def __init__(self, identifiant, nom, poids, date_arrivee):
+        pass  # REMPLACE CE PASS PAR TON CODE
+
+    def __str__(self):
+        return f"Renard ID {self.identifiant} - {self.nom} (Arrive le {self.date_arrivee})"
+
+# ── Fonction de test ──────────────────────────────────────────────────
+def test_init_renard():
+    r = Renard(101, "Zorro", 6.5, "2023-01-15")
+    assert r.identifiant  == 101
+    assert r.nom          == "Zorro"
+    assert r.poids        == 6.5
+    assert r.date_arrivee == "2023-01-15"
+    r2 = Renard(104, "Kira", 4.9, "2024-11-20")
+    assert r2.identifiant == 104
+    assert r2.poids       == 4.9
+    assert r2.nom         == "Kira"
+    print("Les tests sont valides.")
+
+test_init_renard()
+    </script>
+
+    <div class="encadre-conseil">
+      <span class="encadre-prefix">Correction – Question 1</span>
+      <button class="btn-tp-or" onclick="toggleBloc('corr1')">Afficher / masquer la correction</button>
+      <div id="corr1" class="correction-bloc">
+        <pre>def __init__(self, identifiant, nom, poids, date_arrivee):
+    self.identifiant  = identifiant
+    self.nom          = nom
+    self.poids        = poids
+    self.date_arrivee = date_arrivee</pre>
+
+        <script type="py-editor" env="refuge">
+class Renard:
+    def __init__(self, identifiant, nom, poids, date_arrivee):
+        self.identifiant  = identifiant
+        self.nom          = nom
+        self.poids        = poids
+        self.date_arrivee = date_arrivee
+
+    def __str__(self):
+        return f"Renard ID {self.identifiant} - {self.nom} (Arrive le {self.date_arrivee})"
+
+def test_init_renard():
+    r = Renard(101, "Zorro", 6.5, "2023-01-15")
+    assert r.identifiant  == 101
+    assert r.nom          == "Zorro"
+    assert r.poids        == 6.5
+    assert r.date_arrivee == "2023-01-15"
+    r2 = Renard(104, "Kira", 4.9, "2024-11-20")
+    assert r2.identifiant == 104
+    assert r2.poids       == 4.9
+    assert r2.nom         == "Kira"
+    print("Les tests sont valides.")
+
+test_init_renard()
+        </script>
+      </div>
+    </div>
+  </section>
+
+  <hr class="sep">
+
+  <!-- QUESTION 2 -->
+  <section id="q2">
+    <h2>4 — <span class="badge-question">Q2</span> Écrire <code>__str__</code> et tester</h2>
+
+    <div class="encadre-question">
+      <span class="encadre-prefix">Énoncé de la question 2</span>
+      <p>
+        Écrire le code de la méthode <code>__str__</code> de la classe <code>Renard</code> qui renvoie
+        une chaîne de caractères au format précis :
+      </p>
+      <pre style="background:#f0ebff; border-left-color:#7b3fa8; margin:0">"Renard ID [id] - [Nom] (Arrivé le [date_arrivee])"</pre>
+      <p style="margin-top:.8rem; margin-bottom:0">
+        Tester ensuite en instanciant un renard <code>renard1</code> : identifiant <code>200</code>,
+        nom <code>Oscar</code>, poids <code>5.1 kg</code>, arrivé le <code>2026-01-01</code>.
+        Afficher les informations dans la console.
+      </p>
+    </div>
+
+    <h3>Aide méthodologique</h3>
+
+    <p>
+      La méthode <code>__str__</code> doit <strong>retourner</strong> (avec <code>return</code>)
+      une chaîne de caractères — jamais <code>print</code> directement. On utilise une f-string
+      pour insérer les valeurs des attributs dans la chaîne.
+    </p>
+
+    <div class="encadre-conseil">
+      <span class="encadre-prefix">Format exact attendu</span>
+      <p>
+        Pour le renard de test (<code>renard1</code>), le résultat doit être <strong>exactement</strong> :
+      </p>
+      <pre style="background:#f0f3f7; border:none; padding:.5rem 1rem; margin:0">Renard ID 200 - Oscar (Arrivé le 2026-01-01)</pre>
+      <p style="margin:.5rem 0 0; font-size:.9rem;">
+        Attention à l'accent sur « Arrivé » et aux espaces autour du tiret.
+      </p>
+    </div>
+
+    <div class="encadre-indice">
+      <span class="encadre-prefix">Indice niveau 1 — f-string</span>
+      <button class="btn-secondaire" onclick="toggleBloc('ind2a')">Afficher / masquer</button>
+      <div id="ind2a" class="indice-bloc">
+        <pre>def __str__(self):
+    return f"Renard ID {self.???} - {self.???} (Arrivé le {self.???})"</pre>
+        <p style="margin:.5rem 0 0; font-size:.9rem;">
+          Remplace les <code>???</code> par les bons noms d'attributs.
+          Note : le <code>poids</code> n'apparaît pas dans ce format.
+        </p>
+      </div>
+    </div>
+
+    <div class="encadre-indice">
+      <span class="encadre-prefix">Indice niveau 2 — solution complète</span>
+      <button class="btn-secondaire" onclick="toggleBloc('ind2b')">Afficher / masquer</button>
+      <div id="ind2b" class="indice-bloc">
+        <pre>def __str__(self):
+    return f"Renard ID {self.identifiant} - {self.nom} (Arrivé le {self.date_arrivee})"</pre>
+      </div>
+    </div>
+
+    <h3>Éditeur Python — à toi de jouer !</h3>
+
+    <script type="py-editor" env="refuge">
+class Renard:
+    def __init__(self, identifiant, nom, poids, date_arrivee):
+        self.identifiant  = identifiant
+        self.nom          = nom
+        self.poids        = poids
+        self.date_arrivee = date_arrivee
+
+    def __str__(self):
+        pass  # REMPLACE CE PASS PAR TON CODE
+
+# ── Test de l'énoncé ─────────────────────────────────────────────────
+renard1 = Renard(200, "Oscar", 5.1, "2026-01-01")
+print(renard1)  # doit afficher : Renard ID 200 - Oscar (Arrivé le 2026-01-01)
+
+# ── Fonction de test ──────────────────────────────────────────────────
+def test_str_renard():
+    r = Renard(200, "Oscar", 5.1, "2026-01-01")
+    assert str(r) == "Renard ID 200 - Oscar (Arrivé le 2026-01-01)"
+    r2 = Renard(101, "Zorro", 6.5, "2023-01-15")
+    assert str(r2) == "Renard ID 101 - Zorro (Arrivé le 2023-01-15)"
+    r3 = Renard(110, "Foxy", 4.5, "2023-10-25")
+    assert str(r3) == "Renard ID 110 - Foxy (Arrivé le 2023-10-25)"
+    print("Les tests sont valides.")
+
+test_str_renard()
+    </script>
+
+    <div class="encadre-conseil">
+      <span class="encadre-prefix">Correction – Question 2</span>
+      <button class="btn-tp-or" onclick="toggleBloc('corr2')">Afficher / masquer la correction</button>
+      <div id="corr2" class="correction-bloc">
+        <pre>def __str__(self):
+    return f"Renard ID {self.identifiant} - {self.nom} (Arrivé le {self.date_arrivee})"
+
+# Test de l'énoncé :
+renard1 = Renard(200, "Oscar", 5.1, "2026-01-01")
+print(renard1)
+# → Renard ID 200 - Oscar (Arrivé le 2026-01-01)</pre>
+
+        <script type="py-editor" env="refuge">
+class Renard:
+    def __init__(self, identifiant, nom, poids, date_arrivee):
+        self.identifiant  = identifiant
+        self.nom          = nom
+        self.poids        = poids
+        self.date_arrivee = date_arrivee
+
+    def __str__(self):
+        return f"Renard ID {self.identifiant} - {self.nom} (Arrivé le {self.date_arrivee})"
+
+renard1 = Renard(200, "Oscar", 5.1, "2026-01-01")
+print(renard1)
+
+def test_str_renard():
+    r = Renard(200, "Oscar", 5.1, "2026-01-01")
+    assert str(r) == "Renard ID 200 - Oscar (Arrivé le 2026-01-01)"
+    r2 = Renard(101, "Zorro", 6.5, "2023-01-15")
+    assert str(r2) == "Renard ID 101 - Zorro (Arrivé le 2023-01-15)"
+    r3 = Renard(110, "Foxy", 4.5, "2023-10-25")
+    assert str(r3) == "Renard ID 110 - Foxy (Arrivé le 2023-10-25)"
+    print("Les tests sont valides.")
+
+test_str_renard()
+        </script>
+      </div>
+    </div>
+  </section>
+
+  <hr class="sep">
+
+  <!-- QUESTION 3 -->
+  <section id="q3">
+    <h2>5 — <span class="badge-question">Q3</span> Identifier et corriger le bug de <code>importer_donnees</code></h2>
+
+    <div class="encadre-question">
+      <span class="encadre-prefix">Énoncé de la question 3</span>
+      <p style="margin:0">
+        L'exécution de la méthode <code>importer_donnees</code> provoque une <strong>erreur logique</strong>
+        lors de la manipulation ultérieure du poids et de l'identifiant des renards. Identifier la source
+        de cette erreur, proposer une correction, puis tester en instanciant le refuge « SOS Goupil »
+        et en y important le fichier <code>donnees_renards.csv</code>.
+      </p>
+    </div>
+
+    <h3>Analyse du bug</h3>
+
+    <p>
+      Voici la ligne problématique dans la méthode fournie :
+    </p>
+
+    <pre>renard = Renard(ligne['id'], ligne['nom'], ligne['poids'], ligne['date_arrivee'])
+#               ↑ str !      ↑ str ok     ↑ str !          ↑ str ok</pre>
+
+    <p>
+      <code>csv.DictReader</code> lit tout comme du texte. La valeur <code>ligne['id']</code> vaut
+      la chaîne <code>'101'</code>, pas l'entier <code>101</code>. De même, <code>ligne['poids']</code>
+      vaut <code>'6.5'</code>, pas le flottant <code>6.5</code>.
+    </p>
+
+    <div class="encadre-piege">
+      <span class="encadre-prefix">Erreur logique — pas d'erreur immédiate !</span>
+      <p>
+        C'est une <strong>erreur logique</strong>, pas une erreur de syntaxe. Python ne se plaint pas
+        quand tu passes une <code>str</code> là où on attend un <code>int</code> — il crée l'objet
+        sans sourciller. L'erreur n'apparaît que plus tard, quand tu tentes une opération numérique
+        sur le poids (comme comparer <code>renard.poids &lt; 6.0</code> entre une str et un float).
+      </p>
+      <pre># Exemple de ce qui se passe sans la correction :
+>>> '5.8' < 6.0   # TypeError : impossible de comparer str et float !
+# Ou pire :
+>>> '5.8' + 0.5   # TypeError</pre>
+    </div>
+
+    <h3>La correction</h3>
+
+    <p>
+      Il faut convertir explicitement <code>id</code> en <code>int</code> et <code>poids</code> en
+      <code>float</code> au moment de la création de l'objet :
+    </p>
+
+    <div class="encadre-indice">
+      <span class="encadre-prefix">Indice — syntaxe de conversion</span>
+      <button class="btn-secondaire" onclick="toggleBloc('ind3a')">Afficher / masquer</button>
+      <div id="ind3a" class="indice-bloc">
+        <pre>int('101')    # → 101    (str vers int)
+float('6.5')  # → 6.5    (str vers float)
+float('5.8')  # → 5.8    (str vers float)</pre>
+      </div>
+    </div>
+
+    <h3>Éditeur Python — à toi de jouer !</h3>
+
+    <script type="py-editor" env="refuge">
+import csv
+
+class Renard:
+    def __init__(self, identifiant, nom, poids, date_arrivee):
+        self.identifiant  = identifiant
+        self.nom          = nom
+        self.poids        = poids
+        self.date_arrivee = date_arrivee
+
+    def __str__(self):
+        return f"Renard ID {self.identifiant} - {self.nom} (Arrivé le {self.date_arrivee})"
+
+class Refuge:
+    def __init__(self, nom, adresse):
+        self.nom           = nom
+        self.adresse       = adresse
+        self.liste_renards = []
+
+    def recueillir(self, un_renard):
+        self.liste_renards.append(un_renard)
+
+    def importer_donnees(self, donnees_texte):
+        """Version adaptée : reçoit le texte CSV en paramètre (PyScript)."""
+        import io
+        f = io.StringIO(donnees_texte)
+        lignes = csv.DictReader(f, delimiter=';')
+        for ligne in lignes:
+            # CORRIGE LA LIGNE CI-DESSOUS :
+            renard = Renard(ligne['id'], ligne['nom'], ligne['poids'], ligne['date_arrivee'])
+            self.recueillir(renard)
+
+# CSV embarqué pour le test (identique au fichier donnees_renards.csv)
+CSV_DONNEES = """id;nom;poids;date_arrivee
+101;Zorro;6.5;2023-01-15
+102;Roxy;5.8;2023-02-10
+103;Filou;7.2;2023-03-05
+104;Kira;4.9;2024-11-20
+105;Rouky;6.1;2023-05-12
+106;Vixen;5.5;2023-06-01
+107;Goupil;7.8;2023-07-18
+108;Pipo;5.3;2023-08-22
+109;Vulpec;6.9;2023-09-09
+110;Foxy;4.5;2023-10-25
+111;Renardeau;3.2;2024-04-01
+112;Rubis;7.0;2024-03-10"""
+
+mon_refuge = Refuge("SOS Goupil", "12 rue de la Forêt")
+mon_refuge.importer_donnees(CSV_DONNEES)
+
+# ── Fonction de test ──────────────────────────────────────────────────
+def test_import():
+    assert len(mon_refuge.liste_renards) == 12
+    r0 = mon_refuge.liste_renards[0]
+    assert r0.identifiant == 101        # doit être un int
+    assert r0.poids       == 6.5        # doit être un float
+    assert r0.nom         == "Zorro"
+    r1 = mon_refuge.liste_renards[1]
+    assert r1.poids < 6.0               # Roxy : 5.8 < 6.0, doit être True
+    print("Les tests sont valides.")
+
+test_import()
+    </script>
+
+    <div class="encadre-conseil">
+      <span class="encadre-prefix">Correction – Question 3</span>
+      <button class="btn-tp-or" onclick="toggleBloc('corr3')">Afficher / masquer la correction</button>
+      <div id="corr3" class="correction-bloc">
+        <p><strong>Ligne buguée :</strong></p>
+        <pre>renard = Renard(ligne['id'], ligne['nom'], ligne['poids'], ligne['date_arrivee'])</pre>
+        <p><strong>Ligne corrigée :</strong></p>
+        <pre>renard = Renard(int(ligne['id']), ligne['nom'], float(ligne['poids']), ligne['date_arrivee'])</pre>
+        <p>
+          Seuls <code>id</code> (converti en <code>int</code>) et <code>poids</code>
+          (converti en <code>float</code>) nécessitent une conversion.
+          <code>nom</code> et <code>date_arrivee</code> sont déjà des chaînes — pas de conversion nécessaire.
+        </p>
+        <p><strong>Méthode corrigée complète :</strong></p>
+        <pre>def importer_donnees(self, nom_fichier):
+    print(f"Tentative d'importation depuis {nom_fichier}...")
+    with open(nom_fichier, 'r', encoding='utf-8') as f:
+        lignes = csv.DictReader(f, delimiter=';')
+        for ligne in lignes:
+            renard = Renard(
+                int(ligne['id']),
+                ligne['nom'],
+                float(ligne['poids']),
+                ligne['date_arrivee']
+            )
+            self.recueillir(renard)</pre>
+      </div>
+    </div>
+  </section>
+
+  <hr class="sep">
+
+  <!-- QUESTION 4 -->
+  <section id="q4">
+    <h2>6 — <span class="badge-question">Q4</span> Analyser la corpulence et justifier le pourcentage</h2>
+
+    <div class="encadre-question">
+      <span class="encadre-prefix">Énoncé de la question 4</span>
+      <p style="margin:0">
+        Exécuter les deux méthodes d'analyse de la corpulence sur l'instance de ton refuge.
+        Justifier le pourcentage obtenu en isolant et en affichant le nombre de renards peu
+        corpulents par rapport au nombre total de renards hébergés.
+      </p>
+    </div>
+
+    <h3>Aide méthodologique</h3>
+
+    <p>
+      Un renard est « peu corpulent » si son poids est <strong>strictement inférieur à 6,0 kg</strong>
+      (condition : <code>renard.poids &lt; 6.0</code>). La méthode <code>lister_peu_corpulents</code>
+      est déjà écrite dans le fichier fourni — tu l'appelles seulement.
+    </p>
+
+    <p>
+      Pour justifier le pourcentage, tu dois afficher :
+    </p>
+
+    <ol>
+      <li>La liste des renards peu corpulents (avec <code>print</code> dans une boucle).</li>
+      <li>Le nombre de renards peu corpulents (<code>len(...)</code>).</li>
+      <li>Le nombre total de renards (<code>len(refuge.liste_renards)</code>).</li>
+      <li>Le pourcentage calculé par <code>pourcentage_peu_corpulents()</code>.</li>
+    </ol>
+
+    <h3>Résultats attendus avec le fichier complet (30 renards)</h3>
+
+    <table class="table-csv">
+      <tr><th>id</th><th>nom</th><th>poids (kg)</th><th>date_arrivee</th></tr>
+      <tr class="peu-corpulent"><td>102</td><td>Roxy</td><td>5.8</td><td>2023-02-10</td></tr>
+      <tr class="peu-corpulent"><td>104</td><td>Kira</td><td>4.9</td><td>2024-11-20</td></tr>
+      <tr class="peu-corpulent"><td>106</td><td>Vixen</td><td>5.5</td><td>2023-06-01</td></tr>
+      <tr class="peu-corpulent"><td>108</td><td>Pipo</td><td>5.3</td><td>2023-08-22</td></tr>
+      <tr class="peu-corpulent"><td>110</td><td>Foxy</td><td>4.5</td><td>2023-10-25</td></tr>
+      <tr class="peu-corpulent"><td>111</td><td>Renardeau</td><td>3.2</td><td>2024-04-01</td></tr>
+      <tr class="peu-corpulent"><td>114</td><td>Pacha</td><td>5.7</td><td>2024-01-28</td></tr>
+      <tr class="peu-corpulent"><td>116</td><td>Écho</td><td>5.1</td><td>2023-12-19</td></tr>
+      <tr class="peu-corpulent"><td>118</td><td>Oscar</td><td>5.9</td><td>2024-06-11</td></tr>
+      <tr class="peu-corpulent"><td>120</td><td>Mia</td><td>4.7</td><td>2024-08-29</td></tr>
+      <tr class="peu-corpulent"><td>122</td><td>Nina</td><td>5.6</td><td>2024-10-14</td></tr>
+      <tr class="peu-corpulent"><td>124</td><td>Bella</td><td>4.8</td><td>2024-04-18</td></tr>
+      <tr class="peu-corpulent"><td>126</td><td>Sparky</td><td>5.0</td><td>2024-02-14</td></tr>
+      <tr class="peu-corpulent"><td>128</td><td>Pip</td><td>4.6</td><td>2023-11-29</td></tr>
+      <tr class="peu-corpulent"><td>130</td><td>Loup</td><td>5.2</td><td>2023-09-01</td></tr>
+    </table>
+
+    <div class="encadre">
+      <span class="encadre-prefix">Résultats attendus</span>
+      <p style="margin:0">
+        15 renards peu corpulents sur 30 au total →
+        <strong>50,0 %</strong> du refuge est peu corpulent.
+        \(\frac{15}{30} \times 100 = 50{,}0\%\)
+      </p>
+    </div>
+
+    <h3>Code à écrire pour justifier</h3>
+
+    <pre>peu_corp = mon_refuge.lister_peu_corpulents()
+print(f"Renards peu corpulents ({len(peu_corp)}/{len(mon_refuge.liste_renards)}) :")
+for r in peu_corp:
+    print(r)
+print(f"\nPourcentage : {mon_refuge.pourcentage_peu_corpulents():.1f}%")</pre>
+
+    <h3>Éditeur Python — à toi de jouer !</h3>
+
+    <script type="py-editor" env="refuge">
+import csv, io
+
+class Renard:
+    def __init__(self, identifiant, nom, poids, date_arrivee):
+        self.identifiant  = identifiant
+        self.nom          = nom
+        self.poids        = poids
+        self.date_arrivee = date_arrivee
+
+    def __str__(self):
+        return f"Renard ID {self.identifiant} - {self.nom} (Arrivé le {self.date_arrivee})"
+
+class Refuge:
+    def __init__(self, nom, adresse):
+        self.nom           = nom
+        self.adresse       = adresse
+        self.liste_renards = []
+
+    def recueillir(self, un_renard):
+        self.liste_renards.append(un_renard)
+
+    def lister_peu_corpulents(self):
+        return [r for r in self.liste_renards if r.poids < 6.0]
+
+    def pourcentage_peu_corpulents(self):
+        if len(self.liste_renards) == 0:
+            return 0.0
+        return len(self.lister_peu_corpulents()) / len(self.liste_renards) * 100
+
+    def importer_donnees(self, donnees_texte):
+        f = io.StringIO(donnees_texte)
+        lignes = csv.DictReader(f, delimiter=';')
+        for ligne in lignes:
+            renard = Renard(int(ligne['id']), ligne['nom'],
+                            float(ligne['poids']), ligne['date_arrivee'])
+            self.recueillir(renard)
+
+CSV_COMPLET = """id;nom;poids;date_arrivee
+101;Zorro;6.5;2023-01-15
+102;Roxy;5.8;2023-02-10
+103;Filou;7.2;2023-03-05
+104;Kira;4.9;2024-11-20
+105;Rouky;6.1;2023-05-12
+106;Vixen;5.5;2023-06-01
+107;Goupil;7.8;2023-07-18
+108;Pipo;5.3;2023-08-22
+109;Vulpec;6.9;2023-09-09
+110;Foxy;4.5;2023-10-25
+111;Renardeau;3.2;2024-04-01
+112;Rubis;7.0;2024-03-10
+113;Sacha;6.3;2024-02-05
+114;Pacha;5.7;2024-01-28
+115;Delta;6.6;2023-11-03
+116;Écho;5.1;2023-12-19
+117;Tango;7.1;2024-05-15
+118;Oscar;5.9;2024-06-11
+119;Lima;6.8;2024-07-07
+120;Mia;4.7;2024-08-29
+121;Léo;6.4;2024-09-17
+122;Nina;5.6;2024-10-14
+123;Max;7.3;2024-05-25
+124;Bella;4.8;2024-04-18
+125;Toby;6.2;2024-03-29
+126;Sparky;5.0;2024-02-14
+127;Shadow;7.4;2024-01-01
+128;Pip;4.6;2023-11-29
+129;Ziggy;6.7;2023-10-10
+130;Loup;5.2;2023-09-01"""
+
+mon_refuge = Refuge("SOS Goupil", "12 rue de la Forêt")
+mon_refuge.importer_donnees(CSV_COMPLET)
+
+# ── Question 4 : à compléter ─────────────────────────────────────────
+peu_corp = mon_refuge.lister_peu_corpulents()
+print(f"Renards peu corpulents ({len(peu_corp)}/{len(mon_refuge.liste_renards)}) :")
+for r in peu_corp:
+    print(r)
+print(f"\nPourcentage : {mon_refuge.pourcentage_peu_corpulents():.1f}%")
+
+# ── Fonction de test ──────────────────────────────────────────────────
+def test_corpulence():
+    assert len(mon_refuge.liste_renards) == 30
+    assert len(peu_corp) == 15
+    assert mon_refuge.pourcentage_peu_corpulents() == 50.0
+    assert peu_corp[0].nom == "Roxy"
+    print("Les tests sont valides.")
+
+test_corpulence()
+    </script>
+
+    <div class="encadre-conseil">
+      <span class="encadre-prefix">Correction – Question 4</span>
+      <button class="btn-tp-or" onclick="toggleBloc('corr4')">Afficher / masquer la correction</button>
+      <div id="corr4" class="correction-bloc">
+        <pre>peu_corp = mon_refuge.lister_peu_corpulents()
+print(f"Renards peu corpulents ({len(peu_corp)}/{len(mon_refuge.liste_renards)}) :")
+for r in peu_corp:
+    print(r)
+print(f"\nPourcentage : {mon_refuge.pourcentage_peu_corpulents():.1f}%")</pre>
+        <p><strong>Sortie attendue :</strong></p>
+        <pre style="font-size:.8rem;">Renards peu corpulents (15/30) :
+Renard ID 102 - Roxy (Arrivé le 2023-02-10)
+Renard ID 104 - Kira (Arrivé le 2024-11-20)
+Renard ID 106 - Vixen (Arrivé le 2023-06-01)
+...
+Renard ID 130 - Loup (Arrivé le 2023-09-01)
+
+Pourcentage : 50.0%</pre>
+        <p><strong>Justification :</strong> 15 renards sur 30 ont un poids strictement inférieur à 6,0 kg.
+        La formule \(\frac{15}{30} \times 100 = 50{,}0\%\) confirme le résultat.</p>
+      </div>
+    </div>
+  </section>
+
+  <hr class="sep">
+
+  <!-- PIÈGES FRÉQUENTS -->
+  <section id="pieges">
+    <h2>7 — Pièges fréquents &amp; astuces de vérification</h2>
+
+    <div class="encadre-piege">
+      <span class="encadre-prefix">Piège 1 — Oublier <code>self.</code> devant un attribut</span>
+      <p>
+        Sans <code>self.</code>, tu crées une variable locale qui disparaît à la fin de la méthode.
+        L'attribut n'est pas créé sur l'objet.
+      </p>
+      <pre># ❌ Mauvais : identifiant est une variable locale, perdue après __init__
+def __init__(self, identifiant, ...):
+    identifiant = identifiant   # sans self.
+
+# ✓ Correct
+def __init__(self, identifiant, ...):
+    self.identifiant = identifiant</pre>
+    </div>
+
+    <div class="encadre-piege">
+      <span class="encadre-prefix">Piège 2 — <code>__str__</code> qui <code>print</code> au lieu de <code>return</code></span>
+      <p>
+        <code>__str__</code> doit <strong>retourner</strong> une chaîne, pas l'afficher.
+        Si tu fais <code>print(...)</code> à l'intérieur, Python reçoit <code>None</code>
+        comme valeur de retour — et <code>print(renard)</code> affiche <code>None</code>.
+      </p>
+      <pre># ❌ Mauvais
+def __str__(self):
+    print(f"Renard ID {self.identifiant} ...")   # print dans __str__ → None !
+
+# ✓ Correct
+def __str__(self):
+    return f"Renard ID {self.identifiant} ..."   # return une str</pre>
+    </div>
+
+    <div class="encadre-piege">
+      <span class="encadre-prefix">Piège 3 — Types CSV : oublier <code>int()</code> ou <code>float()</code></span>
+      <p>
+        C'est LE piège central du sujet. Toutes les valeurs lues par <code>csv.DictReader</code>
+        sont des <code>str</code>. Sans conversion, la comparaison <code>renard.poids &lt; 6.0</code>
+        lève une <code>TypeError</code>.
+      </p>
+      <pre># ❌ Mauvais
+Renard(ligne['id'], ligne['nom'], ligne['poids'], ligne['date_arrivee'])
+#      str !                      str !
+
+# ✓ Correct
+Renard(int(ligne['id']), ligne['nom'], float(ligne['poids']), ligne['date_arrivee'])</pre>
+    </div>
+
+    <div class="encadre-piege">
+      <span class="encadre-prefix">Piège 4 — Condition stricte : poids &lt; 6.0, pas ≤</span>
+      <p>
+        L'énoncé précise « <em>strictement inférieur</em> à 6,0 kg ». Un renard pesant exactement
+        6,0 kg n'est <strong>pas</strong> peu corpulent. Vérifie que tu utilises <code>&lt;</code>
+        et non <code>&lt;=</code>.
+      </p>
+      <pre>renard.poids < 6.0   # ✓ strictement inférieur
+renard.poids <= 6.0  # ❌ inclut 6.0 — faux ici</pre>
+    </div>
+
+    <div class="encadre-piege">
+      <span class="encadre-prefix">Piège 5 — Confondre la méthode et son appel</span>
+      <p>
+        Une méthode se définit avec <code>def methode(self)</code> et s'appelle avec
+        <code>objet.methode()</code> (avec les parenthèses). Oublier les parenthèses retourne
+        la méthode elle-même, pas son résultat.
+      </p>
+      <pre>mon_refuge.lister_peu_corpulents    # ❌ retourne l'objet-méthode
+mon_refuge.lister_peu_corpulents()  # ✓ retourne la liste</pre>
+    </div>
+
+    <div class="encadre-conseil">
+      <span class="encadre-prefix">Astuce — Vérifier les types après import</span>
+      <p>
+        Juste après <code>importer_donnees</code>, vérifie les types avec <code>type()</code> :
+      </p>
+      <pre>r = mon_refuge.liste_renards[0]
+print(type(r.identifiant))  # doit afficher : <class 'int'>
+print(type(r.poids))        # doit afficher : <class 'float'>
+print(type(r.nom))          # doit afficher : <class 'str'></pre>
+    </div>
+
+    <div class="encadre-conseil">
+      <span class="encadre-prefix">Astuce — Vérifier <code>__str__</code> caractère par caractère</span>
+      <p>
+        Le format demandé est précis. Vérifie chaque détail :
+        les guillemets, les espaces autour du tiret (<code> - </code>),
+        les parenthèses, et surtout l'accent sur <strong>Arrivé</strong>.
+      </p>
+      <pre># Format exact :
+"Renard ID 200 - Oscar (Arrivé le 2026-01-01)"
+#          ↑ espace  ↑ espace         ↑ accent !</pre>
+    </div>
+  </section>
+
+  <hr class="sep">
+
+  <footer>
+    Lycée Antoine Watteau — DarkSATHI Li
+  </footer>
+
+</div>
+
+<script>
+  const btnTop = document.getElementById('btn-top');
+  window.addEventListener('scroll', function () {
+    btnTop.style.display = window.scrollY > 300 ? 'flex' : 'none';
+  });
+  btnTop.addEventListener('click', function () {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  });
+
+  function toggleBloc(id) {
+    var el = document.getElementById(id);
+    if (el) el.classList.toggle('visible');
+  }
+</script>
+
+</body>
+</html>
