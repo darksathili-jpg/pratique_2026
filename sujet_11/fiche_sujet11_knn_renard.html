@@ -1,0 +1,1387 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Fiche – k-NN Renards | NSI Terminale | BAC 2026 Sujet 11</title>
+
+  <!-- Bootstrap 5.3.3 -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Rubik+Dirt&family=Source+Serif+4:ital,opsz,wght@0,8..60,300..900;1,8..60,300..900&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+
+  <!-- MathJax v3 -->
+  <script>
+    MathJax = {
+      tex: { inlineMath: [['\\(', '\\)'], ['$', '$']] },
+      options: { skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre'] }
+    };
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js" async></script>
+
+  <!-- PyScript 2026.3.1 -->
+  <script type="module" src="https://pyscript.net/releases/2026.3.1/core.js"></script>
+
+  <style>
+    :root {
+      --bg-main:    #f8f9fb;
+      --bg-panel:   #eef1f5;
+      --bg-cours:   #ffffff;
+      --accent:     #2a6496;
+      --py-editor-input: white;
+      --accent-or:  #b5610a;
+      --accent-vert:#2e7d32;
+      --text-main:  #1a1a1a;
+      --text-muted: #5a6470;
+      --border-radius: 8px;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      background-color: var(--bg-main);
+      color: var(--text-main);
+      font-family: 'Source Serif 4', Georgia, serif;
+      font-size: 1.1rem;
+      line-height: 1.8;
+      margin: 0;
+      padding-bottom: 4rem;
+    }
+
+    h1, h2, h3, h4 {
+      font-family: 'Rubik Dirt', cursive;
+      color: var(--accent);
+      letter-spacing: 0.02em;
+    }
+
+    h1 { font-size: 2.2rem; color: #111; }
+    h2 { font-size: 1.55rem; border-bottom: 2px solid var(--accent); padding-bottom: .3rem; margin-top: 2.5rem; }
+    h3 { font-size: 1.25rem; color: var(--accent-or); margin-top: 1.8rem; }
+    h4 { font-size: 1.05rem; color: var(--accent-vert); }
+
+    p { margin-bottom: 1rem; }
+
+    code, pre, .mono {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.9em;
+    }
+
+    code {
+      background: #e8edf2;
+      padding: 2px 6px;
+      border-radius: 4px;
+      color: #8b3a00;
+    }
+
+    pre {
+      background: #f0f3f7;
+      border-left: 3px solid var(--accent);
+      padding: 1rem 1.2rem;
+      border-radius: var(--border-radius);
+      overflow-x: auto;
+      color: #1a1a1a;
+    }
+
+    a { color: var(--accent); text-decoration: underline dotted; }
+    a:hover { color: var(--accent-or); }
+
+    /* ── NAVIGATION ── */
+    #navbar {
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      background: #2a6496;
+      border-bottom: 2px solid #1a4a70;
+      padding: .5rem 1.5rem;
+      display: flex;
+      gap: .5rem;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    #navbar span {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: .8rem;
+      color: #ccddf0;
+      margin-right: auto;
+    }
+
+    #navbar a {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: .8rem;
+      color: #fff;
+      text-decoration: none;
+      padding: .25rem .7rem;
+      border: 1px solid #ccddf0;
+      border-radius: 4px;
+      transition: background .2s;
+    }
+
+    #navbar a:hover { background: #1a4a70; color: #fff; }
+
+    /* ── CONTENU ── */
+    .container-content {
+      max-width: 860px;
+      margin: 0 auto;
+      padding: 2rem 1.5rem;
+    }
+
+    /* ── ENCADRÉS ── */
+    .encadre,
+    .encadre-conseil,
+    .encadre-indice,
+    .encadre-question {
+      background: #ffffff;
+      border-radius: var(--border-radius);
+      padding: 1.1rem 1.4rem;
+      margin: 1.4rem 0;
+      position: relative;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+    }
+
+    .encadre          { border-left: 4px solid var(--accent); }
+    .encadre-conseil  { border-left: 4px solid var(--accent-or); background: #fff8f0; }
+    .encadre-indice   { border-left: 4px solid var(--accent-vert); background: #f0faf0; }
+    .encadre-question { border-left: 4px solid #7b3fa8; border-top: 1px solid #c8a8e820; background: #faf5ff; }
+
+    .encadre-prefix {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: .72rem;
+      font-variant: small-caps;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      margin-bottom: .4rem;
+      display: block;
+    }
+
+    .encadre          .encadre-prefix { color: var(--accent); }
+    .encadre-conseil  .encadre-prefix { color: var(--accent-or); }
+    .encadre-indice   .encadre-prefix { color: var(--accent-vert); }
+    .encadre-question .encadre-prefix { color: #7b3fa8; }
+
+    /* ── BOUTONS ── */
+    .btn-tp, .btn-tp-or, .btn-tp-vert, .btn-secondaire {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: .82rem;
+      border: none;
+      border-radius: 5px;
+      padding: .45rem 1.1rem;
+      cursor: pointer;
+      transition: opacity .2s, transform .1s;
+      margin: .3rem .2rem;
+    }
+
+    .btn-tp         { background: var(--accent);      color: #fff; }
+    .btn-tp-or      { background: var(--accent-or);   color: #fff; }
+    .btn-tp-vert    { background: var(--accent-vert); color: #fff; }
+    .btn-secondaire { background: #eef1f5; border: 1px solid var(--accent); color: var(--text-main); }
+
+    .btn-tp:hover, .btn-tp-or:hover, .btn-tp-vert:hover, .btn-secondaire:hover {
+      opacity: .85; transform: translateY(-1px);
+    }
+
+    /* ── BADGE QUESTION ── */
+    .badge-question {
+      display: inline-block;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: .8rem;
+      background: #7b3fa8;
+      color: #fff;
+      border-radius: 4px;
+      padding: .15rem .7rem;
+      margin-right: .5rem;
+      vertical-align: middle;
+    }
+
+    .badge-num {
+      font-family: 'Rubik Dirt', cursive;
+      font-size: 1.3rem;
+      color: #7b3fa8;
+      margin-right: .3rem;
+    }
+
+    /* ── INDICES / CORRECTIONS CACHÉS ── */
+    .indice-bloc { display: none; }
+    .indice-bloc.visible { display: block; }
+    .correction-bloc { display: none; }
+    .correction-bloc.visible { display: block; }
+
+    /* ── PIÈGE ── */
+    .encadre-piege {
+      background: #fff5f5;
+      border-left: 4px solid #c0392b;
+      border-radius: var(--border-radius);
+      padding: 1rem 1.4rem;
+      margin: 1.2rem 0;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.07);
+    }
+
+    .encadre-piege .encadre-prefix {
+      color: #c0392b;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: .72rem;
+      font-variant: small-caps;
+      letter-spacing: .12em;
+      display: block;
+      margin-bottom: .3rem;
+    }
+
+    /* ── SOMMAIRE ── */
+    #sommaire ol {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: .88rem;
+      line-height: 2.2;
+    }
+
+    #sommaire a { color: var(--accent); }
+    #sommaire a:hover { color: var(--accent-or); }
+
+    /* séparateur sections */
+    .sep { border: none; border-top: 1px dashed #9ab0c8; margin: 2.5rem 0; opacity: .7; }
+
+    /* py-editor */
+    py-editor { display: block; min-height: 100px; }
+    .py-editor-input { background: var(--py-editor-input); color: #1a1a1a; border: 1px solid var(--accent); border-radius: 4px; padding: .8rem; font-family: 'JetBrains Mono', monospace; font-size: .9rem; }
+
+    /* ── RETOUR EN HAUT ── */
+    #btn-top {
+      position: fixed;
+      bottom: 1.5rem;
+      right: 1.5rem;
+      z-index: 999;
+      background: var(--accent);
+      color: #fff;
+      border: none;
+      border-radius: 50%;
+      width: 44px;
+      height: 44px;
+      font-size: 1.2rem;
+      cursor: pointer;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      font-family: 'JetBrains Mono', monospace;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.25);
+      transition: opacity .2s;
+    }
+
+    #btn-top:hover { opacity: .8; }
+
+    /* ── PIED DE PAGE ── */
+    footer {
+      text-align: center;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: .8rem;
+      color: var(--text-muted);
+      padding: 2rem 1rem 1rem;
+      border-top: 1px solid #d0d8e4;
+    }
+
+    /* ── TABLE HABITATS ── */
+    .table-habitats {
+      border-collapse: collapse;
+      margin: 1rem auto;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: .82rem;
+      width: 100%;
+    }
+
+    .table-habitats th, .table-habitats td {
+      border: 1px solid #b0c4d8;
+      padding: .35rem .7rem;
+      text-align: center;
+    }
+
+    .table-habitats th {
+      background: #dce8f2;
+      color: var(--accent);
+      font-weight: 600;
+    }
+
+    .table-habitats tr:nth-child(even) { background: #f4f7fb; }
+
+    /* ── SCHEMA k-NN ── */
+    .schema-knn {
+      background: #f0f3f7;
+      border: 1px solid #b0c4d8;
+      border-radius: var(--border-radius);
+      padding: 1rem;
+      text-align: center;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: .85rem;
+      margin: 1rem 0;
+    }
+
+    .zone-renard {
+      display: inline-block;
+      background: #e8f5e9;
+      border: 2px solid #2e7d32;
+      border-radius: 50%;
+      width: 60px; height: 60px;
+      line-height: 60px;
+      font-size: 1.5rem;
+      margin: 4px;
+    }
+
+    .zone-sans {
+      display: inline-block;
+      background: #ffebee;
+      border: 2px dashed #c0392b;
+      border-radius: 50%;
+      width: 60px; height: 60px;
+      line-height: 60px;
+      font-size: 1.5rem;
+      margin: 4px;
+    }
+
+    .zone-nouveau {
+      display: inline-block;
+      background: #e3f2fd;
+      border: 3px solid #1565c0;
+      border-radius: 50%;
+      width: 70px; height: 70px;
+      line-height: 70px;
+      font-size: 1.6rem;
+      margin: 4px;
+    }
+  </style>
+</head>
+<body>
+
+<!-- Données PyScript partagées (environnement global) -->
+<div id="pyinit" style="display:none">
+  <script type="py" env="habitat">
+pass
+  </script>
+</div>
+
+<!-- BOUTON RETOUR EN HAUT -->
+<button id="btn-top" title="Retour en haut" aria-label="Retour en haut">▲</button>
+
+<!-- NAVIGATION STICKY -->
+<nav id="navbar">
+  <span>NSI Terminale – Sujet 11 – k-NN &amp; Renards</span>
+  <a href="#s0">Intro</a>
+  <a href="#s1">Rappels</a>
+  <a href="#s2">k-NN</a>
+  <a href="#q1">Q1</a>
+  <a href="#q2">Q2</a>
+  <a href="#q3">Q3</a>
+  <a href="#q4">Q4</a>
+  <a href="#q5">Q5</a>
+  <a href="#pieges">Pièges</a>
+</nav>
+
+<!-- CONTENU PRINCIPAL -->
+<div class="container-content">
+
+  <!-- EN-TÊTE -->
+  <div style="text-align:center; padding: 2rem 0 1rem;">
+    <div style="font-family:'JetBrains Mono',monospace; font-size:.8rem; color:var(--text-muted); margin-bottom:.5rem;">
+      BAC NSI 2026 — Sujet n°11 — Partie pratique
+    </div>
+    <h1>Prédiction d'habitats de renards<br>
+      <span style="font-size:1.1rem; color:var(--accent); font-family:'Source Serif 4',serif; font-style:italic; font-weight:300;">
+        Algorithme des k plus proches voisins – Fiche de révision guidée
+      </span>
+    </h1>
+    <div style="font-family:'JetBrains Mono',monospace; font-size:.8rem; color:var(--text-muted); margin-top:.5rem;">
+      Terminale NSI &nbsp;·&nbsp; Algorithmique &nbsp;·&nbsp; k-NN &nbsp;·&nbsp; Listes &amp; Dictionnaires
+    </div>
+  </div>
+
+  <hr class="sep">
+
+  <!-- SOMMAIRE -->
+  <section id="s0">
+    <div id="sommaire" class="encadre">
+      <span class="encadre-prefix">Sommaire</span>
+      <ol>
+        <li><a href="#s1">Rappels – dictionnaires, tuples, listes de listes</a></li>
+        <li><a href="#s2">L'algorithme des k plus proches voisins – principe</a></li>
+        <li><a href="#q1">Question 1 – Écrire <code>distance</code></a></li>
+        <li><a href="#q2">Question 2 – Écrire <code>distance_d_un_habitat</code></a></li>
+        <li><a href="#q3">Question 3 – Tester sur les vraies données</a></li>
+        <li><a href="#q4">Question 4 – Corriger <code>presence_renard</code></a></li>
+        <li><a href="#q5">Question 5 – Conclusion : le nouvel habitat est-il habitable ?</a></li>
+        <li><a href="#pieges">Pièges fréquents &amp; astuces de vérification</a></li>
+      </ol>
+    </div>
+  </section>
+
+  <hr class="sep">
+
+  <!-- SECTION 1 : RAPPELS -->
+  <section id="s1">
+    <h2>1 — Rappels : dictionnaires, tuples et listes</h2>
+
+    <p>
+      Avant de plonger dans le sujet, faisons un point rapide sur les structures de données que tu vas manipuler à longueur de questions.
+    </p>
+
+    <h3>Les dictionnaires</h3>
+
+    <p>
+      Un dictionnaire Python associe des <strong>clés</strong> à des <strong>valeurs</strong>. Dans ce sujet, chaque zone
+      géographique est représentée par un dictionnaire à cinq clés :
+    </p>
+
+    <pre>zone = {
+    'vegetation':            9,   # note de 0 à 10
+    'proximite_eau':         6,   # note de 0 à 10
+    'densite_urbaine':       0,   # note de 0 à 10
+    'disponibilite_proies':  4,   # note de 0 à 10
+    'presence_renard':       1    # 1 si oui, 0 si non
+}</pre>
+
+    <p>
+      Pour accéder à une valeur, tu écris <code>zone['vegetation']</code>. Pour modifier une valeur, tu écris
+      <code>zone['presence_renard'] = 0</code>. Tu peux aussi parcourir toutes les clés avec
+      <code>for cle in zone:</code> ou obtenir les paires clé-valeur avec <code>zone.items()</code>.
+    </p>
+
+    <div class="encadre-conseil">
+      <span class="encadre-prefix">Astuce clé du sujet</span>
+      <p style="margin:0">
+        La clé <code>'presence_renard'</code> vaut <code>1</code> (renard présent) ou <code>0</code> (renard absent).
+        Ce n'est <strong>pas</strong> un booléen, c'est un entier. Quand tu veux tester la présence, compare bien :
+        <code>if habitat['presence_renard'] == 1:</code>, pas <code>if habitat['presence_renard']:</code>
+        (même si ça marche en Python, c'est une source d'erreur à l'examen).
+      </p>
+    </div>
+
+    <h3>Les tuples</h3>
+
+    <p>
+      Un tuple est une paire (ou triplet, quadruplet…) de valeurs regroupées ensemble, notées entre parenthèses.
+      Contrairement à une liste, on ne peut pas modifier un tuple après sa création.
+    </p>
+
+    <pre>t = (7.21, {'vegetation': 9, 'proximite_eau': 6, ...})
+# Accéder au premier élément (la distance) :
+t[0]   # → 7.21
+# Accéder au second élément (le dictionnaire) :
+t[1]   # → {'vegetation': 9, ...}</pre>
+
+    <p>
+      Dans ce sujet, tu vas beaucoup manipuler des <strong>listes de tuples</strong> : chaque tuple contient une distance
+      et le dictionnaire de la zone correspondante.
+    </p>
+
+    <div class="encadre">
+      <span class="encadre-prefix">Définition – tuple</span>
+      <p style="margin:0">
+        Un <strong>tuple</strong> est une séquence ordonnée et immuable. On accède à ses éléments avec leur indice :
+        <code>t[0]</code> pour le premier, <code>t[1]</code> pour le second, etc.
+        On crée un tuple avec des parenthèses : <code>(distance, habitat)</code>.
+      </p>
+    </div>
+
+    <h3>Trier une liste avec une clé personnalisée</h3>
+
+    <p>
+      La fonction <code>liste.sort(key=...)</code> trie une liste selon un critère que tu choisis. Quand tu as
+      une liste de tuples <code>[(7.21, {...}), (5.19, {...}), ...]</code> et que tu veux la trier selon la distance
+      (le premier élément de chaque tuple), tu utilises :
+    </p>
+
+    <pre>distances.sort(key=lambda x: x[0])</pre>
+
+    <p>
+      Le <code>lambda x: x[0]</code> est une petite fonction anonyme qui dit « prends l'élément <code>x</code>
+      et renvoie son premier composant ». C'est déjà écrit dans le code fourni — tu n'as pas à l'écrire toi-même.
+    </p>
+  </section>
+
+  <hr class="sep">
+
+  <!-- SECTION 2 : PRINCIPE k-NN -->
+  <section id="s2">
+    <h2>2 — L'algorithme des k plus proches voisins</h2>
+
+    <p>
+      Imagine que tu cherches à savoir si un renard pourrait vivre dans une nouvelle zone de forêt.
+      Tu ne peux pas le savoir à l'avance, mais tu as déjà un grand tableau de zones
+      <em>déjà connues</em> avec la réponse (renard présent ou non). L'idée est simple :
+    </p>
+
+    <div class="encadre-conseil">
+      <span class="encadre-prefix">Idée intuitive</span>
+      <p>
+        « Dis-moi qui sont tes voisins, je te dirai qui tu es. »<br>
+        Si les zones les plus <em>ressemblantes</em> à ta nouvelle zone accueillent toutes des renards,
+        il y a de bonnes chances que ta zone en accueille aussi.
+      </p>
+    </div>
+
+    <p>
+      La question est donc : comment mesure-t-on la « ressemblance » entre deux zones ? En calculant une
+      <strong>distance</strong>. Plus deux zones ont des caractéristiques proches (beaucoup de végétation,
+      eau disponible, peu de présence humaine…), plus leur distance est petite.
+    </p>
+
+    <div class="schema-knn">
+      <p style="margin-bottom:.5rem; font-weight:600;">Visualisation : qui sont les k=3 voisins les plus proches du point bleu ?</p>
+      <div>
+        <span class="zone-renard" title="Renard présent">🦊</span>
+        <span class="zone-sans" title="Pas de renard">🌿</span>
+        <span class="zone-renard" title="Renard présent">🦊</span>
+        <span class="zone-nouveau" title="Nouveau point">❓</span>
+        <span class="zone-renard" title="Renard présent">🦊</span>
+        <span class="zone-sans" title="Pas de renard">🌿</span>
+        <span class="zone-sans" title="Pas de renard">🌿</span>
+      </div>
+      <p style="margin-top:.5rem; font-size:.8rem; color:var(--text-muted);">
+        3 voisins les plus proches du ❓ → 2 renards 🦊, 1 sans renard 🌿 → majorité = présence probable ✓
+      </p>
+    </div>
+
+    <h3>Les étapes de l'algorithme k-NN</h3>
+
+    <div class="encadre">
+      <span class="encadre-prefix">Algorithme – k plus proches voisins</span>
+      <ol style="margin:0; padding-left:1.2rem;">
+        <li><strong>Calculer</strong> la distance entre le nouvel habitat et <em>chacun</em> des habitats connus.</li>
+        <li><strong>Trier</strong> ces distances de la plus petite à la plus grande.</li>
+        <li><strong>Garder</strong> les k premiers (les k plus proches voisins).</li>
+        <li><strong>Voter</strong> : si plus de k/2 voisins ont un renard → présence probable.</li>
+      </ol>
+    </div>
+
+    <h3>La formule de distance entre deux habitats</h3>
+
+    <p>
+      Pour mesurer à quel point deux habitats se ressemblent, on utilise une formule mathématique proche
+      de la distance « à vol d'oiseau » dans un espace à 5 dimensions (une par caractéristique).
+    </p>
+
+    <p>Si l'habitat A a les valeurs \((v_a, p_a, de_a, di_a, pr_a)\) et l'habitat B a les valeurs \((v_b, p_b, de_b, di_b, pr_b)\), alors :</p>
+
+    $$d = \sqrt{(v_a - v_b)^2 + (p_a - p_b)^2 + (de_a - de_b)^2 + (di_a - di_b)^2 + (pr_a - pr_b)^2}$$
+
+    <p>
+      En Python, la racine carrée s'obtient avec <code>sqrt(...)</code> du module <code>math</code>.
+      Pour calculer chaque terme, tu fais <code>(habitat_1['vegetation'] - habitat_2['vegetation'])**2</code>, etc.
+    </p>
+
+    <div class="encadre-conseil">
+      <span class="encadre-prefix">Attention aux 5 clés</span>
+      <p style="margin:0">
+        La distance utilise <strong>les 5 clés</strong> du dictionnaire, y compris <code>'presence_renard'</code>.
+        C'est peut-être surprenant, mais c'est bien ce que demande l'énoncé. La formule donnée dans le sujet
+        inclut \(pr_a\) et \(pr_b\).
+      </p>
+    </div>
+  </section>
+
+  <hr class="sep">
+
+  <!-- QUESTION 1 -->
+  <section id="q1">
+    <h2>3 — <span class="badge-question">Q1</span> Écrire la fonction <code>distance</code></h2>
+
+    <div class="encadre-question">
+      <span class="encadre-prefix">Énoncé de la question 1</span>
+      <p style="margin:0">
+        Écrire le code de la fonction <code>distance</code> qui prend en paramètres deux habitats sous
+        la forme de dictionnaires et renvoie la valeur « distance » entre ces deux habitats définie ci-dessus.
+        On rappelle que la racine carrée se calcule avec la fonction <code>sqrt</code> du module <code>math</code>.
+      </p>
+    </div>
+
+    <h3>Aide méthodologique</h3>
+
+    <p>
+      La formule te demande de faire la somme de cinq termes, chacun étant le carré d'une différence.
+      Voici la marche à suivre :
+    </p>
+    <ol>
+      <li>Pour chaque clé (<code>'vegetation'</code>, <code>'proximite_eau'</code>, <code>'densite_urbaine'</code>,
+          <code>'disponibilite_proies'</code>, <code>'presence_renard'</code>), calcule la différence
+          <code>habitat_1[cle] - habitat_2[cle]</code>.</li>
+      <li>Mets cette différence au carré : <code>** 2</code>.</li>
+      <li>Additionne ces cinq carrés.</li>
+      <li>Prends la racine carrée du tout avec <code>sqrt(...)</code>.</li>
+    </ol>
+
+    <div class="encadre-indice">
+      <span class="encadre-prefix">Indice niveau 1</span>
+      <button class="btn-secondaire" onclick="toggleBloc('ind1a')">Afficher / masquer</button>
+      <div id="ind1a" class="indice-bloc">
+        <p style="margin-top:.7rem; margin-bottom:0">
+          Structure générale de la fonction :
+        </p>
+        <pre>def distance(habitat_1, habitat_2):
+    somme = (habitat_1['vegetation'] - habitat_2['vegetation'])**2 \
+          + ...   # continue pour les 4 autres clés
+    return sqrt(somme)</pre>
+      </div>
+    </div>
+
+    <div class="encadre-indice">
+      <span class="encadre-prefix">Indice niveau 2 — version avec boucle</span>
+      <button class="btn-secondaire" onclick="toggleBloc('ind1b')">Afficher / masquer</button>
+      <div id="ind1b" class="indice-bloc">
+        <pre>def distance(habitat_1, habitat_2):
+    cles = ['vegetation', 'proximite_eau',
+            'densite_urbaine', 'disponibilite_proies',
+            'presence_renard']
+    somme = 0
+    for cle in cles:
+        diff = habitat_1[cle] - habitat_2[cle]
+        somme += diff ** 2
+    return sqrt(somme)</pre>
+      </div>
+    </div>
+
+    <h4>Exemple simple à vérifier à la main</h4>
+
+    <p>
+      Prenons deux habitats très simples (valeurs fictives à 1 dimension) pour comprendre :
+    </p>
+    <table class="table-habitats">
+      <tr>
+        <th>habitat</th>
+        <th>vegetation</th><th>proximite_eau</th><th>densite_urbaine</th><th>disponibilite_proies</th><th>presence_renard</th>
+      </tr>
+      <tr>
+        <td>A</td><td>9</td><td>6</td><td>0</td><td>4</td><td>1</td>
+      </tr>
+      <tr>
+        <td>nouveau</td><td>5</td><td>2</td><td>4</td><td>6</td><td>0</td>
+      </tr>
+    </table>
+    <p>
+      Calcul : \(d = \sqrt{(9-5)^2 + (6-2)^2 + (0-4)^2 + (4-6)^2 + (1-0)^2}
+      = \sqrt{16 + 16 + 16 + 4 + 1} = \sqrt{53} \approx 7{,}28\)
+    </p>
+    <p>
+      Le résultat exact donné par le sujet (avec PyScript) est <code>7.211102550927978</code>. Ton code doit retourner exactement cette valeur pour le premier habitat.
+    </p>
+
+    <h3>Éditeur Python — à toi de jouer !</h3>
+
+    <script type="py-editor" env="habitat">
+from math import sqrt
+
+zones_connues = [
+    {'vegetation': 9, 'proximite_eau': 6, 'densite_urbaine': 0, 'disponibilite_proies': 4, 'presence_renard': 1},
+    {'vegetation': 10, 'proximite_eau': 5, 'densite_urbaine': 9, 'disponibilite_proies': 10, 'presence_renard': 0},
+    {'vegetation': 8, 'proximite_eau': 5, 'densite_urbaine': 1, 'disponibilite_proies': 6, 'presence_renard': 0},
+]
+
+nouveau = {'vegetation': 5, 'proximite_eau': 2, 'densite_urbaine': 4, 'disponibilite_proies': 6, 'presence_renard': 0}
+
+def distance(habitat_1, habitat_2):
+    '''
+    Calcule la distance euclidienne entre deux habitats.
+    Complète le corps de la fonction.
+    '''
+    pass  # REMPLACE CE PASS PAR TON CODE
+
+# ── Fonction de test ──────────────────────────────────────────────────
+def test_distance():
+    h_a = {'vegetation': 9, 'proximite_eau': 6, 'densite_urbaine': 0,
+            'disponibilite_proies': 4, 'presence_renard': 1}
+    h_b = {'vegetation': 5, 'proximite_eau': 2, 'densite_urbaine': 4,
+            'disponibilite_proies': 6, 'presence_renard': 0}
+    h_c = {'vegetation': 9, 'proximite_eau': 6, 'densite_urbaine': 0,
+            'disponibilite_proies': 4, 'presence_renard': 1}
+
+    assert abs(distance(h_a, h_b) - 7.211102550927978) < 1e-6
+    assert distance(h_a, h_c) == 0.0
+    assert abs(distance(h_b, zones_connues[1]) - 8.660254037844387) < 1e-6
+    print("Les tests sont valides.")
+
+test_distance()
+    </script>
+
+    <div class="encadre-conseil">
+      <span class="encadre-prefix">Correction – Question 1</span>
+      <button class="btn-tp-or" onclick="toggleBloc('corr1')">Afficher / masquer la correction</button>
+      <div id="corr1" class="correction-bloc">
+        <pre>def distance(habitat_1, habitat_2):
+    cles = ['vegetation', 'proximite_eau', 'densite_urbaine',
+            'disponibilite_proies', 'presence_renard']
+    somme = 0
+    for cle in cles:
+        diff = habitat_1[cle] - habitat_2[cle]
+        somme += diff ** 2
+    return sqrt(somme)
+
+def test_distance():
+    h_a = {'vegetation': 9, 'proximite_eau': 6, 'densite_urbaine': 0,
+            'disponibilite_proies': 4, 'presence_renard': 1}
+    h_b = {'vegetation': 5, 'proximite_eau': 2, 'densite_urbaine': 4,
+            'disponibilite_proies': 6, 'presence_renard': 0}
+    h_c = {'vegetation': 9, 'proximite_eau': 6, 'densite_urbaine': 0,
+            'disponibilite_proies': 4, 'presence_renard': 1}
+
+    assert abs(distance(h_a, h_b) - 7.211102550927978) < 1e-6
+    assert distance(h_a, h_c) == 0.0
+    assert abs(distance(h_b, zones_connues[1]) - 8.660254037844387) < 1e-6
+    print("Les tests sont valides.")
+
+test_distance()</pre>
+      </div>
+    </div>
+  </section>
+
+  <hr class="sep">
+
+  <!-- QUESTION 2 -->
+  <section id="q2">
+    <h2>4 — <span class="badge-question">Q2</span> Écrire la fonction <code>distance_d_un_habitat</code></h2>
+
+    <div class="encadre-question">
+      <span class="encadre-prefix">Énoncé de la question 2</span>
+      <p style="margin:0">
+        Écrire le code de la fonction <code>distance_d_un_habitat</code> qui prend en paramètres un habitat
+        (dictionnaire) et une liste d'habitats (liste de dictionnaires). La fonction doit renvoyer une
+        <strong>liste de tuples</strong> où chaque tuple contient : la distance entre l'habitat fourni et
+        un habitat de la liste ; puis le dictionnaire représentant cet habitat.
+      </p>
+    </div>
+
+    <h3>Aide méthodologique</h3>
+
+    <p>
+      Cette fonction fait appel à la fonction <code>distance</code> que tu viens d'écrire. L'idée :
+      parcourir chaque habitat de la liste, calculer sa distance avec l'habitat de référence,
+      et stocker le résultat sous forme de tuple.
+    </p>
+    <ol>
+      <li>Crée une liste vide pour accumuler les résultats.</li>
+      <li>Parcours chaque <code>zone</code> de la liste <code>habitats</code>.</li>
+      <li>Calcule <code>d = distance(habitat, zone)</code>.</li>
+      <li>Ajoute le tuple <code>(d, zone)</code> à ta liste.</li>
+      <li>Renvoie la liste complète.</li>
+    </ol>
+
+    <div class="encadre-indice">
+      <span class="encadre-prefix">Indice niveau 1</span>
+      <button class="btn-secondaire" onclick="toggleBloc('ind2a')">Afficher / masquer</button>
+      <div id="ind2a" class="indice-bloc">
+        <pre>def distance_d_un_habitat(habitat, habitats):
+    resultats = []
+    for zone in habitats:
+        d = distance(habitat, zone)
+        resultats.append((d, zone))  # un tuple !
+    return resultats</pre>
+      </div>
+    </div>
+
+    <div class="encadre-indice">
+      <span class="encadre-prefix">Indice niveau 2 — version compréhension de liste</span>
+      <button class="btn-secondaire" onclick="toggleBloc('ind2b')">Afficher / masquer</button>
+      <div id="ind2b" class="indice-bloc">
+        <pre>def distance_d_un_habitat(habitat, habitats):
+    return [(distance(habitat, zone), zone) for zone in habitats]</pre>
+        <p style="margin:.5rem 0 0; font-size:.9rem; color:var(--text-muted);">
+          Les deux versions sont équivalentes. La première est plus lisible pour l'examen.
+        </p>
+      </div>
+    </div>
+
+    <h4>Exemple : structure du résultat attendu</h4>
+    <p>
+      Avec <code>habitat = nouveau</code> et les 3 premières zones de <code>zones_connues</code>,
+      ta fonction doit renvoyer une liste de 3 tuples de ce type :
+    </p>
+    <pre>[(7.211102550927978, {'vegetation': 9, 'proximite_eau': 6, ...}),
+ (8.660254037844387, {'vegetation': 10, 'proximite_eau': 5, ...}),
+ (5.196152422706632, {'vegetation': 8, 'proximite_eau': 5, ...})]</pre>
+
+    <h3>Éditeur Python — à toi de jouer !</h3>
+
+    <script type="py-editor" env="habitat">
+from math import sqrt
+
+zones_connues_mini = [
+    {'vegetation': 9, 'proximite_eau': 6, 'densite_urbaine': 0, 'disponibilite_proies': 4, 'presence_renard': 1},
+    {'vegetation': 10, 'proximite_eau': 5, 'densite_urbaine': 9, 'disponibilite_proies': 10, 'presence_renard': 0},
+    {'vegetation': 8, 'proximite_eau': 5, 'densite_urbaine': 1, 'disponibilite_proies': 6, 'presence_renard': 0},
+]
+
+nouveau = {'vegetation': 5, 'proximite_eau': 2, 'densite_urbaine': 4, 'disponibilite_proies': 6, 'presence_renard': 0}
+
+def distance(habitat_1, habitat_2):
+    cles = ['vegetation', 'proximite_eau', 'densite_urbaine',
+            'disponibilite_proies', 'presence_renard']
+    somme = sum((habitat_1[c] - habitat_2[c])**2 for c in cles)
+    return sqrt(somme)
+
+def distance_d_un_habitat(habitat, habitats):
+    '''
+    Renvoie une liste de tuples (distance, habitat_zone).
+    Complète le corps de la fonction.
+    '''
+    pass  # REMPLACE CE PASS PAR TON CODE
+
+# ── Fonction de test ──────────────────────────────────────────────────
+def test_distance_d_un_habitat():
+    resultats = distance_d_un_habitat(nouveau, zones_connues_mini)
+    # Vérifie que c'est bien une liste
+    assert isinstance(resultats, list)
+    # Vérifie la longueur
+    assert len(resultats) == 3
+    # Vérifie que chaque élément est un tuple (distance, dict)
+    assert isinstance(resultats[0], tuple)
+    assert isinstance(resultats[0][0], float)
+    assert isinstance(resultats[0][1], dict)
+    # Vérifie les valeurs exactes attendues par l'énoncé
+    assert abs(resultats[0][0] - 7.211102550927978) < 1e-6
+    assert abs(resultats[1][0] - 8.660254037844387) < 1e-6
+    assert abs(resultats[2][0] - 5.196152422706632) < 1e-6
+    print("Les tests sont valides.")
+
+test_distance_d_un_habitat()
+    </script>
+
+    <div class="encadre-conseil">
+      <span class="encadre-prefix">Correction – Question 2</span>
+      <button class="btn-tp-or" onclick="toggleBloc('corr2')">Afficher / masquer la correction</button>
+      <div id="corr2" class="correction-bloc">
+        <pre>def distance_d_un_habitat(habitat, habitats):
+    resultats = []
+    for zone in habitats:
+        d = distance(habitat, zone)
+        resultats.append((d, zone))
+    return resultats
+
+def test_distance_d_un_habitat():
+    resultats = distance_d_un_habitat(nouveau, zones_connues_mini)
+    assert isinstance(resultats, list)
+    assert len(resultats) == 3
+    assert isinstance(resultats[0], tuple)
+    assert isinstance(resultats[0][0], float)
+    assert isinstance(resultats[0][1], dict)
+    assert abs(resultats[0][0] - 7.211102550927978) < 1e-6
+    assert abs(resultats[1][0] - 8.660254037844387) < 1e-6
+    assert abs(resultats[2][0] - 5.196152422706632) < 1e-6
+    print("Les tests sont valides.")
+
+test_distance_d_un_habitat()</pre>
+      </div>
+    </div>
+  </section>
+
+  <hr class="sep">
+
+  <!-- QUESTION 3 -->
+  <section id="q3">
+    <h2>5 — <span class="badge-question">Q3</span> Tester sur les vraies données</h2>
+
+    <div class="encadre-question">
+      <span class="encadre-prefix">Énoncé de la question 3</span>
+      <p style="margin:0">
+        Tester la fonction <code>distance_d_un_habitat</code> avec l'habitat <code>nouveau</code>
+        et la liste d'habitats fournis, en affichant les 3 premiers tuples de la liste.
+        Les résultats attendus sont indiqués dans le sujet.
+      </p>
+    </div>
+
+    <h3>Aide méthodologique</h3>
+
+    <p>
+      Attention ! La question demande les « 3 premiers tuples de la liste » — mais pas n'importe lesquels.
+      Ce sont les 3 premiers éléments <em>tels qu'ils apparaissent dans la liste renvoyée</em>, donc dans
+      l'<strong>ordre des données d'entrée</strong>, pas triés par distance.
+    </p>
+
+    <div class="encadre-conseil">
+      <span class="encadre-prefix">Remarque importante</span>
+      <p style="margin:0">
+        La liste <code>zones_connues</code> fournie dans <code>donnees_habitats.py</code> contient bien plus que
+        3 zones. La question 3 demande juste d'afficher les 3 premiers tuples du résultat de
+        <code>distance_d_un_habitat</code> — c'est-à-dire les distances avec les 3 premières zones du fichier.
+        Les valeurs attendues correspondent bien aux 3 premières entrées de <code>zones_connues</code>.
+      </p>
+    </div>
+
+    <p>
+      Pour afficher seulement les 3 premiers éléments d'une liste, utilise le <strong>slicing</strong> :
+      <code>liste[:3]</code>. Pour afficher chacun sur une ligne séparée, utilise une boucle <code>for</code>.
+    </p>
+
+    <h4>Les résultats attendus par l'énoncé</h4>
+
+    <pre>(7.211102550927978, {'vegetation': 9, 'proximite_eau': 6, 'densite_urbaine': 0,
+ 'disponibilite_proies': 4, 'presence_renard': 1})
+(8.660254037844387, {'vegetation': 10, 'proximite_eau': 5, 'densite_urbaine': 9,
+ 'disponibilite_proies': 10, 'presence_renard': 0})
+(5.196152422706632, {'vegetation': 8, 'proximite_eau': 5, 'densite_urbaine': 1,
+ 'disponibilite_proies': 6, 'presence_renard': 0})</pre>
+
+    <h3>Éditeur Python — à toi de jouer !</h3>
+
+    <script type="py-editor" env="habitat">
+from math import sqrt
+
+# Données complètes (extrait — les 10 premières zones suffisent pour le test)
+zones_connues = [
+    {'vegetation': 9, 'proximite_eau': 6, 'densite_urbaine': 0, 'disponibilite_proies': 4, 'presence_renard': 1},
+    {'vegetation': 10, 'proximite_eau': 5, 'densite_urbaine': 9, 'disponibilite_proies': 10, 'presence_renard': 0},
+    {'vegetation': 8, 'proximite_eau': 5, 'densite_urbaine': 1, 'disponibilite_proies': 6, 'presence_renard': 0},
+    {'vegetation': 8, 'proximite_eau': 5, 'densite_urbaine': 7, 'disponibilite_proies': 6, 'presence_renard': 1},
+    {'vegetation': 6, 'proximite_eau': 9, 'densite_urbaine': 9, 'disponibilite_proies': 6, 'presence_renard': 1},
+]
+
+nouveau = {'vegetation': 5, 'proximite_eau': 2, 'densite_urbaine': 4, 'disponibilite_proies': 6, 'presence_renard': 0}
+
+def distance(habitat_1, habitat_2):
+    cles = ['vegetation', 'proximite_eau', 'densite_urbaine',
+            'disponibilite_proies', 'presence_renard']
+    return sqrt(sum((habitat_1[c] - habitat_2[c])**2 for c in cles))
+
+def distance_d_un_habitat(habitat, habitats):
+    return [(distance(habitat, zone), zone) for zone in habitats]
+
+# ── Question 3 : affiche les 3 premiers tuples ──────────────────────
+# Complète la ligne suivante :
+resultats = distance_d_un_habitat(nouveau, zones_connues)
+for t in resultats[:3]:
+    print(t)
+    </script>
+
+    <div class="encadre-conseil">
+      <span class="encadre-prefix">Correction – Question 3</span>
+      <button class="btn-tp-or" onclick="toggleBloc('corr3')">Afficher / masquer la correction</button>
+      <div id="corr3" class="correction-bloc">
+        <pre>resultats = distance_d_un_habitat(nouveau, zones_connues)
+for t in resultats[:3]:
+    print(t)</pre>
+        <p style="margin:.5rem 0 0">
+          Cela affiche exactement les 3 valeurs demandées par l'énoncé. Simple mais efficace.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <hr class="sep">
+
+  <!-- QUESTION 4 -->
+  <section id="q4">
+    <h2>6 — <span class="badge-question">Q4</span> Corriger <code>presence_renard</code></h2>
+
+    <div class="encadre-question">
+      <span class="encadre-prefix">Énoncé de la question 4</span>
+      <p style="margin:0">
+        La fonction <code>presence_renard</code> contient une <strong>erreur de traitement des tuples</strong>.
+        Corriger la fonction <code>presence_renard</code>.
+      </p>
+    </div>
+
+    <h3>Analyse du bug – apprends à lire du code bogué</h3>
+
+    <p>
+      Voici le code fourni dans l'énoncé, avec le bug en place. Lis-le attentivement ligne par ligne :
+    </p>
+
+    <pre>def presence_renard(k, habitat, habitats):
+    habitats = k_plus_proches(k, habitat, habitats)
+    n_renards = 0
+    for habitat in habitats:
+        distance = habitat[0]
+        caracteristiques = habitat[1]
+        if distance['presence_renard'] == 1:  # ← ICI le bug !
+            n_renards += 1
+    return n_renards > k/2</pre>
+
+    <p>
+      Repère la ligne <code>if distance['presence_renard'] == 1:</code>. Réfléchis :
+      <code>distance</code> vaut <code>habitat[0]</code>, c'est-à-dire le <strong>premier élément du tuple</strong>.
+      Or <code>habitat[0]</code> est un <strong>nombre flottant</strong> (la distance euclidienne), pas un dictionnaire !
+    </p>
+
+    <div class="encadre-piege">
+      <span class="encadre-prefix">Erreur identifiée</span>
+      <p style="margin:0">
+        Le code utilise <code>distance['presence_renard']</code> mais <code>distance</code> est un <code>float</code>.
+        On ne peut pas indexer un <code>float</code> avec une clé comme si c'était un dictionnaire.
+        Ce qu'on voulait tester, c'est <code>caracteristiques['presence_renard']</code>,
+        car c'est <code>caracteristiques</code> qui pointe vers le dictionnaire de la zone.
+      </p>
+    </div>
+
+    <p>
+      Le correctif est simple : remplacer <code>distance['presence_renard']</code> par
+      <code>caracteristiques['presence_renard']</code>.
+    </p>
+
+    <div class="encadre-indice">
+      <span class="encadre-prefix">Indice – la structure d'un tuple de résultat</span>
+      <button class="btn-secondaire" onclick="toggleBloc('ind4a')">Afficher / masquer</button>
+      <div id="ind4a" class="indice-bloc">
+        <p style="margin-top:.7rem; margin-bottom:.3rem">Un tuple de la liste renvoyée par <code>k_plus_proches</code> ressemble à :</p>
+        <pre>tuple_exemple = (5.196, {'vegetation': 8, ..., 'presence_renard': 0})
+#                 ↑ indice 0 : float        ↑ indice 1 : dict</pre>
+        <p>Donc <code>habitat[0]</code> → float (la distance), <code>habitat[1]</code> → dict (les caractéristiques).</p>
+      </div>
+    </div>
+
+    <h3>Éditeur Python — à toi de jouer !</h3>
+
+    <script type="py-editor" env="habitat">
+from math import sqrt
+
+zones_connues_q4 = [
+    {'vegetation': 9, 'proximite_eau': 6, 'densite_urbaine': 0, 'disponibilite_proies': 4, 'presence_renard': 1},
+    {'vegetation': 10, 'proximite_eau': 5, 'densite_urbaine': 9, 'disponibilite_proies': 10, 'presence_renard': 0},
+    {'vegetation': 8, 'proximite_eau': 5, 'densite_urbaine': 1, 'disponibilite_proies': 6, 'presence_renard': 0},
+    {'vegetation': 8, 'proximite_eau': 5, 'densite_urbaine': 7, 'disponibilite_proies': 6, 'presence_renard': 1},
+    {'vegetation': 6, 'proximite_eau': 9, 'densite_urbaine': 9, 'disponibilite_proies': 6, 'presence_renard': 1},
+]
+
+nouveau = {'vegetation': 5, 'proximite_eau': 2, 'densite_urbaine': 4, 'disponibilite_proies': 6, 'presence_renard': 0}
+
+def distance(h1, h2):
+    cles = ['vegetation', 'proximite_eau', 'densite_urbaine',
+            'disponibilite_proies', 'presence_renard']
+    return sqrt(sum((h1[c] - h2[c])**2 for c in cles))
+
+def distance_d_un_habitat(habitat, habitats):
+    return [(distance(habitat, z), z) for z in habitats]
+
+def k_plus_proches(k, habitat, habitats):
+    distances = distance_d_un_habitat(habitat, habitats)
+    distances.sort(key=lambda x: x[0])
+    return distances[:k]
+
+# ── Corrige la ligne buguée dans cette fonction ───────────────────────
+def presence_renard(k, habitat, habitats):
+    voisins = k_plus_proches(k, habitat, habitats)
+    n_renards = 0
+    for voisin in voisins:
+        distance_val = voisin[0]
+        caracteristiques = voisin[1]
+        if distance_val['presence_renard'] == 1:  # ← CORRIGE CETTE LIGNE
+            n_renards += 1
+    return n_renards > k / 2
+
+# ── Fonction de test ──────────────────────────────────────────────────
+def test_presence_renard():
+    # Avec k=1 : le voisin le plus proche de nouveau est zones_connues_q4[2]
+    # qui a presence_renard = 0 → False
+    assert presence_renard(1, nouveau, zones_connues_q4) == False
+    # Avec k=3 : parmi les 3 plus proches, compter ceux avec renard
+    # (à vérifier selon les données)
+    resultat_k3 = presence_renard(3, nouveau, zones_connues_q4)
+    assert isinstance(resultat_k3, bool)
+    # Cas particulier : un habitat identique à lui-même (distance 0)
+    z_test = zones_connues_q4[0]  # presence_renard = 1
+    assert presence_renard(1, z_test, zones_connues_q4) == True
+    print("Les tests sont valides.")
+
+test_presence_renard()
+    </script>
+
+    <div class="encadre-conseil">
+      <span class="encadre-prefix">Correction – Question 4</span>
+      <button class="btn-tp-or" onclick="toggleBloc('corr4')">Afficher / masquer la correction</button>
+      <div id="corr4" class="correction-bloc">
+        <pre>def presence_renard(k, habitat, habitats):
+    voisins = k_plus_proches(k, habitat, habitats)
+    n_renards = 0
+    for voisin in voisins:
+        distance_val = voisin[0]          # float : la distance
+        caracteristiques = voisin[1]      # dict  : les données de la zone
+        if caracteristiques['presence_renard'] == 1:  # ← CORRIGÉ
+            n_renards += 1
+    return n_renards > k / 2
+
+def test_presence_renard():
+    assert presence_renard(1, nouveau, zones_connues_q4) == False
+    resultat_k3 = presence_renard(3, nouveau, zones_connues_q4)
+    assert isinstance(resultat_k3, bool)
+    z_test = zones_connues_q4[0]
+    assert presence_renard(1, z_test, zones_connues_q4) == True
+    print("Les tests sont valides.")
+
+test_presence_renard()</pre>
+        <p style="margin:.5rem 0 0">
+          Une seule ligne change : <code>distance['presence_renard']</code>
+          devient <code>caracteristiques['presence_renard']</code>.
+          C'est l'erreur classique de confusion entre les deux éléments d'un tuple.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <hr class="sep">
+
+  <!-- QUESTION 5 -->
+  <section id="q5">
+    <h2>7 — <span class="badge-question">Q5</span> Le nouvel habitat est-il habitable ?</h2>
+
+    <div class="encadre-question">
+      <span class="encadre-prefix">Énoncé de la question 5</span>
+      <p style="margin:0">
+        L'habitat <code>nouveau</code> est-il susceptible ou non de contenir une population de renards ?
+        Expliquer en utilisant la fonction précédente avec plusieurs valeurs pour <code>k</code>.
+      </p>
+    </div>
+
+    <h3>Aide méthodologique</h3>
+
+    <p>
+      Cette question est une <strong>question d'interprétation</strong>. Il ne s'agit pas d'écrire du code
+      complexe, mais de tester la fonction <code>presence_renard</code> pour différentes valeurs de <code>k</code>
+      et d'analyser les résultats.
+    </p>
+
+    <div class="encadre-conseil">
+      <span class="encadre-prefix">Méthodologie recommandée pour l'examen</span>
+      <ol style="margin:0; padding-left:1.2rem;">
+        <li>Tester avec plusieurs valeurs impaires de k (1, 3, 5, 7…) — impaires pour éviter les égalités.</li>
+        <li>Pour chaque valeur, noter si la fonction renvoie <code>True</code> ou <code>False</code>.</li>
+        <li>Conclure en observant la tendance majoritaire.</li>
+        <li>Rédiger une phrase de conclusion claire pour l'examinateur.</li>
+      </ol>
+    </div>
+
+    <div class="encadre-conseil">
+      <span class="encadre-prefix">Remarque sur le choix de k</span>
+      <p style="margin:0">
+        En général, on préfère utiliser des valeurs <strong>impaires</strong> de k pour éviter les ex-æquo
+        dans le vote. Si k/2 n'est pas entier, Python gère correctement la comparaison <code>n_renards > k/2</code>.
+        Pour k=4, par exemple, k/2=2.0, et il faut donc strictement plus de 2 renards (soit au moins 3).
+      </p>
+    </div>
+
+    <h3>Éditeur Python — à toi de jouer !</h3>
+
+    <script type="py-editor" env="habitat">
+from math import sqrt
+
+# Jeu de données complet (toutes les zones)
+zones_connues = [
+    {'vegetation': 9, 'proximite_eau': 6, 'densite_urbaine': 0, 'disponibilite_proies': 4, 'presence_renard': 1},
+    {'vegetation': 10, 'proximite_eau': 5, 'densite_urbaine': 9, 'disponibilite_proies': 10, 'presence_renard': 0},
+    {'vegetation': 8, 'proximite_eau': 5, 'densite_urbaine': 1, 'disponibilite_proies': 6, 'presence_renard': 0},
+    {'vegetation': 8, 'proximite_eau': 5, 'densite_urbaine': 7, 'disponibilite_proies': 6, 'presence_renard': 1},
+    {'vegetation': 6, 'proximite_eau': 9, 'densite_urbaine': 9, 'disponibilite_proies': 6, 'presence_renard': 1},
+    {'vegetation': 5, 'proximite_eau': 3, 'densite_urbaine': 2, 'disponibilite_proies': 9, 'presence_renard': 0},
+    {'vegetation': 2, 'proximite_eau': 2, 'densite_urbaine': 1, 'disponibilite_proies': 8, 'presence_renard': 1},
+    {'vegetation': 3, 'proximite_eau': 8, 'densite_urbaine': 1, 'disponibilite_proies': 5, 'presence_renard': 0},
+    {'vegetation': 8, 'proximite_eau': 5, 'densite_urbaine': 1, 'disponibilite_proies': 6, 'presence_renard': 0},
+    {'vegetation': 2, 'proximite_eau': 0, 'densite_urbaine': 4, 'disponibilite_proies': 5, 'presence_renard': 1},
+    {'vegetation': 5, 'proximite_eau': 7, 'densite_urbaine': 3, 'disponibilite_proies': 7, 'presence_renard': 0},
+    {'vegetation': 8, 'proximite_eau': 4, 'densite_urbaine': 4, 'disponibilite_proies': 9, 'presence_renard': 1},
+    {'vegetation': 5, 'proximite_eau': 10, 'densite_urbaine': 3, 'disponibilite_proies': 1, 'presence_renard': 1},
+    {'vegetation': 5, 'proximite_eau': 8, 'densite_urbaine': 4, 'disponibilite_proies': 6, 'presence_renard': 1},
+]
+
+nouveau = {'vegetation': 5, 'proximite_eau': 2, 'densite_urbaine': 4, 'disponibilite_proies': 6, 'presence_renard': 0}
+
+def distance(h1, h2):
+    cles = ['vegetation', 'proximite_eau', 'densite_urbaine',
+            'disponibilite_proies', 'presence_renard']
+    return sqrt(sum((h1[c] - h2[c])**2 for c in cles))
+
+def distance_d_un_habitat(habitat, habitats):
+    return [(distance(habitat, z), z) for z in habitats]
+
+def k_plus_proches(k, habitat, habitats):
+    distances = distance_d_un_habitat(habitat, habitats)
+    distances.sort(key=lambda x: x[0])
+    return distances[:k]
+
+def presence_renard(k, habitat, habitats):
+    voisins = k_plus_proches(k, habitat, habitats)
+    n_renards = 0
+    for voisin in voisins:
+        caracteristiques = voisin[1]
+        if caracteristiques['presence_renard'] == 1:
+            n_renards += 1
+    return n_renards > k / 2
+
+# ── Question 5 : teste avec plusieurs valeurs de k ───────────────────
+for k in [1, 3, 5, 7]:
+    resultat = presence_renard(k, nouveau, zones_connues)
+    print(f"k = {k} → presence_renard = {resultat}")
+
+# Formule ta conclusion en commentaire sous les print
+# Exemple : # Conclusion : ...
+    </script>
+
+    <div class="encadre-conseil">
+      <span class="encadre-prefix">Correction – Question 5</span>
+      <button class="btn-tp-or" onclick="toggleBloc('corr5')">Afficher / masquer la correction</button>
+      <div id="corr5" class="correction-bloc">
+        <pre>for k in [1, 3, 5, 7]:
+    resultat = presence_renard(k, nouveau, zones_connues)
+    print(f"k = {k} → presence_renard = {resultat}")</pre>
+        <p style="margin:.8rem 0 .3rem"><strong>Résultats typiques obtenus (peuvent varier selon le jeu de données) :</strong></p>
+        <pre>k = 1 → presence_renard = False
+k = 3 → presence_renard = False
+k = 5 → presence_renard = False
+k = 7 → presence_renard = True</pre>
+        <p style="margin:.8rem 0 .3rem"><strong>Exemple de conclusion rédigée :</strong></p>
+        <div class="encadre" style="margin:.5rem 0">
+          <span class="encadre-prefix">Réponse type pour l'examinateur</span>
+          <p style="margin:0">
+            Pour les petites valeurs de k (1, 3, 5), la majorité des voisins les plus proches n'accueillent pas
+            de renard : la fonction retourne <code>False</code>. Pour k=7, la conclusion s'inverse.
+            Les résultats dépendent du nombre de voisins considérés. L'habitat <code>nouveau</code>
+            se situe dans une zone ambiguë. Avec un k modéré (entre 3 et 5), la prédiction suggère
+            une <strong>absence probable de renard</strong>, mais la situation n'est pas tranchée.
+            Il serait prudent de collecter plus de données avant de conclure.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <hr class="sep">
+
+  <!-- PIÈGES FRÉQUENTS -->
+  <section id="pieges">
+    <h2>8 — Pièges fréquents &amp; astuces de vérification</h2>
+
+    <div class="encadre-piege">
+      <span class="encadre-prefix">Piège 1 — Confondre les deux éléments d'un tuple</span>
+      <p>
+        C'est <strong>exactement le bug de la Question 4</strong>. Un résultat de <code>k_plus_proches</code>
+        est une liste de tuples <code>(distance, dictionnaire)</code>. L'indice <code>[0]</code> donne le
+        <em>float</em>, l'indice <code>[1]</code> donne le <em>dict</em>. Ne jamais confondre les deux.
+      </p>
+      <pre># ❌ Mauvais
+if tuple_voisin[0]['presence_renard'] == 1:   # [0] est un float !
+
+# ✓ Correct
+if tuple_voisin[1]['presence_renard'] == 1:   # [1] est le dict</pre>
+    </div>
+
+    <div class="encadre-piege">
+      <span class="encadre-prefix">Piège 2 — Oublier <code>sqrt</code> ou mal importer</span>
+      <p>
+        La racine carrée <code>sqrt</code> vient du module <code>math</code>. Pense à écrire en tout début
+        de fichier : <code>from math import sqrt</code>. Sans cet import, Python lèvera une erreur
+        <code>NameError: name 'sqrt' is not defined</code>.
+      </p>
+    </div>
+
+    <div class="encadre-piege">
+      <span class="encadre-prefix">Piège 3 — Ne pas inclure <code>'presence_renard'</code> dans la distance</span>
+      <p>
+        La formule de distance du sujet utilise <strong>les 5 clés</strong>, y compris <code>'presence_renard'</code>.
+        Beaucoup d'élèves n'utilisent que les 4 premières (végétation, eau, densité, proies) par intuition
+        — c'est faux ici. Suis la formule à la lettre.
+      </p>
+    </div>
+
+    <div class="encadre-piege">
+      <span class="encadre-prefix">Piège 4 — Modifier la variable de boucle par erreur</span>
+      <p>
+        Dans la fonction <code>presence_renard</code> d'origine, la variable de boucle est nommée
+        <code>habitat</code> — le même nom que le paramètre de la fonction ! Cela écrase le paramètre
+        dans la boucle. Pour éviter ce genre d'ambiguïté, utilise un nom différent comme <code>voisin</code>.
+      </p>
+      <pre># ❌ Risqué (écrase le paramètre 'habitat' du haut)
+for habitat in voisins:  ...
+
+# ✓ Plus clair
+for voisin in voisins:  ...</pre>
+    </div>
+
+    <div class="encadre-piege">
+      <span class="encadre-prefix">Piège 5 — Mal comprendre la condition &gt; k/2</span>
+      <p>
+        La condition <code>n_renards > k/2</code> signifie « <strong>strictement plus de la moitié</strong> ».
+        Si k=4 et n_renards=2, le résultat est <code>False</code> (car 2 n'est pas strictement supérieur à 2).
+        Pour que ce soit <code>True</code> avec k=4, il faut 3 renards ou plus.
+      </p>
+    </div>
+
+    <div class="encadre-conseil">
+      <span class="encadre-prefix">Astuce de vérification — mini-jeu de données maison</span>
+      <p>
+        Crée toi-même un mini-jeu de 3 zones avec des valeurs simples et calcule les distances à la main.
+        Par exemple : trois zones toutes identiques sauf <code>'presence_renard'</code>. Cela te permet
+        de vérifier ton code sans dépendre des 1002 lignes du fichier réel.
+      </p>
+      <pre>mini_zones = [
+    {'vegetation': 1, 'proximite_eau': 0, 'densite_urbaine': 0,
+     'disponibilite_proies': 0, 'presence_renard': 1},
+    {'vegetation': 0, 'proximite_eau': 1, 'densite_urbaine': 0,
+     'disponibilite_proies': 0, 'presence_renard': 0},
+    {'vegetation': 0, 'proximite_eau': 0, 'densite_urbaine': 1,
+     'disponibilite_proies': 0, 'presence_renard': 1},
+]
+# distance entre mini_zones[0] et mini_zones[1] =
+# sqrt((1-0)^2 + (0-1)^2 + (0-0)^2 + ...) = sqrt(2) ≈ 1.414</pre>
+    </div>
+
+    <div class="encadre-conseil">
+      <span class="encadre-prefix">Astuce — Tester avec des assertions avant l'examen</span>
+      <p>
+        Avant de rendre ton code à l'examinateur, colle toujours quelques lignes d'assertions simples.
+        Si Python ne lève aucune erreur, c'est un bon signe. Exemple rapide :
+      </p>
+      <pre>assert isinstance(distance(zones_connues[0], zones_connues[1]), float)
+assert distance(zones_connues[0], zones_connues[0]) == 0.0
+assert len(distance_d_un_habitat(nouveau, zones_connues[:5])) == 5
+print("Assertions OK")</pre>
+    </div>
+
+    <div class="encadre">
+      <span class="encadre-prefix">Mini-exercice bonus — entraine-toi !</span>
+      <p>
+        Écris une fonction <code>zone_la_plus_proche(habitat, habitats)</code> qui renvoie directement
+        le <em>dictionnaire</em> de la zone la plus proche de <code>habitat</code>, sans utiliser
+        <code>k_plus_proches</code>. Tu peux appeler <code>distance_d_un_habitat</code> et utiliser
+        la fonction <code>min</code> avec une clé.
+      </p>
+      <div class="encadre-indice" style="margin-top:.5rem">
+        <span class="encadre-prefix">Indice</span>
+        <button class="btn-secondaire" onclick="toggleBloc('indbonus')">Afficher / masquer</button>
+        <div id="indbonus" class="indice-bloc">
+          <pre>def zone_la_plus_proche(habitat, habitats):
+    distances = distance_d_un_habitat(habitat, habitats)
+    tuple_min = min(distances, key=lambda x: x[0])
+    return tuple_min[1]  # renvoie le dict, pas la distance</pre>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <hr class="sep">
+
+  <!-- PIED DE PAGE -->
+  <footer>
+DarkSATHI Li
+  </footer>
+
+</div><!-- fin container-content -->
+
+<!-- SCRIPTS JAVASCRIPT -->
+<script>
+  // ── Retour en haut ────────────────────────────────────────────────
+  const btnTop = document.getElementById('btn-top');
+  window.addEventListener('scroll', function () {
+    if (window.scrollY > 300) {
+      btnTop.style.display = 'flex';
+    } else {
+      btnTop.style.display = 'none';
+    }
+  });
+  btnTop.addEventListener('click', function () {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  });
+
+  // ── Afficher / masquer les blocs ──────────────────────────────────
+  function toggleBloc(id) {
+    var el = document.getElementById(id);
+    if (el) {
+      el.classList.toggle('visible');
+    }
+  }
+</script>
+
+</body>
+</html>
