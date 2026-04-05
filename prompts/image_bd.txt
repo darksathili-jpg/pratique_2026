@@ -1,0 +1,22 @@
+> **Prompt :**
+>
+> "**Crée une nouvelle bande dessinée de 6 cases (2 lignes x 3 colonnes) qui représente la continuité narrative et pédagogique directe de la bande dessinée fournie en image de référence.**
+>
+> **Consignes critiques :**
+>
+> 1.  **Personnages et Style :** Réutilise *exactement* les mêmes personnages (la jeune fille rousse et le garçon à lunettes) dans le même style artistique (BD de ligne claire franco-belge, couleurs vives, aspect dessiné à la main).
+> 2.  **Mise en Page :** Reproduis *exactement* le format : le bandeau de titre orné en haut, et les six panneaux rectangulaires uniformes. Conserve le papier texture de fond.
+> 3.  **Bandeau de Titre :** Modifie le texte du bandeau de titre orné pour qu'il dise : '**NSI TERMINALE : [Insère ici le titre du nouveau sujet, ex: LES AVENTURES DE L'ICALENDAR] ! (BAC 2026 – SUJET 3)**'.
+> 4.  **Contenu Pédagogique (à partir du sujet HTML fourni) :** Utilise le contenu textuel et le code du nouveau sujet HTML pour peupler les six panneaux. Distribue les concepts logiquement :
+>     * **Panneau 1 :** Introduction du nouveau problème (contexte Q1).
+>     * **Panneau 2 :** Présentation du concept clé (ex: Q1, la fonction `est_bissextile`).
+>     * **Panneau 3 :** Identification d'un bug courant (contexte Q2/Q3).
+>     * **Panneau 4 :** Application d'assertions (filtrage Sûr, contexte Q2/Q3).
+>     * **Panneau 5 :** Résolution et test (contexte Q4, le format iCalendar).
+>     * **Panneau 6 :** Conclusion triomphante (contexte Q4, format iCalendar valide).
+> 5.  **Vérification de l'Audit de Texte :** Assure-toi que *chaque* texte de dialogue, étiquette de panneau, et bloc de code complexe est parfaitement correct orthographiquement (en français) et syntaxiquement (en Python). Les étiquettes de panneau doivent utiliser '**CASE - [Description]**' pour la cohérence.
+> 6.  **Signature :** Conserve la signature '**DarkSATHI Li**' et '**FIN. SUJET [Insère n° du sujet] ACCOMPLI**' sur le dernier panneau.
+>
+> **Image de référence fournie :** image_15.png (pour la présentation, le style et les personnages).
+>
+> **Sujet HTML fourni :** [Insère ici le fichier HTML complet du sujet].**"
