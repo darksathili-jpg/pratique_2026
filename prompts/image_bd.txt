@@ -6,10 +6,10 @@
 >
 > 1.  **Personnages et Style :** Réutilise *exactement* les mêmes personnages (la jeune fille rousse et le garçon à lunettes) dans le même style artistique (BD de ligne claire franco-belge, couleurs vives, aspect dessiné à la main).
 > 2.  **Mise en Page :** Reproduis *exactement* le format : le bandeau de titre orné en haut, et les six panneaux rectangulaires uniformes. Conserve le papier texture de fond.
-> 3.  **Bandeau de Titre :** Modifie le texte du bandeau de titre orné pour qu'il dise : '**NSI TERMINALE : [Insère ici le titre du nouveau sujet, ex: LES AVENTURES DE L'ICALENDAR] ! (BAC 2026 – SUJET 3)**'.
+> 3.  **Bandeau de Titre :** Modifie le texte du bandeau de titre orné pour qu'il dise : '**NSI TERMINALE : [une serre sous attaque] ! (BAC 2026 – SUJET 7)**'.
 > 4.  **Contenu Pédagogique (à partir du sujet HTML fourni) :** Utilise le contenu textuel et le code du nouveau sujet HTML pour peupler les six panneaux. Distribue les concepts logiquement :
 >     * **Panneau 1 :** Introduction du nouveau problème (contexte Q1).
->     * **Panneau 2 :** Présentation du concept clé (ex: Q1, la fonction `est_bissextile`).
+>     * **Panneau 2 :** Présentation du concept clé.
 >     * **Panneau 3 :** Identification d'un bug courant (contexte Q2/Q3).
 >     * **Panneau 4 :** Application d'assertions (filtrage Sûr, contexte Q2/Q3).
 >     * **Panneau 5 :** Résolution et test (contexte Q4, le format iCalendar).
