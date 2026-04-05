@@ -1,0 +1,1314 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Fiche – Simulation d'évacuation | NSI Terminale | BAC 2026</title>
+
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Rubik+Dirt&family=Source+Serif+4:ital,opsz,wght@0,8..60,300..900;1,8..60,300..900&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+
+  <script>
+    MathJax = {
+      tex: { inlineMath: [['\\(','\\)'],['$','$']] },
+      options: { skipHtmlTags: ['script','noscript','style','textarea','pre'] }
+    };
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js" async></script>
+  <script type="module" src="https://pyscript.net/releases/2026.3.1/core.js"></script>
+
+  <style>
+    :root {
+      --bg-main:     #f8f9fb;
+      --bg-panel:    #eef1f5;
+      --accent:      #2a6496;
+      --accent-or:   #b5610a;
+      --accent-vert: #2e7d32;
+      --text-main:   #1a1a1a;
+      --text-muted:  #5a6470;
+      --rouge:       #c0392b;
+      --violet:      #7b3fa8;
+      --border-radius: 8px;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg-main);
+      color: var(--text-main);
+      font-family: 'Source Serif 4', Georgia, serif;
+      font-size: 1.05rem;
+      line-height: 1.8;
+      margin: 0;
+      padding-bottom: 4rem;
+    }
+
+    h1, h2, h3, h4 { font-family: 'Rubik Dirt', cursive; color: var(--accent); letter-spacing: .02em; }
+    h1 { font-size: 2.1rem; color: #111; }
+    h2 { font-size: 1.5rem; border-bottom: 2px solid var(--accent); padding-bottom: .3rem; margin-top: 2.5rem; }
+    h3 { font-size: 1.2rem; color: var(--accent-or); margin-top: 1.8rem; }
+    p  { margin-bottom: 1rem; }
+
+    code, pre { font-family: 'JetBrains Mono', monospace; font-size: .88em; }
+    code { background: #e8edf2; padding: 2px 6px; border-radius: 4px; color: #8b3a00; }
+    pre  { background: #f0f3f7; border-left: 3px solid var(--accent); padding: 1rem 1.2rem;
+           border-radius: var(--border-radius); overflow-x: auto; color: #1a1a1a; line-height: 1.6; }
+
+    a { color: var(--accent); text-decoration: underline dotted; }
+
+    /* NAV */
+    #navbar {
+      position: sticky; top: 0; z-index: 1000;
+      background: #2a6496; border-bottom: 2px solid #1a4a70;
+      padding: .5rem 1.5rem; display: flex; gap: .5rem; flex-wrap: wrap; align-items: center;
+    }
+    #navbar span { font-family: 'JetBrains Mono', monospace; font-size: .78rem; color: #ccddf0; margin-right: auto; }
+    #navbar a {
+      font-family: 'JetBrains Mono', monospace; font-size: .78rem; color: #fff;
+      text-decoration: none; padding: .22rem .65rem; border: 1px solid #ccddf0;
+      border-radius: 4px; transition: background .2s;
+    }
+    #navbar a:hover { background: #1a4a70; }
+
+    .container-content { max-width: 900px; margin: 0 auto; padding: 2rem 1.5rem; }
+
+    /* ENCADRÉS */
+    .encadre, .encadre-conseil, .encadre-indice, .encadre-question, .encadre-piege, .encadre-bug {
+      border-radius: var(--border-radius); padding: 1.1rem 1.4rem; margin: 1.3rem 0;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+    }
+    .encadre          { background: #fff;    border-left: 4px solid var(--accent); }
+    .encadre-conseil  { background: #fff8f0; border-left: 4px solid var(--accent-or); }
+    .encadre-indice   { background: #f0faf0; border-left: 4px solid var(--accent-vert); }
+    .encadre-question { background: #faf5ff; border-left: 4px solid var(--violet); }
+    .encadre-piege    { background: #fff5f5; border-left: 4px solid var(--rouge); }
+    .encadre-bug      { background: #fff9f0; border-left: 4px solid #e67e22; }
+
+    .encadre-prefix {
+      font-family: 'JetBrains Mono', monospace; font-size: .7rem;
+      font-variant: small-caps; letter-spacing: .12em; text-transform: uppercase;
+      margin-bottom: .4rem; display: block;
+    }
+    .encadre          .encadre-prefix { color: var(--accent); }
+    .encadre-conseil  .encadre-prefix { color: var(--accent-or); }
+    .encadre-indice   .encadre-prefix { color: var(--accent-vert); }
+    .encadre-question .encadre-prefix { color: var(--violet); }
+    .encadre-piege    .encadre-prefix { color: var(--rouge); }
+    .encadre-bug      .encadre-prefix { color: #e67e22; }
+
+    /* BOUTONS */
+    .btn-tp, .btn-tp-or, .btn-tp-vert, .btn-secondaire {
+      font-family: 'JetBrains Mono', monospace; font-size: .82rem;
+      border: none; border-radius: 5px; padding: .42rem 1rem;
+      cursor: pointer; transition: opacity .2s, transform .1s; margin: .3rem .2rem;
+    }
+    .btn-tp         { background: var(--accent);      color: #fff; }
+    .btn-tp-or      { background: var(--accent-or);   color: #fff; }
+    .btn-tp-vert    { background: var(--accent-vert); color: #fff; }
+    .btn-secondaire { background: #eef1f5; border: 1px solid var(--accent); color: var(--text-main); }
+    .btn-tp:hover, .btn-tp-or:hover, .btn-tp-vert:hover, .btn-secondaire:hover {
+      opacity: .85; transform: translateY(-1px);
+    }
+
+    .badge-question {
+      display: inline-block; font-family: 'JetBrains Mono', monospace; font-size: .8rem;
+      background: var(--violet); color: #fff; border-radius: 4px;
+      padding: .15rem .7rem; margin-right: .5rem; vertical-align: middle;
+    }
+
+    /* INDICES / CORRECTIONS */
+    .indice-bloc     { display: none; }
+    .correction-bloc { display: none; }
+    .indice-bloc.visible     { display: block; }
+    .correction-bloc.visible { display: block; }
+
+    /* SOMMAIRE */
+    #sommaire ol { font-family: 'JetBrains Mono', monospace; font-size: .87rem; line-height: 2.2; }
+    #sommaire a { color: var(--accent); }
+
+    /* GRILLE PIÈCE */
+    .grille-piece {
+      display: inline-block;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: .78rem;
+      line-height: 1.6;
+      background: #f0f3f7;
+      border: 2px solid var(--accent);
+      border-radius: 6px;
+      padding: .5rem .8rem;
+      margin: .5rem;
+    }
+    .grille-piece .sortie { color: var(--accent-vert); font-weight: 700; }
+    .grille-piece .occ    { color: var(--rouge); font-weight: 700; }
+
+    /* TABLEAU */
+    .table-info {
+      border-collapse: collapse; width: 100%;
+      font-family: 'JetBrains Mono', monospace; font-size: .83rem; margin: .8rem 0;
+    }
+    .table-info th {
+      background: #dce8f2; color: var(--accent);
+      border: 1px solid #b0c8e0; padding: .4rem .8rem; text-align: left;
+    }
+    .table-info td { border: 1px solid #d0dce8; padding: .38rem .8rem; }
+    .table-info tr:nth-child(even) td { background: #f4f7fb; }
+    .td-ok  { color: var(--accent-vert); font-weight: 600; }
+    .td-bug { color: var(--rouge); font-weight: 600; }
+
+    /* MANHATTAN SCHÉMA */
+    .manhattan-grid {
+      display: inline-grid;
+      gap: 2px;
+      margin: .5rem;
+    }
+    .mc { width: 32px; height: 32px; display: flex; align-items: center; justify-content: center;
+          font-family: 'JetBrains Mono', monospace; font-size: .72rem;
+          border-radius: 3px; }
+    .mc-vide  { background: #f0f3f7; border: 1px solid #d0dce8; }
+    .mc-sortie{ background: #c8e6c9; border: 1px solid #81c784; color: var(--accent-vert); font-weight:700; }
+    .mc-occ   { background: #ffcdd2; border: 1px solid #e57373; color: var(--rouge); font-weight:700; }
+    .mc-dist  { background: #e3f2fd; border: 1px solid #90caf9; color: var(--accent); }
+
+    .code-ligne { display: block; }
+    .code-bug   { color: var(--rouge); background: #fff0f0; border-radius: 3px; padding: 0 3px; }
+    .code-ok    { color: var(--accent-vert); background: #f0fff0; border-radius: 3px; padding: 0 3px; }
+
+    .sep { border: none; border-top: 1px dashed #9ab0c8; margin: 2.5rem 0; opacity: .7; }
+
+    #btn-top {
+      position: fixed; bottom: 1.5rem; right: 1.5rem; z-index: 999;
+      background: var(--accent); color: #fff; border: none; border-radius: 50%;
+      width: 44px; height: 44px; font-size: 1.2rem; cursor: pointer;
+      display: none; align-items: center; justify-content: center;
+      font-family: 'JetBrains Mono', monospace;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.25); transition: opacity .2s;
+    }
+    #btn-top:hover { opacity: .8; }
+
+    footer {
+      text-align: center; font-family: 'JetBrains Mono', monospace;
+      font-size: .8rem; color: var(--text-muted);
+      padding: 2rem 1rem 1rem; border-top: 1px solid #d0d8e4;
+    }
+
+    /* Annotation compteur */
+    .badge-tours {
+      display: inline-block; background: var(--accent); color: #fff;
+      font-family: 'JetBrains Mono', monospace; font-size: .75rem;
+      border-radius: 4px; padding: .1rem .5rem; margin-left: .4rem;
+    }
+  </style>
+</head>
+<body>
+
+<div style="display:none"><script type="py" env="evac">pass</script></div>
+<button id="btn-top" title="Retour en haut" aria-label="Retour en haut">▲</button>
+
+<nav id="navbar">
+  <span>NSI Terminale — Simulation d'évacuation</span>
+  <a href="#s0">Intro</a>
+  <a href="#s1">Rappels</a>
+  <a href="#s2">Architecture</a>
+  <a href="#q1">Q1</a>
+  <a href="#q2">Q2</a>
+  <a href="#q3">Q3</a>
+  <a href="#q4">Q4</a>
+  <a href="#pieges">Pièges</a>
+</nav>
+
+<div class="container-content">
+
+  <!-- EN-TÊTE -->
+  <div style="text-align:center; padding: 2rem 0 1rem;">
+    <div style="font-family:'JetBrains Mono',monospace; font-size:.78rem; color:var(--text-muted); margin-bottom:.5rem;">
+      BAC NSI 2026 — Sujet n°14 — Partie pratique
+    </div>
+    <h1>Simulation d'évacuation<br>
+      <span style="font-size:1rem; color:var(--accent); font-family:'Source Serif 4',serif; font-style:italic; font-weight:300;">
+        POO · Algorithmes · Distance de Manhattan · Débogage
+      </span>
+    </h1>
+    <div style="font-family:'JetBrains Mono',monospace; font-size:.78rem; color:var(--text-muted); margin-top:.5rem;">
+      Terminale NSI &nbsp;·&nbsp; 4 questions · 1h · 2 bugs à identifier &amp; corriger
+    </div>
+  </div>
+
+  <!-- ALERT ANALYSE -->
+  <div class="encadre-bug" style="margin-top:0;">
+    <span class="encadre-prefix">Analyse critique — Bugs identifiés dans le code fourni</span>
+    <p>
+      Le code de <code>choix_sortie</code> contient <strong>deux bugs distincts</strong> à identifier
+      précisément en Question 4 :
+    </p>
+    <ul>
+      <li>
+        <strong>Bug logique :</strong> la condition <code>if k &lt; 0</code> est <em>toujours fausse</em>
+        car <code>k</code> commence à 1 dans <code>range(1, len(self.sorties))</code> — le corps
+        de la boucle ne s'exécute donc jamais, et seule <code>sorties[0]</code> est renvoyée.
+      </li>
+      <li>
+        <strong>Variable non définie :</strong> <code>d2</code> est utilisée sans avoir été initialisée
+        — cela aurait provoqué une <code>NameError</code> si la condition avait pu être vraie.
+      </li>
+    </ul>
+    <p style="margin:0">
+      Les corrections : remplacer <code>if k &lt; 0</code> par <code>if d2 &lt; distance</code>,
+      et ajouter <code>d2 = distance_de_manhattan(autre_sortie)</code> avant cette ligne.
+    </p>
+  </div>
+
+  <hr class="sep">
+
+  <!-- SOMMAIRE -->
+  <section id="s0">
+    <div id="sommaire" class="encadre">
+      <span class="encadre-prefix">Sommaire</span>
+      <ol>
+        <li><a href="#s1">Rappels de cours — tableaux 2D, boucles imbriquées, distance de Manhattan</a></li>
+        <li><a href="#s2">Architecture du programme — la classe <code>Piece</code></a></li>
+        <li><a href="#q1">Question 1 — <code>nb_occupants_restants</code> : compter les occupants</a></li>
+        <li><a href="#q2">Question 2 — <code>evacuation</code> : simuler l'évacuation complète</a></li>
+        <li><a href="#q3">Question 3 — <code>ajouter_sortie</code> : compléter les directions S et E</a></li>
+        <li><a href="#q4">Question 4 — <code>choix_sortie</code> : identifier et corriger les 2 bugs</a></li>
+        <li><a href="#pieges">Pièges fréquents &amp; stratégie de performance</a></li>
+      </ol>
+    </div>
+  </section>
+
+  <hr class="sep">
+
+  <!-- SECTION 1 : RAPPELS -->
+  <section id="s1">
+    <h2>1 — Rappels indispensables</h2>
+
+    <h3>Les tableaux 2D et leur parcours</h3>
+
+    <p>
+      La grille d'une pièce est une <strong>liste de listes</strong> en Python.
+      <code>grille[i][j]</code> est la case à la ligne <code>i</code>, colonne <code>j</code>.
+      Pour sommer tous les éléments, on utilise des boucles imbriquées ou des sommes imbriquées :
+    </p>
+
+    <div class="encadre">
+      <span class="encadre-prefix">Trois façons équivalentes de sommer une grille 2D</span>
+      <pre style="margin:.3rem 0"><code># Méthode 1 : boucles imbriquées
+total = 0
+for ligne in grille:
+    for valeur in ligne:
+        total += valeur
+
+# Méthode 2 : sum imbriqué (plus compacte)
+total = sum(sum(ligne) for ligne in grille)
+
+# Méthode 3 : sum avec unpacking (avancée)
+total = sum(v for ligne in grille for v in ligne)</code></pre>
+    </div>
+
+    <h3>La distance de Manhattan</h3>
+
+    <p>
+      Imagine une ville avec un réseau de rues en grille. Pour aller du point A au point B,
+      tu ne peux pas couper en diagonale — tu dois emprunter les rues horizontales et verticales.
+      La <strong>distance de Manhattan</strong> mesure ce trajet minimal.
+    </p>
+
+    <div class="encadre-conseil">
+      <span class="encadre-prefix">Définition et calcul</span>
+      <p>
+        La distance de Manhattan entre deux cases \((i_1, j_1)\) et \((i_2, j_2)\) est :
+        $$d = |i_1 - i_2| + |j_1 - j_2|$$
+      </p>
+      <pre style="margin:.3rem 0"><code>def distance_de_manhattan(destination):
+    """Fonction interne — i et j sont capturés depuis le contexte."""
+    return abs(i - destination[0]) + abs(j - destination[1])</code></pre>
+      <p style="margin:.5rem 0 0">
+        <strong>Exemple :</strong> depuis la case (3, 4), la sortie en (0, 5) est à
+        \(|3-0| + |4-5| = 3 + 1 = 4\) cases.
+        La sortie en (4, 1) est à \(|3-4| + |4-1| = 1 + 3 = 4\) cases également.
+      </p>
+    </div>
+
+    <!-- SCHÉMA VISUEL MANHATTAN -->
+    <div style="overflow-x:auto; text-align:center; margin:1rem 0;">
+      <p style="font-family:'JetBrains Mono',monospace; font-size:.8rem; color:var(--text-muted); margin-bottom:.3rem;">
+        Grille 5×7 avec 4 sorties — distances depuis la case (0,3)
+      </p>
+      <div style="display:inline-block; font-family:'JetBrains Mono',monospace; font-size:.75rem; text-align:center;">
+        <div style="margin-bottom:4px; padding-left:36px;">
+          <span style="display:inline-block; width:32px; height:16px; background:#c8e6c9; border:1px solid #81c784; border-radius:3px; text-align:center; color:var(--accent-vert); font-weight:700;">P</span>
+          <span style="display:inline-block; width:32px; height:16px; text-align:center; color:var(--text-muted); font-size:.65rem;">(0,5)</span>
+        </div>
+        <table style="border-collapse:collapse;">
+          <tr>
+            <td style="padding:2px; color:var(--text-muted); font-size:.68rem; width:36px; text-align:right; padding-right:6px;">(0,·)</td>
+            <td style="padding:2px;"><div class="mc mc-dist">3</div></td>
+            <td style="padding:2px;"><div class="mc mc-dist">2</div></td>
+            <td style="padding:2px;"><div class="mc mc-dist">1</div></td>
+            <td style="padding:2px;"><div class="mc mc-occ">★</div></td>
+            <td style="padding:2px;"><div class="mc mc-dist">1</div></td>
+            <td style="padding:2px;"><div class="mc mc-sortie">P</div></td>
+            <td style="padding:2px;"><div class="mc mc-dist">3</div></td>
+          </tr>
+          <tr>
+            <td style="padding:2px; color:var(--text-muted); font-size:.68rem; text-align:right; padding-right:6px;">(1,·)</td>
+            <td style="padding:2px;"><div class="mc mc-sortie">P</div></td>
+            <td style="padding:2px;"><div class="mc mc-dist">3</div></td>
+            <td style="padding:2px;"><div class="mc mc-dist">2</div></td>
+            <td style="padding:2px;"><div class="mc mc-dist">2</div></td>
+            <td style="padding:2px;"><div class="mc mc-dist">2</div></td>
+            <td style="padding:2px;"><div class="mc mc-dist">2</div></td>
+            <td style="padding:2px;"><div class="mc mc-dist">4</div></td>
+          </tr>
+          <tr>
+            <td style="padding:2px; color:var(--text-muted); font-size:.68rem; text-align:right; padding-right:6px;">(2,·)</td>
+            <td style="padding:2px;"><div class="mc mc-vide"></div></td>
+            <td style="padding:2px;"><div class="mc mc-vide"></div></td>
+            <td style="padding:2px;"><div class="mc mc-vide"></div></td>
+            <td style="padding:2px;"><div class="mc mc-vide"></div></td>
+            <td style="padding:2px;"><div class="mc mc-vide"></div></td>
+            <td style="padding:2px;"><div class="mc mc-vide"></div></td>
+            <td style="padding:2px;"><div class="mc mc-vide"></div></td>
+          </tr>
+          <tr>
+            <td style="padding:2px; color:var(--text-muted); font-size:.68rem; text-align:right; padding-right:6px;">(3,·)</td>
+            <td style="padding:2px;"><div class="mc mc-vide"></div></td>
+            <td style="padding:2px;"><div class="mc mc-vide"></div></td>
+            <td style="padding:2px;"><div class="mc mc-vide"></div></td>
+            <td style="padding:2px;"><div class="mc mc-vide"></div></td>
+            <td style="padding:2px;"><div class="mc mc-vide"></div></td>
+            <td style="padding:2px;"><div class="mc mc-vide"></div></td>
+            <td style="padding:2px;"><div class="mc mc-sortie">P</div></td>
+          </tr>
+          <tr>
+            <td style="padding:2px; color:var(--text-muted); font-size:.68rem; text-align:right; padding-right:6px;">(4,·)</td>
+            <td style="padding:2px;"><div class="mc mc-vide"></div></td>
+            <td style="padding:2px;"><div class="mc mc-sortie">P</div></td>
+            <td style="padding:2px;"><div class="mc mc-vide"></div></td>
+            <td style="padding:2px;"><div class="mc mc-vide"></div></td>
+            <td style="padding:2px;"><div class="mc mc-vide"></div></td>
+            <td style="padding:2px;"><div class="mc mc-vide"></div></td>
+            <td style="padding:2px;"><div class="mc mc-vide"></div></td>
+          </tr>
+        </table>
+        <p style="margin-top:.4rem; color:var(--text-muted); font-size:.68rem;">
+          ★ = case (0,3) | <span style="color:var(--accent-vert)">P = sorties</span> | chiffres = distances de Manhattan depuis (0,3)
+        </p>
+      </div>
+    </div>
+
+    <h3>Le schéma algorithmique « trouver le minimum »</h3>
+
+    <p>
+      C'est exactement ce que doit faire <code>choix_sortie</code> : parcourir une liste
+      et retenir l'élément qui minimise une valeur. Ce schéma revient souvent en NSI.
+    </p>
+
+    <div class="encadre">
+      <span class="encadre-prefix">Patron — Trouver l'élément minimal</span>
+      <pre style="margin:.3rem 0"><code>meilleur     = liste[0]           # initialisation avec le premier élément
+meilleure_val = critere(liste[0]) # valeur correspondante
+
+for element in liste[1:]:         # parcours du reste
+    val = critere(element)
+    if val < meilleure_val:        # on a trouvé mieux
+        meilleur     = element
+        meilleure_val = val
+
+return meilleur</code></pre>
+    </div>
+  </section>
+
+  <hr class="sep">
+
+  <!-- SECTION 2 : ARCHITECTURE -->
+  <section id="s2">
+    <h2>2 — Architecture du programme</h2>
+
+    <h3>La classe <code>Piece</code> — ses attributs</h3>
+
+    <table class="table-info">
+      <thead><tr><th>Attribut</th><th>Type</th><th>Description</th></tr></thead>
+      <tbody>
+        <tr><td><code>grille</code></td><td>list[list[int]]</td><td>Tableau 2D — <code>grille[i][j]</code> = nb d'occupants (0 à 5)</td></tr>
+        <tr><td><code>i_max</code></td><td>int</td><td>Indice maximal de ligne = profondeur − 1</td></tr>
+        <tr><td><code>j_max</code></td><td>int</td><td>Indice maximal de colonne = largeur − 1</td></tr>
+        <tr><td><code>capacite</code></td><td>int</td><td>Capacité totale = profondeur × largeur × 5</td></tr>
+        <tr><td><code>sorties</code></td><td>list[tuple]</td><td>Liste de tuples <code>(i, j)</code> représentant les sorties</td></tr>
+      </tbody>
+    </table>
+
+    <h3>Coordonnées des sorties — convention critique</h3>
+
+    <div class="encadre-conseil">
+      <span class="encadre-prefix">Comment une sortie est représentée</span>
+      <p>
+        Une sortie est un <strong>tuple <code>(ligne, colonne)</code></strong> — dans le même format
+        que les cases de la grille. Pour une pièce <code>Piece(5, 7)</code> :
+      </p>
+      <table class="table-info" style="max-width:480px;">
+        <thead><tr><th>Direction</th><th>Tuple</th><th>Raisonnement</th></tr></thead>
+        <tbody>
+          <tr><td><code>"N"</code> Nord</td><td><code>(0, position)</code></td><td>Ligne 0, colonne = position</td></tr>
+          <tr><td><code>"S"</code> Sud</td><td><code>(i_max, position)</code></td><td>Dernière ligne, colonne = position</td></tr>
+          <tr><td><code>"O"</code> Ouest</td><td><code>(position, 0)</code></td><td>Colonne 0, ligne = position</td></tr>
+          <tr><td><code>"E"</code> Est</td><td><code>(position, j_max)</code></td><td>Dernière colonne, ligne = position</td></tr>
+        </tbody>
+      </table>
+      <p style="margin:0">
+        <strong>Mnémotechnique :</strong> N et S → même colonne, ligne extrême.
+        O et E → même ligne, colonne extrême. La <code>position</code> est toujours
+        l'indice <em>parallèle</em> au mur.
+      </p>
+    </div>
+
+    <h3>Les méthodes — ce qui est fourni, ce qui est à faire</h3>
+
+    <table class="table-info">
+      <thead><tr><th>Méthode</th><th>Statut</th><th>Rôle</th></tr></thead>
+      <tbody>
+        <tr><td><code>nb_occupants_restants()</code></td><td style="color:var(--accent-or)">À écrire (Q1)</td><td>Somme de tous les éléments de la grille</td></tr>
+        <tr><td><code>ajouter_sortie(dir, pos)</code></td><td style="color:var(--accent-or)">À compléter (Q3)</td><td>Ajouter S et E en plus de N et O</td></tr>
+        <tr><td><code>choix_sortie(i, j)</code></td><td style="color:var(--rouge)">À corriger (Q4)</td><td>Renvoyer la sortie la plus proche — 2 bugs</td></tr>
+        <tr><td><code>ajouter_occupants(i, j, nb)</code></td><td class="td-ok">Fournie ✓</td><td>Ajouter des occupants dans une case (max 5)</td></tr>
+        <tr><td><code>deplacer(i, j, nb, dir)</code></td><td class="td-ok">Fournie ✓</td><td>Déplacer des occupants dans une direction</td></tr>
+        <tr><td><code>alerter(silencieux)</code></td><td class="td-ok">Fournie ✓</td><td>Simuler un tour — renvoie True si mouvement</td></tr>
+        <tr><td><code>evacuation(p, silencieux)</code></td><td style="color:var(--accent-or)">À écrire (Q2)</td><td>Boucler sur alerter() jusqu'à évacuation totale</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <hr class="sep">
+
+  <!-- QUESTION 1 -->
+  <section id="q1">
+    <h2>Question 1 — <code>nb_occupants_restants</code></h2>
+
+    <div class="encadre-question">
+      <span class="encadre-prefix">Énoncé — Question 1</span>
+      <p style="margin:0">
+        <span class="badge-question">Q1</span>
+        Écrire le corps de la méthode <code>nb_occupants_restants</code> qui renvoie
+        le nombre total d'occupants actuellement dans la pièce.
+      </p>
+    </div>
+
+    <div class="encadre-conseil">
+      <span class="encadre-prefix">Comprendre la structure à parcourir</span>
+      <p>
+        <code>self.grille</code> est une liste de listes. Par exemple pour <code>Piece(3, 4)</code> :
+      </p>
+      <pre style="margin:.3rem 0"><code>self.grille = [
+    [0, 2, 0, 0],   # ligne 0
+    [3, 0, 1, 0],   # ligne 1
+    [0, 0, 4, 0],   # ligne 2
+]
+# Total = 0+2+0+0 + 3+0+1+0 + 0+0+4+0 = 10</code></pre>
+    </div>
+
+    <!-- INDICES -->
+    <div style="margin:.8rem 0;">
+      <button class="btn-tp-vert" onclick="toggleIndice('ind-q1-1', this)">▶ Indice 1 — Boucles imbriquées</button>
+    </div>
+    <div id="ind-q1-1" class="encadre-indice indice-bloc">
+      <span class="encadre-prefix">Indice 1</span>
+      <pre style="margin:.3rem 0"><code>total = 0
+for ligne in self.grille:
+    for valeur in ligne:
+        total += valeur
+return total</code></pre>
+    </div>
+
+    <div style="margin:.8rem 0;">
+      <button class="btn-tp-vert" onclick="toggleIndice('ind-q1-2', this)">▶ Indice 2 — Version compacte avec sum()</button>
+    </div>
+    <div id="ind-q1-2" class="encadre-indice indice-bloc">
+      <span class="encadre-prefix">Indice 2</span>
+      <pre style="margin:.3rem 0"><code>return sum(sum(ligne) for ligne in self.grille)</code></pre>
+      <p style="margin:.4rem 0 0">
+        <code>sum(ligne)</code> somme une liste. <code>sum(...for ligne in self.grille)</code>
+        applique ça à chaque ligne et additionne les résultats.
+      </p>
+    </div>
+
+    <div class="encadre" style="margin-top:1.2rem;">
+      <span class="encadre-prefix">Éditeur Python — Complète nb_occupants_restants</span>
+      <script type="py-editor" env="evac">
+class Piece:
+    def __init__(self, profondeur, largeur):
+        self.grille = [[0 for _ in range(largeur)] for _ in range(profondeur)]
+        self.i_max = profondeur - 1
+        self.j_max = largeur - 1
+        self.capacite = profondeur * largeur * 5
+        self.sorties = []
+
+    def ajouter_occupants(self, i, j, nb):
+        nb_add = min(nb, 5 - self.grille[i][j])
+        if nb_add > 0:
+            self.grille[i][j] += nb_add
+        return nb_add
+
+    def nb_occupants_restants(self):
+        pass  # À compléter
+
+
+def test_nb_occupants_restants():
+    p1 = Piece(5, 7)
+    p1.ajouter_sortie = lambda d, pos: None  # on n'en a pas besoin ici
+    # Test pièce vide
+    assert p1.nb_occupants_restants() == 0, "Doit renvoyer 0 si vide"
+    # Ajout manuel dans la grille
+    p1.grille[0][3] = 4
+    p1.grille[0][1] = 2
+    p1.grille[3][4] = 3
+    p1.grille[4][0] = 1   # n1 = 1 pour ce test
+    p1.grille[4][3] = 2
+    assert p1.nb_occupants_restants() == 12, f"Attendu 12, obtenu {p1.nb_occupants_restants()}"
+    # Test avec une seule case
+    p2 = Piece(3, 3)
+    p2.ajouter_occupants(1, 1, 5)
+    assert p2.nb_occupants_restants() == 5
+    # Test avec grille pleine (9 cases × 5)
+    p3 = Piece(3, 3)
+    for i in range(3):
+        for j in range(3):
+            p3.ajouter_occupants(i, j, 5)
+    assert p3.nb_occupants_restants() == 45
+    print("Les tests sont validés.")
+
+test_nb_occupants_restants()
+      </script>
+    </div>
+
+    <div style="margin:1rem 0;">
+      <button class="btn-tp-or" onclick="toggleCorrection('corr-q1', this)">&#128274; Afficher la correction</button>
+    </div>
+    <div id="corr-q1" class="correction-bloc encadre-conseil">
+      <span class="encadre-prefix">Correction — Question 1</span>
+      <script type="py-editor" env="evac-c1">
+def nb_occupants_restants(self):
+    """Renvoie le nombre total d'occupants dans la pièce."""
+    return sum(sum(ligne) for ligne in self.grille)
+
+# Explication :
+# - sum(ligne)          → somme d'une ligne (ex: [0,2,0,0] → 2)
+# - for ligne in self.grille → parcourt chaque ligne
+# - sum(... for ...)    → additionne les sommes de chaque ligne
+
+# Test de vérification mentale :
+grille_exemple = [[0,2,0,0], [3,0,1,0], [0,0,4,0]]
+print(sum(sum(ligne) for ligne in grille_exemple))  # → 10
+      </script>
+    </div>
+  </section>
+
+  <hr class="sep">
+
+  <!-- QUESTION 2 -->
+  <section id="q2">
+    <h2>Question 2 — <code>evacuation</code></h2>
+
+    <div class="encadre-question">
+      <span class="encadre-prefix">Énoncé — Question 2</span>
+      <p>
+        <span class="badge-question">Q2</span>
+        Écrire le corps de la fonction <code>evacuation(p, silencieux=True)</code> qui simule
+        l'évacuation complète et renvoie le nombre de tours nécessaires.
+        Elle doit appeler <code>p.alerter(silencieux)</code> à chaque tour,
+        et afficher l'état de la pièce si <code>silencieux=False</code>.
+      </p>
+    </div>
+
+    <div class="encadre-conseil">
+      <span class="encadre-prefix">Ce que fait alerter() — à comprendre absolument</span>
+      <ul style="margin:0">
+        <li><code>p.alerter(silencieux)</code> simule <strong>un tour</strong> : chaque occupant avance d'une case vers sa sortie.</li>
+        <li>Elle renvoie <code>True</code> si au moins un déplacement a eu lieu, <code>False</code> si personne n'a pu bouger.</li>
+        <li>Quand tous les occupants sont sortis, <code>alerter()</code> renvoie <code>False</code> (rien à déplacer).</li>
+        <li>On compte le nombre d'appels à <code>alerter()</code> = le nombre de tours.</li>
+      </ul>
+    </div>
+
+    <!-- INDICES -->
+    <div style="margin:.8rem 0;">
+      <button class="btn-tp-vert" onclick="toggleIndice('ind-q2-1', this)">▶ Indice 1 — Structure de la boucle</button>
+    </div>
+    <div id="ind-q2-1" class="encadre-indice indice-bloc">
+      <span class="encadre-prefix">Indice 1</span>
+      <pre style="margin:.3rem 0"><code>tours = 0
+while p.alerter(silencieux):   # alerter() renvoie True tant qu'il y a des mouvements
+    tours += 1
+    if not silencieux:
+        print(p)
+return tours</code></pre>
+      <p style="margin:.4rem 0 0">
+        <strong>Attention à l'ordre :</strong> on appelle <code>alerter()</code> dans la condition
+        du <code>while</code> — l'appel <em>et</em> le test se font en même temps.
+        On incrémente <code>tours</code> <em>après</em> chaque tour réussi.
+      </p>
+    </div>
+
+    <div style="margin:.8rem 0;">
+      <button class="btn-tp-vert" onclick="toggleIndice('ind-q2-2', this)">▶ Indice 2 — Trace d'exécution sur un exemple simple</button>
+    </div>
+    <div id="ind-q2-2" class="encadre-indice indice-bloc">
+      <span class="encadre-prefix">Indice 2 — Trace</span>
+      <p>
+        Pièce 1×2 avec 1 occupant en (0,0) et sortie en (0,1) :
+      </p>
+      <table class="table-info" style="max-width:440px; font-size:.82rem;">
+        <thead><tr><th>Tour</th><th>Avant alerter()</th><th>alerter() renvoie</th><th>Après</th></tr></thead>
+        <tbody>
+          <tr><td>1</td><td>[1, 0]</td><td>True (déplacement vers sortie)</td><td>[0, 0]</td></tr>
+          <tr><td>—</td><td>[0, 0]</td><td>False (rien à déplacer)</td><td>Fin de boucle</td></tr>
+        </tbody>
+      </table>
+      <p style="margin:.4rem 0 0">
+        La boucle s'exécute 1 fois → <code>tours = 1</code>. La fonction renvoie 1.
+      </p>
+    </div>
+
+    <div class="encadre" style="margin-top:1.2rem;">
+      <span class="encadre-prefix">Éditeur Python — Écris evacuation</span>
+      <script type="py-editor" env="evac-q2">
+from copy import deepcopy
+from random import shuffle
+
+class Piece:
+    def __init__(self, profondeur, largeur):
+        self.grille = [[0]*largeur for _ in range(profondeur)]
+        self.i_max = profondeur - 1
+        self.j_max = largeur - 1
+        self.capacite = profondeur * largeur * 5
+        self.sorties = []
+
+    def ajouter_occupants(self, i, j, nb):
+        nb_add = min(nb, 5 - self.grille[i][j])
+        if nb_add > 0:
+            self.grille[i][j] += nb_add
+        return nb_add
+
+    def nb_occupants_restants(self):
+        return sum(sum(l) for l in self.grille)
+
+    def ajouter_sortie(self, direction, position):
+        if direction == "N":   self.sorties.append((0, position))
+        elif direction == "O": self.sorties.append((position, 0))
+        elif direction == "S": self.sorties.append((self.i_max, position))
+        elif direction == "E": self.sorties.append((position, self.j_max))
+
+    def choix_sortie(self, i, j):
+        def dist(d): return abs(i-d[0]) + abs(j-d[1])
+        choix = self.sorties[0]; distance = dist(choix)
+        for k in range(1, len(self.sorties)):
+            autre = self.sorties[k]; d2 = dist(autre)
+            if d2 < distance: choix = autre; distance = d2
+        return choix
+
+    def deplacer(self, i, j, nb, direction, silencieux=True):
+        d = {"N":(-1,0),"S":(1,0),"E":(0,1),"O":(0,-1)}
+        ni, nj = i+d[direction][0], j+d[direction][1]
+        nb_dep = min(nb, 5-self.grille[ni][nj], self.grille[i][j])
+        if nb_dep > 0:
+            self.grille[i][j] -= nb_dep; self.grille[ni][nj] += nb_dep
+        return nb_dep
+
+    def alerter(self, silencieux=True):
+        old = deepcopy(self.grille); modif = False
+        for i in range(len(self.grille)):
+            for j in range(len(self.grille[i])):
+                if old[i][j] > 0:
+                    si, sj = self.choix_sortie(i, j)
+                    dx, dy = sj-j, si-i
+                    if dx == 0 and dy == 0:
+                        self.grille[i][j] -= 1; nb_dep = 1
+                    else:
+                        mvt = []
+                        if dx > 0: mvt.append("E")
+                        elif dx < 0 and j > 0: mvt.append("O")
+                        if dy > 0: mvt.append("S")
+                        elif dy < 0 and i > 0: mvt.append("N")
+                        shuffle(mvt)
+                        nb_dep = self.deplacer(i, j, old[i][j], mvt[0], silencieux)
+                        if nb_dep == 0 and len(mvt) > 1:
+                            nb_dep = self.deplacer(i, j, old[i][j], mvt[1], silencieux)
+                    if nb_dep > 0: modif = True
+        return modif
+
+    def __str__(self):
+        return str(self.grille)
+
+
+def evacuation(p, silencieux=True):
+    pass  # À compléter !
+
+
+def test_evacuation():
+    situations = [
+        {"cases": {(0,3):3, (1,1):1, (3,2):5}, "attendu": 11},
+        {"cases": {(0,3):4, (0,1):2, (3,4):3, (4,0):1, (4,3):2}, "attendu": 14},
+        {"cases": {(0,3):1, (0,1):2, (3,4):1, (4,0):3, (4,3):5}, "attendu": 15},
+    ]
+    for i, s in enumerate(situations):
+        p = Piece(5, 7)
+        p.ajouter_sortie("N", 5)
+        for c, nb in s["cases"].items():
+            p.ajouter_occupants(c[0], c[1], nb)
+        nbT = evacuation(p)
+        assert nbT == s["attendu"], f"Essai {i+1}: obtenu {nbT}, attendu {s['attendu']}"
+    print("Les tests sont validés.")
+
+test_evacuation()
+      </script>
+    </div>
+
+    <div style="margin:1rem 0;">
+      <button class="btn-tp-or" onclick="toggleCorrection('corr-q2', this)">&#128274; Afficher la correction</button>
+    </div>
+    <div id="corr-q2" class="correction-bloc encadre-conseil">
+      <span class="encadre-prefix">Correction — Question 2</span>
+      <script type="py-editor" env="evac-c2">
+def evacuation(p, silencieux=True):
+    """Simule l'évacuation complète et renvoie le nombre de tours."""
+    tours = 0
+    while p.alerter(silencieux):   # alerter() renvoie True tant qu'il y a des mouvements
+        tours += 1
+        if not silencieux:
+            print(p)               # affichage de l'état si mode verbeux
+    return tours
+
+# Pourquoi ça marche ?
+# - alerter() est appelé dans la condition du while → il s'exécute ET teste le résultat
+# - Quand tous les occupants sont partis, alerter() renvoie False → sortie de boucle
+# - On compte le nombre de fois où alerter() a renvoyé True = nombre de tours utiles
+      </script>
+    </div>
+  </section>
+
+  <hr class="sep">
+
+  <!-- QUESTION 3 -->
+  <section id="q3">
+    <h2>Question 3 — Compléter <code>ajouter_sortie</code></h2>
+
+    <div class="encadre-question">
+      <span class="encadre-prefix">Énoncé — Question 3</span>
+      <p style="margin:0">
+        <span class="badge-question">Q3</span>
+        Modifier <code>ajouter_sortie(direction, position)</code> pour prendre en compte
+        les directions <code>"S"</code> (sud) et <code>"E"</code> (est) en plus des directions
+        existantes <code>"N"</code> et <code>"O"</code>.
+      </p>
+    </div>
+
+    <p>Code actuel :</p>
+
+    <pre><code>def ajouter_sortie(self, direction: str, position: int):
+    if direction == "N":
+        self.sorties.append((0, position))      # ligne 0, colonne = position
+    elif direction == "O":
+        self.sorties.append((position, 0))      # colonne 0, ligne = position</code></pre>
+
+    <div class="encadre-conseil">
+      <span class="encadre-prefix">Raisonnement géométrique</span>
+      <p>Pour une pièce <code>Piece(5, 7)</code> → <code>i_max=4, j_max=6</code> :</p>
+      <table class="table-info" style="max-width:500px;">
+        <thead><tr><th>Direction</th><th>Mur</th><th>Tuple sortie</th><th>Exemple pos=3</th></tr></thead>
+        <tbody>
+          <tr><td><code>"N"</code> Nord</td><td>Ligne du haut</td><td><code>(0, position)</code></td><td><code>(0, 3)</code></td></tr>
+          <tr><td><code>"S"</code> Sud</td><td>Ligne du bas</td><td><code>(i_max, position)</code></td><td><code>(4, 3)</code></td></tr>
+          <tr><td><code>"O"</code> Ouest</td><td>Colonne gauche</td><td><code>(position, 0)</code></td><td><code>(3, 0)</code></td></tr>
+          <tr><td><code>"E"</code> Est</td><td>Colonne droite</td><td><code>(position, j_max)</code></td><td><code>(3, 6)</code></td></tr>
+        </tbody>
+      </table>
+      <p style="margin:.4rem 0 0">
+        <strong>Règle simple :</strong> N et S fixent la ligne (0 ou <code>i_max</code>),
+        la position donne la colonne. O et E fixent la colonne (0 ou <code>j_max</code>),
+        la position donne la ligne.
+      </p>
+    </div>
+
+    <!-- INDICE -->
+    <div style="margin:.8rem 0;">
+      <button class="btn-tp-vert" onclick="toggleIndice('ind-q3-1', this)">▶ Indice — Les deux elif à ajouter</button>
+    </div>
+    <div id="ind-q3-1" class="encadre-indice indice-bloc">
+      <span class="encadre-prefix">Indice</span>
+      <pre style="margin:.3rem 0"><code>elif direction == "S":
+    self.sorties.append((self.i_max, position))
+elif direction == "E":
+    self.sorties.append((position, self.j_max))</code></pre>
+    </div>
+
+    <div class="encadre" style="margin-top:1.2rem;">
+      <span class="encadre-prefix">Éditeur Python — Complète ajouter_sortie</span>
+      <script type="py-editor" env="evac-q3">
+from random import randint
+
+class Piece:
+    def __init__(self, profondeur, largeur):
+        self.grille = [[0]*largeur for _ in range(profondeur)]
+        self.i_max = profondeur - 1
+        self.j_max = largeur - 1
+        self.capacite = profondeur * largeur * 5
+        self.sorties = []
+
+    def ajouter_sortie(self, direction, position):
+        if direction == "N":
+            self.sorties.append((0, position))
+        elif direction == "O":
+            self.sorties.append((position, 0))
+        # À compléter pour "S" et "E"
+
+
+def test_ajouter_sortie():
+    p1 = Piece(5, 7)    # i_max=4, j_max=6
+    p1.ajouter_sortie("N", 5)   # → (0, 5)
+    n1 = randint(1, 5)
+    p1.ajouter_sortie("S", n1)  # → (4, n1)
+    n2 = randint(1, 5)
+    p1.ajouter_sortie("E", n2)  # → (n2, 6)
+    p1.ajouter_sortie("O", 1)   # → (1, 0)
+    attendu = [(0, 5), (4, n1), (n2, 6), (1, 0)]
+    assert p1.sorties == attendu, f"Obtenu {p1.sorties}, attendu {attendu}"
+    # Cas particulier : position 0
+    p2 = Piece(4, 5)   # i_max=3, j_max=4
+    p2.ajouter_sortie("S", 2)
+    assert p2.sorties == [(3, 2)]
+    p2.ajouter_sortie("E", 1)
+    assert p2.sorties == [(3, 2), (1, 4)]
+    print("Les tests sont validés.")
+
+test_ajouter_sortie()
+      </script>
+    </div>
+
+    <div style="margin:1rem 0;">
+      <button class="btn-tp-or" onclick="toggleCorrection('corr-q3', this)">&#128274; Afficher la correction</button>
+    </div>
+    <div id="corr-q3" class="correction-bloc encadre-conseil">
+      <span class="encadre-prefix">Correction — Question 3</span>
+      <script type="py-editor" env="evac-c3">
+def ajouter_sortie(self, direction, position):
+    """Ajoute une sortie dans la direction donnée à la position donnée."""
+    if direction == "N":
+        self.sorties.append((0, position))           # ligne 0, colonne = position
+    elif direction == "O":
+        self.sorties.append((position, 0))           # colonne 0, ligne = position
+    elif direction == "S":
+        self.sorties.append((self.i_max, position))  # dernière ligne, colonne = position
+    elif direction == "E":
+        self.sorties.append((position, self.j_max))  # dernière colonne, ligne = position
+
+# Test de vérification :
+class PieceTest:
+    def __init__(self): self.i_max = 4; self.j_max = 6; self.sorties = []
+    ajouter_sortie = ajouter_sortie
+
+p = PieceTest()
+p.ajouter_sortie(p, "N", 5)
+p.ajouter_sortie(p, "S", 3)
+p.ajouter_sortie(p, "E", 2)
+p.ajouter_sortie(p, "O", 1)
+print(f"Sorties : {p.sorties}")
+print(f"Attendu : [(0, 5), (4, 3), (2, 6), (1, 0)]")
+      </script>
+    </div>
+  </section>
+
+  <hr class="sep">
+
+  <!-- QUESTION 4 -->
+  <section id="q4">
+    <h2>Question 4 — Corriger les bugs de <code>choix_sortie</code></h2>
+
+    <div class="encadre-question">
+      <span class="encadre-prefix">Énoncé — Question 4</span>
+      <p style="margin:0">
+        <span class="badge-question">Q4</span>
+        Identifier <strong>l'erreur logique</strong> et la <strong>variable non définie</strong>
+        dans le code de <code>choix_sortie</code>, puis effectuer les corrections
+        pour qu'elle renvoie la sortie la plus proche (au sens de la distance de Manhattan).
+      </p>
+    </div>
+
+    <p>Voici le code fourni :</p>
+
+    <pre><code>def choix_sortie(self, i: int, j: int) -> tuple:
+    def distance_de_manhattan(destination):
+        return abs(i - destination[0]) + abs(j - destination[1])
+    assert len(self.sorties) > 0, "Aucune sortie"
+    choix    = self.sorties[0]
+    distance = distance_de_manhattan(choix)
+    for k in range(1, len(self.sorties)):
+        autre_sortie = self.sorties[k]
+        <span class="code-bug">if k < 0:                    ← BUG 1 : condition toujours fausse !</span>
+            choix    = autre_sortie
+            <span class="code-bug">distance = d2               ← BUG 2 : d2 n'est pas définie !</span>
+    return choix</code></pre>
+
+    <div class="encadre-piege">
+      <span class="encadre-prefix">Bug 1 — Condition logiquement impossible</span>
+      <p>
+        <code>for k in range(1, len(self.sorties))</code> fait varier <code>k</code>
+        de <strong>1</strong> jusqu'à la longueur de la liste moins 1.
+        <code>k</code> est donc toujours <strong>≥ 1</strong>.
+      </p>
+      <p>
+        La condition <code>if k &lt; 0</code> est donc <em>toujours fausse</em> — le corps
+        du <code>if</code> ne s'exécute jamais. La boucle tourne mais ne fait rien.
+        La fonction renvoie toujours <code>self.sorties[0]</code>, quelle que soit la position.
+      </p>
+      <p style="margin:0">
+        <strong>Ce qu'il fallait écrire :</strong> comparer la distance à la nouvelle sortie
+        avec la distance au meilleur choix actuel :
+        <code>if distance_de_manhattan(autre_sortie) &lt; distance</code>
+      </p>
+    </div>
+
+    <div class="encadre-piege">
+      <span class="encadre-prefix">Bug 2 — Variable d2 non définie</span>
+      <p style="margin:0">
+        Dans le corps du <code>if</code>, <code>distance = d2</code> utilise <code>d2</code>
+        qui n'a jamais été initialisée. Python aurait levé une <code>NameError</code>
+        si le <code>if</code> avait pu s'exécuter. La correction : calculer
+        <code>d2 = distance_de_manhattan(autre_sortie)</code> <em>avant</em> le test,
+        et utiliser cette variable dans la condition <em>et</em> l'affectation.
+      </p>
+    </div>
+
+    <div class="encadre-conseil">
+      <span class="encadre-prefix">Vérification manuelle des 6 cas de test</span>
+      <p>Sorties : <code>[(0,5), (4,1), (3,6), (1,0)]</code> dans une pièce 5×7</p>
+      <table class="table-info">
+        <thead>
+          <tr><th>Position</th><th>d→(0,5)</th><th>d→(4,1)</th><th>d→(3,6)</th><th>d→(1,0)</th><th>Sortie choisie</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>(0,3)</td><td><strong>2</strong></td><td>6</td><td>6</td><td>4</td><td class="td-ok">(0,5)</td></tr>
+          <tr><td>(0,1)</td><td>4</td><td>4</td><td>8</td><td><strong>2</strong></td><td class="td-ok">(1,0)</td></tr>
+          <tr><td>(1,2)</td><td>4</td><td>4</td><td>6</td><td><strong>2</strong></td><td class="td-ok">(1,0)</td></tr>
+          <tr><td>(3,4)</td><td>4</td><td>4</td><td><strong>2</strong></td><td>6</td><td class="td-ok">(3,6)</td></tr>
+          <tr><td>(4,0)</td><td>9</td><td><strong>1</strong></td><td>7</td><td>3</td><td class="td-ok">(4,1)</td></tr>
+          <tr><td>(4,3)</td><td>6</td><td><strong>2</strong></td><td>4</td><td>6</td><td class="td-ok">(4,1)</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- INDICE -->
+    <div style="margin:.8rem 0;">
+      <button class="btn-tp-vert" onclick="toggleIndice('ind-q4-1', this)">▶ Indice — Les deux lignes à modifier</button>
+    </div>
+    <div id="ind-q4-1" class="encadre-indice indice-bloc">
+      <span class="encadre-prefix">Indice</span>
+      <pre style="margin:.3rem 0"><code>for k in range(1, len(self.sorties)):
+    autre_sortie = self.sorties[k]
+    d2 = distance_de_manhattan(autre_sortie)   # ← AJOUTER cette ligne
+    if d2 < distance:                           # ← REMPLACER if k < 0
+        choix    = autre_sortie
+        distance = d2                           # d2 est maintenant définie</code></pre>
+    </div>
+
+    <div class="encadre" style="margin-top:1.2rem;">
+      <span class="encadre-prefix">Éditeur Python — Corrige choix_sortie</span>
+      <script type="py-editor" env="evac-q4">
+class Piece:
+    def __init__(self, profondeur, largeur):
+        self.grille = [[0]*largeur for _ in range(profondeur)]
+        self.i_max = profondeur-1
+        self.j_max = largeur-1
+        self.capacite = profondeur * largeur * 5
+        self.sorties = []
+
+    def choix_sortie(self, i, j):
+        """Renvoie la sortie la plus proche de la position (i, j)."""
+        def distance_de_manhattan(destination):
+            return abs(i - destination[0]) + abs(j - destination[1])
+        assert len(self.sorties) > 0, "Aucune sortie"
+        choix    = self.sorties[0]
+        distance = distance_de_manhattan(choix)
+        for k in range(1, len(self.sorties)):
+            autre_sortie = self.sorties[k]
+            if k < 0:              # ← BUG 1 à corriger
+                choix    = autre_sortie
+                distance = d2      # ← BUG 2 à corriger
+        return choix
+
+
+def test_choix_sortie():
+    p1 = Piece(5, 7)
+    p1.sorties = [(0, 5), (4, 1), (3, 6), (1, 0)]
+    assert p1.choix_sortie(0, 3) == (0, 5), f"Obtenu {p1.choix_sortie(0, 3)}"
+    assert p1.choix_sortie(0, 1) == (1, 0), f"Obtenu {p1.choix_sortie(0, 1)}"
+    assert p1.choix_sortie(1, 2) == (1, 0), f"Obtenu {p1.choix_sortie(1, 2)}"
+    assert p1.choix_sortie(3, 4) == (3, 6), f"Obtenu {p1.choix_sortie(3, 4)}"
+    assert p1.choix_sortie(4, 0) == (4, 1), f"Obtenu {p1.choix_sortie(4, 0)}"
+    assert p1.choix_sortie(4, 3) == (4, 1), f"Obtenu {p1.choix_sortie(4, 3)}"
+    print("Les tests sont validés.")
+
+test_choix_sortie()
+      </script>
+    </div>
+
+    <div style="margin:1rem 0;">
+      <button class="btn-tp-or" onclick="toggleCorrection('corr-q4', this)">&#128274; Afficher la correction</button>
+    </div>
+    <div id="corr-q4" class="correction-bloc encadre-conseil">
+      <span class="encadre-prefix">Correction — Question 4 (version complète annotée)</span>
+      <script type="py-editor" env="evac-c4">
+class Piece:
+    def __init__(self, profondeur, largeur):
+        self.grille = [[0]*largeur for _ in range(profondeur)]
+        self.i_max = profondeur-1; self.j_max = largeur-1
+        self.capacite = profondeur * largeur * 5; self.sorties = []
+
+    def choix_sortie(self, i, j):
+        """Renvoie la sortie la plus proche de (i, j) selon la distance de Manhattan."""
+        def distance_de_manhattan(destination):
+            return abs(i - destination[0]) + abs(j - destination[1])
+
+        assert len(self.sorties) > 0, "Aucune sortie"
+        choix    = self.sorties[0]            # meilleur choix actuel = première sortie
+        distance = distance_de_manhattan(choix) # distance correspondante
+
+        for k in range(1, len(self.sorties)):
+            autre_sortie = self.sorties[k]
+            d2 = distance_de_manhattan(autre_sortie)  # ← CORRECTION BUG 2 : calcul de d2
+            if d2 < distance:                          # ← CORRECTION BUG 1 : comparer les distances
+                choix    = autre_sortie
+                distance = d2
+
+        return choix
+
+
+def test_choix_sortie():
+    p1 = Piece(5, 7)
+    p1.sorties = [(0, 5), (4, 1), (3, 6), (1, 0)]
+    assert p1.choix_sortie(0, 3) == (0, 5)   # d=2, c'est la plus proche
+    assert p1.choix_sortie(0, 1) == (1, 0)   # d=2, égalité avec (4,1) → premier dans la liste
+    assert p1.choix_sortie(1, 2) == (1, 0)   # d=2
+    assert p1.choix_sortie(3, 4) == (3, 6)   # d=2
+    assert p1.choix_sortie(4, 0) == (4, 1)   # d=1, la plus proche
+    assert p1.choix_sortie(4, 3) == (4, 1)   # d=2
+    print("Les tests sont validés.")
+
+test_choix_sortie()
+      </script>
+      <div style="margin-top:.8rem;">
+        <p>
+          <strong>Résumé des deux corrections :</strong>
+        </p>
+        <ul>
+          <li>
+            Ajouter <code>d2 = distance_de_manhattan(autre_sortie)</code> avant le test
+            (correction du Bug 2 et préparation de la valeur à comparer).
+          </li>
+          <li>
+            Remplacer <code>if k &lt; 0</code> par <code>if d2 &lt; distance</code>
+            (correction du Bug 1 — logique du minimum).
+          </li>
+        </ul>
+        <p style="margin:0">
+          <strong>Cas d'égalité :</strong> si deux sorties sont à égale distance, la méthode
+          conserve la première trouvée (la condition <code>&lt;</code> strictement inférieur
+          ne met pas à jour en cas d'égalité). C'est cohérent avec les tests.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <hr class="sep">
+
+  <!-- PIÈGES + STRATÉGIE -->
+  <section id="pieges">
+    <h2>Pièges fréquents &amp; stratégie de performance</h2>
+
+    <div class="encadre-piege">
+      <span class="encadre-prefix">Piège 1 — Confondre (ligne, colonne) et (x, y)</span>
+      <p style="margin:0">
+        Dans cette classe, toutes les positions sont des tuples <code>(i, j)</code>
+        où <code>i</code> est la <strong>ligne</strong> (axe vertical) et <code>j</code>
+        est la <strong>colonne</strong> (axe horizontal). Pour une sortie au Sud d'une pièce
+        de profondeur 5 : la ligne est <code>i_max = 4</code>, pas <code>j_max</code>.
+        Inverser les deux fait placer les sorties sur le mauvais mur.
+      </p>
+    </div>
+
+    <div class="encadre-piege">
+      <span class="encadre-prefix">Piège 2 — Oublier que alerter() s'appelle dans la condition du while</span>
+      <p style="margin:0">
+        <code>while p.alerter(silencieux):</code> appelle <code>alerter()</code>
+        <em>et</em> teste son résultat en même temps. Si tu écris d'abord
+        <code>p.alerter()</code> puis <code>while p.nb_occupants_restants() > 0</code>,
+        tu perdras un tour à chaque itération (un appel double) et le résultat sera erroné.
+        La formulation en une seule ligne est la plus propre.
+      </p>
+    </div>
+
+    <div class="encadre-piege">
+      <span class="encadre-prefix">Piège 3 — Copier le code bugué de choix_sortie sans analyser</span>
+      <p style="margin:0">
+        Le code fourni semble fonctionner (pas d'erreur au lancement) car la condition
+        <code>if k &lt; 0</code> est simplement toujours fausse — Python ne plante pas.
+        Mais le résultat est systématiquement faux : seule la première sortie est renvoyée.
+        Il faut <strong>lire et analyser</strong> le code plutôt que de simplement l'exécuter.
+        C'est exactement ce que Q4 demande.
+      </p>
+    </div>
+
+    <div class="encadre-piege">
+      <span class="encadre-prefix">Piège 4 — Ne pas identifier les deux bugs séparément</span>
+      <p style="margin:0">
+        L'énoncé demande d'identifier <em>l'erreur logique</em> <strong>et</strong>
+        la <em>variable non définie</em> — ce sont deux bugs distincts. À l'examen,
+        mentionner les deux est indispensable pour avoir tous les points.
+        Bug 1 = logique (condition impossible), Bug 2 = technique (<code>NameError</code>).
+      </p>
+    </div>
+
+    <h3>Stratégie pour une performance maximale le jour J</h3>
+
+    <div class="encadre-conseil">
+      <span class="encadre-prefix">Ordre d'attaque recommandé</span>
+      <ol style="margin:0">
+        <li>
+          <strong>Q1 en 3 minutes.</strong> Une ligne : <code>return sum(sum(l) for l in self.grille)</code>.
+          Lancer <code>test_nb_occupants_restants()</code> immédiatement.
+        </li>
+        <li>
+          <strong>Q2 en 5 minutes.</strong> Trois lignes avec <code>while/alerter</code>.
+          Lancer <code>test_evacuation()</code>. Si les temps ne correspondent pas,
+          vérifier Q1 (nb_occupants est utilisé dans l'IHM mais pas dans evacuation directement).
+        </li>
+        <li>
+          <strong>Q3 en 5 minutes.</strong> Deux <code>elif</code> supplémentaires.
+          Vérifier avec <code>test_ajouter_sortie()</code>.
+        </li>
+        <li>
+          <strong>Q4 en 10 minutes.</strong> Lire le code ligne par ligne.
+          Identifier <code>k &lt; 0</code> (jamais vrai), puis <code>d2</code> (non définie).
+          Corriger les deux. Vérifier avec <code>test_choix_sortie()</code>.
+        </li>
+        <li>
+          <strong>Tester l'IHM.</strong> Lancer <code>IHM_evacuation.py</code> et vérifier
+          que : le compteur d'occupants s'affiche (Q1), l'évacuation ne donne plus « Échec » (Q2),
+          les sorties S et E apparaissent (Q3), les occupants se dispersent vers toutes les sorties (Q4).
+        </li>
+      </ol>
+    </div>
+
+    <h3>Mini-exercices de vérification</h3>
+
+    <div class="encadre">
+      <span class="encadre-prefix">Mini-exercice A — Distance de Manhattan</span>
+      <p>Calculer à la main les distances de Manhattan depuis la case <code>(2, 3)</code>
+         vers chacune des sorties <code>[(0,5), (4,1), (3,6), (1,0)]</code>.</p>
+      <button class="btn-secondaire" onclick="toggleCorrection('mini-a', this)">Vérifier</button>
+      <div id="mini-a" class="correction-bloc" style="margin-top:.6rem;">
+        <ul style="margin:0">
+          <li>(0,5) : |2−0| + |3−5| = 2 + 2 = <strong>4</strong></li>
+          <li>(4,1) : |2−4| + |3−1| = 2 + 2 = <strong>4</strong></li>
+          <li>(3,6) : |2−3| + |3−6| = 1 + 3 = <strong>4</strong></li>
+          <li>(1,0) : |2−1| + |3−0| = 1 + 3 = <strong>4</strong></li>
+        </ul>
+        <p style="margin:.4rem 0 0">
+          Toutes les sorties sont à égale distance 4 → <code>choix_sortie</code> renvoie
+          la première : <code>(0, 5)</code>.
+        </p>
+      </div>
+    </div>
+
+    <div class="encadre">
+      <span class="encadre-prefix">Mini-exercice B — Analyser une condition de boucle</span>
+      <p>
+        Dans <code>for k in range(1, 4)</code>, quelles sont les valeurs prises par <code>k</code> ?
+        La condition <code>if k &lt; 0</code> peut-elle être vraie ?
+      </p>
+      <button class="btn-secondaire" onclick="toggleCorrection('mini-b', this)">Vérifier</button>
+      <div id="mini-b" class="correction-bloc" style="margin-top:.6rem;">
+        <p style="margin:0">
+          <code>k</code> prend les valeurs 1, 2, 3. La condition <code>k &lt; 0</code>
+          est <strong>toujours fausse</strong> car 1, 2, 3 sont tous positifs.
+          Le corps du <code>if</code> ne s'exécute jamais — c'est exactement le Bug 1.
+        </p>
+      </div>
+    </div>
+
+    <div class="encadre">
+      <span class="encadre-prefix">Mini-exercice C — Coordonnées de sortie</span>
+      <p>
+        Pour une pièce <code>Piece(8, 10)</code>, quels tuples représentent :
+        une sortie au Sud en position 4, et une sortie à l'Est en position 3 ?
+      </p>
+      <button class="btn-secondaire" onclick="toggleCorrection('mini-c', this)">Vérifier</button>
+      <div id="mini-c" class="correction-bloc" style="margin-top:.6rem;">
+        <p>
+          <code>Piece(8, 10)</code> → <code>i_max = 7</code>, <code>j_max = 9</code>
+        </p>
+        <ul style="margin:0">
+          <li>Sud, position 4 → <code>(i_max, 4) = (7, 4)</code></li>
+          <li>Est, position 3 → <code>(3, j_max) = (3, 9)</code></li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <hr class="sep">
+
+  <div class="encadre" style="margin-top:2rem;">
+    <span class="encadre-prefix">Récapitulatif — Les 4 réponses en un coup d'œil</span>
+    <pre style="margin:.3rem 0; font-size:.85em;"><code># Q1 — nb_occupants_restants
+return sum(sum(ligne) for ligne in self.grille)
+
+# Q2 — evacuation
+def evacuation(p, silencieux=True):
+    tours = 0
+    while p.alerter(silencieux):
+        tours += 1
+        if not silencieux: print(p)
+    return tours
+
+# Q3 — ajouter_sortie (deux elif à ajouter)
+elif direction == "S":
+    self.sorties.append((self.i_max, position))
+elif direction == "E":
+    self.sorties.append((position, self.j_max))
+
+# Q4 — choix_sortie (deux corrections dans la boucle)
+    d2 = distance_de_manhattan(autre_sortie)   # ← AJOUTER
+    if d2 < distance:                           # ← REMPLACER if k < 0</code></pre>
+  </div>
+
+</div>
+
+<footer>Lycée Antoine Watteau — DarkSATHI Li</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+  const btnTop = document.getElementById('btn-top');
+  window.addEventListener('scroll', () => { btnTop.style.display = window.scrollY > 300 ? 'flex' : 'none'; });
+  btnTop.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
+
+  function toggleIndice(id, btn) {
+    var el = document.getElementById(id);
+    if (!el) return;
+    el.classList.toggle('visible');
+    btn.textContent = el.classList.contains('visible')
+      ? btn.textContent.replace('▶','▼') : btn.textContent.replace('▼','▶');
+  }
+
+  function toggleCorrection(id, btn) {
+    var el = document.getElementById(id);
+    if (!el) return;
+    el.classList.toggle('visible');
+    if (el.classList.contains('visible')) {
+      btn.textContent = btn.textContent.replace('Afficher','Masquer').replace('Vérifier','Masquer');
+    } else {
+      btn.textContent = btn.textContent.replace('Masquer','Afficher');
+    }
+  }
+</script>
+</body>
+</html>
