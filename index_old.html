@@ -282,8 +282,6 @@
       transition: transform .2s ease, box-shadow .2s ease;
       box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
       animation: fadeUp .4s ease both;
-      position: relative;
-      overflow: hidden;
     }
 
     .card:hover {
@@ -303,82 +301,6 @@
 
     .card.locked .card-arrow {
       display: none;
-    }
-
-    /* ── IMAGE DE PRÉSENTATION : visible par défaut, la card coulisse dessus au survol ── */
-
-    /* Couche image : remplit toute la carte, visible au repos */
-    .card-img-bg {
-      position: absolute;
-      inset: 0;
-      z-index: 2;
-      background-size: cover;
-      background-position: top center;
-      border-radius: calc(var(--border-radius) - 1px);
-      transition: transform .42s cubic-bezier(.4, 0, .2, 1);
-      transform: translateY(0);
-    }
-
-    /* Couche contenu : démarre cachée en-dessous, monte au survol */
-    .card-inner {
-      position: relative;
-      z-index: 3;
-      display: flex;
-      flex-direction: column;
-      gap: .6rem;
-      flex: 1;
-      background: #ffffff;
-      border-radius: calc(var(--border-radius) - 1px);
-      transition: transform .42s cubic-bezier(.4, 0, .2, 1);
-      /* Par défaut (sans image) : pas de transform */
-    }
-
-    /* Quand data-image est défini et non vide : l'image est visible, le contenu est caché en bas */
-    .card.has-preview {
-      min-height: 220px;
-    }
-
-    .card.has-preview .card-img-bg {
-      transform: translateY(0);
-    }
-
-    .card.has-preview .card-inner {
-      transform: translateY(100%);
-      /* Contenu caché sous la card */
-      position: absolute;
-      inset: 0;
-      padding: 1.2rem 1.3rem 1rem;
-      overflow: hidden;
-    }
-
-    /* Au survol : l'image remonte hors vue, le contenu descend en place */
-    .card.has-preview:hover .card-img-bg {
-      transform: translateY(-100%);
-    }
-
-    .card.has-preview:hover .card-inner {
-      transform: translateY(0);
-    }
-
-    /* Petit badge "Aperçu" sur l'image */
-    .card-img-badge {
-      position: absolute;
-      bottom: .7rem;
-      left: .8rem;
-      z-index: 4;
-      font-family: 'JetBrains Mono', monospace;
-      font-size: .58rem;
-      color: #fff;
-      background: rgba(0,0,0,.55);
-      padding: .2rem .55rem;
-      border-radius: 20px;
-      letter-spacing: .05em;
-      pointer-events: none;
-      transition: opacity .3s;
-    }
-
-    .card.has-preview:hover .card-img-badge {
-      opacity: 0;
     }
 
     .card-num {
@@ -640,8 +562,7 @@
 
       <!-- ── Sujet 1 ── -->
       <a class="card locked" href="sujet_1/fiche_rle_nsi_light.html" target="_blank" data-status="done"
-        style="--card-accent:#2a6496;" data-delay="0" data-video="https://youtu.be/FnHQYgbDV5E" data-notebook="https://notebooklm.google.com/notebook/7ab46ba1-9dc9-4936-bf39-79f39297340d"
-        data-image="sujet1/rle.png">
+        style="--card-accent:#2a6496;" data-delay="0" data-video="https://youtu.be/FnHQYgbDV5E" data-notebook="https://notebooklm.google.com/notebook/7ab46ba1-9dc9-4936-bf39-79f39297340d">
         <div class="card-num">SUJET 01</div>
         <div class="card-title">Traitement d'images en niveaux de gris</div>
         <div class="card-tags">
@@ -656,8 +577,7 @@
 
       <!-- ── Sujet 2 ── -->
       <a class="card locked" href="sujet_2/fiche_salaires_nsi.html" data-status="done" style="--card-accent:#b5610a;"
-        data-delay="1" data-video="" data-notebook="https://notebooklm.google.com/notebook/b68b8da8-504a-440c-8349-de04b033e752"
-        data-image="salaire.png">
+        data-delay="1" data-video="" data-notebook="https://notebooklm.google.com/notebook/b68b8da8-504a-440c-8349-de04b033e752">
         <div class="card-num">SUJET 02</div>
         <div class="card-title">Écarts de salaires femmes / hommes</div>
         <div class="card-tags">
@@ -1015,38 +935,9 @@
   <!-- SCRIPTS -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
   <script>
-
-    /* ── Wrapper card-inner + injection image de fond ── */
-    document.querySelectorAll('.card').forEach(card => {
-      const imgUrl = (card.dataset.image || '').trim();
-
-      // Emballer tout le contenu dans .card-inner
-      const inner = document.createElement('div');
-      inner.className = 'card-inner';
-      while (card.firstChild) inner.appendChild(card.firstChild);
-      card.appendChild(inner);
-
-      if (imgUrl) {
-        card.classList.add('has-preview');
-
-        // Couche image
-        const bg = document.createElement('div');
-        bg.className = 'card-img-bg';
-        bg.style.backgroundImage = `url('${imgUrl}')`;
-        card.insertBefore(bg, inner);
-
-        // Badge
-        const badge = document.createElement('div');
-        badge.className = 'card-img-badge';
-        badge.textContent = '↑ Survoler pour la fiche';
-        card.appendChild(badge);
-      }
-    });
-
     /* ── Sections vidéo & NotebookLM dynamiques ── */
     document.querySelectorAll('.card[data-video]').forEach(card => {
       const urlV = (card.dataset.video || '').trim();
-      const inner = card.querySelector('.card-inner');
       const secV = document.createElement('div');
       secV.className = 'card-video';
       if (urlV) {
@@ -1056,12 +947,11 @@
       } else {
         secV.innerHTML = `<span class="video-soon">🎬 Vidéo à venir…</span>`;
       }
-      (inner || card).appendChild(secV);
+      card.appendChild(secV);
     });
 
     document.querySelectorAll('.card[data-notebook]').forEach(card => {
       const urlN = (card.dataset.notebook || '').trim();
-      const inner = card.querySelector('.card-inner');
       const secN = document.createElement('div');
       secN.className = 'card-notebook';
       if (urlN) {
@@ -1071,7 +961,7 @@
       } else {
         secN.innerHTML = `<span class="notebook-soon">🎧 NotebookLM à venir…</span>`;
       }
-      (inner || card).appendChild(secN);
+      card.appendChild(secN);
     });
 
     /* Animation staggered */
