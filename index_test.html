@@ -382,6 +382,104 @@
       border-bottom: 5px solid rgba(255,255,255,.85);
     }
 
+    /* ── Bouton loupe plein écran ── */
+    .btn-zoom {
+      position: absolute;
+      top: .55rem;
+      right: .55rem;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: rgba(255,255,255,.18);
+      border: 1px solid rgba(255,255,255,.35);
+      color: #fff;
+      font-size: .85rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      backdrop-filter: blur(4px);
+      transition: background .2s, transform .15s;
+      z-index: 10;
+      line-height: 1;
+    }
+
+    .btn-zoom:hover {
+      background: rgba(255,255,255,.38);
+      transform: scale(1.12);
+    }
+
+    /* ── Lightbox ── */
+    #lightbox {
+      display: none;
+      position: fixed;
+      inset: 0;
+      z-index: 9000;
+      background: rgba(8, 16, 28, .92);
+      backdrop-filter: blur(6px);
+      align-items: center;
+      justify-content: center;
+      cursor: zoom-out;
+      animation: lbIn .18s ease;
+    }
+
+    #lightbox.open { display: flex; }
+
+    @keyframes lbIn {
+      from { opacity: 0; }
+      to   { opacity: 1; }
+    }
+
+    #lightbox img {
+      max-width: min(92vw, 1100px);
+      max-height: 90vh;
+      object-fit: contain;
+      border-radius: 6px;
+      box-shadow: 0 24px 80px rgba(0,0,0,.6);
+      cursor: default;
+      animation: lbScale .2s cubic-bezier(.4,0,.2,1);
+    }
+
+    @keyframes lbScale {
+      from { transform: scale(.92); opacity: 0; }
+      to   { transform: scale(1);   opacity: 1; }
+    }
+
+    #lightbox-close {
+      position: fixed;
+      top: 1.2rem;
+      right: 1.4rem;
+      background: rgba(255,255,255,.15);
+      border: 1px solid rgba(255,255,255,.3);
+      color: #fff;
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      font-size: 1.1rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      backdrop-filter: blur(4px);
+      transition: background .2s;
+      z-index: 9001;
+    }
+
+    #lightbox-close:hover { background: rgba(255,255,255,.3); }
+
+    #lightbox-caption {
+      position: fixed;
+      bottom: 1.2rem;
+      left: 50%;
+      transform: translateX(-50%);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: .7rem;
+      color: rgba(255,255,255,.55);
+      letter-spacing: .08em;
+      pointer-events: none;
+      white-space: nowrap;
+    }
+
     /* ── Face CONTENU (cachée sous la card au repos) ── */
     .card-face--info {
       transform: translateY(100%);
@@ -817,7 +915,7 @@
 
       <!-- ── Sujet 11 ── -->
       <a class="card locked" href="sujet_11/fiche_sujet11_knn_renard.html" data-status="done" style="--card-accent:#2e7d32;" data-delay="10" data-video=""
-        data-notebook="https://notebooklm.google.com/notebook/e0602d7b-b0d9-4cc9-9a78-ea740bf58ca5" data-image="sujet_11/renard_knn.png">
+        data-notebook="https://notebooklm.google.com/notebook/e0602d7b-b0d9-4cc9-9a78-ea740bf58ca5">
         <div class="card-num">SUJET 11</div>
         <div class="card-title">Le renard — habitat et protection (loi Biodiversité)</div>
         <div class="card-tags">
@@ -833,7 +931,7 @@
 
       <!-- ── Sujet 12 ── -->
       <a class="card locked" href="sujet_12/fiche_sujet12_refuge_renards.html" data-status="done" style="--card-accent:#7b3fa8;" data-delay="11" data-video=""
-        data-notebook="https://notebooklm.google.com/notebook/414be745-e4cd-4585-a572-06302ba8db24" data-image="sujet_12/refuge.png">
+        data-notebook="https://notebooklm.google.com/notebook/414be745-e4cd-4585-a572-06302ba8db24">
         <div class="card-num">SUJET 12</div>
         <div class="card-title">Refuge de renards — base de données CSV</div>
         <div class="card-tags">
@@ -848,8 +946,8 @@
       </a>
 
       <!-- ── Sujet 13 ── -->
-      <a class="card locked" href="sujet_13/fiche_ballon_sonde.html" data-status="done" style="--card-accent:#2a6496;" data-delay="12" data-video=""
-        data-notebook="sujet_13/ballon_sonde_notebooklm.md" data-image="sujet_13/ballon_sonde.png">
+      <a class="card locked" href="#" data-status="todo" style="--card-accent:#2a6496;" data-delay="12" data-video=""
+        data-notebook="">
         <div class="card-num">SUJET 13</div>
         <div class="card-title">Ballon sonde météo — données atmosphériques</div>
         <div class="card-tags">
@@ -858,7 +956,7 @@
           <span class="tag">statistiques</span>
         </div>
         <div class="card-footer">
-          <span class="status-badge status-done">✓ Fiche prête</span>
+          <span class="status-badge status-todo">⏳ À créer</span>
           <span class="card-arrow">→</span>
         </div>
       </a>
@@ -1004,7 +1102,7 @@
 
       <!-- ── Sujet 23 ── -->
       <a class="card locked" href="sujet_23/fiche_demeter_nsi.html" data-status="done" style="--card-accent:#2e7d32;" data-delay="22" data-video=""
-        data-notebook="https://notebooklm.google.com/notebook/217e6ede-9fad-47a6-a925-c651ac2666ab" data-image="sujet_23/bcd.png">
+        data-notebook="https://notebooklm.google.com/notebook/217e6ede-9fad-47a6-a925-c651ac2666ab">
         <div class="card-num">SUJET 23</div>
         <div class="card-title">Données environnementales et prévention de maladies dans les cultures</div>
         <div class="card-tags">
@@ -1028,6 +1126,13 @@
 
   </div><!-- /container-content -->
 
+  <!-- LIGHTBOX -->
+  <div id="lightbox" role="dialog" aria-modal="true" aria-label="Image en grand">
+    <button id="lightbox-close" aria-label="Fermer">✕</button>
+    <img id="lightbox-img" src="" alt="">
+    <div id="lightbox-caption"></div>
+  </div>
+
   <!-- SCRIPTS -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
   <script>
@@ -1039,7 +1144,8 @@
            └── .card-flip
                  ├── .card-face.card-face--img
                  │     ├── <img>
-                 │     └── .card-img-hint
+                 │     ├── .card-img-hint
+                 │     └── .btn-zoom  ← 🔍 nouveau
                  └── .card-face.card-face--info
                        └── [contenu original déplacé ici]
     ══════════════════════════════════════════ */
@@ -1070,6 +1176,20 @@
       hint.className = 'card-img-hint';
       hint.textContent = 'Voir la fiche';
       faceImg.appendChild(hint);
+
+      // ── Bouton loupe ──
+      const title = card.querySelector('.card-title') ? card.querySelector('.card-title').textContent.trim() : '';
+      const btnZoom = document.createElement('button');
+      btnZoom.className = 'btn-zoom';
+      btnZoom.title = 'Voir la BD en grand';
+      btnZoom.setAttribute('aria-label', 'Voir la BD en grand');
+      btnZoom.innerHTML = '🔍';
+      btnZoom.addEventListener('click', e => {
+        e.preventDefault();
+        e.stopPropagation();
+        openLightbox(imgUrl, title);
+      });
+      faceImg.appendChild(btnZoom);
 
       // Face contenu
       const faceInfo = document.createElement('div');
@@ -1141,6 +1261,41 @@
           card.style.display = (f === 'all' || f === card.dataset.status) ? '' : 'none';
         });
       });
+    });
+
+    /* ══════════════════════════════════════════
+       6. LIGHTBOX — BD en taille d'origine
+    ══════════════════════════════════════════ */
+    const lightbox     = document.getElementById('lightbox');
+    const lbImg        = document.getElementById('lightbox-img');
+    const lbCaption    = document.getElementById('lightbox-caption');
+    const lbClose      = document.getElementById('lightbox-close');
+
+    function openLightbox(src, caption) {
+      lbImg.src = src;
+      lbImg.alt = caption || '';
+      lbCaption.textContent = caption ? caption + ' — clic ou Échap pour fermer' : 'Clic ou Échap pour fermer';
+      lightbox.classList.add('open');
+      document.body.style.overflow = 'hidden';
+      lbClose.focus();
+    }
+
+    function closeLightbox() {
+      lightbox.classList.remove('open');
+      document.body.style.overflow = '';
+      lbImg.src = '';
+    }
+
+    lbClose.addEventListener('click', closeLightbox);
+
+    // Clic sur le fond sombre = fermer
+    lightbox.addEventListener('click', e => {
+      if (e.target === lightbox) closeLightbox();
+    });
+
+    // Touche Échap
+    document.addEventListener('keydown', e => {
+      if (e.key === 'Escape' && lightbox.classList.contains('open')) closeLightbox();
     });
 
   </script>

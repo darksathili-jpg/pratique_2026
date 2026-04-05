@@ -1,0 +1,1199 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Fiche – Ballon sonde | NSI Terminale | BAC 2026 Sujet 13</title>
+
+  <!-- Bootstrap 5.3.3 -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Rubik+Dirt&family=Source+Serif+4:ital,opsz,wght@0,8..60,300..900;1,8..60,300..900&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+
+  <!-- MathJax v3 -->
+  <script>
+    MathJax = {
+      tex: { inlineMath: [['\\(', '\\)'], ['$', '$']] },
+      options: { skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre'] }
+    };
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js" async></script>
+
+  <!-- PyScript 2026.3.1 -->
+  <script type="module" src="https://pyscript.net/releases/2026.3.1/core.js"></script>
+
+  <style>
+    :root {
+      --bg-main:    #f8f9fb;
+      --bg-panel:   #eef1f5;
+      --bg-cours:   #ffffff;
+      --accent:     #2a6496;
+      --py-editor-input: white;
+      --accent-or:  #b5610a;
+      --accent-vert:#2e7d32;
+      --text-main:  #1a1a1a;
+      --text-muted: #5a6470;
+      --border-radius: 8px;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      background-color: var(--bg-main);
+      color: var(--text-main);
+      font-family: 'Source Serif 4', Georgia, serif;
+      font-size: 1.1rem;
+      line-height: 1.8;
+      margin: 0;
+      padding-bottom: 4rem;
+    }
+
+    h1, h2, h3, h4 {
+      font-family: 'Rubik Dirt', cursive;
+      color: var(--accent);
+      letter-spacing: 0.02em;
+    }
+
+    h1 { font-size: 2.2rem; color: #111; }
+    h2 { font-size: 1.55rem; border-bottom: 2px solid var(--accent); padding-bottom: .3rem; margin-top: 2.5rem; }
+    h3 { font-size: 1.25rem; color: var(--accent-or); margin-top: 1.8rem; }
+    h4 { font-size: 1.05rem; color: var(--accent-vert); }
+
+    p { margin-bottom: 1rem; }
+
+    code, pre, .mono {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.9em;
+    }
+
+    code {
+      background: #e8edf2;
+      padding: 2px 6px;
+      border-radius: 4px;
+      color: #8b3a00;
+    }
+
+    pre {
+      background: #f0f3f7;
+      border-left: 3px solid var(--accent);
+      padding: 1rem 1.2rem;
+      border-radius: var(--border-radius);
+      overflow-x: auto;
+      color: #1a1a1a;
+    }
+
+    a { color: var(--accent); text-decoration: underline dotted; }
+    a:hover { color: var(--accent-or); }
+
+    /* ── NAVIGATION ── */
+    #navbar {
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      background: #2a6496;
+      border-bottom: 2px solid #1a4a70;
+      padding: .5rem 1.5rem;
+      display: flex;
+      gap: .5rem;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    #navbar span {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: .8rem;
+      color: #ccddf0;
+      margin-right: auto;
+    }
+
+    #navbar a {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: .8rem;
+      color: #fff;
+      text-decoration: none;
+      padding: .25rem .7rem;
+      border: 1px solid #ccddf0;
+      border-radius: 4px;
+      transition: background .2s;
+    }
+
+    #navbar a:hover { background: #1a4a70; color: #fff; }
+
+    .container-content {
+      max-width: 860px;
+      margin: 0 auto;
+      padding: 2rem 1.5rem;
+    }
+
+    /* ── ENCADRÉS ── */
+    .encadre,
+    .encadre-conseil,
+    .encadre-indice,
+    .encadre-question {
+      background: #ffffff;
+      border-radius: var(--border-radius);
+      padding: 1.1rem 1.4rem;
+      margin: 1.4rem 0;
+      position: relative;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+    }
+
+    .encadre          { border-left: 4px solid var(--accent); }
+    .encadre-conseil  { border-left: 4px solid var(--accent-or); background: #fff8f0; }
+    .encadre-indice   { border-left: 4px solid var(--accent-vert); background: #f0faf0; }
+    .encadre-question { border-left: 4px solid #7b3fa8; background: #faf5ff; }
+
+    .encadre-prefix {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: .72rem;
+      font-variant: small-caps;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      margin-bottom: .4rem;
+      display: block;
+    }
+
+    .encadre          .encadre-prefix { color: var(--accent); }
+    .encadre-conseil  .encadre-prefix { color: var(--accent-or); }
+    .encadre-indice   .encadre-prefix { color: var(--accent-vert); }
+    .encadre-question .encadre-prefix { color: #7b3fa8; }
+
+    /* ── BOUTONS ── */
+    .btn-tp, .btn-tp-or, .btn-tp-vert, .btn-secondaire {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: .82rem;
+      border: none;
+      border-radius: 5px;
+      padding: .45rem 1.1rem;
+      cursor: pointer;
+      transition: opacity .2s, transform .1s;
+      margin: .3rem .2rem;
+    }
+
+    .btn-tp         { background: var(--accent);      color: #fff; }
+    .btn-tp-or      { background: var(--accent-or);   color: #fff; }
+    .btn-tp-vert    { background: var(--accent-vert); color: #fff; }
+    .btn-secondaire { background: #eef1f5; border: 1px solid var(--accent); color: var(--text-main); }
+
+    .btn-tp:hover, .btn-tp-or:hover, .btn-tp-vert:hover, .btn-secondaire:hover {
+      opacity: .85; transform: translateY(-1px);
+    }
+
+    .badge-question {
+      display: inline-block;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: .8rem;
+      background: #7b3fa8;
+      color: #fff;
+      border-radius: 4px;
+      padding: .15rem .7rem;
+      margin-right: .5rem;
+      vertical-align: middle;
+    }
+
+    .indice-bloc     { display: none; }
+    .indice-bloc.visible  { display: block; }
+    .correction-bloc { display: none; }
+    .correction-bloc.visible { display: block; }
+
+    .encadre-piege {
+      background: #fff5f5;
+      border-left: 4px solid #c0392b;
+      border-radius: var(--border-radius);
+      padding: 1rem 1.4rem;
+      margin: 1.2rem 0;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.07);
+    }
+
+    .encadre-piege .encadre-prefix {
+      color: #c0392b;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: .72rem;
+      font-variant: small-caps;
+      letter-spacing: .12em;
+      display: block;
+      margin-bottom: .3rem;
+    }
+
+    #sommaire ol {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: .88rem;
+      line-height: 2.2;
+    }
+    #sommaire a { color: var(--accent); }
+    #sommaire a:hover { color: var(--accent-or); }
+
+    .sep { border: none; border-top: 1px dashed #9ab0c8; margin: 2.5rem 0; opacity: .7; }
+
+    py-editor { display: block; min-height: 100px; }
+
+    /* ── TABLE ── */
+    .table-data {
+      border-collapse: collapse;
+      margin: 1rem auto;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: .82rem;
+      width: 100%;
+    }
+
+    .table-data th, .table-data td {
+      border: 1px solid #b0c4d8;
+      padding: .3rem .6rem;
+      text-align: center;
+    }
+
+    .table-data th { background: #dce8f2; color: var(--accent); font-weight: 600; }
+    .table-data tr:nth-child(even) { background: #f4f7fb; }
+    .table-data tr.froid { background: #fff3cd; font-weight: 600; }
+
+    /* ── RETOUR EN HAUT ── */
+    #btn-top {
+      position: fixed;
+      bottom: 1.5rem;
+      right: 1.5rem;
+      z-index: 999;
+      background: var(--accent);
+      color: #fff;
+      border: none;
+      border-radius: 50%;
+      width: 44px;
+      height: 44px;
+      font-size: 1.2rem;
+      cursor: pointer;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      font-family: 'JetBrains Mono', monospace;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.25);
+      transition: opacity .2s;
+    }
+
+    #btn-top:hover { opacity: .8; }
+
+    footer {
+      text-align: center;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: .8rem;
+      color: var(--text-muted);
+      padding: 2rem 1rem 1rem;
+      border-top: 1px solid #d0d8e4;
+    }
+  </style>
+</head>
+<body>
+
+<div id="pyinit" style="display:none">
+  <script type="py" env="ballon">
+pass
+  </script>
+</div>
+
+<button id="btn-top" title="Retour en haut" aria-label="Retour en haut">▲</button>
+
+<!-- NAVIGATION -->
+<nav id="navbar">
+  <span>NSI Terminale – Sujet 13 – Ballon sonde</span>
+  <a href="#s0">Intro</a>
+  <a href="#s1">Rappels</a>
+  <a href="#s2">Données</a>
+  <a href="#q1">Q1</a>
+  <a href="#q2">Q2</a>
+  <a href="#q3">Q3</a>
+  <a href="#q4">Q4</a>
+  <a href="#q5">Q5</a>
+  <a href="#q6">Q6</a>
+  <a href="#pieges">Pièges</a>
+</nav>
+
+<div class="container-content">
+
+  <!-- EN-TÊTE -->
+  <div style="text-align:center; padding: 2rem 0 1rem;">
+    <div style="font-family:'JetBrains Mono',monospace; font-size:.8rem; color:var(--text-muted); margin-bottom:.5rem;">
+      BAC NSI 2026 — Sujet n°13 — Partie pratique
+    </div>
+    <h1>Étude climatique par ballon sonde<br>
+      <span style="font-size:1.1rem; color:var(--accent); font-family:'Source Serif 4',serif; font-style:italic; font-weight:300;">
+        Traitement de données CSV, fonctions, assertions, KML — Fiche de révision guidée
+      </span>
+    </h1>
+    <div style="font-family:'JetBrains Mono',monospace; font-size:.8rem; color:var(--text-muted); margin-top:.5rem;">
+      Terminale NSI &nbsp;·&nbsp; Algorithmique &nbsp;·&nbsp; Traitement de fichiers &nbsp;·&nbsp; Assertions
+    </div>
+  </div>
+
+  <hr class="sep">
+
+  <!-- SOMMAIRE -->
+  <section id="s0">
+    <div id="sommaire" class="encadre">
+      <span class="encadre-prefix">Sommaire</span>
+      <ol>
+        <li><a href="#s1">Rappels – fonctions, listes, fichiers CSV, assertions</a></li>
+        <li><a href="#s2">Le jeu de données – releves_ballon_sonde.csv</a></li>
+        <li><a href="#q1">Question 1 – Appeler <code>recupere_donnees_fichier_csv</code></a></li>
+        <li><a href="#q2">Question 2 – Écrire <code>conversion_K_en_C</code></a></li>
+        <li><a href="#q3">Question 3 – Écrire <code>altitude_la_plus_froide</code></a></li>
+        <li><a href="#q4">Question 4 – Ajouter une assertion dans <code>genere_kml</code></a></li>
+        <li><a href="#q5">Question 5 – Appeler <code>genere_kml</code></a></li>
+        <li><a href="#q6">Question 6 – Corriger le bug de la balise <code>&lt;/kml&gt;</code></a></li>
+        <li><a href="#pieges">Pièges fréquents &amp; astuces de vérification</a></li>
+      </ol>
+    </div>
+  </section>
+
+  <hr class="sep">
+
+  <!-- SECTION 1 : RAPPELS -->
+  <section id="s1">
+    <h2>1 — Rappels essentiels</h2>
+
+    <h3>Dépackager le résultat d'une fonction qui renvoie plusieurs valeurs</h3>
+
+    <p>
+      En Python, une fonction peut renvoyer plusieurs valeurs séparées par des virgules.
+      À l'appel, tu les récupères dans autant de variables que de valeurs renvoyées — c'est le <em>dépackage</em>.
+    </p>
+
+    <pre>def deux_valeurs():
+    return 10, 20
+
+a, b = deux_valeurs()   # a = 10,  b = 20
+print(a, b)             # → 10 20</pre>
+
+    <p>
+      Dans ce sujet, <code>recupere_donnees_fichier_csv</code> renvoie <strong>4 listes</strong> dans cet ordre :
+      <code>altitudes</code>, <code>temperatures</code>, <code>longitudes</code>, <code>latitudes</code>.
+    </p>
+
+    <h3>Parcourir une liste et construire une nouvelle liste</h3>
+
+    <pre># Version boucle classique
+def convertir(liste):
+    resultat = []
+    for valeur in liste:
+        resultat.append(valeur - 273.15)
+    return resultat
+
+# Version compréhension de liste (équivalente, plus concise)
+def convertir(liste):
+    return [valeur - 273.15 for valeur in liste]</pre>
+
+    <h3>Trouver le minimum d'une liste</h3>
+
+    <pre>t_min = min(liste_temperatures)  # renvoie la plus petite valeur</pre>
+
+    <h3>L'assertion — garantir une condition</h3>
+
+    <p>
+      Une assertion vérifie qu'une condition est vraie. Si elle est fausse, Python lève une
+      <code>AssertionError</code> et stoppe l'exécution. C'est un outil de <em>défense</em>
+      qu'on place au début d'une fonction pour s'assurer que les données d'entrée sont cohérentes.
+    </p>
+
+    <pre>assert condition, "Message d'erreur optionnel"
+
+# Exemple :
+assert len(liste_a) == len(liste_b), "Les deux listes doivent avoir la même longueur"</pre>
+
+    <div class="encadre-conseil">
+      <span class="encadre-prefix">Conversion Kelvin ↔ Celsius</span>
+      <p style="margin:0">
+        La formule est : \(T_{°C} = T_K - 273{,}15\). Donc <strong>on soustrait 273,15</strong>.
+        Inversement, \(T_K = T_{°C} + 273{,}15\).
+        À 0°C correspond 273,15 K. Les kelvins ne sont jamais négatifs.
+      </p>
+    </div>
+  </section>
+
+  <hr class="sep">
+
+  <!-- SECTION 2 : DONNÉES -->
+  <section id="s2">
+    <h2>2 — Le jeu de données complet</h2>
+
+    <p>
+      Le fichier <code>releves_ballon_sonde.csv</code> contient 20 relevés effectués pendant la montée du ballon,
+      de 0 m (sol) à 24 865 m d'altitude. Séparateur : point-virgule (<code>;</code>).
+      En-têtes : <code>Altitude_m;Temperature_K;Longitude;Latitude</code>.
+    </p>
+
+    <p>
+      Le tableau ci-dessous présente toutes les données avec les températures <strong>déjà converties en °C</strong>
+      (colonne supplémentaire). Les lignes en jaune correspondent à la température minimale.
+    </p>
+
+    <table class="table-data">
+      <tr>
+        <th>Altitude (m)</th>
+        <th>Temp. (K)</th>
+        <th>Temp. (°C)</th>
+        <th>Longitude</th>
+        <th>Latitude</th>
+      </tr>
+      <tr><td>0</td><td>288.15</td><td>15.0</td><td>4.760467</td><td>45.602117</td></tr>
+      <tr><td>200</td><td>286.85</td><td>13.7</td><td>4.760467</td><td>45.602167</td></tr>
+      <tr><td>500</td><td>284.85</td><td>11.7</td><td>4.761183</td><td>45.60125</td></tr>
+      <tr><td>1100</td><td>281.05</td><td>7.9</td><td>4.766717</td><td>45.600117</td></tr>
+      <tr><td>1800</td><td>276.55</td><td>3.4</td><td>4.765183</td><td>45.60085</td></tr>
+      <tr><td>2250</td><td>273.65</td><td>0.5</td><td>4.766633</td><td>45.601017</td></tr>
+      <tr><td>2680</td><td>270.85</td><td>-2.3</td><td>4.770567</td><td>45.605383</td></tr>
+      <tr><td>5070</td><td>255.45</td><td>-17.7</td><td>4.800883</td><td>45.602433</td></tr>
+      <tr><td>6800</td><td>244.25</td><td>-28.9</td><td>4.819033</td><td>45.608467</td></tr>
+      <tr><td>8900</td><td>230.65</td><td>-42.5</td><td>4.850517</td><td>45.608551</td></tr>
+      <tr><td>9800</td><td>224.85</td><td>-48.3</td><td>4.892783</td><td>45.601533</td></tr>
+      <tr><td>11000</td><td>217.15</td><td>-56.0</td><td>4.963467</td><td>45.596267</td></tr>
+      <tr><td>13500</td><td>216.95</td><td>-56.2</td><td>5.155833</td><td>45.586467</td></tr>
+      <tr class="froid"><td>15120</td><td>216.65</td><td>-56.5 ❄</td><td>5.298383</td><td>45.591167</td></tr>
+      <tr class="froid"><td>17210</td><td>216.65</td><td>-56.5 ❄</td><td>5.444417</td><td>45.595083</td></tr>
+      <tr><td>19500</td><td>217.15</td><td>-56.0</td><td>5.578417</td><td>45.597952</td></tr>
+      <tr><td>20100</td><td>217.05</td><td>-56.1</td><td>5.6044</td><td>45.605617</td></tr>
+      <tr><td>21250</td><td>220.15</td><td>-53.0</td><td>5.662033</td><td>45.611053</td></tr>
+      <tr><td>23620</td><td>223.05</td><td>-50.1</td><td>5.747867</td><td>45.62555</td></tr>
+      <tr><td>24865</td><td>225.15</td><td>-48.0</td><td>5.766817</td><td>45.616383</td></tr>
+    </table>
+
+    <div class="encadre">
+      <span class="encadre-prefix">Résultats clés à retenir</span>
+      <p>
+        20 relevés au total. Température minimale : <strong>-56,5 °C</strong> (216,65 K),
+        atteinte à <strong>deux altitudes</strong> : 15 120 m et 17 210 m.
+        La fonction <code>altitude_la_plus_froide</code> doit donc renvoyer <code>(-56.5, [15120, 17210])</code>.
+      </p>
+    </div>
+  </section>
+
+  <hr class="sep">
+
+  <!-- QUESTION 1 -->
+  <section id="q1">
+    <h2>3 — <span class="badge-question">Q1</span> Appeler <code>recupere_donnees_fichier_csv</code></h2>
+
+    <div class="encadre-question">
+      <span class="encadre-prefix">Énoncé de la question 1</span>
+      <p style="margin:0">
+        En utilisant la fonction <code>recupere_donnees_fichier_csv</code>, écrire la ou les lignes
+        de code qui récupèrent les données relevées par le ballon sonde dans 4 listes différentes :
+        <code>altitudes</code>, <code>temperatures</code>, <code>longitudes</code> et <code>latitudes</code>.
+      </p>
+    </div>
+
+    <h3>Aide méthodologique</h3>
+
+    <p>
+      La fonction <code>recupere_donnees_fichier_csv</code> est déjà écrite dans le fichier fourni.
+      Elle renvoie 4 listes dans cet ordre précis. Tu dois juste l'<strong>appeler</strong> et
+      récupérer les 4 valeurs de retour dans 4 variables nommées exactement comme indiqué.
+    </p>
+
+    <div class="encadre-indice">
+      <span class="encadre-prefix">Indice – dépackage de 4 valeurs</span>
+      <button class="btn-secondaire" onclick="toggleBloc('ind1a')">Afficher / masquer</button>
+      <div id="ind1a" class="indice-bloc">
+        <pre>variable1, variable2, variable3, variable4 = fonction_qui_renvoie_4_valeurs(argument)</pre>
+      </div>
+    </div>
+
+    <h3>Éditeur Python — à toi de jouer !</h3>
+
+    <script type="py-editor" env="ballon">
+# La fonction recupere_donnees_fichier_csv est simulée ici
+# avec les vraies données du fichier pour que tu puisses tester
+
+def recupere_donnees_fichier_csv(nom_fichier):
+    """Version simulée — données réelles du fichier releves_ballon_sonde.csv"""
+    altitudes    = [0,200,500,1100,1800,2250,2680,5070,6800,8900,
+                    9800,11000,13500,15120,17210,19500,20100,21250,23620,24865]
+    temperatures = [288.15,286.85,284.85,281.05,276.55,273.65,270.85,255.45,
+                    244.25,230.65,224.85,217.15,216.95,216.65,216.65,217.15,
+                    217.05,220.15,223.05,225.15]
+    longitudes   = [4.760467,4.760467,4.761183,4.766717,4.765183,4.766633,
+                    4.770567,4.800883,4.819033,4.850517,4.892783,4.963467,
+                    5.155833,5.298383,5.444417,5.578417,5.6044,5.662033,
+                    5.747867,5.766817]
+    latitudes    = [45.602117,45.602167,45.60125,45.600117,45.60085,45.601017,
+                    45.605383,45.602433,45.608467,45.608551,45.601533,45.596267,
+                    45.586467,45.591167,45.595083,45.597952,45.605617,45.611053,
+                    45.62555,45.616383]
+    return altitudes, temperatures, longitudes, latitudes
+
+# QUESTION 1 : écris ici la ou les lignes de code
+# pour appeler recupere_donnees_fichier_csv avec le bon nom de fichier
+# et récupérer les 4 listes dans 4 variables.
+
+# Remplace la ligne suivante par ton code :
+pass
+
+# ── Fonction de test ──────────────────────────────────────────────────
+def test_recuperation():
+    alt, temp, lon, lat = recupere_donnees_fichier_csv('releves_ballon_sonde.csv')
+    assert len(alt)  == 20
+    assert len(temp) == 20
+    assert len(lon)  == 20
+    assert len(lat)  == 20
+    assert alt[0]    == 0
+    assert alt[-1]   == 24865
+    assert temp[0]   == 288.15
+    print("Les tests sont valides.")
+
+test_recuperation()
+    </script>
+
+    <div class="encadre-conseil">
+      <span class="encadre-prefix">Correction – Question 1</span>
+      <button class="btn-tp-or" onclick="toggleBloc('corr1')">Afficher / masquer la correction</button>
+      <div id="corr1" class="correction-bloc">
+        <pre>altitudes, temperatures, longitudes, latitudes = recupere_donnees_fichier_csv('releves_ballon_sonde.csv')</pre>
+        <p style="margin:.6rem 0 0">
+          C'est une seule ligne. L'ordre des 4 variables doit correspondre exactement à l'ordre
+          de retour de la fonction (<code>altitudes, temperatures, longitudes, latitudes</code>).
+          Les noms des variables doivent être exactement ceux indiqués dans l'énoncé.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <hr class="sep">
+
+  <!-- QUESTION 2 -->
+  <section id="q2">
+    <h2>4 — <span class="badge-question">Q2</span> Écrire <code>conversion_K_en_C</code></h2>
+
+    <div class="encadre-question">
+      <span class="encadre-prefix">Énoncé de la question 2</span>
+      <p>
+        Écrire en Python une fonction nommée <code>conversion_K_en_C</code> qui prend en paramètre
+        une liste de températures en kelvins et retourne cette même liste convertie en degrés Celsius,
+        avec les valeurs <strong>arrondies à 1 chiffre après la virgule</strong>
+        (commande : <code>round(valeur, 1)</code>). Écrire une ligne de code permettant de tester la fonction.
+      </p>
+    </div>
+
+    <h3>Aide méthodologique</h3>
+
+    <p>
+      La formule de conversion est : \(T_{°C} = T_K - 273{,}15\)
+    </p>
+
+    <p>
+      La fonction doit parcourir chaque valeur de la liste, appliquer la conversion et l'arrondi,
+      puis construire et retourner une nouvelle liste.
+    </p>
+
+    <h4>Exemples de conversions à vérifier</h4>
+
+    <table class="table-data" style="width:auto; margin:0 0 1rem 0;">
+      <tr><th>Température (K)</th><th>Calcul</th><th>Résultat (°C)</th></tr>
+      <tr><td>288.15</td><td>288.15 − 273.15 = 15.0</td><td>15.0</td></tr>
+      <tr><td>273.65</td><td>273.65 − 273.15 = 0.5</td><td>0.5</td></tr>
+      <tr><td>255.45</td><td>255.45 − 273.15 = −17.7</td><td>-17.7</td></tr>
+      <tr><td>216.65</td><td>216.65 − 273.15 = −56.5</td><td>-56.5</td></tr>
+    </table>
+
+    <div class="encadre-indice">
+      <span class="encadre-prefix">Indice niveau 1 – structure</span>
+      <button class="btn-secondaire" onclick="toggleBloc('ind2a')">Afficher / masquer</button>
+      <div id="ind2a" class="indice-bloc">
+        <pre>def conversion_K_en_C(liste_temperatures):
+    resultat = []
+    for temp_k in liste_temperatures:
+        temp_c = round(temp_k - ???, 1)
+        resultat.append(temp_c)
+    return resultat</pre>
+      </div>
+    </div>
+
+    <div class="encadre-indice">
+      <span class="encadre-prefix">Indice niveau 2 – version compréhension</span>
+      <button class="btn-secondaire" onclick="toggleBloc('ind2b')">Afficher / masquer</button>
+      <div id="ind2b" class="indice-bloc">
+        <pre>def conversion_K_en_C(liste_temperatures):
+    return [round(t - 273.15, 1) for t in liste_temperatures]</pre>
+      </div>
+    </div>
+
+    <h3>Éditeur Python — à toi de jouer !</h3>
+
+    <script type="py-editor" env="ballon">
+def conversion_K_en_C(liste_temperatures):
+    pass  # REMPLACE CE PASS PAR TON CODE
+
+# Ligne de test demandée par l'énoncé :
+# print(conversion_K_en_C([288.15, 273.65, 255.45, 216.65]))
+
+# ── Fonction de test ──────────────────────────────────────────────────
+def test_conversion_K_en_C():
+    assert conversion_K_en_C([288.15]) == [15.0]
+    assert conversion_K_en_C([273.65]) == [0.5]
+    assert conversion_K_en_C([216.65]) == [-56.5]
+    res = conversion_K_en_C([288.15, 273.65, 255.45, 216.65])
+    assert res == [15.0, 0.5, -17.7, -56.5]
+    print("Les tests sont valides.")
+
+test_conversion_K_en_C()
+    </script>
+
+    <div class="encadre-conseil">
+      <span class="encadre-prefix">Correction – Question 2</span>
+      <button class="btn-tp-or" onclick="toggleBloc('corr2')">Afficher / masquer la correction</button>
+      <div id="corr2" class="correction-bloc">
+        <pre>def conversion_K_en_C(liste_temperatures):
+    resultat = []
+    for temp_k in liste_temperatures:
+        temp_c = round(temp_k - 273.15, 1)
+        resultat.append(temp_c)
+    return resultat
+
+# Ligne de test de l'énoncé :
+print(conversion_K_en_C([288.15, 273.65, 255.45, 216.65]))
+# → [15.0, 0.5, -17.7, -56.5]</pre>
+        <p style="margin:.6rem 0 0">
+          Version compréhension de liste (également acceptée) :
+        </p>
+        <pre>def conversion_K_en_C(liste_temperatures):
+    return [round(t - 273.15, 1) for t in liste_temperatures]</pre>
+
+        <script type="py-editor" env="ballon">
+def conversion_K_en_C(liste_temperatures):
+    resultat = []
+    for temp_k in liste_temperatures:
+        temp_c = round(temp_k - 273.15, 1)
+        resultat.append(temp_c)
+    return resultat
+
+print(conversion_K_en_C([288.15, 273.65, 255.45, 216.65]))
+
+def test_conversion_K_en_C():
+    assert conversion_K_en_C([288.15]) == [15.0]
+    assert conversion_K_en_C([273.65]) == [0.5]
+    assert conversion_K_en_C([216.65]) == [-56.5]
+    res = conversion_K_en_C([288.15, 273.65, 255.45, 216.65])
+    assert res == [15.0, 0.5, -17.7, -56.5]
+    print("Les tests sont valides.")
+
+test_conversion_K_en_C()
+        </script>
+      </div>
+    </div>
+  </section>
+
+  <hr class="sep">
+
+  <!-- QUESTION 3 -->
+  <section id="q3">
+    <h2>5 — <span class="badge-question">Q3</span> Écrire <code>altitude_la_plus_froide</code></h2>
+
+    <div class="encadre-question">
+      <span class="encadre-prefix">Énoncé de la question 3</span>
+      <p>
+        Proposer une écriture de la fonction <code>altitude_la_plus_froide</code> qui prend en paramètres
+        une liste d'altitudes et une liste de températures en °C, et renvoie un tuple :
+        <strong>(température minimale, liste des altitudes correspondantes)</strong>.
+      </p>
+      <p style="margin:0">
+        Si la température minimale est atteinte à plusieurs altitudes, toutes doivent apparaître dans la liste.
+      </p>
+    </div>
+
+    <h3>Les exemples de l'énoncé</h3>
+
+    <pre>&gt;&gt;&gt; altitudes   = [7000, 10125, 13896, 14211]
+&gt;&gt;&gt; temperatures = [-35.2, -52.1, -57.4, -57.4]
+&gt;&gt;&gt; altitude_la_plus_froide(altitudes, temperatures)
+(-57.4, [13896, 14211])       # deux altitudes à égalité
+
+&gt;&gt;&gt; altitudes   = [6000, 7250, 11542, 15214, 17300]
+&gt;&gt;&gt; temperatures = [-33.7, -45, -53, -58.5, -60.1]
+&gt;&gt;&gt; altitude_la_plus_froide(altitudes, temperatures)
+(-60.1, [17300])              # une seule altitude</pre>
+
+    <h3>Aide méthodologique</h3>
+
+    <ol>
+      <li>Trouver la température minimale de la liste avec <code>min()</code>.</li>
+      <li>Parcourir simultanément les deux listes (avec <code>zip</code> ou un indice <code>i</code>).</li>
+      <li>Chaque fois que la température vaut le minimum, ajouter l'altitude correspondante à une liste.</li>
+      <li>Retourner un tuple <code>(t_min, liste_altitudes)</code>.</li>
+    </ol>
+
+    <div class="encadre-indice">
+      <span class="encadre-prefix">Indice niveau 1 – structure avec zip</span>
+      <button class="btn-secondaire" onclick="toggleBloc('ind3a')">Afficher / masquer</button>
+      <div id="ind3a" class="indice-bloc">
+        <pre>def altitude_la_plus_froide(liste_altitudes, liste_temperatures):
+    t_min = min(liste_temperatures)
+    alts_min = []
+    for alt, temp in zip(liste_altitudes, liste_temperatures):
+        if temp == t_min:
+            alts_min.append(alt)
+    return (t_min, alts_min)</pre>
+      </div>
+    </div>
+
+    <div class="encadre-indice">
+      <span class="encadre-prefix">Indice niveau 2 – structure avec indice</span>
+      <button class="btn-secondaire" onclick="toggleBloc('ind3b')">Afficher / masquer</button>
+      <div id="ind3b" class="indice-bloc">
+        <pre>def altitude_la_plus_froide(liste_altitudes, liste_temperatures):
+    t_min = min(liste_temperatures)
+    alts_min = []
+    for i in range(len(liste_altitudes)):
+        if liste_temperatures[i] == t_min:
+            alts_min.append(liste_altitudes[i])
+    return (t_min, alts_min)</pre>
+      </div>
+    </div>
+
+    <h4>Résultat attendu avec les vraies données du ballon</h4>
+
+    <div class="encadre">
+      <span class="encadre-prefix">Résultat exact sur releves_ballon_sonde.csv</span>
+      <pre style="margin:0; background:transparent; border:none; padding:0;">altitude_la_plus_froide(altitudes, temperatures_celsius)
+→ (-56.5, [15120, 17210])</pre>
+    </div>
+
+    <h3>Éditeur Python — à toi de jouer !</h3>
+
+    <script type="py-editor" env="ballon">
+def altitude_la_plus_froide(liste_altitudes, liste_temperatures):
+    pass  # REMPLACE CE PASS PAR TON CODE
+
+# ── Fonction de test ──────────────────────────────────────────────────
+def test_altitude_la_plus_froide():
+    # Exemple 1 de l'énoncé
+    alt1  = [7000, 10125, 13896, 14211]
+    temp1 = [-35.2, -52.1, -57.4, -57.4]
+    assert altitude_la_plus_froide(alt1, temp1) == (-57.4, [13896, 14211])
+
+    # Exemple 2 de l'énoncé
+    alt2  = [6000, 7250, 11542, 15214, 17300]
+    temp2 = [-33.7, -45, -53, -58.5, -60.1]
+    assert altitude_la_plus_froide(alt2, temp2) == (-60.1, [17300])
+
+    # Données réelles du ballon sonde
+    alt_ballon  = [0,200,500,1100,1800,2250,2680,5070,6800,8900,
+                   9800,11000,13500,15120,17210,19500,20100,21250,23620,24865]
+    temp_ballon = [15.0,13.7,11.7,7.9,3.4,0.5,-2.3,-17.7,-28.9,-42.5,
+                   -48.3,-56.0,-56.2,-56.5,-56.5,-56.0,-56.1,-53.0,-50.1,-48.0]
+    assert altitude_la_plus_froide(alt_ballon, temp_ballon) == (-56.5, [15120, 17210])
+    print("Les tests sont valides.")
+
+test_altitude_la_plus_froide()
+    </script>
+
+    <div class="encadre-conseil">
+      <span class="encadre-prefix">Correction – Question 3</span>
+      <button class="btn-tp-or" onclick="toggleBloc('corr3')">Afficher / masquer la correction</button>
+      <div id="corr3" class="correction-bloc">
+        <pre>def altitude_la_plus_froide(liste_altitudes, liste_temperatures):
+    t_min    = min(liste_temperatures)
+    alts_min = []
+    for alt, temp in zip(liste_altitudes, liste_temperatures):
+        if temp == t_min:
+            alts_min.append(alt)
+    return (t_min, alts_min)</pre>
+        <p style="margin:.6rem 0 0">
+          Appel avec les données du ballon après conversion :
+          <code>altitude_la_plus_froide(altitudes, temperatures_C)</code>
+          → <code>(-56.5, [15120, 17210])</code>
+        </p>
+
+        <script type="py-editor" env="ballon">
+def altitude_la_plus_froide(liste_altitudes, liste_temperatures):
+    t_min    = min(liste_temperatures)
+    alts_min = []
+    for alt, temp in zip(liste_altitudes, liste_temperatures):
+        if temp == t_min:
+            alts_min.append(alt)
+    return (t_min, alts_min)
+
+def test_altitude_la_plus_froide():
+    alt1  = [7000, 10125, 13896, 14211]
+    temp1 = [-35.2, -52.1, -57.4, -57.4]
+    assert altitude_la_plus_froide(alt1, temp1) == (-57.4, [13896, 14211])
+    alt2  = [6000, 7250, 11542, 15214, 17300]
+    temp2 = [-33.7, -45, -53, -58.5, -60.1]
+    assert altitude_la_plus_froide(alt2, temp2) == (-60.1, [17300])
+    alt_b  = [15120, 17210, 19500]
+    temp_b = [-56.5, -56.5, -56.0]
+    assert altitude_la_plus_froide(alt_b, temp_b) == (-56.5, [15120, 17210])
+    print("Les tests sont valides.")
+
+test_altitude_la_plus_froide()
+        </script>
+      </div>
+    </div>
+  </section>
+
+  <hr class="sep">
+
+  <!-- QUESTION 4 -->
+  <section id="q4">
+    <h2>6 — <span class="badge-question">Q4</span> Ajouter une assertion dans <code>genere_kml</code></h2>
+
+    <div class="encadre-question">
+      <span class="encadre-prefix">Énoncé de la question 4</span>
+      <p style="margin:0">
+        Observer le corps de la fonction <code>genere_kml</code>, puis, à l'aide d'une assertion,
+        insérer une ligne de code qui garantit que les deux listes <code>liste_longitudes</code>
+        et <code>liste_latitudes</code> sont de <strong>même longueur</strong>.
+      </p>
+    </div>
+
+    <h3>Aide méthodologique</h3>
+
+    <p>
+      La boucle <code>for i in range(len(liste_longitudes))</code> dans <code>genere_kml</code>
+      utilise l'indice <code>i</code> pour accéder aux deux listes simultanément.
+      Si les deux listes n'ont pas la même longueur, on risque un <code>IndexError</code>
+      (accès hors limites). L'assertion, placée <em>au début</em> de la fonction, stoppe
+      l'exécution proprement avant que ce problème arrive.
+    </p>
+
+    <div class="encadre">
+      <span class="encadre-prefix">Syntaxe de l'assertion</span>
+      <pre style="margin:0">assert len(liste_longitudes) == len(liste_latitudes), \
+       "Les listes longitudes et latitudes doivent avoir la même longueur"</pre>
+    </div>
+
+    <h3>Où placer cette ligne ?</h3>
+
+    <p>
+      Juste après la ligne <code>def genere_kml(liste_longitudes, liste_latitudes):</code>,
+      avant toute autre instruction.
+    </p>
+
+    <pre>def genere_kml(liste_longitudes, liste_latitudes):
+    assert len(liste_longitudes) == len(liste_latitudes)  # ← ICI
+    fichier_kml = open('ballon sonde.kml', 'w')
+    ...</pre>
+
+    <h3>Éditeur Python — à toi de jouer !</h3>
+
+    <script type="py-editor" env="ballon">
+def genere_kml(liste_longitudes, liste_latitudes):
+    # AJOUTE TON ASSERTION ICI :
+
+    # (Le reste de la fonction est simulé pour le test)
+    print(f"Génération KML : {len(liste_longitudes)} points")
+
+# ── Fonction de test ──────────────────────────────────────────────────
+def test_assertion_kml():
+    # Cas valide : listes de même longueur (ne doit pas planter)
+    genere_kml([4.76, 5.15], [45.60, 45.59])
+
+    # Cas invalide : listes de longueurs différentes (doit lever AssertionError)
+    erreur_levee = False
+    try:
+        genere_kml([4.76, 5.15, 5.44], [45.60])
+    except AssertionError:
+        erreur_levee = True
+    assert erreur_levee, "L'assertion n'a pas été levée !"
+    print("Les tests sont valides.")
+
+test_assertion_kml()
+    </script>
+
+    <div class="encadre-conseil">
+      <span class="encadre-prefix">Correction – Question 4</span>
+      <button class="btn-tp-or" onclick="toggleBloc('corr4')">Afficher / masquer la correction</button>
+      <div id="corr4" class="correction-bloc">
+        <pre>def genere_kml(liste_longitudes, liste_latitudes):
+    assert len(liste_longitudes) == len(liste_latitudes), \
+           "Erreur : les listes longitude et latitude n'ont pas la même longueur"
+    fichier_kml = open('ballon sonde.kml', 'w')
+    ...</pre>
+        <p style="margin:.6rem 0 0">
+          Le message d'erreur est optionnel mais fortement recommandé : il aide à comprendre
+          ce qui a planté quand l'<code>AssertionError</code> est levée.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <hr class="sep">
+
+  <!-- QUESTION 5 -->
+  <section id="q5">
+    <h2>7 — <span class="badge-question">Q5</span> Appeler <code>genere_kml</code></h2>
+
+    <div class="encadre-question">
+      <span class="encadre-prefix">Énoncé de la question 5</span>
+      <p style="margin:0">
+        Écrire une ligne de code qui appelle la fonction <code>genere_kml</code> avec les deux listes
+        de longitudes et de latitudes obtenues à la question 1, puis ouvrir le fichier kml généré
+        dans le même répertoire que le fichier Python.
+      </p>
+    </div>
+
+    <h3>Aide méthodologique</h3>
+
+    <p>
+      Il s'agit d'un simple appel de fonction avec les deux variables récupérées à la question 1.
+      L'ordre des paramètres est <code>(longitudes, latitudes)</code> — vérifie la signature de la
+      fonction : <code>def genere_kml(liste_longitudes, liste_latitudes)</code>.
+    </p>
+
+    <div class="encadre-conseil">
+      <span class="encadre-prefix">Correction – Question 5</span>
+      <button class="btn-tp-or" onclick="toggleBloc('corr5')">Afficher / masquer la correction</button>
+      <div id="corr5" class="correction-bloc">
+        <pre>genere_kml(longitudes, latitudes)</pre>
+        <p style="margin:.6rem 0 0">
+          Après l'exécution, le fichier <code>ballon sonde.kml</code> est créé dans le même
+          répertoire que <code>etude_climatique.py</code>. Tu peux l'ouvrir avec Google Earth,
+          QGIS, ou tout logiciel compatible KML.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <hr class="sep">
+
+  <!-- QUESTION 6 -->
+  <section id="q6">
+    <h2>8 — <span class="badge-question">Q6</span> Corriger le bug de la balise <code>&lt;/kml&gt;</code></h2>
+
+    <div class="encadre-question">
+      <span class="encadre-prefix">Énoncé de la question 6</span>
+      <p style="margin:0">
+        La balise fermante <code>&lt;/kml&gt;</code> est absente en toute fin de fichier, ce qui cause
+        des problèmes de compatibilité. Proposer une amélioration du code visant à répondre à cette difficulté.
+      </p>
+    </div>
+
+    <h3>Analyse de la fonction fournie</h3>
+
+    <p>
+      Observe la fin de la fonction <code>genere_kml</code> telle qu'elle est fournie :
+    </p>
+
+    <pre>    bas_fichier = '</Document>\n'
+    fichier_kml.write(bas_fichier)
+    fichier_kml.close()          # ← le fichier est fermé ICI</pre>
+
+    <p>
+      Le fichier KML valide doit se terminer par :
+    </p>
+
+    <pre>...
+&lt;/Document&gt;
+&lt;/kml&gt;     ← cette ligne est absente !</pre>
+
+    <div class="encadre-conseil">
+      <span class="encadre-prefix">Structure d'un fichier KML valide</span>
+      <pre style="margin:0; font-size:.85rem;">&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+&lt;kml xmlns="http://www.opengis.net/kml/2.2"&gt;   ← ouvre kml
+&lt;Document&gt;
+  &lt;Placemark&gt; ... &lt;/Placemark&gt;
+  ...
+&lt;/Document&gt;
+&lt;/kml&gt;                                          ← ferme kml (MANQUANT)</pre>
+    </div>
+
+    <h3>La correction</h3>
+
+    <p>
+      Il suffit d'ajouter l'écriture de <code>&lt;/kml&gt;\n</code> dans <code>bas_fichier</code>
+      avant la fermeture du fichier. Deux solutions équivalentes :
+    </p>
+
+    <div class="encadre-indice">
+      <span class="encadre-prefix">Indice – deux approches possibles</span>
+      <button class="btn-secondaire" onclick="toggleBloc('ind6a')">Afficher / masquer</button>
+      <div id="ind6a" class="indice-bloc">
+        <pre># Solution A : modifier bas_fichier
+bas_fichier = '&lt;/Document&gt;\n'
+bas_fichier += '&lt;/kml&gt;\n'      # ← ajouter cette ligne
+fichier_kml.write(bas_fichier)
+fichier_kml.close()
+
+# Solution B : écrire séparément
+bas_fichier = '&lt;/Document&gt;\n'
+fichier_kml.write(bas_fichier)
+fichier_kml.write('&lt;/kml&gt;\n')  # ← ajouter cette ligne
+fichier_kml.close()</pre>
+      </div>
+    </div>
+
+    <h3>Éditeur Python — à toi de jouer !</h3>
+
+    <script type="py-editor" env="ballon">
+# Voici une version simplifiée de genere_kml qui écrit dans une variable (pas un fichier)
+# pour que tu puisses tester sans accès au disque.
+
+def genere_kml_corrigee(liste_longitudes, liste_latitudes):
+    assert len(liste_longitudes) == len(liste_latitudes)
+    contenu = '<?xml version="1.0" encoding="UTF-8"?>\n'
+    contenu += '<kml xmlns="http://www.opengis.net/kml/2.2">\n'
+    contenu += '<Document>\n'
+    contenu += '<name>Trajectoire ballon sonde</name>\n'
+    for i in range(len(liste_longitudes)):
+        contenu += '<Placemark>\n'
+        contenu += f'<name>Point {i}</name>\n'
+        contenu += '<Point>\n'
+        contenu += f'<coordinates>{liste_longitudes[i]},{liste_latitudes[i]}</coordinates>\n'
+        contenu += '</Point>\n'
+        contenu += '</Placemark>\n'
+    # AJOUTE ICI LA CORRECTION (bas_fichier) :
+    bas_fichier = '</Document>\n'
+    # Ligne manquante à compléter :
+    contenu += bas_fichier
+    return contenu
+
+# ── Fonction de test ──────────────────────────────────────────────────
+def test_kml_corrige():
+    kml = genere_kml_corrigee([4.760467], [45.602117])
+    assert '</Document>' in kml
+    assert '</kml>'      in kml,  "Balise </kml> manquante !"
+    assert kml.index('</Document>') < kml.index('</kml>'), "</kml> doit être APRES </Document>"
+    print("Les tests sont valides.")
+
+test_kml_corrige()
+    </script>
+
+    <div class="encadre-conseil">
+      <span class="encadre-prefix">Correction – Question 6</span>
+      <button class="btn-tp-or" onclick="toggleBloc('corr6')">Afficher / masquer la correction</button>
+      <div id="corr6" class="correction-bloc">
+        <pre># Dans genere_kml, remplacer :
+bas_fichier = '&lt;/Document&gt;\n'
+fichier_kml.write(bas_fichier)
+fichier_kml.close()
+
+# Par :
+bas_fichier = '&lt;/Document&gt;\n'
+bas_fichier += '&lt;/kml&gt;\n'      # ← correction : ajout de la balise fermante
+fichier_kml.write(bas_fichier)
+fichier_kml.close()</pre>
+        <p style="margin:.6rem 0 0">
+          La balise <code>&lt;/kml&gt;</code> doit être <em>après</em> <code>&lt;/Document&gt;</code>
+          et avant la fermeture du fichier. L'ordre est impératif dans un document XML/KML.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <hr class="sep">
+
+  <!-- PIÈGES FRÉQUENTS -->
+  <section id="pieges">
+    <h2>9 — Pièges fréquents &amp; astuces de vérification</h2>
+
+    <div class="encadre-piege">
+      <span class="encadre-prefix">Piège 1 — Inverser l'ordre des 4 listes au dépackage (Q1)</span>
+      <p>
+        La fonction renvoie dans l'ordre : <code>altitudes, temperatures, longitudes, latitudes</code>.
+        Inverser deux variables (par exemple mettre <code>latitudes</code> avant <code>longitudes</code>)
+        ne produit aucune erreur Python, mais les données sont mélangées silencieusement.
+      </p>
+      <pre># ❌ Mauvais : l'ordre ne correspond pas à la fonction
+longitudes, latitudes, altitudes, temperatures = recupere_donnees_fichier_csv(...)
+
+# ✓ Correct : même ordre que le return de la fonction
+altitudes, temperatures, longitudes, latitudes = recupere_donnees_fichier_csv(...)</pre>
+    </div>
+
+    <div class="encadre-piege">
+      <span class="encadre-prefix">Piège 2 — Oublier <code>round()</code> dans conversion_K_en_C (Q2)</span>
+      <p>
+        Sans <code>round(..., 1)</code>, les résultats de <code>288.15 - 273.15</code> peuvent donner
+        <code>14.999999999999972</code> au lieu de <code>15.0</code> à cause des flottants Python.
+        L'arrondi est obligatoire pour passer les assertions.
+      </p>
+      <pre># ❌ Sans arrondi : erreur de précision flottante possible
+[t - 273.15 for t in liste]
+
+# ✓ Avec arrondi
+[round(t - 273.15, 1) for t in liste]</pre>
+    </div>
+
+    <div class="encadre-piege">
+      <span class="encadre-prefix">Piège 3 — Ne pas collecter toutes les altitudes à égalité (Q3)</span>
+      <p>
+        Si on s'arrête à la première altitude trouvée (<code>return</code> dans la boucle), on rate
+        les altitudes suivantes qui ont la même température minimale. La boucle doit aller jusqu'au bout.
+      </p>
+      <pre># ❌ Mauvais : sort à la première occurrence
+for alt, temp in zip(alt, temp_C):
+    if temp == t_min:
+        return (t_min, [alt])   # manque les autres !
+
+# ✓ Correct : collecte tout, renvoie après
+alts_min = []
+for alt, temp in zip(alt, temp_C):
+    if temp == t_min:
+        alts_min.append(alt)
+return (t_min, alts_min)</pre>
+    </div>
+
+    <div class="encadre-piege">
+      <span class="encadre-prefix">Piège 4 — Placer l'assertion après les premiers calculs (Q4)</span>
+      <p>
+        L'assertion doit être la <em>première</em> instruction de la fonction, avant toute écriture
+        dans le fichier. Si elle est placée au milieu, le fichier KML peut être partiellement écrit
+        avant que l'erreur soit détectée.
+      </p>
+    </div>
+
+    <div class="encadre-piege">
+      <span class="encadre-prefix">Piège 5 — Inverser longitudes et latitudes (Q5)</span>
+      <p>
+        La signature de <code>genere_kml</code> est <code>(liste_longitudes, liste_latitudes)</code>.
+        Si tu appelles <code>genere_kml(latitudes, longitudes)</code>, le fichier KML sera généré
+        avec des coordonnées inversées — les points seront mal placés sur la carte.
+      </p>
+    </div>
+
+    <div class="encadre-piege">
+      <span class="encadre-prefix">Piège 6 — Oublier <code>fichier_kml.close()</code> après la correction (Q6)</span>
+      <p>
+        La ligne <code>fichier_kml.close()</code> doit rester en toute fin de fonction.
+        Si elle est supprimée ou oubliée, le fichier reste ouvert et les données peuvent ne pas
+        être entièrement écrites sur le disque.
+      </p>
+    </div>
+
+    <div class="encadre-conseil">
+      <span class="encadre-prefix">Astuce — Vérifier le contenu du KML généré</span>
+      <p>
+        Après avoir appelé <code>genere_kml(longitudes, latitudes)</code>, ouvre le fichier
+        <code>ballon sonde.kml</code> dans un éditeur de texte. Vérifie que :
+      </p>
+      <ul>
+        <li>La première ligne est <code>&lt;?xml version="1.0"...&gt;</code></li>
+        <li>La dernière ligne est <code>&lt;/kml&gt;</code> (après Q6)</li>
+        <li>Il y a exactement 20 balises <code>&lt;Placemark&gt;</code> (20 relevés)</li>
+      </ul>
+    </div>
+  </section>
+
+  <hr class="sep">
+
+  <footer>
+    Lycée Antoine Watteau — DarkSATHI Li
+  </footer>
+
+</div>
+
+<script>
+  const btnTop = document.getElementById('btn-top');
+  window.addEventListener('scroll', function () {
+    btnTop.style.display = window.scrollY > 300 ? 'flex' : 'none';
+  });
+  btnTop.addEventListener('click', function () {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  });
+
+  function toggleBloc(id) {
+    var el = document.getElementById(id);
+    if (el) el.classList.toggle('visible');
+  }
+</script>
+
+</body>
+</html>
