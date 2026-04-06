@@ -585,6 +585,86 @@
       color: #fff;
     }
 
+    /* ── BOUTON BD (lightbox) ── */
+    .bd-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: .35rem;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: .62rem;
+      padding: .22rem .7rem;
+      border-radius: 20px;
+      background: #f5f0ff;
+      border: 1px solid #a07ee8;
+      color: #5b21b6;
+      text-decoration: none;
+      cursor: pointer;
+      transition: all .2s;
+      white-space: nowrap;
+    }
+
+    .bd-btn:hover {
+      background: #5b21b6;
+      border-color: #5b21b6;
+      color: #fff;
+    }
+
+    /* ── LIGHTBOX ── */
+    #bd-lightbox {
+      display: none;
+      position: fixed;
+      inset: 0;
+      z-index: 9999;
+      background: rgba(8, 15, 26, .92);
+      backdrop-filter: blur(4px);
+      align-items: center;
+      justify-content: center;
+      padding: 1.5rem;
+      animation: lbFadeIn .22s ease;
+    }
+
+    #bd-lightbox.open { display: flex; }
+
+    #bd-lightbox img {
+      max-width: 100%;
+      max-height: 90vh;
+      object-fit: contain;
+      border-radius: 6px;
+      box-shadow: 0 8px 60px rgba(0,0,0,.6);
+      animation: lbZoom .25s cubic-bezier(.4,0,.2,1);
+    }
+
+    #bd-lightbox-close {
+      position: absolute;
+      top: 1rem;
+      right: 1.2rem;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: .75rem;
+      color: #fff;
+      background: rgba(255,255,255,.12);
+      border: 1px solid rgba(255,255,255,.25);
+      border-radius: 20px;
+      padding: .3rem .9rem;
+      cursor: pointer;
+      transition: background .2s;
+    }
+
+    #bd-lightbox-close:hover { background: rgba(255,255,255,.25); }
+
+    #bd-lightbox-hint {
+      position: absolute;
+      bottom: 1.2rem;
+      left: 50%;
+      transform: translateX(-50%);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: .62rem;
+      color: rgba(255,255,255,.45);
+      white-space: nowrap;
+    }
+
+    @keyframes lbFadeIn { from { opacity:0; } to { opacity:1; } }
+    @keyframes lbZoom   { from { transform: scale(.92); opacity:0; } to { transform: scale(1); opacity:1; } }
+
     @keyframes fadeUp {
       from {
         opacity: 0;
@@ -1028,6 +1108,13 @@
 
   </div><!-- /container-content -->
 
+  <!-- LIGHTBOX BD -->
+  <div id="bd-lightbox" role="dialog" aria-modal="true" aria-label="Bande dessinée en plein écran">
+    <button id="bd-lightbox-close" aria-label="Fermer">✕ Fermer</button>
+    <img id="bd-lightbox-img" src="" alt="">
+    <p id="bd-lightbox-hint">Clic en dehors ou Échap pour fermer</p>
+  </div>
+
   <!-- SCRIPTS -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
   <script>
@@ -1090,7 +1177,7 @@
       sec.className = 'card-video';
       sec.innerHTML = url
         ? `<a class="video-btn" href="${url}" target="_blank" rel="noopener" onclick="event.stopPropagation()">
-             <svg viewBox="0 0 10 10"><polygon points="2,1 9,5 2,9"/></svg>▶ Voir la vidéo
+             <svg viewBox="0 0 10 10"><polygon points="2,1 9,5 2,9"/></svg>Voir la vidéo
            </a>`
         : `<span class="video-soon">🎬 Vidéo à venir…</span>`;
       // Insérer dans .card-face--info si existe, sinon dans card
@@ -1104,12 +1191,45 @@
       sec.className = 'card-notebook';
       sec.innerHTML = url
         ? `<a class="notebook-btn" href="${url}" target="_blank" rel="noopener" onclick="event.stopPropagation()">
-             <svg viewBox="0 0 10 10"><rect x="1" y="1" width="5" height="7" rx="1"/><line x1="3" y1="3" x2="6" y2="3" stroke="currentColor" stroke-width="1" fill="none"/><line x1="3" y1="5" x2="6" y2="5" stroke="currentColor" stroke-width="1" fill="none"/><circle cx="8" cy="7" r="1.5"/></svg>🎧 NotebookLM
+             <svg viewBox="0 0 10 10"><rect x="1" y="1" width="5" height="7" rx="1"/><line x1="3" y1="3" x2="6" y2="3" stroke="currentColor" stroke-width="1" fill="none"/><line x1="3" y1="5" x2="6" y2="5" stroke="currentColor" stroke-width="1" fill="none"/><circle cx="8" cy="7" r="1.5"/></svg>NotebookLM
            </a>`
-        : `<span class="notebook-soon">🎧 NotebookLM à venir…</span>`;
+        : `<span class="notebook-soon">NotebookLM à venir…</span>`;
+      // Bouton BD si la card a une image
+      const imgUrl = (card.dataset.image || '').trim();
+      if (imgUrl) {
+        const bdBtn = document.createElement('button');
+        bdBtn.className = 'bd-btn';
+        bdBtn.setAttribute('type', 'button');
+        bdBtn.setAttribute('aria-label', 'Voir la bande dessinée en plein écran');
+        bdBtn.innerHTML = 'Voir la BD';
+        bdBtn.addEventListener('click', e => {
+          e.preventDefault();
+          e.stopPropagation();
+          const lb = document.getElementById('bd-lightbox');
+          document.getElementById('bd-lightbox-img').src = imgUrl;
+          lb.classList.add('open');
+          document.body.style.overflow = 'hidden';
+        });
+        sec.appendChild(bdBtn);
+      }
       const target = card.querySelector('.card-face--info') || card;
       target.appendChild(sec);
     });
+
+    /* ══════════════════════════════════════════
+       LIGHTBOX — fermeture
+    ══════════════════════════════════════════ */
+    (function () {
+      const lb    = document.getElementById('bd-lightbox');
+      const close = () => {
+        lb.classList.remove('open');
+        document.getElementById('bd-lightbox-img').src = '';
+        document.body.style.overflow = '';
+      };
+      document.getElementById('bd-lightbox-close').addEventListener('click', close);
+      lb.addEventListener('click', e => { if (e.target === lb) close(); });
+      document.addEventListener('keydown', e => { if (e.key === 'Escape') close(); });
+    })();
 
     /* ══════════════════════════════════════════
        3. ANIMATION STAGGERED
