@@ -1,0 +1,1227 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Fiche – Cabinet vétérinaire | NSI Terminale | BAC 2026</title>
+
+  <!-- Bootstrap 5.3.3 -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Rubik+Dirt&family=Source+Serif+4:ital,opsz,wght@0,8..60,300..900;1,8..60,300..900&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+
+  <!-- MathJax v3 -->
+  <script>
+    MathJax = {
+      tex: { inlineMath: [['\\(', '\\)'], ['$', '$']] },
+      options: { skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre'] }
+    };
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js" async></script>
+
+  <!-- PyScript 2026.3.1 -->
+  <script type="module" src="https://pyscript.net/releases/2026.3.1/core.js"></script>
+
+  <style>
+    :root {
+      --bg-main:    #f8f9fb;
+      --bg-panel:   #eef1f5;
+      --bg-cours:   #ffffff;
+      --accent:     #2a6496;
+      --py-editor-input: white;
+      --accent-or:  #b5610a;
+      --accent-vert:#2e7d32;
+      --text-main:  #1a1a1a;
+      --text-muted: #5a6470;
+      --border-radius: 8px;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      background-color: var(--bg-main);
+      color: var(--text-main);
+      font-family: 'Source Serif 4', Georgia, serif;
+      font-size: 1.1rem;
+      line-height: 1.8;
+      margin: 0;
+      padding-bottom: 4rem;
+    }
+
+    h1, h2, h3, h4 {
+      font-family: 'Rubik Dirt', cursive;
+      color: var(--accent);
+      letter-spacing: 0.02em;
+    }
+
+    h1 { font-size: 2.2rem; color: #111; }
+    h2 { font-size: 1.55rem; border-bottom: 2px solid var(--accent); padding-bottom: .3rem; margin-top: 2.5rem; }
+    h3 { font-size: 1.25rem; color: var(--accent-or); margin-top: 1.8rem; }
+    h4 { font-size: 1.05rem; color: var(--accent-vert); }
+
+    p { margin-bottom: 1rem; }
+    code, pre, .mono { font-family: 'JetBrains Mono', monospace; font-size: 0.9em; }
+    code { background: #e8edf2; padding: 2px 6px; border-radius: 4px; color: #8b3a00; }
+    pre { background: #f0f3f7; border-left: 3px solid var(--accent); padding: 1rem 1.2rem; border-radius: var(--border-radius); overflow-x: auto; color: #1a1a1a; }
+
+    a { color: var(--accent); text-decoration: underline dotted; }
+    a:hover { color: var(--accent-or); }
+
+    /* ── NAVIGATION ── */
+    #navbar {
+      position: sticky; top: 0; z-index: 1000;
+      background: #2a6496; border-bottom: 2px solid #1a4a70;
+      padding: .5rem 1.5rem;
+      display: flex; gap: .5rem; flex-wrap: wrap; align-items: center;
+    }
+    #navbar span { font-family: 'JetBrains Mono', monospace; font-size: .8rem; color: #ccddf0; margin-right: auto; }
+    #navbar a {
+      font-family: 'JetBrains Mono', monospace; font-size: .8rem;
+      color: #fff; text-decoration: none; padding: .25rem .7rem;
+      border: 1px solid #ccddf0; border-radius: 4px; transition: background .2s;
+    }
+    #navbar a:hover { background: #1a4a70; }
+
+    /* ── CONTENU ── */
+    .container-content { max-width: 860px; margin: 0 auto; padding: 2rem 1.5rem; }
+
+    /* ── ENCADRÉS ── */
+    .encadre, .encadre-conseil, .encadre-indice, .encadre-question {
+      background: #ffffff; border-radius: var(--border-radius);
+      padding: 1.1rem 1.4rem; margin: 1.4rem 0;
+      position: relative; box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+    }
+    .encadre          { border-left: 4px solid var(--accent); }
+    .encadre-conseil  { border-left: 4px solid var(--accent-or); background: #fff8f0; }
+    .encadre-indice   { border-left: 4px solid var(--accent-vert); background: #f0faf0; }
+    .encadre-question { border-left: 4px solid #7b3fa8; background: #faf5ff; }
+
+    .encadre-prefix {
+      font-family: 'JetBrains Mono', monospace; font-size: .72rem;
+      font-variant: small-caps; letter-spacing: .12em;
+      text-transform: uppercase; margin-bottom: .4rem; display: block;
+    }
+    .encadre          .encadre-prefix { color: var(--accent); }
+    .encadre-conseil  .encadre-prefix { color: var(--accent-or); }
+    .encadre-indice   .encadre-prefix { color: var(--accent-vert); }
+    .encadre-question .encadre-prefix { color: #7b3fa8; }
+
+    /* ── BOUTONS ── */
+    .btn-tp, .btn-tp-or, .btn-tp-vert, .btn-secondaire {
+      font-family: 'JetBrains Mono', monospace; font-size: .82rem;
+      border: none; border-radius: 5px; padding: .45rem 1.1rem;
+      cursor: pointer; transition: opacity .2s, transform .1s; margin: .3rem .2rem;
+    }
+    .btn-tp         { background: var(--accent);      color: #fff; }
+    .btn-tp-or      { background: var(--accent-or);   color: #fff; }
+    .btn-tp-vert    { background: var(--accent-vert); color: #fff; }
+    .btn-secondaire { background: #eef1f5; border: 1px solid var(--accent); color: var(--text-main); }
+    .btn-tp:hover, .btn-tp-or:hover, .btn-tp-vert:hover, .btn-secondaire:hover { opacity:.85; transform:translateY(-1px); }
+
+    /* ── BADGE QUESTION ── */
+    .badge-question {
+      display: inline-block; font-family: 'JetBrains Mono', monospace;
+      font-size: .8rem; background: #7b3fa8; color: #fff;
+      border-radius: 4px; padding: .15rem .7rem; margin-right: .5rem; vertical-align: middle;
+    }
+
+    /* ── TOGGLE ── */
+    .indice-bloc     { display: none; }
+    .indice-bloc.visible     { display: block; }
+    .correction-bloc { display: none; }
+    .correction-bloc.visible { display: block; }
+
+    /* ── TABLE GÉNÉRIQUE ── */
+    .table-gen {
+      border-collapse: collapse; margin: .8rem auto;
+      font-family: 'JetBrains Mono', monospace; font-size: .83rem; width: 100%;
+    }
+    .table-gen th, .table-gen td { border: 1px solid var(--accent); padding: .38rem .8rem; }
+    .table-gen th { background: #dce8f2; color: var(--accent); font-weight: 600; }
+    .table-gen .fk  { color: var(--accent-or); }
+    .table-gen .pk  { color: var(--accent-vert); font-weight: 600; }
+    .table-gen .bug { background: #fff0f0; color: #c0392b; }
+    .table-gen .ok  { background: #f0faf0; color: #2e7d32; }
+
+    /* ── SCHEMA BDD ── */
+    .schema-bdd {
+      display: flex; flex-wrap: wrap; gap: 1rem;
+      justify-content: center; margin: 1rem 0;
+    }
+    .schema-table {
+      border: 2px solid var(--accent); border-radius: 6px;
+      font-family: 'JetBrains Mono', monospace; font-size: .8rem;
+      background: #fff; min-width: 190px;
+    }
+    .schema-table .schema-title {
+      background: #2a6496; color: #fff; text-align: center;
+      padding: .3rem .8rem; font-weight: 600; border-radius: 4px 4px 0 0;
+    }
+    .schema-table .schema-row {
+      padding: .25rem .8rem; border-top: 1px solid #dce8f2; line-height: 1.6;
+    }
+    .schema-table .schema-row.pk-row  { color: #2e7d32; }
+    .schema-table .schema-row.fk-row  { color: #b5610a; }
+
+    /* ── PIED DE PAGE ── */
+    footer {
+      text-align: center; font-family: 'JetBrains Mono', monospace;
+      font-size: .8rem; color: var(--text-muted);
+      padding: 2rem 1rem 1rem; border-top: 1px solid #d0d8e4;
+    }
+
+    /* ── RETOUR EN HAUT ── */
+    #btn-top {
+      position: fixed; bottom: 1.5rem; right: 1.5rem; z-index: 999;
+      background: var(--accent); color: #fff; border: none; border-radius: 50%;
+      width: 44px; height: 44px; font-size: 1.2rem; cursor: pointer;
+      display: none; align-items: center; justify-content: center;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.25); transition: opacity .2s;
+    }
+    #btn-top:hover { opacity: .8; }
+
+    /* ── PIÈGE ── */
+    .encadre-piege {
+      background: #fff5f5; border-left: 4px solid #c0392b;
+      border-radius: var(--border-radius); padding: 1rem 1.4rem;
+      margin: 1.2rem 0; box-shadow: 0 1px 4px rgba(0,0,0,0.07);
+    }
+    .encadre-piege .encadre-prefix {
+      color: #c0392b; font-family: 'JetBrains Mono', monospace;
+      font-size: .72rem; font-variant: small-caps; letter-spacing: .12em;
+      display: block; margin-bottom: .3rem;
+    }
+
+    /* ── SOMMAIRE ── */
+    #sommaire ol { font-family: 'JetBrains Mono', monospace; font-size: .88rem; line-height: 2.2; }
+    #sommaire a { color: var(--accent); }
+    #sommaire a:hover { color: var(--accent-or); }
+
+    .sep { border: none; border-top: 1px dashed #9ab0c8; margin: 2.5rem 0; opacity: .7; }
+    py-editor { display: block; min-height: 100px; }
+  </style>
+</head>
+<body>
+
+<div id="pyinit" style="display:none">
+  <script type="py" env="veto">pass</script>
+</div>
+
+<button id="btn-top" title="Retour en haut" aria-label="Retour en haut">▲</button>
+
+<!-- NAVIGATION STICKY -->
+<nav id="navbar">
+  <span>NSI Terminale – Cabinet vétérinaire</span>
+  <a href="#s0">Intro</a>
+  <a href="#s1">Rappels</a>
+  <a href="#s2">Base de données</a>
+  <a href="#q1">Q1</a>
+  <a href="#q2">Q2</a>
+  <a href="#q3">Q3</a>
+  <a href="#q4">Q4</a>
+  <a href="#pieges">Pièges</a>
+</nav>
+
+<!-- CONTENU PRINCIPAL -->
+<div class="container-content">
+
+  <!-- EN-TÊTE -->
+  <div style="text-align:center; padding: 2rem 0 1rem;">
+    <div style="font-family:'JetBrains Mono',monospace; font-size:.8rem; color:var(--text-muted); margin-bottom:.5rem;">
+      BAC NSI 2026 — Sujet n°15 — Partie pratique
+    </div>
+    <h1>Cabinet vétérinaire<br>
+      <span style="font-size:1.1rem; color:var(--accent); font-family:'Source Serif 4',serif; font-style:italic; font-weight:300;">Fiche de révision guidée</span>
+    </h1>
+    <div style="font-family:'JetBrains Mono',monospace; font-size:.8rem; color:var(--text-muted); margin-top:.5rem;">
+      Terminale NSI &nbsp;·&nbsp; Traitement de chaînes &nbsp;·&nbsp; SQL &amp; SQLite &nbsp;·&nbsp; Dictionnaires &nbsp;·&nbsp; Débogage
+    </div>
+  </div>
+
+  <hr class="sep">
+
+  <!-- SOMMAIRE -->
+  <section id="s0">
+    <div id="sommaire" class="encadre">
+      <span class="encadre-prefix">Sommaire</span>
+      <ol>
+        <li><a href="#s1">Rappels – chaînes, <code>isdigit</code>, SQL avec Python</a></li>
+        <li><a href="#s2">La base de données du cabinet</a></li>
+        <li><a href="#q1">Question 1 – Écrire <code>normalisation_tel</code></a></li>
+        <li><a href="#q2">Question 2 – Écrire le jeu de tests de <code>validation_tel</code></a></li>
+        <li><a href="#q3">Question 3 – Écrire <code>consultation_vaccination_chat</code></a></li>
+        <li><a href="#q4">Question 4 – Analyser et corriger <code>derniere_vaccination</code></a></li>
+        <li><a href="#pieges">Pièges fréquents &amp; astuces de vérification</a></li>
+      </ol>
+    </div>
+  </section>
+
+  <hr class="sep">
+
+  <!-- SECTION 1 : RAPPELS -->
+  <section id="s1">
+    <h2>1 — Rappels : chaînes, isdigit et SQLite</h2>
+
+    <h3>Parcourir une chaîne caractère par caractère</h3>
+    <p>
+      En Python, une chaîne de caractères est itérable : on peut la parcourir
+      avec une boucle <code>for</code> exactement comme une liste.
+      La méthode <code>isdigit()</code> renvoie <code>True</code> si et seulement si
+      le caractère est un chiffre (0 à 9).
+    </p>
+
+    <div class="encadre-conseil">
+      <span class="encadre-prefix">Exemple – filtrer les chiffres d'une chaîne</span>
+      <pre style="margin:0"><code># Garder uniquement les chiffres d'une chaîne
+chaine = "(0)6.12.99-90-12 gilbert"
+resultat = ""
+for c in chaine:
+    if c.isdigit():
+        resultat += c
+print(resultat)  # → "0612999012"
+
+# Version compacte (compréhension de chaîne)
+resultat = "".join(c for c in chaine if c.isdigit())
+print(resultat)  # → "0612999012"</code></pre>
+    </div>
+
+    <div class="encadre">
+      <span class="encadre-prefix">Rappel – isdigit()</span>
+      <table class="table-gen" style="width:auto">
+        <tr><th>Appel</th><th>Résultat</th><th>Raison</th></tr>
+        <tr><td><code>'2'.isdigit()</code></td><td><code>True</code></td><td>Chiffre</td></tr>
+        <tr><td><code>'C'.isdigit()</code></td><td><code>False</code></td><td>Lettre</td></tr>
+        <tr><td><code>'.'.isdigit()</code></td><td><code>False</code></td><td>Ponctuation</td></tr>
+        <tr><td><code>' '.isdigit()</code></td><td><code>False</code></td><td>Espace</td></tr>
+        <tr><td><code>'('.isdigit()</code></td><td><code>False</code></td><td>Parenthèse</td></tr>
+        <tr><td><code>'-'.isdigit()</code></td><td><code>False</code></td><td>Tiret</td></tr>
+      </table>
+    </div>
+
+    <h3>Requêtes SQL avec sqlite3 en Python</h3>
+
+    <div class="encadre">
+      <span class="encadre-prefix">Patron complet – connexion, requête, résultats</span>
+      <pre style="margin:0"><code>import sqlite3
+
+conn = sqlite3.connect("cabinet.sqlite")   # ouvrir la base
+cursor = conn.cursor()
+
+# Requête simple
+resultats = cursor.execute(
+    "SELECT id, nom FROM animal ORDER BY nom LIMIT 3"
+)
+for r in resultats:
+    print(r[0], r[1])   # accès par position dans le tuple
+
+# Requête avec paramètre (? remplace la valeur, évite les injections SQL)
+resultats = cursor.execute(
+    "SELECT nom FROM animal WHERE espece = 'chat' AND id_proprietaire = ?",
+    (2,)    # tuple même pour un seul paramètre !
+)
+rows = list(resultats)   # convertir en liste pour réutiliser</code></pre>
+    </div>
+
+    <div class="encadre-conseil">
+      <span class="encadre-prefix">Rappel – clauses SQL utilisées dans ce sujet</span>
+      <table class="table-gen">
+        <tr><th>Clause</th><th>Rôle</th><th>Exemple</th></tr>
+        <tr><td><code>SELECT</code></td><td>Choisir les colonnes</td><td><code>SELECT nom, telephone</code></td></tr>
+        <tr><td><code>FROM</code></td><td>Table principale</td><td><code>FROM animal</code></td></tr>
+        <tr><td><code>JOIN … ON …</code></td><td>Joindre deux tables</td><td><code>JOIN proprietaire ON animal.id_proprietaire = proprietaire.id</code></td></tr>
+        <tr><td><code>WHERE</code></td><td>Filtrer les lignes</td><td><code>WHERE espece = 'chat'</code></td></tr>
+        <tr><td><code>ORDER BY</code></td><td>Trier le résultat</td><td><code>ORDER BY animal.id, date</code></td></tr>
+        <tr><td><code>?</code></td><td>Paramètre dynamique</td><td><code>WHERE date &gt; ?</code></td></tr>
+      </table>
+    </div>
+
+    <h3>Comparer des dates au format AAAAMMJJ</h3>
+    <p>
+      Les dates sont stockées sous forme de chaînes au format <code>"AAAAMMJJ"</code>
+      (ex. <code>"20241024"</code>). Ce format a une propriété précieuse :
+      <strong>l'ordre alphabétique = l'ordre chronologique</strong>.
+      On peut donc comparer des dates avec <code>&gt;</code>, <code>&lt;</code>, <code>&gt;=</code>
+      en Python comme en SQL, sans conversion.
+    </p>
+    <div class="encadre-conseil">
+      <span class="encadre-prefix">Exemple</span>
+      <pre style="margin:0"><code>"20251125" > "20241024"   # True  → 2025 après 2024
+"20240101" < "20240102"   # True  → 2 jan. après 1 jan.
+# En SQL :
+WHERE consultation.date > '20240923'   # toutes les dates après le 23/09/2024</code></pre>
+    </div>
+  </section>
+
+  <hr class="sep">
+
+  <!-- SECTION 2 : BASE DE DONNÉES -->
+  <section id="s2">
+    <h2>2 — La base de données du cabinet</h2>
+
+    <p>
+      La base <code>cabinet.sqlite</code> contient trois tables liées entre elles.
+      Comprendre leurs relations est indispensable pour écrire les requêtes SQL.
+    </p>
+
+    <!-- Schéma -->
+    <div class="schema-bdd">
+      <div class="schema-table">
+        <div class="schema-title">proprietaire</div>
+        <div class="schema-row pk-row">🔑 id : INTEGER (PK)</div>
+        <div class="schema-row">nom : TEXT</div>
+        <div class="schema-row">prenom : TEXT</div>
+        <div class="schema-row">telephone : TEXT</div>
+      </div>
+      <div class="schema-table">
+        <div class="schema-title">animal</div>
+        <div class="schema-row pk-row">🔑 id : INTEGER (PK)</div>
+        <div class="schema-row">espece : TEXT</div>
+        <div class="schema-row">nom : TEXT</div>
+        <div class="schema-row">date_naissance : TEXT (AAAAMMJJ)</div>
+        <div class="schema-row fk-row">🔗 id_proprietaire : INTEGER (FK)</div>
+      </div>
+      <div class="schema-table">
+        <div class="schema-title">consultation</div>
+        <div class="schema-row pk-row">🔑 id : INTEGER (PK)</div>
+        <div class="schema-row fk-row">🔗 id_animal : INTEGER (FK)</div>
+        <div class="schema-row">date : TEXT (AAAAMMJJ)</div>
+        <div class="schema-row">motif : TEXT</div>
+      </div>
+    </div>
+
+    <div class="encadre">
+      <span class="encadre-prefix">Relations entre les tables</span>
+      <p style="margin:0">
+        <code>animal.id_proprietaire</code> → <code>proprietaire.id</code><br>
+        <code>consultation.id_animal</code> → <code>animal.id</code>
+      </p>
+      <p style="margin-top:.7rem; margin-bottom:0">
+        Pour récupérer le téléphone du propriétaire d'un animal lors d'une consultation,
+        il faut donc effectuer <strong>deux jointures</strong> : <code>consultation ↔ animal ↔ proprietaire</code>.
+      </p>
+    </div>
+
+    <div class="encadre-conseil">
+      <span class="encadre-prefix">Extraits réels de la base</span>
+      <p><strong>Table proprietaire</strong> (400 lignes) :</p>
+      <table class="table-gen" style="width:auto">
+        <tr><th>id</th><th>nom</th><th>prenom</th><th>telephone</th></tr>
+        <tr><td>1</td><td>Duhamel</td><td>François</td><td>06-57-84-52-41</td></tr>
+        <tr><td>2</td><td>Dumont</td><td>Marcelle</td><td>0648747223</td></tr>
+        <tr><td>3</td><td>Joubert</td><td>Anouk</td><td>0 4 76 33 78 15</td></tr>
+      </table>
+      <p style="margin-top:.8rem"><strong>Table animal</strong> (411 lignes — 100 chats, 104 chiens, 96 lapins, 111 oiseaux) :</p>
+      <table class="table-gen" style="width:auto">
+        <tr><th>id</th><th>espece</th><th>nom</th><th>date_naissance</th><th>id_proprietaire</th></tr>
+        <tr><td>1</td><td>oiseau</td><td>Flocon</td><td>20171111</td><td>1</td></tr>
+        <tr><td>2</td><td>lapin</td><td>Roudoudou</td><td>20210901</td><td>2</td></tr>
+        <tr><td>3</td><td>chat</td><td>Mistral</td><td>20251206</td><td>2</td></tr>
+      </table>
+      <p style="margin-top:.8rem"><strong>Table consultation</strong> (4 457 lignes — 3 063 vaccinations) :</p>
+      <table class="table-gen" style="width:auto">
+        <tr><th>id</th><th>id_animal</th><th>date</th><th>motif</th></tr>
+        <tr><td>1</td><td>1</td><td>20171229</td><td>vaccination</td></tr>
+        <tr><td>25</td><td>4</td><td>20050621</td><td>bilan</td></tr>
+        <tr><td>34</td><td>5</td><td>20131106</td><td>maladie</td></tr>
+      </table>
+    </div>
+
+    <h3>Structure du pipeline de rappel SMS</h3>
+
+    <div class="encadre-conseil">
+      <span class="encadre-prefix">Flux de données – de la base à l'envoi SMS</span>
+      <ol style="margin:0">
+        <li><strong>Q3 — </strong><code>consultation_vaccination_chat(date)</code> : requête SQL → liste de consultations de chats vaccinés depuis <code>date</code></li>
+        <li><strong>Q4 — </strong><code>derniere_vaccination(consultations)</code> : filtrer → dictionnaire <code>id_animal → dernière consultation</code></li>
+        <li><em>(hors sujet)</em> Filtrer les chats vaccinés il y a 10 à 13 mois → candidats au rappel</li>
+        <li><strong>Q1 — </strong><code>normalisation_tel(tel)</code> : nettoyer le numéro de téléphone</li>
+        <li><strong>Q2 — </strong><code>validation_tel(tel)</code> : vérifier que c'est bien un mobile</li>
+        <li><em>(hors sujet)</em> Envoyer le SMS via la plateforme</li>
+      </ol>
+    </div>
+  </section>
+
+  <hr class="sep">
+
+  <!-- QUESTION 1 -->
+  <section id="q1">
+    <h2>Question 1 — Écrire <code>normalisation_tel</code></h2>
+
+    <div class="encadre-question">
+      <span class="encadre-prefix">Énoncé — Question 1</span>
+      <p>
+        <span class="badge-question">Q1</span>
+        Écrire la fonction <code>normalisation_tel(tel)</code> qui prend un numéro de téléphone
+        (chaîne de caractères quelconque) et renvoie uniquement ses chiffres, dans l'ordre,
+        sous forme de chaîne.
+      </p>
+      <pre style="margin-top:.7rem; margin-bottom:0"><code>normalisation_tel("(0)2 12 99 90 12")   # → "0212999012"
+normalisation_tel("0.6.12.99.90.12")    # → "0612999012"
+normalisation_tel("06-12-99-90-12")     # → "0612999012"</code></pre>
+    </div>
+
+    <h3>Aide méthodologique</h3>
+
+    <div class="encadre-conseil">
+      <span class="encadre-prefix">Démarche</span>
+      <ol style="margin:0">
+        <li>Initialiser une chaîne résultat vide : <code>resultat = ""</code></li>
+        <li>Parcourir chaque caractère <code>c</code> de <code>tel</code> avec une boucle <code>for</code>.</li>
+        <li>Si <code>c.isdigit()</code> est vrai, ajouter <code>c</code> à <code>resultat</code>.</li>
+        <li>Renvoyer <code>resultat</code>.</li>
+      </ol>
+    </div>
+
+    <div class="encadre-conseil">
+      <span class="encadre-prefix">Trace sur "(0)6.12.99-90-12 gilbert"</span>
+      <table class="table-gen" style="width:auto">
+        <tr><th>Caractère</th><td>(</td><td>0</td><td>)</td><td>6</td><td>.</td><td>1</td><td>2</td><td>.</td><td>9</td><td>9</td><td>-</td><td>9</td><td>0</td><td>-</td><td>1</td><td>2</td><td style="color:var(--text-muted)"> </td><td style="color:var(--text-muted)">g</td><td>…</td></tr>
+        <tr><th>isdigit ?</th><td>✗</td><td>✓</td><td>✗</td><td>✓</td><td>✗</td><td>✓</td><td>✓</td><td>✗</td><td>✓</td><td>✓</td><td>✗</td><td>✓</td><td>✓</td><td>✗</td><td>✓</td><td>✓</td><td>✗</td><td>✗</td><td>✗</td></tr>
+        <tr><th>Résultat</th><td></td><td>0</td><td></td><td>06</td><td></td><td>061</td><td>0612</td><td></td><td>06129</td><td>061299</td><td></td><td>0612999</td><td>06129990</td><td></td><td>061299901</td><td>0612999012</td><td></td><td></td><td></td></tr>
+      </table>
+      <p style="margin-top:.5rem; margin-bottom:0">Résultat final : <code>"0612999012"</code></p>
+    </div>
+
+    <div style="margin:.8rem 0;">
+      <button class="btn-tp-vert" onclick="toggleIndice('ind1a', this)">▶ Indice 1 — Structure de la boucle</button>
+    </div>
+    <div id="ind1a" class="encadre-indice indice-bloc">
+      <span class="encadre-prefix">Indice 1</span>
+      <pre style="margin:0"><code>def normalisation_tel(tel):
+    resultat = ""
+    for c in tel:
+        if c.isdigit():
+            resultat += c
+    return resultat</code></pre>
+    </div>
+
+    <div style="margin:.8rem 0;">
+      <button class="btn-tp-vert" onclick="toggleIndice('ind1b', this)">▶ Indice 2 — Version compacte avec join</button>
+    </div>
+    <div id="ind1b" class="encadre-indice indice-bloc">
+      <span class="encadre-prefix">Indice 2</span>
+      <p style="margin:0">
+        Il est possible d'écrire la même chose en une ligne avec une compréhension :
+        <code>return "".join(c for c in tel if c.isdigit())</code>.
+        Les deux versions sont équivalentes et acceptées.
+      </p>
+    </div>
+
+    <div class="encadre" style="margin-top:1.2rem;">
+      <span class="encadre-prefix">Éditeur Python — Question 1</span>
+      <script type="py-editor" env="veto">
+def normalisation_tel(tel):
+    # TODO : compléter
+    pass
+
+
+def test_normalisation_tel():
+    assert normalisation_tel("06 12 99 90 12") == "0612999012"
+    assert normalisation_tel("02 12 99 90 12") == "0212999012"
+    assert normalisation_tel("02.12.99.90.12") == "0212999012"
+    assert normalisation_tel("0.6.12.99.90.12") == "0612999012"
+    assert normalisation_tel("06-12-99-90-12") == "0612999012"
+    assert normalisation_tel("(0)6.12.99-90-12 gilbert") == "0612999012"
+    assert normalisation_tel("061299901") == "061299901"
+    assert normalisation_tel("06129990123") == "06129990123"
+    print("Les tests de la fonction normalisation_tel sont passés")
+
+test_normalisation_tel()
+      </script>
+    </div>
+
+    <div style="margin:1rem 0;">
+      <button class="btn-tp-or" onclick="toggleCorrection('corr-q1', this)">&#128274; Afficher la correction</button>
+    </div>
+    <div id="corr-q1" class="correction-bloc encadre-conseil">
+      <span class="encadre-prefix">Correction — Question 1</span>
+      <script type="py-editor" env="veto-c1">
+def normalisation_tel(tel):
+    """Renvoie uniquement les chiffres du numéro, dans l'ordre."""
+    resultat = ""
+    for c in tel:
+        if c.isdigit():
+            resultat += c
+    return resultat
+
+
+def test_normalisation_tel():
+    assert normalisation_tel("06 12 99 90 12") == "0612999012"
+    assert normalisation_tel("02 12 99 90 12") == "0212999012"
+    assert normalisation_tel("02.12.99.90.12") == "0212999012"
+    assert normalisation_tel("0.6.12.99.90.12") == "0612999012"
+    assert normalisation_tel("06-12-99-90-12") == "0612999012"
+    assert normalisation_tel("(0)6.12.99-90-12 gilbert") == "0612999012"
+    assert normalisation_tel("061299901") == "061299901"
+    assert normalisation_tel("06129990123") == "06129990123"
+    print("Les tests de la fonction normalisation_tel sont passés")
+
+test_normalisation_tel()
+      </script>
+      <div style="margin-top:.8rem;">
+        <p style="margin:0">
+          Deux derniers cas importants : un numéro de 9 chiffres (<code>"061299901"</code>)
+          et un de 11 chiffres (<code>"06129990123"</code>) doivent être renvoyés <em>tels quels</em>
+          après normalisation — sans troncature ni complétion. La validation (Q2) refusera ensuite
+          ces numéros invalides. La normalisation ne fait que supprimer les séparateurs.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <hr class="sep">
+
+  <!-- QUESTION 2 -->
+  <section id="q2">
+    <h2>Question 2 — Jeu de tests de <code>validation_tel</code></h2>
+
+    <div class="encadre-question">
+      <span class="encadre-prefix">Énoncé — Question 2</span>
+      <p>
+        <span class="badge-question">Q2</span>
+        La fonction <code>validation_tel(tel)</code> est fournie et déjà correcte.
+        Écrire un jeu de tests (<code>assert</code>) qui vérifie son bon fonctionnement.
+      </p>
+    </div>
+
+    <h3>Rappel — logique de validation_tel</h3>
+
+    <pre><code>def validation_tel(tel):
+    if len(tel) != 10:      # doit avoir exactement 10 chiffres
+        return False
+    if tel[0] != "0":       # doit commencer par 0
+        return False
+    if tel[1] != "6" and tel[1] != "7":  # 2e chiffre : 6 ou 7 uniquement
+        return False
+    return True</code></pre>
+
+    <div class="encadre-conseil">
+      <span class="encadre-prefix">Analyse des conditions — que tester ?</span>
+      <table class="table-gen">
+        <tr><th>Cas à tester</th><th>Entrée</th><th>Attendu</th><th>Raison</th></tr>
+        <tr><td>Numéro 06 valide</td><td><code>"0612345678"</code></td><td><code>True</code></td><td>Commence par 06, 10 chiffres</td></tr>
+        <tr><td>Numéro 07 valide</td><td><code>"0712345678"</code></td><td><code>True</code></td><td>Commence par 07, 10 chiffres</td></tr>
+        <tr><td>Numéro fixe 01</td><td><code>"0112345678"</code></td><td><code>False</code></td><td>2e chiffre = 1</td></tr>
+        <tr><td>Numéro fixe 04</td><td><code>"0476337815"</code></td><td><code>False</code></td><td>2e chiffre = 4</td></tr>
+        <tr><td>Trop court (9 chiffres)</td><td><code>"061299901"</code></td><td><code>False</code></td><td>len != 10</td></tr>
+        <tr><td>Trop long (11 chiffres)</td><td><code>"06129990123"</code></td><td><code>False</code></td><td>len != 10</td></tr>
+        <tr><td>Ne commence pas par 0</td><td><code>"1612345678"</code></td><td><code>False</code></td><td>tel[0] != '0'</td></tr>
+        <tr><td>Tous les 06 → 07 de bord</td><td><code>"0699999999"</code></td><td><code>True</code></td><td>06 valide</td></tr>
+      </table>
+    </div>
+
+    <div class="encadre" style="margin-top:1.2rem;">
+      <span class="encadre-prefix">Éditeur Python — Question 2</span>
+      <script type="py-editor" env="veto">
+def validation_tel(tel):
+    if len(tel) != 10:
+        return False
+    if tel[0] != "0":
+        return False
+    if tel[1] != "6" and tel[1] != "7":
+        return False
+    return True
+
+
+def test_validation_tel():
+    # TODO : écrire au moins 6 assertions couvrant tous les cas
+    pass
+
+test_validation_tel()
+      </script>
+    </div>
+
+    <div style="margin:1rem 0;">
+      <button class="btn-tp-or" onclick="toggleCorrection('corr-q2', this)">&#128274; Afficher la correction</button>
+    </div>
+    <div id="corr-q2" class="correction-bloc encadre-conseil">
+      <span class="encadre-prefix">Correction — Question 2</span>
+      <script type="py-editor" env="veto-c2">
+def validation_tel(tel):
+    if len(tel) != 10:
+        return False
+    if tel[0] != "0":
+        return False
+    if tel[1] != "6" and tel[1] != "7":
+        return False
+    return True
+
+
+def test_validation_tel():
+    # Cas valides
+    assert validation_tel("0612345678") == True   # 06 standard
+    assert validation_tel("0712345678") == True   # 07 valide
+    assert validation_tel("0699999999") == True   # 06 tous 9
+
+    # Longueur incorrecte
+    assert validation_tel("061299901")  == False  # trop court (9)
+    assert validation_tel("06129990123") == False # trop long (11)
+    assert validation_tel("")           == False  # vide
+
+    # Ne commence pas par 0
+    assert validation_tel("1612345678") == False  # commence par 1
+
+    # 2e chiffre invalide (fixe)
+    assert validation_tel("0112345678") == False  # 01
+    assert validation_tel("0212345678") == False  # 02
+    assert validation_tel("0312345678") == False  # 03
+    assert validation_tel("0412345678") == False  # 04
+    assert validation_tel("0512345678") == False  # 05
+    assert validation_tel("0812345678") == False  # 08
+    assert validation_tel("0912345678") == False  # 09
+
+    print("Tests de validation_tel passés")
+
+test_validation_tel()
+      </script>
+      <div style="margin-top:.8rem;">
+        <p>
+          <strong>Stratégie :</strong> un bon jeu de tests couvre chaque branche du code.
+          <code>validation_tel</code> a 3 conditions de rejet — il faut un test qui déclenche
+          chacune d'elles. Tester uniquement les cas <code>True</code> sans tester les cas <code>False</code>
+          n'est pas suffisant.
+        </p>
+        <p style="margin:0">
+          <strong>Point de vigilance :</strong> tester la chaîne vide <code>""</code>
+          (longueur 0 → <code>False</code>) permet de s'assurer qu'il n'y a pas d'erreur d'index
+          avec <code>tel[0]</code> et <code>tel[1]</code> quand la longueur est insuffisante.
+          Python évalue les conditions <code>if</code> dans l'ordre — si <code>len != 10</code>
+          est vrai, on renvoie <code>False</code> avant d'accéder à <code>tel[0]</code>.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <hr class="sep">
+
+  <!-- QUESTION 3 -->
+  <section id="q3">
+    <h2>Question 3 — Écrire <code>consultation_vaccination_chat</code></h2>
+
+    <div class="encadre-question">
+      <span class="encadre-prefix">Énoncé — Question 3</span>
+      <p>
+        <span class="badge-question">Q3</span>
+        En s'inspirant de <code>proprietaires_animaux_nes_apres</code>, écrire
+        <code>consultation_vaccination_chat(date)</code> qui renvoie les consultations
+        de vaccination de chats dont la date est supérieure à <code>date</code>.
+      </p>
+      <p>Champs à récupérer (dans l'ordre) :</p>
+      <ol style="margin:0">
+        <li><code>id</code> de l'animal</li>
+        <li><code>nom</code> de l'animal</li>
+        <li><code>telephone</code> du propriétaire</li>
+        <li><code>date</code> de la consultation</li>
+      </ol>
+      <p style="margin-top:.7rem; margin-bottom:0">
+        Trié par <code>id</code> d'animal puis <code>date</code> de consultation croissants.
+      </p>
+    </div>
+
+    <h3>Aide méthodologique</h3>
+
+    <div class="encadre-conseil">
+      <span class="encadre-prefix">Démarche — construire la requête SQL par étapes</span>
+      <ol style="margin:0">
+        <li><strong>SELECT</strong> : quels champs ? <code>animal.id</code>, <code>animal.nom</code>, <code>proprietaire.telephone</code>, <code>consultation.date</code></li>
+        <li><strong>FROM</strong> : table principale → <code>consultation</code> (c'est là qu'est le motif)</li>
+        <li><strong>JOIN animal</strong> pour obtenir le nom et l'espèce → sur <code>consultation.id_animal = animal.id</code></li>
+        <li><strong>JOIN proprietaire</strong> pour obtenir le téléphone → sur <code>animal.id_proprietaire = proprietaire.id</code></li>
+        <li><strong>WHERE</strong> : deux conditions → <code>animal.espece = 'chat'</code> ET <code>consultation.motif = 'vaccination'</code> ET <code>consultation.date &gt; ?</code></li>
+        <li><strong>ORDER BY</strong> : <code>animal.id, consultation.date</code></li>
+      </ol>
+    </div>
+
+    <div class="encadre-conseil">
+      <span class="encadre-prefix">Modèle de référence — proprietaires_animaux_nes_apres</span>
+      <pre style="margin:0"><code>def proprietaires_animaux_nes_apres(date):
+    conn = sqlite3.connect(DB_PATH)
+    cursor = conn.cursor()
+    resultat = cursor.execute(
+        """
+    SELECT proprietaire.nom, proprietaire.prenom
+    FROM proprietaire
+        JOIN animal ON proprietaire.id = animal.id_proprietaire
+    WHERE animal.date_naissance > ?
+    ORDER BY proprietaire.nom, proprietaire.prenom;
+    """,
+        (date,),
+    )
+    return list(resultat)</code></pre>
+    </div>
+
+    <div style="margin:.8rem 0;">
+      <button class="btn-tp-vert" onclick="toggleIndice('ind3a', this)">▶ Indice 1 — Squelette SQL à compléter</button>
+    </div>
+    <div id="ind3a" class="encadre-indice indice-bloc">
+      <span class="encadre-prefix">Indice 1</span>
+      <pre style="margin:0"><code>SELECT animal.id, animal.nom, proprietaire.telephone, consultation.date
+FROM consultation
+    JOIN animal ON consultation.id_animal = animal.id
+    JOIN proprietaire ON animal.id_proprietaire = proprietaire.id
+WHERE animal.espece = 'chat'
+  AND consultation.motif = 'vaccination'
+  AND consultation.date > ?
+ORDER BY animal.id, consultation.date;</code></pre>
+    </div>
+
+    <div style="margin:.8rem 0;">
+      <button class="btn-tp-vert" onclick="toggleIndice('ind3b', this)">▶ Indice 2 — Fonction Python complète</button>
+    </div>
+    <div id="ind3b" class="encadre-indice indice-bloc">
+      <span class="encadre-prefix">Indice 2</span>
+      <pre style="margin:0"><code>def consultation_vaccination_chat(date):
+    conn = sqlite3.connect(DB_PATH)
+    cursor = conn.cursor()
+    resultat = cursor.execute(
+        """
+    SELECT animal.id, animal.nom, proprietaire.telephone, consultation.date
+    FROM consultation
+        JOIN animal ON consultation.id_animal = animal.id
+        JOIN proprietaire ON animal.id_proprietaire = proprietaire.id
+    WHERE animal.espece = 'chat'
+      AND consultation.motif = 'vaccination'
+      AND consultation.date > ?
+    ORDER BY animal.id, consultation.date;
+    """,
+        (date,),
+    )
+    return list(resultat)</code></pre>
+    </div>
+
+    <div class="encadre-conseil" style="margin-top:1rem;">
+      <span class="encadre-prefix">Résultats attendus — test_consultation_vaccination_chat("20240923")</span>
+      <table class="table-gen">
+        <tr><th>#</th><th>id_animal</th><th>nom_animal</th><th>telephone (brut)</th><th>date</th></tr>
+        <tr><td>[0]</td><td>16</td><td>Plume</td><td>0.6.36.96.89.83</td><td>20241024</td></tr>
+        <tr><td>[1]</td><td>16</td><td>Plume</td><td>0.6.36.96.89.83</td><td>20251125</td></tr>
+        <tr><td>[2]</td><td>17</td><td>Gollum</td><td>0.6.36.96.89.83</td><td>20250113</td></tr>
+        <tr><td>[3]</td><td>26</td><td>Olympe</td><td>(0)4 73 98 01 23</td><td>20250109</td></tr>
+        <tr><td>[4]</td><td>32</td><td>Chopin</td><td>06.37.97.66.64</td><td>20241201</td></tr>
+        <tr><td>…</td><td>…</td><td>…</td><td>…</td><td>…</td></tr>
+        <tr><td>[117]</td><td>…</td><td>…</td><td>…</td><td>…</td></tr>
+      </table>
+      <p style="margin-top:.5rem; margin-bottom:0">
+        Total : <strong>118 lignes</strong>. Les téléphones sont en format brut — c'est <code>normalisation_tel</code> qui s'en chargera ensuite.
+      </p>
+    </div>
+
+    <div style="margin:1rem 0;">
+      <button class="btn-tp-or" onclick="toggleCorrection('corr-q3', this)">&#128274; Afficher la correction</button>
+    </div>
+    <div id="corr-q3" class="correction-bloc encadre-conseil">
+      <span class="encadre-prefix">Correction — Question 3</span>
+      <pre><code>import sqlite3
+
+DB_PATH = "cabinet.sqlite"
+
+def consultation_vaccination_chat(date):
+    """
+    Renvoie les consultations de vaccination de chats dont la date > date.
+    Résultat trié par id_animal puis date.
+    """
+    conn = sqlite3.connect(DB_PATH)
+    cursor = conn.cursor()
+    resultat = cursor.execute(
+        """
+    SELECT animal.id, animal.nom, proprietaire.telephone, consultation.date
+    FROM consultation
+        JOIN animal ON consultation.id_animal = animal.id
+        JOIN proprietaire ON animal.id_proprietaire = proprietaire.id
+    WHERE animal.espece = 'chat'
+      AND consultation.motif = 'vaccination'
+      AND consultation.date > ?
+    ORDER BY animal.id, consultation.date;
+    """,
+        (date,),
+    )
+    return list(resultat)</code></pre>
+      <div style="margin-top:.8rem;">
+        <p>
+          <strong>Ordre des JOIN :</strong> on commence par <code>consultation</code> car c'est la table qui filtre
+          sur <code>motif</code> et <code>date</code>. On joint ensuite <code>animal</code> pour filtrer sur
+          <code>espece</code>, puis <code>proprietaire</code> pour récupérer le téléphone.
+        </p>
+        <p style="margin:0">
+          <strong>Le tuple <code>(date,)</code> :</strong> même pour un seul paramètre <code>?</code>,
+          Python exige un tuple. La virgule finale est obligatoire : <code>(date)</code> sans virgule
+          n'est qu'une parenthèse, pas un tuple.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <hr class="sep">
+
+  <!-- QUESTION 4 -->
+  <section id="q4">
+    <h2>Question 4 — Analyser et corriger <code>derniere_vaccination</code></h2>
+
+    <div class="encadre-question">
+      <span class="encadre-prefix">Énoncé — Question 4</span>
+      <p>
+        <span class="badge-question">Q4</span>
+        La fonction <code>derniere_vaccination(consultations)</code> est fournie mais buguée :
+        les tests échouent. Expliquer le problème et proposer une correction.
+      </p>
+    </div>
+
+    <h3>Code fourni (bugué)</h3>
+
+    <pre><code>def derniere_vaccination(consultations):
+    derniere = {}
+    for consult in consultations:
+        id_animal = consult[0]
+        date = consult[3]
+        if id_animal not in derniere:
+            derniere[id_animal] = consult
+        elif date &lt; derniere[id_animal][3]:   # ← BUG
+            derniere[id_animal] = consult
+    return derniere</code></pre>
+
+    <h3>Analyse du bug</h3>
+
+    <div class="encadre-piege">
+      <span class="encadre-prefix">Identification du bug — opérateur de comparaison inversé</span>
+      <p>
+        La condition <code>elif date &lt; derniere[id_animal][3]</code> met à jour le dictionnaire
+        quand la date courante est <strong>antérieure</strong> à celle déjà stockée.
+        C'est l'inverse de ce qu'on veut : on cherche la <strong>dernière</strong> (la plus récente),
+        donc il faut mettre à jour quand la date courante est <strong>postérieure</strong>.
+      </p>
+      <p style="margin:0">
+        La correction : remplacer <code>&lt;</code> par <code>&gt;</code>.
+      </p>
+    </div>
+
+    <div class="encadre-conseil">
+      <span class="encadre-prefix">Trace sur Plume (id=16)</span>
+      <table class="table-gen">
+        <tr><th>Étape</th><th>consult</th><th>date</th><th>derniere[16] actuel</th><th>Condition <code>&lt;</code></th><th>Action (bugué)</th><th>Condition <code>&gt;</code></th><th>Action (corrigé)</th></tr>
+        <tr>
+          <td>1ère occurrence</td>
+          <td>(16, "Plume", …, "20241024")</td>
+          <td>20241024</td>
+          <td class="fk">absent</td>
+          <td>—</td>
+          <td>Stocker 20241024</td>
+          <td>—</td>
+          <td>Stocker 20241024</td>
+        </tr>
+        <tr>
+          <td>2ème occurrence</td>
+          <td>(16, "Plume", …, "20251125")</td>
+          <td>20251125</td>
+          <td>20241024</td>
+          <td class="bug">20251125 &lt; 20241024 → <strong>False</strong></td>
+          <td class="bug">❌ Ne met pas à jour</td>
+          <td class="ok">20251125 &gt; 20241024 → <strong>True</strong></td>
+          <td class="ok">✅ Stocke 20251125</td>
+        </tr>
+      </table>
+      <p style="margin-top:.5rem; margin-bottom:0">
+        Avec le bug, <code>derniere[16]</code> vaut <code>"20241024"</code> (la première consultation).
+        Après correction, il vaut <code>"20251125"</code> (la plus récente). ✓
+      </p>
+    </div>
+
+    <div class="encadre" style="margin-top:1.2rem;">
+      <span class="encadre-prefix">Éditeur Python — Question 4</span>
+      <script type="py-editor" env="veto">
+def derniere_vaccination(consultations):
+    """
+    Renvoie un dictionnaire {id_animal: dernière_consultation}.
+    BUG : remplacer < par > dans la condition.
+    """
+    derniere = {}
+    for consult in consultations:
+        id_animal = consult[0]
+        date = consult[3]
+        if id_animal not in derniere:
+            derniere[id_animal] = consult
+        elif date < derniere[id_animal][3]:   # BUG : < doit être >
+            derniere[id_animal] = consult
+    return derniere
+
+
+def test_derniere_vaccination():
+    consultations_pour_test = [
+        (16, "Plume",  "0.6.36.96.89.83", "20241024"),
+        (16, "Plume",  "0.6.36.96.89.83", "20251125"),
+        (17, "Gollum", "0.6.36.96.89.83", "20250113"),
+        (32, "Chopin", "06.37.97.66.64",  "20241201"),
+        (32, "Chopin", "06.37.97.66.64",  "20251119"),
+        (41, "Pixel",  "0130709285",       "20241204"),
+        (41, "Pixel",  "0130709285",       "20251222"),
+    ]
+    resultat = derniere_vaccination(consultations_pour_test)
+    assert resultat[16][3] == "20251125", f"Attendu 20251125, obtenu {resultat[16][3]}"
+    assert resultat[17][3] == "20250113"
+    assert resultat[32][3] == "20251119"
+    assert resultat[41][3] == "20251222"
+    print("Les tests de derniere_vaccination sont passés")
+
+test_derniere_vaccination()
+      </script>
+    </div>
+
+    <div style="margin:1rem 0;">
+      <button class="btn-tp-or" onclick="toggleCorrection('corr-q4', this)">&#128274; Afficher la correction</button>
+    </div>
+    <div id="corr-q4" class="correction-bloc encadre-conseil">
+      <span class="encadre-prefix">Correction — Question 4</span>
+      <script type="py-editor" env="veto-c4">
+def derniere_vaccination(consultations):
+    """
+    Renvoie un dictionnaire {id_animal: dernière_consultation}.
+    La condition est > (et non <) : on remplace quand la date est plus récente.
+    """
+    derniere = {}
+    for consult in consultations:
+        id_animal = consult[0]
+        date = consult[3]
+        if id_animal not in derniere:
+            derniere[id_animal] = consult
+        elif date > derniere[id_animal][3]:   # > et non <
+            derniere[id_animal] = consult
+    return derniere
+
+
+def test_derniere_vaccination():
+    consultations_pour_test = [
+        (16, "Plume",  "0.6.36.96.89.83", "20241024"),
+        (16, "Plume",  "0.6.36.96.89.83", "20251125"),
+        (17, "Gollum", "0.6.36.96.89.83", "20250113"),
+        (32, "Chopin", "06.37.97.66.64",  "20241201"),
+        (32, "Chopin", "06.37.97.66.64",  "20251119"),
+        (41, "Pixel",  "0130709285",       "20241204"),
+        (41, "Pixel",  "0130709285",       "20251222"),
+    ]
+    resultat = derniere_vaccination(consultations_pour_test)
+    assert resultat[16][3] == "20251125"
+    assert resultat[17][3] == "20250113"
+    assert resultat[32][3] == "20251119"
+    assert resultat[41][3] == "20251222"
+    print("Les tests de derniere_vaccination sont passés")
+
+test_derniere_vaccination()
+      </script>
+      <div style="margin-top:.8rem;">
+        <p>
+          <strong>Une seule lettre à changer</strong> : <code>&lt;</code> → <code>&gt;</code>.
+          Ce type de bug (opérateur inversé) est très courant et particulièrement difficile à repérer
+          à la lecture car le code <em>semble</em> logique. Seul un test avec des données ayant
+          plusieurs consultations pour le même animal révèle l'erreur.
+        </p>
+        <p style="margin:0">
+          <strong>Point de robustesse :</strong> cette fonction suppose que les consultations
+          sont triées par date croissante (ce que garantit l'<code>ORDER BY</code> de la Q3).
+          Si les données n'étaient pas triées, l'algorithme fonctionnerait quand même grâce
+          à la comparaison explicite — c'est une force de cette approche.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <hr class="sep">
+
+  <!-- PIÈGES FRÉQUENTS -->
+  <section id="pieges">
+    <h2>Pièges fréquents &amp; astuces de vérification</h2>
+
+    <div class="encadre-piege">
+      <span class="encadre-prefix">Piège 1 — Oublier le tuple pour un seul paramètre SQL</span>
+      <p style="margin:0">
+        En Python, <code>(date)</code> entre parenthèses n'est pas un tuple — c'est juste
+        <code>date</code> avec des parenthèses inutiles. Pour un tuple à un élément,
+        la virgule finale est obligatoire : <code>(date,)</code>.
+        Sans elle, sqlite3 lève une <code>ProgrammingError</code>.
+      </p>
+      <pre style="margin:.6rem 0 0"><code># FAUX — n'est pas un tuple
+cursor.execute("... WHERE date > ?", (date))
+
+# JUSTE — tuple à un élément
+cursor.execute("... WHERE date > ?", (date,))</code></pre>
+    </div>
+
+    <div class="encadre-piege">
+      <span class="encadre-prefix">Piège 2 — Oublier de convertir le curseur en liste</span>
+      <p style="margin:0">
+        <code>cursor.execute()</code> renvoie un <em>itérable paresseux</em> (curseur),
+        pas une liste. On ne peut le parcourir qu'une seule fois. Si tu le renvoies directement
+        sans <code>list(...)</code>, l'appelant peut se retrouver avec un objet vide dès le
+        deuxième accès.
+      </p>
+      <pre style="margin:.6rem 0 0"><code># FAUX — renvoie un curseur, pas une liste
+return cursor.execute("SELECT ...")
+
+# JUSTE — convertit en liste réutilisable
+return list(cursor.execute("SELECT ..."))</code></pre>
+    </div>
+
+    <div class="encadre-piege">
+      <span class="encadre-prefix">Piège 3 — Bug de derniere_vaccination : &lt; vs &gt;</span>
+      <p style="margin:0">
+        Pour trouver le <strong>maximum</strong> d'une série (la date la plus récente),
+        la condition de mise à jour est <code>&gt;</code> (plus grand).
+        Pour le <strong>minimum</strong> (date la plus ancienne), ce serait <code>&lt;</code>.
+        Confondre les deux produit un résultat plausible mais faux — c'est le bug de ce sujet.
+      </p>
+      <pre style="margin:.6rem 0 0"><code># Trouver le maximum (date la plus récente)
+if date > derniere[id_animal][3]:
+    derniere[id_animal] = consult   # on garde la plus grande</code></pre>
+    </div>
+
+    <div class="encadre-piege">
+      <span class="encadre-prefix">Piège 4 — Ambiguïté de noms dans le SELECT</span>
+      <p style="margin:0">
+        Plusieurs tables peuvent avoir des colonnes de même nom. Par exemple,
+        <code>consultation.date</code> et <code>animal.date_naissance</code> sont des dates,
+        et toutes les tables ont un champ <code>id</code>. Sans préfixe
+        (<code>animal.id</code>, <code>consultation.date</code>…), SQLite peut renvoyer
+        la mauvaise colonne ou lever une <code>AmbiguousColumnError</code>.
+        Toujours préfixer les colonnes dans les requêtes avec JOIN.
+      </p>
+    </div>
+
+    <div class="encadre-piege">
+      <span class="encadre-prefix">Piège 5 — Ne tester que les cas True dans validation_tel</span>
+      <p style="margin:0">
+        Un jeu de tests qui vérifie uniquement les numéros valides
+        (<code>assert validation_tel("0612345678") == True</code>) ne prouve rien sur les
+        rejets. La fonction pourrait renvoyer <code>True</code> pour tout, et les tests passeraient.
+        Il faut impérativement tester chaque condition de rejet avec un exemple qui la déclenche.
+      </p>
+    </div>
+
+    <!-- Astuces -->
+    <div class="encadre-conseil" style="margin-top:1.5rem;">
+      <span class="encadre-prefix">Astuces de vérification</span>
+      <ul style="margin:0">
+        <li>
+          <strong>Vérifier normalisation_tel avec des cas extrêmes :</strong>
+          une chaîne sans chiffre (<code>"abc---"</code>) doit renvoyer <code>""</code>,
+          une chaîne uniquement de chiffres (<code>"1234"</code>) doit être renvoyée telle quelle.
+        </li>
+        <li>
+          <strong>Pipeline complet :</strong>
+          <code>validation_tel(normalisation_tel(tel_brut))</code> est le vrai test d'intégration.
+          Par exemple, <code>normalisation_tel("06.37.97.66.64")</code> → <code>"0637976664"</code>
+          → <code>validation_tel("0637976664")</code> → <code>True</code>.
+        </li>
+        <li>
+          <strong>Tester derniere_vaccination avec un seul animal :</strong>
+          une liste d'une seule consultation doit renvoyer un dictionnaire à une entrée
+          — facile à vérifier à la main.
+        </li>
+        <li>
+          <strong>Compter les lignes SQL :</strong> après avoir écrit la requête Q3,
+          vérifier que <code>len(consultation_vaccination_chat("20240923")) == 118</code>
+          est le premier test de sanité.
+        </li>
+      </ul>
+    </div>
+
+    <!-- Mini-exercices -->
+    <h3>Mini-exercices de vérification</h3>
+
+    <div class="encadre">
+      <span class="encadre-prefix">Mini-exercice A — Normalisation à la main</span>
+      <p>Sans Python, donne le résultat de <code>normalisation_tel</code> sur ces entrées :</p>
+      <ol>
+        <li><code>"(0)4 76 33 78 15"</code></li>
+        <li><code>"06-57-84-52-41"</code></li>
+        <li><code>"0324182"</code></li>
+        <li><code>"05-35-95-87-54"</code></li>
+      </ol>
+      <button class="btn-secondaire" onclick="toggleCorrection('corr-mini-a', this)">Vérifier</button>
+      <div id="corr-mini-a" class="correction-bloc" style="margin-top:.7rem;">
+        <ol>
+          <li><code>"0476337815"</code> — 10 chiffres, mais commence par 04 → non mobile</li>
+          <li><code>"0657845241"</code> — 10 chiffres, commence par 06 → mobile ✓</li>
+          <li><code>"0324182"</code> — 7 chiffres → trop court, non mobile</li>
+          <li><code>"0535958754"</code> — 10 chiffres, commence par 05 → non mobile</li>
+        </ol>
+      </div>
+    </div>
+
+    <div class="encadre">
+      <span class="encadre-prefix">Mini-exercice B — Dernière vaccination à la main</span>
+      <p>Donne le résultat de <code>derniere_vaccination</code> (version corrigée) sur :</p>
+      <pre style="margin:.3rem 0"><code>[(10, "Mimi", "0600000000", "20230601"),
+ (10, "Mimi", "0600000000", "20240701"),
+ (10, "Mimi", "0600000000", "20220501"),
+ (20, "Rex",  "0700000001", "20241201")]</code></pre>
+      <button class="btn-secondaire" onclick="toggleCorrection('corr-mini-b', this)">Vérifier</button>
+      <div id="corr-mini-b" class="correction-bloc" style="margin-top:.7rem;">
+        <p>
+          Pour Mimi (id=10) : 3 consultations → dates comparées → <code>20240701 &gt; 20230601 &gt; 20220501</code>
+          → la plus récente est <code>20240701</code>.<br>
+          Pour Rex (id=20) : une seule consultation → <code>20241201</code>.
+        </p>
+        <pre style="margin:0"><code>{
+  10: (10, "Mimi", "0600000000", "20240701"),
+  20: (20, "Rex",  "0700000001", "20241201")
+}</code></pre>
+      </div>
+    </div>
+  </section>
+
+  <hr class="sep">
+
+  <!-- RÉCAPITULATIF -->
+  <div class="encadre" style="margin-top:2rem;">
+    <span class="encadre-prefix">Récapitulatif — Ce que tu dois retenir</span>
+    <ul style="margin:0">
+      <li><code>c.isdigit()</code> renvoie <code>True</code> pour les chiffres 0–9, <code>False</code> pour tout le reste.</li>
+      <li>Normalisation : parcourir la chaîne, accumuler les caractères qui passent <code>isdigit()</code>.</li>
+      <li>Tester <code>validation_tel</code> : couvrir chaque condition de rejet (<code>len ≠ 10</code>, <code>tel[0] ≠ '0'</code>, <code>tel[1] ∉ {6,7}</code>).</li>
+      <li>Dates <code>AAAAMMJJ</code> : ordre alphabétique = ordre chronologique, comparaison directe possible.</li>
+      <li>Requête Q3 : deux JOIN (<code>consultation → animal → proprietaire</code>), trois filtres WHERE, un ORDER BY double.</li>
+      <li>Paramètre SQL : toujours un tuple, même à un élément → <code>(date,)</code> avec virgule.</li>
+      <li>Bug Q4 : <code>&lt;</code> au lieu de <code>&gt;</code> — pour garder le maximum, la condition est <code>&gt;</code>.</li>
+    </ul>
+  </div>
+
+</div><!-- /container-content -->
+
+<footer>
+  Lycée Antoine Watteau — DarkSATHI Li
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+  var btnTop = document.getElementById('btn-top');
+  window.addEventListener('scroll', function () {
+    btnTop.style.display = window.scrollY > 300 ? 'flex' : 'none';
+  });
+  btnTop.addEventListener('click', function () {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  });
+
+  function toggleIndice(id, btn) {
+    var el = document.getElementById(id);
+    if (!el) return;
+    el.classList.toggle('visible');
+    btn.textContent = el.classList.contains('visible')
+      ? btn.textContent.replace('▶', '▼')
+      : btn.textContent.replace('▼', '▶');
+  }
+
+  function toggleCorrection(id, btn) {
+    var el = document.getElementById(id);
+    if (!el) return;
+    el.classList.toggle('visible');
+    if (el.classList.contains('visible')) {
+      btn.textContent = btn.textContent.replace('Afficher', 'Masquer').replace('Vérifier', 'Masquer');
+    } else {
+      btn.textContent = btn.textContent.replace('Masquer', 'Afficher');
+    }
+  }
+</script>
+</body>
+</html>
