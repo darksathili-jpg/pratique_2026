@@ -1,0 +1,416 @@
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+.bd-wrap{font-family:'Comic Sans MS','Chalkboard SE',cursive;background:#fffdf6;border:4px solid #1a1a2e;border-radius:8px;overflow:hidden}
+.bd-title{background:#1a1a2e;color:#ffd166;text-align:center;font-size:16px;font-weight:900;padding:7px 12px;letter-spacing:1px;text-transform:uppercase}
+.bd-sub{background:#2c2c54;color:#aaa;text-align:center;font-size:10px;padding:3px;letter-spacing:2px}
+.bd-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;padding:8px;background:#1a1a2e}
+.panel{background:#fff;border:3px solid #1a1a2e;border-radius:5px;overflow:hidden;display:flex;flex-direction:column}
+.ph{color:#fff;font-size:11px;font-weight:900;text-align:center;padding:4px 6px;text-transform:uppercase;letter-spacing:1px}
+.pb{flex:1;padding:6px;display:flex;flex-direction:column;gap:5px;position:relative}
+.bub{background:#fff;border:2.5px solid #1a1a2e;border-radius:14px;padding:5px 9px;font-size:10.5px;line-height:1.35;position:relative}
+.bub.L{align-self:flex-start;max-width:75%;border-bottom-left-radius:3px}
+.bub.R{align-self:flex-end;max-width:75%;border-bottom-right-radius:3px}
+.bub b{color:#118ab2}
+.bub .w{color:#ef476f;font-weight:900}
+.bub .g{color:#06a77d;font-weight:900}
+.sc{background:#f4f0ff;border:1.5px solid #c4b5fd;border-radius:5px;padding:5px 7px;font-size:10px;font-family:'Courier New',monospace;line-height:1.5;color:#1e1b4b}
+.sc .kw{color:#7c3aed;font-weight:700}
+.sc .fn{color:#1d4ed8;font-weight:700}
+.sc .n{color:#dc2626}
+.sc .cm{color:#6b7280;font-style:italic}
+.sc .hi{background:#fef9c3;border-radius:2px;padding:0 2px}
+.sc .er{background:#fee2e2;border-radius:2px;padding:0 2px;color:#991b1b}
+.sc .ok{background:#dcfce7;border-radius:2px;padding:0 2px;color:#14532d}
+.ret{background:#fffbeb;border:2px solid #fbbf24;border-radius:6px;padding:5px 8px;font-size:10px;line-height:1.4;margin-top:auto}
+.ret .rt{font-size:10.5px;font-weight:900;color:#92400e;margin-bottom:2px;text-transform:uppercase}
+.rrow{display:flex;align-items:center;gap:3px;flex-wrap:wrap;font-size:10px;font-family:monospace}
+.tk{background:#dbeafe;border:1.5px solid #93c5fd;border-radius:3px;padding:1px 4px;color:#1e40af;font-weight:700;font-size:9.5px}
+.tv{background:#dcfce7;border:1.5px solid #86efac;border-radius:3px;padding:1px 4px;color:#166534;font-weight:700;font-size:9.5px}
+.piege{background:#fff0f0;border:2px solid #ef476f;border-radius:5px;padding:5px 7px;font-size:10px;line-height:1.35}
+.piege .pt{font-weight:900;color:#ef476f;font-size:10.5px;margin-bottom:2px}
+.px-grid{display:grid;grid-template-columns:repeat(5,20px);gap:2px;justify-content:center}
+.px{width:20px;height:20px;border-radius:2px;display:flex;align-items:center;justify-content:center;font-size:7.5px;font-family:monospace;border:1px solid #ccc;font-weight:700}
+.scene-row{display:flex;align-items:flex-end;gap:6px;justify-content:center}
+</style>
+
+<div class="bd-wrap">
+<div class="bd-title">NSI Terminale — Codage RLE &amp; Images</div>
+<div class="bd-sub">BAC 2026 · Sujet n°1 · Épreuve pratique</div>
+<div class="bd-grid">
+
+<!-- ═══ CASE 1 : pixels ═══ -->
+<div class="panel">
+  <div class="ph" style="background:#0e7490">1 · Les pixels</div>
+  <div class="pb">
+    <div class="scene-row">
+      <!-- FILLE debout, souriante, t-shirt rouge, cheveux mi-longs -->
+      <svg width="54" height="100" viewBox="0 0 54 100">
+        <!-- corps -->
+        <rect x="16" y="48" width="22" height="28" rx="4" fill="#c0392b"/>
+        <!-- bras gauche tendu vers haut-droite -->
+        <line x1="16" y1="55" x2="5" y2="44" stroke="#f5cba7" stroke-width="5" stroke-linecap="round"/>
+        <line x1="38" y1="55" x2="46" y2="65" stroke="#f5cba7" stroke-width="5" stroke-linecap="round"/>
+        <!-- jambes -->
+        <rect x="18" y="74" width="8" height="20" rx="3" fill="#2980b9"/>
+        <rect x="28" y="74" width="8" height="20" rx="3" fill="#2980b9"/>
+        <!-- chaussures -->
+        <ellipse cx="22" cy="94" rx="6" ry="3" fill="#5d4037"/>
+        <ellipse cx="32" cy="94" rx="6" ry="3" fill="#5d4037"/>
+        <!-- cou -->
+        <rect x="23" y="40" width="8" height="10" rx="2" fill="#f5cba7"/>
+        <!-- tête -->
+        <ellipse cx="27" cy="30" rx="14" ry="15" fill="#f5cba7"/>
+        <!-- cheveux bruns mi-longs -->
+        <ellipse cx="27" cy="20" rx="14" ry="9" fill="#5d3a1a"/>
+        <rect x="13" y="20" width="7" height="22" rx="3" fill="#5d3a1a"/>
+        <rect x="34" y="20" width="7" height="22" rx="3" fill="#5d3a1a"/>
+        <!-- yeux -->
+        <ellipse cx="22" cy="29" rx="3" ry="3.5" fill="#fff"/>
+        <ellipse cx="32" cy="29" rx="3" ry="3.5" fill="#fff"/>
+        <circle cx="23" cy="30" r="1.8" fill="#3d2b1f"/>
+        <circle cx="33" cy="30" r="1.8" fill="#3d2b1f"/>
+        <!-- sourcils -->
+        <path d="M19 25 Q22 23 25 25" stroke="#5d3a1a" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+        <path d="M29 25 Q32 23 35 25" stroke="#5d3a1a" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+        <!-- sourire -->
+        <path d="M22 36 Q27 40 32 36" stroke="#c0392b" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+        <!-- main pointant -->
+        <circle cx="5" cy="43" r="3.5" fill="#f5cba7"/>
+      </svg>
+      <!-- GARÇON souriant, lunettes, chemise bleue -->
+      <svg width="54" height="100" viewBox="0 0 54 100">
+        <!-- chemise bleue -->
+        <rect x="14" y="47" width="26" height="30" rx="4" fill="#2980b9"/>
+        <!-- col blanc -->
+        <polygon points="23,47 31,47 27,56" fill="#ecf0f1"/>
+        <!-- bras -->
+        <line x1="14" y1="55" x2="4" y2="68" stroke="#2980b9" stroke-width="6" stroke-linecap="round"/>
+        <line x1="40" y1="55" x2="50" y2="65" stroke="#2980b9" stroke-width="6" stroke-linecap="round"/>
+        <!-- mains -->
+        <circle cx="4" cy="70" r="4" fill="#f5cba7"/>
+        <circle cx="50" cy="67" r="4" fill="#f5cba7"/>
+        <!-- jambes -->
+        <rect x="17" y="75" width="9" height="20" rx="3" fill="#34495e"/>
+        <rect x="28" y="75" width="9" height="20" rx="3" fill="#34495e"/>
+        <ellipse cx="21" cy="95" rx="6" ry="3" fill="#2c2c2c"/>
+        <ellipse cx="33" cy="95" rx="6" ry="3" fill="#2c2c2c"/>
+        <!-- cou -->
+        <rect x="23" y="39" width="8" height="10" rx="2" fill="#f5cba7"/>
+        <!-- tête -->
+        <ellipse cx="27" cy="27" rx="14" ry="15" fill="#f5cba7"/>
+        <!-- cheveux bruns courts -->
+        <ellipse cx="27" cy="16" rx="14" ry="8" fill="#4a2c0a"/>
+        <rect x="13" y="16" width="5" height="10" rx="2" fill="#4a2c0a"/>
+        <rect x="36" y="16" width="5" height="10" rx="2" fill="#4a2c0a"/>
+        <!-- lunettes -->
+        <circle cx="21" cy="27" r="5" fill="none" stroke="#2c2c2c" stroke-width="1.5"/>
+        <circle cx="33" cy="27" r="5" fill="none" stroke="#2c2c2c" stroke-width="1.5"/>
+        <line x1="26" y1="27" x2="28" y2="27" stroke="#2c2c2c" stroke-width="1.2"/>
+        <line x1="13" y1="26" x2="16" y2="27" stroke="#2c2c2c" stroke-width="1.2"/>
+        <line x1="38" y1="27" x2="41" y2="26" stroke="#2c2c2c" stroke-width="1.2"/>
+        <!-- yeux derrière lunettes -->
+        <circle cx="21" cy="27" r="2" fill="#3d2b1f"/>
+        <circle cx="33" cy="27" r="2" fill="#3d2b1f"/>
+        <!-- sourire grand -->
+        <path d="M20 35 Q27 41 34 35" stroke="#c0392b" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+      </svg>
+    </div>
+    <div class="bub L">Chaque <b>pixel</b> = un octet entre <b>0</b> (noir) et <b>255</b> (blanc).</div>
+    <div class="px-grid">
+      <div class="px" style="background:#000;color:#fff">0</div>
+      <div class="px" style="background:#555;color:#fff">85</div>
+      <div class="px" style="background:#888;color:#fff">128</div>
+      <div class="px" style="background:#bbb">187</div>
+      <div class="px" style="background:#fff">255</div>
+    </div>
+    <div class="bub R">Une image → simple <b>liste Python</b> !</div>
+    <div class="sc"><span class="cm"># image 5×2 aplatie</span><br>[<span class="n">0</span>,<span class="n">0</span>,<span class="n">0</span>,<span class="n">255</span>,<span class="n">255</span>,<br>&nbsp;<span class="n">128</span>,<span class="n">0</span>,<span class="n">0</span>,<span class="n">64</span>,<span class="n">255</span>]</div>
+    <div class="ret"><div class="rt">A retenir</div>pixel = 1 octet · 0=noir · 255=blanc</div>
+  </div>
+</div>
+
+<!-- ═══ CASE 2 : principe RLE ═══ -->
+<div class="panel">
+  <div class="ph" style="background:#7c3aed">2 · Principe RLE</div>
+  <div class="pb">
+    <div class="scene-row">
+      <!-- garçon qui explique, doigt levé -->
+      <svg width="58" height="105" viewBox="0 0 58 105">
+        <rect x="15" y="48" width="28" height="32" rx="4" fill="#2980b9"/>
+        <polygon points="24,48 34,48 29,58" fill="#ecf0f1"/>
+        <!-- bras droit levé doigt pointé -->
+        <line x1="43" y1="54" x2="52" y2="36" stroke="#2980b9" stroke-width="6" stroke-linecap="round"/>
+        <circle cx="52" cy="33" r="4.5" fill="#f5cba7"/>
+        <line x1="52" y1="29" x2="52" y2="22" stroke="#f5cba7" stroke-width="3" stroke-linecap="round"/>
+        <!-- bras gauche -->
+        <line x1="15" y1="56" x2="5" y2="68" stroke="#2980b9" stroke-width="6" stroke-linecap="round"/>
+        <circle cx="4" cy="70" r="4" fill="#f5cba7"/>
+        <!-- jambes -->
+        <rect x="18" y="78" width="9" height="22" rx="3" fill="#34495e"/>
+        <rect x="31" y="78" width="9" height="22" rx="3" fill="#34495e"/>
+        <ellipse cx="22" cy="100" rx="6" ry="3" fill="#2c2c2c"/>
+        <ellipse cx="36" cy="100" rx="6" ry="3" fill="#2c2c2c"/>
+        <!-- cou -->
+        <rect x="24" y="39" width="10" height="11" rx="2" fill="#f5cba7"/>
+        <!-- tête -->
+        <ellipse cx="29" cy="27" rx="15" ry="16" fill="#f5cba7"/>
+        <!-- cheveux -->
+        <ellipse cx="29" cy="15" rx="15" ry="9" fill="#4a2c0a"/>
+        <rect x="14" y="15" width="5" height="12" rx="2" fill="#4a2c0a"/>
+        <rect x="40" y="15" width="5" height="12" rx="2" fill="#4a2c0a"/>
+        <!-- lunettes -->
+        <circle cx="22" cy="27" r="5.5" fill="none" stroke="#2c2c2c" stroke-width="1.5"/>
+        <circle cx="36" cy="27" r="5.5" fill="none" stroke="#2c2c2c" stroke-width="1.5"/>
+        <line x1="27.5" y1="27" x2="30.5" y2="27" stroke="#2c2c2c" stroke-width="1.2"/>
+        <line x1="13" y1="26" x2="16.5" y2="27" stroke="#2c2c2c" stroke-width="1.2"/>
+        <line x1="41.5" y1="27" x2="45" y2="26" stroke="#2c2c2c" stroke-width="1.2"/>
+        <circle cx="22" cy="27" r="2.2" fill="#3d2b1f"/>
+        <circle cx="36" cy="27" r="2.2" fill="#3d2b1f"/>
+        <path d="M21 35 Q29 42 37 35" stroke="#c0392b" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+      </svg>
+    </div>
+    <div class="bub L">RLE = écrire <b>(compte, valeur)</b> pour chaque suite identique.</div>
+    <div style="font-size:10px;padding:2px 0">
+      <div style="margin-bottom:3px"><span style="background:#dbeafe;border-radius:3px;padding:1px 5px;color:#1e40af;font-weight:700;font-size:9px">avant</span> &nbsp;[4, 4, 4, 0, 5, 5]</div>
+      <div class="rrow" style="margin-bottom:3px">
+        <span class="tk">3</span><span class="tv">4</span>
+        <span style="color:#888">·</span>
+        <span class="tk">1</span><span class="tv">0</span>
+        <span style="color:#888">·</span>
+        <span class="tk">2</span><span class="tv">5</span>
+      </div>
+      <div><span style="background:#dcfce7;border-radius:3px;padding:1px 5px;color:#166534;font-weight:700;font-size:9px">après</span> &nbsp;[3, 4, 1, 0, 2, 5]</div>
+    </div>
+    <div class="bub R">[0,0,0,0,0] → <b class="g">[5, 0]</b>. 5 éléments → 2 !</div>
+    <div class="sc"><span class="cm"># Structure alternée</span><br>[<span class="hi">compte</span>, <span class="hi">val</span>, <span class="hi">compte</span>, <span class="hi">val</span>…]</div>
+    <div class="ret"><div class="rt">A retenir</div>Plage → couple (k,v) · Liste aplatie</div>
+  </div>
+</div>
+
+<!-- ═══ CASE 3 : Q1 taille ═══ -->
+<div class="panel">
+  <div class="ph" style="background:#dc2626">3 · Le piège de la taille</div>
+  <div class="pb">
+    <div class="scene-row">
+      <!-- fille surprise, sourcils levés, bouche ouverte -->
+      <svg width="54" height="100" viewBox="0 0 54 100">
+        <rect x="16" y="48" width="22" height="28" rx="4" fill="#c0392b"/>
+        <line x1="16" y1="55" x2="5" y2="60" stroke="#f5cba7" stroke-width="5" stroke-linecap="round"/>
+        <line x1="38" y1="55" x2="49" y2="60" stroke="#f5cba7" stroke-width="5" stroke-linecap="round"/>
+        <rect x="18" y="74" width="8" height="20" rx="3" fill="#2980b9"/>
+        <rect x="28" y="74" width="8" height="20" rx="3" fill="#2980b9"/>
+        <ellipse cx="22" cy="94" rx="6" ry="3" fill="#5d4037"/>
+        <ellipse cx="32" cy="94" rx="6" ry="3" fill="#5d4037"/>
+        <rect x="23" y="40" width="8" height="10" rx="2" fill="#f5cba7"/>
+        <ellipse cx="27" cy="30" rx="14" ry="15" fill="#f5cba7"/>
+        <!-- cheveux -->
+        <ellipse cx="27" cy="20" rx="14" ry="9" fill="#5d3a1a"/>
+        <rect x="13" y="20" width="7" height="22" rx="3" fill="#5d3a1a"/>
+        <rect x="34" y="20" width="7" height="22" rx="3" fill="#5d3a1a"/>
+        <!-- yeux grands surpris -->
+        <ellipse cx="22" cy="29" rx="4" ry="4.5" fill="#fff"/>
+        <ellipse cx="32" cy="29" rx="4" ry="4.5" fill="#fff"/>
+        <circle cx="22" cy="29" r="2.2" fill="#3d2b1f"/>
+        <circle cx="32" cy="29" r="2.2" fill="#3d2b1f"/>
+        <!-- sourcils levés surprise -->
+        <path d="M18 22 Q22 19 26 22" stroke="#5d3a1a" stroke-width="2" fill="none" stroke-linecap="round"/>
+        <path d="M28 22 Q32 19 36 22" stroke="#5d3a1a" stroke-width="2" fill="none" stroke-linecap="round"/>
+        <!-- bouche ouverte surprise -->
+        <ellipse cx="27" cy="37" rx="4" ry="3" fill="#c0392b"/>
+        <!-- mains levées -->
+        <circle cx="5" cy="59" r="4" fill="#f5cba7"/>
+        <circle cx="49" cy="59" r="4" fill="#f5cba7"/>
+      </svg>
+    </div>
+    <div class="bub L">La liste RLE est-elle <b>toujours</b> plus courte ?</div>
+    <div class="sc">[1, 2, 3, 4, 5] <span class="cm"># 5 valeurs</span><br>→ [<span class="er">1,1, 1,2, 1,3, 1,4, 1,5</span>]<br><span class="cm"># longueur 10 — doublée !</span></div>
+    <div class="bub R"><span class="w">NON !</span> Chaque plage k=1 génère 2 éléments.</div>
+    <div class="piege"><div class="pt">Règle : n plages → taille 2n</div>RLE utile ssi <b>2p ≤ n</b><br><span style="color:#ef476f">Contre-ex : [1,2,3,4] → ×2</span></div>
+    <div class="ret"><div class="rt">A retenir</div>RLE n'est pas toujours plus court !</div>
+  </div>
+</div>
+
+<!-- ═══ CASE 4 : Q2 decodage ═══ -->
+<div class="panel">
+  <div class="ph" style="background:#059669">4 · Écrire decodage_rle</div>
+  <div class="pb">
+    <div class="scene-row">
+      <!-- garçon assis devant ordi, penché en avant -->
+      <svg width="70" height="90" viewBox="0 0 70 90">
+        <!-- bureau -->
+        <rect x="0" y="72" width="70" height="6" rx="2" fill="#8B6914"/>
+        <!-- écran -->
+        <rect x="5" y="45" width="38" height="28" rx="3" fill="#1a1a2e"/>
+        <rect x="7" y="47" width="34" height="23" rx="2" fill="#0f172a"/>
+        <text x="24" y="58" font-family="monospace" font-size="6" fill="#a78bfa" text-anchor="middle">i += 2</text>
+        <rect x="20" y="68" width="8" height="5" rx="1" fill="#5d4037"/>
+        <!-- corps garçon penché -->
+        <rect x="44" y="44" width="20" height="24" rx="4" fill="#2980b9"/>
+        <polygon points="49,44 57,44 53,52" fill="#ecf0f1"/>
+        <!-- bras vers clavier -->
+        <line x1="44" y1="52" x2="34" y2="65" stroke="#2980b9" stroke-width="5" stroke-linecap="round"/>
+        <circle cx="33" cy="66" r="3.5" fill="#f5cba7"/>
+        <!-- jambes -->
+        <rect x="46" y="67" width="7" height="18" rx="3" fill="#34495e"/>
+        <rect x="56" y="67" width="7" height="18" rx="3" fill="#34495e"/>
+        <ellipse cx="50" cy="85" rx="5" ry="3" fill="#2c2c2c"/>
+        <ellipse cx="60" cy="85" rx="5" ry="3" fill="#2c2c2c"/>
+        <!-- cou -->
+        <rect x="50" y="35" width="7" height="10" rx="2" fill="#f5cba7"/>
+        <!-- tête inclinée -->
+        <ellipse cx="55" cy="26" rx="12" ry="13" fill="#f5cba7"/>
+        <!-- cheveux -->
+        <ellipse cx="55" cy="16" rx="12" ry="7" fill="#4a2c0a"/>
+        <rect x="43" y="16" width="4" height="9" rx="2" fill="#4a2c0a"/>
+        <rect x="63" y="16" width="4" height="9" rx="2" fill="#4a2c0a"/>
+        <!-- lunettes -->
+        <circle cx="49" cy="25" r="4.5" fill="none" stroke="#2c2c2c" stroke-width="1.4"/>
+        <circle cx="61" cy="25" r="4.5" fill="none" stroke="#2c2c2c" stroke-width="1.4"/>
+        <line x1="53.5" y1="25" x2="56.5" y2="25" stroke="#2c2c2c" stroke-width="1.2"/>
+        <line x1="42" y1="24" x2="44.5" y2="25" stroke="#2c2c2c" stroke-width="1.2"/>
+        <line x1="65.5" y1="25" x2="68" y2="24" stroke="#2c2c2c" stroke-width="1.2"/>
+        <circle cx="49" cy="25" r="1.8" fill="#3d2b1f"/>
+        <circle cx="61" cy="25" r="1.8" fill="#3d2b1f"/>
+        <!-- sourire concentré -->
+        <path d="M47 32 Q55 37 63 32" stroke="#c0392b" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+      </svg>
+    </div>
+    <div class="bub L">Lire la liste RLE <b>2 par 2</b> : d'abord le compte, puis la valeur.</div>
+    <div class="sc"><span class="kw">def</span> <span class="fn">decodage_rle</span>(liste_rle):<br>&nbsp;&nbsp;res = []<br>&nbsp;&nbsp;i = <span class="n">0</span><br>&nbsp;&nbsp;<span class="kw">while</span> i &lt; <span class="fn">len</span>(liste_rle):<br>&nbsp;&nbsp;&nbsp;&nbsp;k = liste_rle[i]<br>&nbsp;&nbsp;&nbsp;&nbsp;v = liste_rle[i+<span class="n">1</span>]<br>&nbsp;&nbsp;&nbsp;&nbsp;res.<span class="fn">extend</span>([v]*k)<br>&nbsp;&nbsp;&nbsp;&nbsp;i += <span class="hi">2</span><span class="cm"> # PAS DE 2 !</span><br>&nbsp;&nbsp;<span class="kw">return</span> res</div>
+    <div class="piege"><div class="pt">Piège classique</div><span class="er">i += 1</span> → décalage total !<br><span class="ok">i += 2</span> → correct</div>
+    <div class="ret"><div class="rt">Test</div><code>decodage(codage(L)) == L</code> → True</div>
+  </div>
+</div>
+
+<!-- ═══ CASE 5 : Q3 bug 256 ═══ -->
+<div class="panel">
+  <div class="ph" style="background:#d97706">5 · Le bug des 256 pixels</div>
+  <div class="pb">
+    <div class="scene-row">
+      <!-- fille inquiète, main sur la bouche -->
+      <svg width="54" height="100" viewBox="0 0 54 100">
+        <rect x="16" y="48" width="22" height="28" rx="4" fill="#c0392b"/>
+        <!-- main sur la bouche -->
+        <line x1="16" y1="55" x2="8" y2="52" stroke="#f5cba7" stroke-width="5" stroke-linecap="round"/>
+        <circle cx="7" cy="51" r="5" fill="#f5cba7"/>
+        <line x1="38" y1="55" x2="46" y2="65" stroke="#f5cba7" stroke-width="5" stroke-linecap="round"/>
+        <rect x="18" y="74" width="8" height="20" rx="3" fill="#2980b9"/>
+        <rect x="28" y="74" width="8" height="20" rx="3" fill="#2980b9"/>
+        <ellipse cx="22" cy="94" rx="6" ry="3" fill="#5d4037"/>
+        <ellipse cx="32" cy="94" rx="6" ry="3" fill="#5d4037"/>
+        <rect x="23" y="40" width="8" height="10" rx="2" fill="#f5cba7"/>
+        <ellipse cx="27" cy="30" rx="14" ry="15" fill="#f5cba7"/>
+        <ellipse cx="27" cy="20" rx="14" ry="9" fill="#5d3a1a"/>
+        <rect x="13" y="20" width="7" height="22" rx="3" fill="#5d3a1a"/>
+        <rect x="34" y="20" width="7" height="22" rx="3" fill="#5d3a1a"/>
+        <!-- yeux inquiets -->
+        <ellipse cx="22" cy="29" rx="3.5" ry="4" fill="#fff"/>
+        <ellipse cx="32" cy="29" rx="3.5" ry="4" fill="#fff"/>
+        <circle cx="22" cy="30" r="2" fill="#3d2b1f"/>
+        <circle cx="32" cy="30" r="2" fill="#3d2b1f"/>
+        <!-- sourcils froncés -->
+        <path d="M18 24 Q22 26 26 24" stroke="#5d3a1a" stroke-width="2" fill="none" stroke-linecap="round"/>
+        <path d="M28 24 Q32 26 36 24" stroke="#5d3a1a" stroke-width="2" fill="none" stroke-linecap="round"/>
+        <!-- bouche inquiète -->
+        <path d="M22 37 Q27 35 32 37" stroke="#c0392b" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+      </svg>
+    </div>
+    <div class="bub L">Pourquoi <b>bac_nsi_256.png</b> est corrompue après encodage ?</div>
+    <div class="sc"><span class="cm"># 1ère ligne = 256 pixels noirs</span><br>k = <span class="n">256</span> <span class="cm"># mais octet max = 255</span><br>liste_rle.append(<span class="er">256</span>) <span class="cm"># OVERFLOW</span><br><span class="cm"># tronqué à 255 → 1 pixel perdu</span><br><span class="cm"># image décalée et corrompue !</span></div>
+    <div class="bub R"><span class="w">Un octet = max 255.</span> 256 ne tient pas → perte de données !</div>
+    <div class="ret"><div class="rt">A retenir</div>32×32 : OK · 256×256 : corrompue<br>Cause : compte &gt; 255 tronqué</div>
+  </div>
+</div>
+
+<!-- ═══ CASE 6 : Q4 solution ═══ -->
+<div class="panel">
+  <div class="ph" style="background:#1a1a2e">6 · La solution — découper !</div>
+  <div class="pb">
+    <div class="scene-row">
+      <!-- garçon souriant, pouce levé, ampoule -->
+      <svg width="70" height="100" viewBox="0 0 70 100">
+        <!-- ampoule idée -->
+        <ellipse cx="58" cy="18" rx="9" ry="10" fill="#ffd166"/>
+        <rect x="54" y="27" width="8" height="4" rx="1" fill="#aaa"/>
+        <line x1="58" y1="31" x2="58" y2="35" stroke="#888" stroke-width="1.5"/>
+        <!-- rayons -->
+        <line x1="58" y1="6" x2="58" y2="2" stroke="#ffd166" stroke-width="1.5"/>
+        <line x1="68" y1="10" x2="71" y2="7" stroke="#ffd166" stroke-width="1.5"/>
+        <line x1="70" y1="20" x2="74" y2="20" stroke="#ffd166" stroke-width="1.5"/>
+        <line x1="48" y1="10" x2="45" y2="7" stroke="#ffd166" stroke-width="1.5"/>
+        <!-- corps -->
+        <rect x="14" y="48" width="28" height="30" rx="4" fill="#2980b9"/>
+        <polygon points="23,48 33,48 28,57" fill="#ecf0f1"/>
+        <!-- bras droit pouce levé -->
+        <line x1="42" y1="54" x2="52" y2="44" stroke="#2980b9" stroke-width="6" stroke-linecap="round"/>
+        <circle cx="53" cy="42" r="5" fill="#f5cba7"/>
+        <line x1="53" y1="37" x2="53" y2="30" stroke="#f5cba7" stroke-width="3" stroke-linecap="round"/>
+        <!-- pouce -->
+        <ellipse cx="53" cy="28" rx="3" ry="4" fill="#f5cba7" stroke="#e8a87c" stroke-width="0.8"/>
+        <!-- bras gauche -->
+        <line x1="14" y1="56" x2="4" y2="68" stroke="#2980b9" stroke-width="6" stroke-linecap="round"/>
+        <circle cx="3" cy="70" r="4" fill="#f5cba7"/>
+        <!-- jambes -->
+        <rect x="17" y="76" width="9" height="20" rx="3" fill="#34495e"/>
+        <rect x="30" y="76" width="9" height="20" rx="3" fill="#34495e"/>
+        <ellipse cx="21" cy="96" rx="6" ry="3" fill="#2c2c2c"/>
+        <ellipse cx="35" cy="96" rx="6" ry="3" fill="#2c2c2c"/>
+        <!-- cou -->
+        <rect x="24" y="40" width="9" height="10" rx="2" fill="#f5cba7"/>
+        <!-- tête -->
+        <ellipse cx="28" cy="28" rx="14" ry="15" fill="#f5cba7"/>
+        <!-- cheveux -->
+        <ellipse cx="28" cy="17" rx="14" ry="8" fill="#4a2c0a"/>
+        <rect x="14" y="17" width="5" height="10" rx="2" fill="#4a2c0a"/>
+        <rect x="37" y="17" width="5" height="10" rx="2" fill="#4a2c0a"/>
+        <!-- lunettes -->
+        <circle cx="22" cy="28" r="5" fill="none" stroke="#2c2c2c" stroke-width="1.5"/>
+        <circle cx="34" cy="28" r="5" fill="none" stroke="#2c2c2c" stroke-width="1.5"/>
+        <line x1="27" y1="28" x2="29" y2="28" stroke="#2c2c2c" stroke-width="1.2"/>
+        <line x1="13" y1="27" x2="17" y2="28" stroke="#2c2c2c" stroke-width="1.2"/>
+        <line x1="39" y1="28" x2="43" y2="27" stroke="#2c2c2c" stroke-width="1.2"/>
+        <circle cx="22" cy="28" r="2" fill="#3d2b1f"/>
+        <circle cx="34" cy="28" r="2" fill="#3d2b1f"/>
+        <!-- grand sourire -->
+        <path d="M20 37 Q28 44 36 37" stroke="#c0392b" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+        <!-- dent -->
+        <path d="M23 37 Q28 41 33 37 L33 39 Q28 43 23 39 Z" fill="#fff"/>
+      </svg>
+      <!-- fille souriante pouce -->
+      <svg width="46" height="100" viewBox="0 0 46 100">
+        <rect x="10" y="48" width="20" height="28" rx="4" fill="#c0392b"/>
+        <line x1="10" y1="55" x2="2" y2="65" stroke="#f5cba7" stroke-width="5" stroke-linecap="round"/>
+        <circle cx="2" cy="67" r="3.5" fill="#f5cba7"/>
+        <line x1="30" y1="55" x2="38" y2="46" stroke="#f5cba7" stroke-width="5" stroke-linecap="round"/>
+        <ellipse cx="38" cy="44" rx="4" ry="4" fill="#f5cba7"/>
+        <rect x="12" y="74" width="7" height="20" rx="3" fill="#2980b9"/>
+        <rect x="22" y="74" width="7" height="20" rx="3" fill="#2980b9"/>
+        <ellipse cx="15" cy="94" rx="5" ry="3" fill="#5d4037"/>
+        <ellipse cx="26" cy="94" rx="5" ry="3" fill="#5d4037"/>
+        <rect x="17" y="40" width="7" height="10" rx="2" fill="#f5cba7"/>
+        <ellipse cx="20" cy="28" rx="13" ry="14" fill="#f5cba7"/>
+        <ellipse cx="20" cy="18" rx="13" ry="8" fill="#5d3a1a"/>
+        <rect x="7" y="18" width="6" height="20" rx="3" fill="#5d3a1a"/>
+        <rect x="27" y="18" width="6" height="20" rx="3" fill="#5d3a1a"/>
+        <ellipse cx="15" cy="28" rx="3" ry="3.5" fill="#fff"/>
+        <ellipse cx="25" cy="28" rx="3" ry="3.5" fill="#fff"/>
+        <circle cx="16" cy="29" r="1.8" fill="#3d2b1f"/>
+        <circle cx="26" cy="29" r="1.8" fill="#3d2b1f"/>
+        <path d="M13 25 Q16 23 19 25" stroke="#5d3a1a" stroke-width="1.5" fill="none"/>
+        <path d="M21 25 Q24 23 27 25" stroke="#5d3a1a" stroke-width="1.5" fill="none"/>
+        <path d="M14 36 Q20 41 26 36" stroke="#c0392b" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+      </svg>
+    </div>
+    <div class="bub L">Si k &gt; 255, on <b>découpe</b> en morceaux de 255 max !</div>
+    <div class="sc"><span class="kw">while</span> k &gt; <span class="n">255</span>:<br>&nbsp;&nbsp;liste_rle.append(<span class="n">255</span>)<br>&nbsp;&nbsp;liste_rle.append(c)<br>&nbsp;&nbsp;k -= <span class="n">255</span><br>liste_rle.append(k)<br>liste_rle.append(c)</div>
+    <div class="bub R"><span class="g">Bonus :</span> le décodeur <b>n'est pas modifié</b> — il lit les couples normalement !</div>
+    <div class="ret"><div class="rt">A retenir</div>256 noirs → [255,0] + [1,0]<br><span style="color:#059669">decodage_rle reste identique</span></div>
+  </div>
+</div>
+
+</div><!-- bd-grid -->
+<div style="background:#f8f8f0;border-top:2px solid #1a1a2e;padding:6px 14px;font-size:10px;text-align:center;color:#666;font-family:'Courier New',monospace">
+  BAC NSI 2026 · Sujet 1 · pixels · RLE · decodage_rle · limite 255 · sous-plages · DarkSATHI Li
+</div>
+</div>
