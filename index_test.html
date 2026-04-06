@@ -382,104 +382,6 @@
       border-bottom: 5px solid rgba(255,255,255,.85);
     }
 
-    /* ── Bouton loupe plein écran ── */
-    .btn-zoom {
-      position: absolute;
-      top: .55rem;
-      right: .55rem;
-      width: 32px;
-      height: 32px;
-      border-radius: 50%;
-      background: rgba(255,255,255,.18);
-      border: 1px solid rgba(255,255,255,.35);
-      color: #fff;
-      font-size: .85rem;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      backdrop-filter: blur(4px);
-      transition: background .2s, transform .15s;
-      z-index: 10;
-      line-height: 1;
-    }
-
-    .btn-zoom:hover {
-      background: rgba(255,255,255,.38);
-      transform: scale(1.12);
-    }
-
-    /* ── Lightbox ── */
-    #lightbox {
-      display: none;
-      position: fixed;
-      inset: 0;
-      z-index: 9000;
-      background: rgba(8, 16, 28, .92);
-      backdrop-filter: blur(6px);
-      align-items: center;
-      justify-content: center;
-      cursor: zoom-out;
-      animation: lbIn .18s ease;
-    }
-
-    #lightbox.open { display: flex; }
-
-    @keyframes lbIn {
-      from { opacity: 0; }
-      to   { opacity: 1; }
-    }
-
-    #lightbox img {
-      max-width: min(92vw, 1100px);
-      max-height: 90vh;
-      object-fit: contain;
-      border-radius: 6px;
-      box-shadow: 0 24px 80px rgba(0,0,0,.6);
-      cursor: default;
-      animation: lbScale .2s cubic-bezier(.4,0,.2,1);
-    }
-
-    @keyframes lbScale {
-      from { transform: scale(.92); opacity: 0; }
-      to   { transform: scale(1);   opacity: 1; }
-    }
-
-    #lightbox-close {
-      position: fixed;
-      top: 1.2rem;
-      right: 1.4rem;
-      background: rgba(255,255,255,.15);
-      border: 1px solid rgba(255,255,255,.3);
-      color: #fff;
-      width: 38px;
-      height: 38px;
-      border-radius: 50%;
-      font-size: 1.1rem;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      backdrop-filter: blur(4px);
-      transition: background .2s;
-      z-index: 9001;
-    }
-
-    #lightbox-close:hover { background: rgba(255,255,255,.3); }
-
-    #lightbox-caption {
-      position: fixed;
-      bottom: 1.2rem;
-      left: 50%;
-      transform: translateX(-50%);
-      font-family: 'JetBrains Mono', monospace;
-      font-size: .7rem;
-      color: rgba(255,255,255,.55);
-      letter-spacing: .08em;
-      pointer-events: none;
-      white-space: nowrap;
-    }
-
     /* ── Face CONTENU (cachée sous la card au repos) ── */
     .card-face--info {
       transform: translateY(100%);
@@ -683,6 +585,86 @@
       color: #fff;
     }
 
+    /* ── BOUTON BD (lightbox) ── */
+    .bd-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: .35rem;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: .62rem;
+      padding: .22rem .7rem;
+      border-radius: 20px;
+      background: #f5f0ff;
+      border: 1px solid #a07ee8;
+      color: #5b21b6;
+      text-decoration: none;
+      cursor: pointer;
+      transition: all .2s;
+      white-space: nowrap;
+    }
+
+    .bd-btn:hover {
+      background: #5b21b6;
+      border-color: #5b21b6;
+      color: #fff;
+    }
+
+    /* ── LIGHTBOX ── */
+    #bd-lightbox {
+      display: none;
+      position: fixed;
+      inset: 0;
+      z-index: 9999;
+      background: rgba(8, 15, 26, .92);
+      backdrop-filter: blur(4px);
+      align-items: center;
+      justify-content: center;
+      padding: 1.5rem;
+      animation: lbFadeIn .22s ease;
+    }
+
+    #bd-lightbox.open { display: flex; }
+
+    #bd-lightbox img {
+      max-width: 100%;
+      max-height: 90vh;
+      object-fit: contain;
+      border-radius: 6px;
+      box-shadow: 0 8px 60px rgba(0,0,0,.6);
+      animation: lbZoom .25s cubic-bezier(.4,0,.2,1);
+    }
+
+    #bd-lightbox-close {
+      position: absolute;
+      top: 1rem;
+      right: 1.2rem;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: .75rem;
+      color: #fff;
+      background: rgba(255,255,255,.12);
+      border: 1px solid rgba(255,255,255,.25);
+      border-radius: 20px;
+      padding: .3rem .9rem;
+      cursor: pointer;
+      transition: background .2s;
+    }
+
+    #bd-lightbox-close:hover { background: rgba(255,255,255,.25); }
+
+    #bd-lightbox-hint {
+      position: absolute;
+      bottom: 1.2rem;
+      left: 50%;
+      transform: translateX(-50%);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: .62rem;
+      color: rgba(255,255,255,.45);
+      white-space: nowrap;
+    }
+
+    @keyframes lbFadeIn { from { opacity:0; } to { opacity:1; } }
+    @keyframes lbZoom   { from { transform: scale(.92); opacity:0; } to { transform: scale(1); opacity:1; } }
+
     @keyframes fadeUp {
       from {
         opacity: 0;
@@ -720,7 +702,7 @@
       title="YouTube video player" frameborder="0"
       allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
       referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
-      <h1>Fiches de révision<br>NSI Terminale avec Alice et Bob</h1>
+      <h1>Fiches de révision<br>NSI Terminale avec Léna et Nolan</h1>
       <div class="hero-meta">
         <span><span class="ping-dot"></span>Épreuve pratique · session 2026</span>
         <span>23 sujets officiels</span>
@@ -915,7 +897,7 @@
 
       <!-- ── Sujet 11 ── -->
       <a class="card locked" href="sujet_11/fiche_sujet11_knn_renard.html" data-status="done" style="--card-accent:#2e7d32;" data-delay="10" data-video=""
-        data-notebook="https://notebooklm.google.com/notebook/e0602d7b-b0d9-4cc9-9a78-ea740bf58ca5">
+        data-notebook="https://notebooklm.google.com/notebook/e0602d7b-b0d9-4cc9-9a78-ea740bf58ca5" data-image="sujet_11/renard_knn.png">
         <div class="card-num">SUJET 11</div>
         <div class="card-title">Le renard — habitat et protection (loi Biodiversité)</div>
         <div class="card-tags">
@@ -931,7 +913,7 @@
 
       <!-- ── Sujet 12 ── -->
       <a class="card locked" href="sujet_12/fiche_sujet12_refuge_renards.html" data-status="done" style="--card-accent:#7b3fa8;" data-delay="11" data-video=""
-        data-notebook="https://notebooklm.google.com/notebook/414be745-e4cd-4585-a572-06302ba8db24">
+        data-notebook="https://notebooklm.google.com/notebook/414be745-e4cd-4585-a572-06302ba8db24" data-image="sujet_12/refuge.png">
         <div class="card-num">SUJET 12</div>
         <div class="card-title">Refuge de renards — base de données CSV</div>
         <div class="card-tags">
@@ -946,8 +928,8 @@
       </a>
 
       <!-- ── Sujet 13 ── -->
-      <a class="card locked" href="#" data-status="todo" style="--card-accent:#2a6496;" data-delay="12" data-video=""
-        data-notebook="">
+      <a class="card locked" href="sujet_13/fiche_ballon_sonde.html" data-status="done" style="--card-accent:#2a6496;" data-delay="12" data-video=""
+        data-notebook="sujet_13/ballon_sonde_notebooklm.md" data-image="sujet_13/ballon_sonde.png">
         <div class="card-num">SUJET 13</div>
         <div class="card-title">Ballon sonde météo — données atmosphériques</div>
         <div class="card-tags">
@@ -956,14 +938,14 @@
           <span class="tag">statistiques</span>
         </div>
         <div class="card-footer">
-          <span class="status-badge status-todo">⏳ À créer</span>
+          <span class="status-badge status-done">✓ Fiche prête</span>
           <span class="card-arrow">→</span>
         </div>
       </a>
 
       <!-- ── Sujet 14 ── -->
-      <a class="card locked" href="#" data-status="todo" style="--card-accent:#b5610a;" data-delay="13" data-video=""
-        data-notebook="">
+      <a class="card locked" href="sujet_14/fiche_evacuation_nsi.html" data-status="done" style="--card-accent:#b5610a;" data-delay="13" data-video=""
+        data-notebook="" data-image="sujet_14/evacuation.png">
         <div class="card-num">SUJET 14</div>
         <div class="card-title">Normes de construction et évacuation des bâtiments</div>
         <div class="card-tags">
@@ -1102,7 +1084,7 @@
 
       <!-- ── Sujet 23 ── -->
       <a class="card locked" href="sujet_23/fiche_demeter_nsi.html" data-status="done" style="--card-accent:#2e7d32;" data-delay="22" data-video=""
-        data-notebook="https://notebooklm.google.com/notebook/217e6ede-9fad-47a6-a925-c651ac2666ab">
+        data-notebook="https://notebooklm.google.com/notebook/217e6ede-9fad-47a6-a925-c651ac2666ab" data-image="sujet_23/bcd.png">
         <div class="card-num">SUJET 23</div>
         <div class="card-title">Données environnementales et prévention de maladies dans les cultures</div>
         <div class="card-tags">
@@ -1126,11 +1108,11 @@
 
   </div><!-- /container-content -->
 
-  <!-- LIGHTBOX -->
-  <div id="lightbox" role="dialog" aria-modal="true" aria-label="Image en grand">
-    <button id="lightbox-close" aria-label="Fermer">✕</button>
-    <img id="lightbox-img" src="" alt="">
-    <div id="lightbox-caption"></div>
+  <!-- LIGHTBOX BD -->
+  <div id="bd-lightbox" role="dialog" aria-modal="true" aria-label="Bande dessinée en plein écran">
+    <button id="bd-lightbox-close" aria-label="Fermer">✕ Fermer</button>
+    <img id="bd-lightbox-img" src="" alt="">
+    <p id="bd-lightbox-hint">Clic en dehors ou Échap pour fermer</p>
   </div>
 
   <!-- SCRIPTS -->
@@ -1144,8 +1126,7 @@
            └── .card-flip
                  ├── .card-face.card-face--img
                  │     ├── <img>
-                 │     ├── .card-img-hint
-                 │     └── .btn-zoom  ← 🔍 nouveau
+                 │     └── .card-img-hint
                  └── .card-face.card-face--info
                        └── [contenu original déplacé ici]
     ══════════════════════════════════════════ */
@@ -1177,20 +1158,6 @@
       hint.textContent = 'Voir la fiche';
       faceImg.appendChild(hint);
 
-      // ── Bouton loupe ──
-      const title = card.querySelector('.card-title') ? card.querySelector('.card-title').textContent.trim() : '';
-      const btnZoom = document.createElement('button');
-      btnZoom.className = 'btn-zoom';
-      btnZoom.title = 'Voir la BD en grand';
-      btnZoom.setAttribute('aria-label', 'Voir la BD en grand');
-      btnZoom.innerHTML = '🔍';
-      btnZoom.addEventListener('click', e => {
-        e.preventDefault();
-        e.stopPropagation();
-        openLightbox(imgUrl, title);
-      });
-      faceImg.appendChild(btnZoom);
-
       // Face contenu
       const faceInfo = document.createElement('div');
       faceInfo.className = 'card-face card-face--info';
@@ -1210,7 +1177,7 @@
       sec.className = 'card-video';
       sec.innerHTML = url
         ? `<a class="video-btn" href="${url}" target="_blank" rel="noopener" onclick="event.stopPropagation()">
-             <svg viewBox="0 0 10 10"><polygon points="2,1 9,5 2,9"/></svg>▶ Voir la vidéo
+             <svg viewBox="0 0 10 10"><polygon points="2,1 9,5 2,9"/></svg>Voir la vidéo
            </a>`
         : `<span class="video-soon">🎬 Vidéo à venir…</span>`;
       // Insérer dans .card-face--info si existe, sinon dans card
@@ -1224,12 +1191,45 @@
       sec.className = 'card-notebook';
       sec.innerHTML = url
         ? `<a class="notebook-btn" href="${url}" target="_blank" rel="noopener" onclick="event.stopPropagation()">
-             <svg viewBox="0 0 10 10"><rect x="1" y="1" width="5" height="7" rx="1"/><line x1="3" y1="3" x2="6" y2="3" stroke="currentColor" stroke-width="1" fill="none"/><line x1="3" y1="5" x2="6" y2="5" stroke="currentColor" stroke-width="1" fill="none"/><circle cx="8" cy="7" r="1.5"/></svg>🎧 NotebookLM
+             <svg viewBox="0 0 10 10"><rect x="1" y="1" width="5" height="7" rx="1"/><line x1="3" y1="3" x2="6" y2="3" stroke="currentColor" stroke-width="1" fill="none"/><line x1="3" y1="5" x2="6" y2="5" stroke="currentColor" stroke-width="1" fill="none"/><circle cx="8" cy="7" r="1.5"/></svg>NotebookLM
            </a>`
-        : `<span class="notebook-soon">🎧 NotebookLM à venir…</span>`;
+        : `<span class="notebook-soon">NotebookLM à venir…</span>`;
+      // Bouton BD si la card a une image
+      const imgUrl = (card.dataset.image || '').trim();
+      if (imgUrl) {
+        const bdBtn = document.createElement('button');
+        bdBtn.className = 'bd-btn';
+        bdBtn.setAttribute('type', 'button');
+        bdBtn.setAttribute('aria-label', 'Voir la bande dessinée en plein écran');
+        bdBtn.innerHTML = 'Voir la BD';
+        bdBtn.addEventListener('click', e => {
+          e.preventDefault();
+          e.stopPropagation();
+          const lb = document.getElementById('bd-lightbox');
+          document.getElementById('bd-lightbox-img').src = imgUrl;
+          lb.classList.add('open');
+          document.body.style.overflow = 'hidden';
+        });
+        sec.appendChild(bdBtn);
+      }
       const target = card.querySelector('.card-face--info') || card;
       target.appendChild(sec);
     });
+
+    /* ══════════════════════════════════════════
+       LIGHTBOX — fermeture
+    ══════════════════════════════════════════ */
+    (function () {
+      const lb    = document.getElementById('bd-lightbox');
+      const close = () => {
+        lb.classList.remove('open');
+        document.getElementById('bd-lightbox-img').src = '';
+        document.body.style.overflow = '';
+      };
+      document.getElementById('bd-lightbox-close').addEventListener('click', close);
+      lb.addEventListener('click', e => { if (e.target === lb) close(); });
+      document.addEventListener('keydown', e => { if (e.key === 'Escape') close(); });
+    })();
 
     /* ══════════════════════════════════════════
        3. ANIMATION STAGGERED
@@ -1261,41 +1261,6 @@
           card.style.display = (f === 'all' || f === card.dataset.status) ? '' : 'none';
         });
       });
-    });
-
-    /* ══════════════════════════════════════════
-       6. LIGHTBOX — BD en taille d'origine
-    ══════════════════════════════════════════ */
-    const lightbox     = document.getElementById('lightbox');
-    const lbImg        = document.getElementById('lightbox-img');
-    const lbCaption    = document.getElementById('lightbox-caption');
-    const lbClose      = document.getElementById('lightbox-close');
-
-    function openLightbox(src, caption) {
-      lbImg.src = src;
-      lbImg.alt = caption || '';
-      lbCaption.textContent = caption ? caption + ' — clic ou Échap pour fermer' : 'Clic ou Échap pour fermer';
-      lightbox.classList.add('open');
-      document.body.style.overflow = 'hidden';
-      lbClose.focus();
-    }
-
-    function closeLightbox() {
-      lightbox.classList.remove('open');
-      document.body.style.overflow = '';
-      lbImg.src = '';
-    }
-
-    lbClose.addEventListener('click', closeLightbox);
-
-    // Clic sur le fond sombre = fermer
-    lightbox.addEventListener('click', e => {
-      if (e.target === lightbox) closeLightbox();
-    });
-
-    // Touche Échap
-    document.addEventListener('keydown', e => {
-      if (e.key === 'Escape' && lightbox.classList.contains('open')) closeLightbox();
     });
 
   </script>
