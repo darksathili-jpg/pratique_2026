@@ -1,0 +1,1218 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Fiche – Températures Polynésie | NSI Terminale | BAC 2026</title>
+
+  <!-- Bootstrap 5.3.3 -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Rubik+Dirt&family=Source+Serif+4:ital,opsz,wght@0,8..60,300..900;1,8..60,300..900&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+
+  <!-- MathJax v3 -->
+  <script>
+    MathJax = {
+      tex: { inlineMath: [['\\(', '\\)'], ['$', '$']] },
+      options: { skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre'] }
+    };
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js" async></script>
+
+  <!-- PyScript 2026.3.1 -->
+  <script type="module" src="https://pyscript.net/releases/2026.3.1/core.js"></script>
+
+  <style>
+    :root {
+      --bg-main:    #f8f9fb;
+      --bg-panel:   #eef1f5;
+      --bg-cours:   #ffffff;
+      --accent:     #2a6496;
+      --py-editor-input: white;
+      --accent-or:  #b5610a;
+      --accent-vert:#2e7d32;
+      --text-main:  #1a1a1a;
+      --text-muted: #5a6470;
+      --border-radius: 8px;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      background-color: var(--bg-main);
+      color: var(--text-main);
+      font-family: 'Source Serif 4', Georgia, serif;
+      font-size: 1.1rem;
+      line-height: 1.8;
+      margin: 0;
+      padding-bottom: 4rem;
+    }
+
+    h1, h2, h3, h4 {
+      font-family: 'Rubik Dirt', cursive;
+      color: var(--accent);
+      letter-spacing: 0.02em;
+    }
+
+    h1 { font-size: 2.2rem; color: #111; }
+    h2 { font-size: 1.55rem; border-bottom: 2px solid var(--accent); padding-bottom: .3rem; margin-top: 2.5rem; }
+    h3 { font-size: 1.25rem; color: var(--accent-or); margin-top: 1.8rem; }
+    h4 { font-size: 1.05rem; color: var(--accent-vert); }
+
+    p { margin-bottom: 1rem; }
+    code, pre, .mono { font-family: 'JetBrains Mono', monospace; font-size: 0.9em; }
+    code { background: #e8edf2; padding: 2px 6px; border-radius: 4px; color: #8b3a00; }
+    pre { background: #f0f3f7; border-left: 3px solid var(--accent); padding: 1rem 1.2rem; border-radius: var(--border-radius); overflow-x: auto; color: #1a1a1a; }
+
+    a { color: var(--accent); text-decoration: underline dotted; }
+    a:hover { color: var(--accent-or); }
+
+    /* ── NAVIGATION ── */
+    #navbar {
+      position: sticky; top: 0; z-index: 1000;
+      background: #2a6496; border-bottom: 2px solid #1a4a70;
+      padding: .5rem 1.5rem;
+      display: flex; gap: .5rem; flex-wrap: wrap; align-items: center;
+    }
+    #navbar span { font-family: 'JetBrains Mono', monospace; font-size: .8rem; color: #ccddf0; margin-right: auto; }
+    #navbar a {
+      font-family: 'JetBrains Mono', monospace; font-size: .8rem;
+      color: #fff; text-decoration: none; padding: .25rem .7rem;
+      border: 1px solid #ccddf0; border-radius: 4px; transition: background .2s;
+    }
+    #navbar a:hover { background: #1a4a70; }
+
+    /* ── CONTENU ── */
+    .container-content { max-width: 860px; margin: 0 auto; padding: 2rem 1.5rem; }
+
+    /* ── ENCADRÉS ── */
+    .encadre, .encadre-conseil, .encadre-indice, .encadre-question {
+      background: #ffffff; border-radius: var(--border-radius);
+      padding: 1.1rem 1.4rem; margin: 1.4rem 0;
+      position: relative; box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+    }
+    .encadre          { border-left: 4px solid var(--accent); }
+    .encadre-conseil  { border-left: 4px solid var(--accent-or); background: #fff8f0; }
+    .encadre-indice   { border-left: 4px solid var(--accent-vert); background: #f0faf0; }
+    .encadre-question { border-left: 4px solid #7b3fa8; background: #faf5ff; }
+
+    .encadre-prefix {
+      font-family: 'JetBrains Mono', monospace; font-size: .72rem;
+      font-variant: small-caps; letter-spacing: .12em;
+      text-transform: uppercase; margin-bottom: .4rem; display: block;
+    }
+    .encadre          .encadre-prefix { color: var(--accent); }
+    .encadre-conseil  .encadre-prefix { color: var(--accent-or); }
+    .encadre-indice   .encadre-prefix { color: var(--accent-vert); }
+    .encadre-question .encadre-prefix { color: #7b3fa8; }
+
+    /* ── BOUTONS ── */
+    .btn-tp, .btn-tp-or, .btn-tp-vert, .btn-secondaire {
+      font-family: 'JetBrains Mono', monospace; font-size: .82rem;
+      border: none; border-radius: 5px; padding: .45rem 1.1rem;
+      cursor: pointer; transition: opacity .2s, transform .1s; margin: .3rem .2rem;
+    }
+    .btn-tp         { background: var(--accent);      color: #fff; }
+    .btn-tp-or      { background: var(--accent-or);   color: #fff; }
+    .btn-tp-vert    { background: var(--accent-vert); color: #fff; }
+    .btn-secondaire { background: #eef1f5; border: 1px solid var(--accent); color: var(--text-main); }
+    .btn-tp:hover, .btn-tp-or:hover, .btn-tp-vert:hover, .btn-secondaire:hover { opacity:.85; transform:translateY(-1px); }
+
+    /* ── BADGE QUESTION ── */
+    .badge-question {
+      display: inline-block; font-family: 'JetBrains Mono', monospace;
+      font-size: .8rem; background: #7b3fa8; color: #fff;
+      border-radius: 4px; padding: .15rem .7rem; margin-right: .5rem; vertical-align: middle;
+    }
+
+    /* ── TOGGLE ── */
+    .indice-bloc { display: none; }
+    .indice-bloc.visible { display: block; }
+    .correction-bloc { display: none; }
+    .correction-bloc.visible { display: block; }
+
+    /* ── TABLEAUX ── */
+    .table-gen {
+      border-collapse: collapse; margin: .8rem auto;
+      font-family: 'JetBrains Mono', monospace; font-size: .83rem; width: 100%;
+    }
+    .table-gen th, .table-gen td { border: 1px solid var(--accent); padding: .38rem .8rem; }
+    .table-gen th { background: #dce8f2; color: var(--accent); font-weight: 600; }
+    .table-gen .anomalie { background: #fff0f0; color: #c0392b; font-weight: 600; }
+    .table-gen .normal   { color: var(--text-muted); }
+    .table-gen .bug  { background: #fff0f0; color: #c0392b; }
+    .table-gen .ok   { background: #f0faf0; color: #2e7d32; }
+
+    /* ── PIED DE PAGE ── */
+    footer {
+      text-align: center; font-family: 'JetBrains Mono', monospace;
+      font-size: .8rem; color: var(--text-muted);
+      padding: 2rem 1rem 1rem; border-top: 1px solid #d0d8e4;
+    }
+
+    /* ── RETOUR EN HAUT ── */
+    #btn-top {
+      position: fixed; bottom: 1.5rem; right: 1.5rem; z-index: 999;
+      background: var(--accent); color: #fff; border: none; border-radius: 50%;
+      width: 44px; height: 44px; font-size: 1.2rem; cursor: pointer;
+      display: none; align-items: center; justify-content: center;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.25); transition: opacity .2s;
+    }
+    #btn-top:hover { opacity: .8; }
+
+    /* ── PIÈGE ── */
+    .encadre-piege {
+      background: #fff5f5; border-left: 4px solid #c0392b;
+      border-radius: var(--border-radius); padding: 1rem 1.4rem;
+      margin: 1.2rem 0; box-shadow: 0 1px 4px rgba(0,0,0,0.07);
+    }
+    .encadre-piege .encadre-prefix {
+      color: #c0392b; font-family: 'JetBrains Mono', monospace;
+      font-size: .72rem; font-variant: small-caps; letter-spacing: .12em;
+      display: block; margin-bottom: .3rem;
+    }
+
+    /* ── SOMMAIRE ── */
+    #sommaire ol { font-family: 'JetBrains Mono', monospace; font-size: .88rem; line-height: 2.2; }
+    #sommaire a { color: var(--accent); }
+    #sommaire a:hover { color: var(--accent-or); }
+
+    .sep { border: none; border-top: 1px dashed #9ab0c8; margin: 2.5rem 0; opacity: .7; }
+    py-editor { display: block; min-height: 100px; }
+  </style>
+</head>
+<body>
+
+<div id="pyinit" style="display:none">
+  <script type="py" env="poly">pass</script>
+</div>
+
+<button id="btn-top" title="Retour en haut" aria-label="Retour en haut">▲</button>
+
+<!-- NAVIGATION STICKY -->
+<nav id="navbar">
+  <span>NSI Terminale – Températures Polynésie</span>
+  <a href="#s0">Intro</a>
+  <a href="#s1">Rappels</a>
+  <a href="#s2">Données</a>
+  <a href="#q1">Q1</a>
+  <a href="#q2">Q2</a>
+  <a href="#q3">Q3</a>
+  <a href="#q4">Q4</a>
+  <a href="#pieges">Pièges</a>
+</nav>
+
+<div class="container-content">
+
+  <!-- EN-TÊTE -->
+  <div style="text-align:center; padding: 2rem 0 1rem;">
+    <div style="font-family:'JetBrains Mono',monospace; font-size:.8rem; color:var(--text-muted); margin-bottom:.5rem;">
+      BAC NSI 2026 — Sujet n°18 — Partie pratique
+    </div>
+    <h1>Températures en Polynésie<br>
+      <span style="font-size:1.1rem; color:var(--accent); font-family:'Source Serif 4',serif; font-style:italic; font-weight:300;">Fiche de révision guidée</span>
+    </h1>
+    <div style="font-family:'JetBrains Mono',monospace; font-size:.8rem; color:var(--text-muted); margin-top:.5rem;">
+      Terminale NSI &nbsp;·&nbsp; Traitement de données &nbsp;·&nbsp; Listes de dictionnaires &nbsp;·&nbsp; Débogage &nbsp;·&nbsp; Division entière
+    </div>
+  </div>
+
+  <hr class="sep">
+
+  <!-- SOMMAIRE -->
+  <section id="s0">
+    <div id="sommaire" class="encadre">
+      <span class="encadre-prefix">Sommaire</span>
+      <ol>
+        <li><a href="#s1">Rappels – listes de dictionnaires, valeur absolue, division entière</a></li>
+        <li><a href="#s2">Les données du sujet – les quatre archipels</a></li>
+        <li><a href="#q1">Question 1 – Écrire <code>temperature_moyenne</code></a></li>
+        <li><a href="#q2">Question 2 – Écrire <code>detecter_anomalies</code></a></li>
+        <li><a href="#q3">Question 3 – Écrire les trois fonctions de test</a></li>
+        <li><a href="#q4">Question 4 – Identifier et corriger le bug</a></li>
+        <li><a href="#pieges">Pièges fréquents &amp; astuces de vérification</a></li>
+      </ol>
+    </div>
+  </section>
+
+  <hr class="sep">
+
+  <!-- SECTION 1 : RAPPELS -->
+  <section id="s1">
+    <h2>1 — Rappels : outils Python du sujet</h2>
+
+    <h3>Listes de dictionnaires — filtrer et accumuler</h3>
+    <p>
+      Chaque relevé de température est un dictionnaire. La liste entière est un tableau
+      de mesures. Pour ne travailler que sur une zone, on filtre d'abord.
+    </p>
+
+    <div class="encadre-conseil">
+      <span class="encadre-prefix">Patron universel – filtrer puis calculer</span>
+      <pre style="margin:0"><code># Étape 1 : garder uniquement les relevés de la zone voulue
+releves_zone = [r for r in donnees if r['zone'] == zone]
+
+# Étape 2 : vérifier qu'il y a des données
+if not releves_zone:          # liste vide → renvoyer None ou {}
+    return None
+
+# Étape 3 : extraire les températures et calculer
+temperatures = [r['temperature'] for r in releves_zone]
+moyenne = sum(temperatures) / len(temperatures)</code></pre>
+    </div>
+
+    <h3>Valeur absolue — abs()</h3>
+    <div class="encadre">
+      <span class="encadre-prefix">Rappel – abs() en Python</span>
+      <pre style="margin:0"><code>abs(3.0)    # → 3.0
+abs(-3.0)   # → 3.0
+abs(0)      # → 0
+
+# Écart entre une valeur et une moyenne :
+ecart = abs(temperature - moyenne)
+# Anomalie si l'écart dépasse le seuil :
+if ecart > seuil:
+    anomalies.append(date)</code></pre>
+    </div>
+
+    <h3>Division entière — // et calcul de décennie</h3>
+    <p>
+      L'opérateur <code>//</code> (division entière) supprime la partie décimale.
+      Pour obtenir la décennie d'une année, il faut diviser par 10 <em>puis</em>
+      multiplier par 10 — deux opérations, pas une seule.
+    </p>
+
+    <div class="encadre-conseil">
+      <span class="encadre-prefix">Exemple — calculer la décennie correctement</span>
+      <table class="table-gen" style="width:auto">
+        <tr><th>Année</th><th><code>annee // 10</code> seul</th><th>Résultat (faux)</th><th><code>(annee // 10) * 10</code></th><th>Résultat (juste)</th></tr>
+        <tr><td>2010</td><td>201</td><td class="bug">201 ❌</td><td>201 × 10</td><td class="ok">2010 ✓</td></tr>
+        <tr><td>2015</td><td>201</td><td class="bug">201 ❌</td><td>201 × 10</td><td class="ok">2010 ✓</td></tr>
+        <tr><td>2019</td><td>201</td><td class="bug">201 ❌</td><td>201 × 10</td><td class="ok">2010 ✓</td></tr>
+        <tr><td>2020</td><td>202</td><td class="bug">202 ❌</td><td>202 × 10</td><td class="ok">2020 ✓</td></tr>
+        <tr><td>2023</td><td>202</td><td class="bug">202 ❌</td><td>202 × 10</td><td class="ok">2020 ✓</td></tr>
+      </table>
+      <p style="margin-top:.6rem; margin-bottom:0">
+        Le bug du sujet : oublier le <code>* 10</code> final. Les clés du dictionnaire
+        valent alors <code>201</code> et <code>202</code> au lieu de <code>2010</code> et <code>2020</code>.
+      </p>
+    </div>
+
+    <h3>Extraire l'année d'une date "AAAA-MM-JJ"</h3>
+    <div class="encadre">
+      <span class="encadre-prefix">Méthode split()</span>
+      <pre style="margin:0"><code>date = "2020-08-22"
+parties = date.split('-')    # → ['2020', '08', '22']
+annee = int(parties[0])      # → 2020   (int obligatoire !)
+mois  = int(parties[1])      # → 8
+jour  = int(parties[2])      # → 22
+
+# En une ligne :
+annee = int(date.split('-')[0])</code></pre>
+    </div>
+  </section>
+
+  <hr class="sep">
+
+  <!-- SECTION 2 : DONNÉES -->
+  <section id="s2">
+    <h2>2 — Les données du sujet</h2>
+
+    <p>
+      Le jeu de données de test couvre trois archipels (Société, Tuamotu, Marquises)
+      sur des périodes différentes. Comprendre leur répartition est indispensable
+      pour écrire des tests pertinents.
+    </p>
+
+    <div class="encadre-conseil">
+      <span class="encadre-prefix">Vue d'ensemble – donnees_test</span>
+      <table class="table-gen">
+        <tr><th>Zone</th><th>Date</th><th>Température (°C)</th><th>Décennie réelle</th></tr>
+        <tr><td rowspan="6">Société</td><td>2010-01-15</td><td>27.0</td><td>2010</td></tr>
+        <tr><td>2010-06-20</td><td>26.5</td><td>2010</td></tr>
+        <tr><td>2011-03-10</td><td>27.5</td><td>2010</td></tr>
+        <tr><td>2020-02-14</td><td>28.0</td><td>2020</td></tr>
+        <tr><td>2020-08-22</td><td>28.5</td><td>2020</td></tr>
+        <tr><td>2021-05-30</td><td>29.0</td><td>2020</td></tr>
+        <tr><td rowspan="3">Tuamotu</td><td>2015-04-10</td><td>26.8</td><td>2010</td></tr>
+        <tr><td>2020-07-15</td><td>27.5</td><td>2020</td></tr>
+        <tr><td>2021-09-20</td><td>28.0</td><td>2020</td></tr>
+        <tr><td rowspan="3">Marquises</td><td>2020-03-15</td><td>25.5</td><td>2020</td></tr>
+        <tr><td>2021-07-10</td><td>26.0</td><td>2020</td></tr>
+        <tr><td>2022-11-25</td><td>26.5</td><td>2020</td></tr>
+      </table>
+    </div>
+
+    <div class="encadre">
+      <span class="encadre-prefix">Valeurs calculées à connaître pour les tests</span>
+      <table class="table-gen">
+        <tr><th>Zone</th><th>Moy. globale</th><th>Moy. décennie 2010</th><th>Moy. décennie 2020</th></tr>
+        <tr><td>Société</td><td>\(\frac{27.0+26.5+27.5+28.0+28.5+29.0}{6} = 27.75\)</td><td>\(\frac{27.0+26.5+27.5}{3} = 27.0\)</td><td>\(\frac{28.0+28.5+29.0}{3} = 28.5\)</td></tr>
+        <tr><td>Tuamotu</td><td>\(\frac{26.8+27.5+28.0}{3} \approx 27.43\)</td><td>\(\frac{26.8}{1} = 26.8\)</td><td>\(\frac{27.5+28.0}{2} = 27.75\)</td></tr>
+        <tr><td>Marquises</td><td>\(\frac{25.5+26.0+26.5}{3} = 26.0\)</td><td>—</td><td>\(\frac{25.5+26.0+26.5}{3} = 26.0\)</td></tr>
+        <tr><td>Australes</td><td>None</td><td>—</td><td>—</td></tr>
+      </table>
+    </div>
+
+    <div class="encadre-conseil">
+      <span class="encadre-prefix">Anomalies Société — seuil 1.0 °C, moy = 27.75 °C</span>
+      <table class="table-gen">
+        <tr><th>Date</th><th>Temp.</th><th>Écart = |temp – 27.75|</th><th>Anomalie (écart &gt; 1.0) ?</th></tr>
+        <tr><td>2010-01-15</td><td>27.0</td><td>0.75</td><td class="normal">Non</td></tr>
+        <tr><td>2010-06-20</td><td>26.5</td><td class="anomalie">1.25 ✓</td><td class="anomalie">Oui</td></tr>
+        <tr><td>2011-03-10</td><td>27.5</td><td>0.25</td><td class="normal">Non</td></tr>
+        <tr><td>2020-02-14</td><td>28.0</td><td>0.25</td><td class="normal">Non</td></tr>
+        <tr><td>2020-08-22</td><td>28.5</td><td>0.75</td><td class="normal">Non</td></tr>
+        <tr><td>2021-05-30</td><td>29.0</td><td class="anomalie">1.25 ✓</td><td class="anomalie">Oui</td></tr>
+      </table>
+      <p style="margin-top:.5rem; margin-bottom:0">
+        <code>detecter_anomalies('Societe', 1.0, donnees_test)</code>
+        → <code>['2010-06-20', '2021-05-30']</code>
+      </p>
+    </div>
+  </section>
+
+  <hr class="sep">
+
+  <!-- QUESTION 1 -->
+  <section id="q1">
+    <h2>Question 1 — Écrire <code>temperature_moyenne</code></h2>
+
+    <div class="encadre-question">
+      <span class="encadre-prefix">Énoncé — Question 1</span>
+      <p>
+        <span class="badge-question">Q1</span>
+        Écrire <code>temperature_moyenne(zone, donnees)</code> qui renvoie la température
+        moyenne (float) de tous les relevés de la zone, ou <code>None</code> si aucun relevé
+        n'existe pour cette zone.
+      </p>
+      <pre style="margin-top:.7rem; margin-bottom:0"><code>&gt;&gt;&gt; temperature_moyenne('Societe', donnees_test)
+27.75
+&gt;&gt;&gt; temperature_moyenne('Australes', donnees_test)
+&gt;&gt;&gt;         # renvoie None</code></pre>
+    </div>
+
+    <h3>Aide méthodologique</h3>
+
+    <div class="encadre-conseil">
+      <span class="encadre-prefix">Démarche pas à pas</span>
+      <ol style="margin:0">
+        <li>Filtrer : <code>releves_zone = [r for r in donnees if r['zone'] == zone]</code></li>
+        <li>Cas limite : si <code>releves_zone</code> est vide → <code>return None</code></li>
+        <li>Extraire les températures : <code>[r['temperature'] for r in releves_zone]</code></li>
+        <li>Calculer et renvoyer <code>sum(temperatures) / len(temperatures)</code></li>
+      </ol>
+    </div>
+
+    <div style="margin:.8rem 0;">
+      <button class="btn-tp-vert" onclick="toggleIndice('ind1a', this)">▶ Indice 1 — Filtrage en compréhension</button>
+    </div>
+    <div id="ind1a" class="encadre-indice indice-bloc">
+      <span class="encadre-prefix">Indice 1</span>
+      <p style="margin:0">
+        Une liste en compréhension filtre et extrait en une seule ligne :<br>
+        <code>[r['temperature'] for r in donnees if r['zone'] == zone]</code><br>
+        Si cette liste est vide (longueur 0), c'est que la zone n'existe pas → renvoyer <code>None</code>.
+      </p>
+    </div>
+
+    <div style="margin:.8rem 0;">
+      <button class="btn-tp-vert" onclick="toggleIndice('ind1b', this)">▶ Indice 2 — Squelette complet</button>
+    </div>
+    <div id="ind1b" class="encadre-indice indice-bloc">
+      <span class="encadre-prefix">Indice 2</span>
+      <pre style="margin:0"><code>def temperature_moyenne(zone, donnees):
+    temperatures = [r['temperature'] for r in donnees if r['zone'] == zone]
+    if not temperatures:      # liste vide → zone inconnue
+        return None
+    return sum(temperatures) / len(temperatures)</code></pre>
+    </div>
+
+    <div class="encadre" style="margin-top:1.2rem;">
+      <span class="encadre-prefix">Éditeur Python — Question 1</span>
+      <script type="py-editor" env="poly">
+donnees_test = [
+    {'date': '2010-01-15', 'zone': 'Societe',   'temperature': 27.0},
+    {'date': '2010-06-20', 'zone': 'Societe',   'temperature': 26.5},
+    {'date': '2011-03-10', 'zone': 'Societe',   'temperature': 27.5},
+    {'date': '2020-02-14', 'zone': 'Societe',   'temperature': 28.0},
+    {'date': '2020-08-22', 'zone': 'Societe',   'temperature': 28.5},
+    {'date': '2021-05-30', 'zone': 'Societe',   'temperature': 29.0},
+    {'date': '2015-04-10', 'zone': 'Tuamotu',   'temperature': 26.8},
+    {'date': '2020-07-15', 'zone': 'Tuamotu',   'temperature': 27.5},
+    {'date': '2021-09-20', 'zone': 'Tuamotu',   'temperature': 28.0},
+    {'date': '2020-03-15', 'zone': 'Marquises', 'temperature': 25.5},
+    {'date': '2021-07-10', 'zone': 'Marquises', 'temperature': 26.0},
+    {'date': '2022-11-25', 'zone': 'Marquises', 'temperature': 26.5},
+]
+
+def temperature_moyenne(zone, donnees):
+    # TODO : compléter
+    pass
+
+
+def test_temperature_moyenne():
+    assert temperature_moyenne('Societe',   donnees_test) == 27.75
+    assert temperature_moyenne('Marquises', donnees_test) == 26.0
+    assert abs(temperature_moyenne('Tuamotu', donnees_test) - 27.433333) < 0.001
+    assert temperature_moyenne('Australes', donnees_test) is None
+    print("Les tests sont validés.")
+
+test_temperature_moyenne()
+      </script>
+    </div>
+
+    <div style="margin:1rem 0;">
+      <button class="btn-tp-or" onclick="toggleCorrection('corr-q1', this)">&#128274; Afficher la correction</button>
+    </div>
+    <div id="corr-q1" class="correction-bloc encadre-conseil">
+      <span class="encadre-prefix">Correction — Question 1</span>
+      <script type="py-editor" env="poly-c1">
+donnees_test = [
+    {'date': '2010-01-15', 'zone': 'Societe',   'temperature': 27.0},
+    {'date': '2010-06-20', 'zone': 'Societe',   'temperature': 26.5},
+    {'date': '2011-03-10', 'zone': 'Societe',   'temperature': 27.5},
+    {'date': '2020-02-14', 'zone': 'Societe',   'temperature': 28.0},
+    {'date': '2020-08-22', 'zone': 'Societe',   'temperature': 28.5},
+    {'date': '2021-05-30', 'zone': 'Societe',   'temperature': 29.0},
+    {'date': '2015-04-10', 'zone': 'Tuamotu',   'temperature': 26.8},
+    {'date': '2020-07-15', 'zone': 'Tuamotu',   'temperature': 27.5},
+    {'date': '2021-09-20', 'zone': 'Tuamotu',   'temperature': 28.0},
+    {'date': '2020-03-15', 'zone': 'Marquises', 'temperature': 25.5},
+    {'date': '2021-07-10', 'zone': 'Marquises', 'temperature': 26.0},
+    {'date': '2022-11-25', 'zone': 'Marquises', 'temperature': 26.5},
+]
+
+def temperature_moyenne(zone, donnees):
+    """Renvoie la moyenne des températures pour la zone, None si absente."""
+    temperatures = [r['temperature'] for r in donnees if r['zone'] == zone]
+    if not temperatures:
+        return None
+    return sum(temperatures) / len(temperatures)
+
+
+def test_temperature_moyenne():
+    assert temperature_moyenne('Societe',   donnees_test) == 27.75
+    assert temperature_moyenne('Marquises', donnees_test) == 26.0
+    assert abs(temperature_moyenne('Tuamotu', donnees_test) - 27.433333) < 0.001
+    assert temperature_moyenne('Australes', donnees_test) is None
+    print("Les tests sont validés.")
+
+test_temperature_moyenne()
+      </script>
+      <p style="margin-top:.8rem; margin-bottom:0">
+        La compréhension de liste fait d'un coup le filtrage et l'extraction.
+        <strong>Pourquoi <code>if not temperatures</code> plutôt que <code>if temperatures == []</code> ?</strong>
+        En Python, une liste vide est <em>falsy</em> : <code>not []</code> vaut <code>True</code>.
+        Les deux formes fonctionnent, mais <code>not temperatures</code> est idiomatique.
+      </p>
+    </div>
+  </section>
+
+  <hr class="sep">
+
+  <!-- QUESTION 2 -->
+  <section id="q2">
+    <h2>Question 2 — Écrire <code>detecter_anomalies</code></h2>
+
+    <div class="encadre-question">
+      <span class="encadre-prefix">Énoncé — Question 2</span>
+      <p>
+        <span class="badge-question">Q2</span>
+        Écrire <code>detecter_anomalies(zone, seuil, donnees)</code> qui renvoie la liste
+        des dates dont la température s'écarte de la moyenne de plus de <code>seuil</code>
+        degrés (en valeur absolue). Renvoyer une liste vide si la zone n'existe pas.
+      </p>
+    </div>
+
+    <h3>Aide méthodologique</h3>
+
+    <div class="encadre-conseil">
+      <span class="encadre-prefix">Démarche</span>
+      <ol style="margin:0">
+        <li>Calculer la moyenne avec <code>temperature_moyenne</code> (déjà écrite en Q1).</li>
+        <li>Si la moyenne est <code>None</code> → renvoyer <code>[]</code>.</li>
+        <li>Parcourir les relevés de la zone.</li>
+        <li>Pour chaque relevé : si <code>abs(r['temperature'] - moyenne) &gt; seuil</code>, ajouter <code>r['date']</code> à la liste résultat.</li>
+        <li>Renvoyer la liste.</li>
+      </ol>
+    </div>
+
+    <div class="encadre-conseil">
+      <span class="encadre-prefix">Exemple chiffré — Société, seuil = 1.0, moy = 27.75</span>
+      <pre style="margin:0"><code>abs(26.5 - 27.75) = 1.25 > 1.0  → anomalie  → date '2010-06-20' ajoutée
+abs(27.0 - 27.75) = 0.75 ≤ 1.0  → normale
+abs(27.5 - 27.75) = 0.25 ≤ 1.0  → normale
+abs(28.0 - 27.75) = 0.25 ≤ 1.0  → normale
+abs(28.5 - 27.75) = 0.75 ≤ 1.0  → normale
+abs(29.0 - 27.75) = 1.25 > 1.0  → anomalie  → date '2021-05-30' ajoutée</code></pre>
+      <p style="margin-top:.5rem; margin-bottom:0">
+        Résultat : <code>['2010-06-20', '2021-05-30']</code>
+      </p>
+    </div>
+
+    <div style="margin:.8rem 0;">
+      <button class="btn-tp-vert" onclick="toggleIndice('ind2a', this)">▶ Indice 1 — Réutiliser temperature_moyenne</button>
+    </div>
+    <div id="ind2a" class="encadre-indice indice-bloc">
+      <span class="encadre-prefix">Indice 1</span>
+      <p style="margin:0">
+        <code>temperature_moyenne</code> renvoie <code>None</code> pour une zone inconnue.
+        Tester ce cas en premier : <code>if moyenne is None: return []</code>.
+        Ne pas utiliser <code>if moyenne == None</code> — préférer <code>is None</code>.
+      </p>
+    </div>
+
+    <div style="margin:.8rem 0;">
+      <button class="btn-tp-vert" onclick="toggleIndice('ind2b', this)">▶ Indice 2 — Squelette complet</button>
+    </div>
+    <div id="ind2b" class="encadre-indice indice-bloc">
+      <span class="encadre-prefix">Indice 2</span>
+      <pre style="margin:0"><code>def detecter_anomalies(zone, seuil, donnees):
+    moyenne = temperature_moyenne(zone, donnees)
+    if moyenne is None:
+        return []
+    anomalies = []
+    for r in donnees:
+        if r['zone'] == zone:
+            if abs(r['temperature'] - moyenne) > seuil:
+                anomalies.append(r['date'])
+    return anomalies</code></pre>
+    </div>
+
+    <div class="encadre" style="margin-top:1.2rem;">
+      <span class="encadre-prefix">Éditeur Python — Question 2</span>
+      <script type="py-editor" env="poly">
+donnees_test = [
+    {'date': '2010-01-15', 'zone': 'Societe',   'temperature': 27.0},
+    {'date': '2010-06-20', 'zone': 'Societe',   'temperature': 26.5},
+    {'date': '2011-03-10', 'zone': 'Societe',   'temperature': 27.5},
+    {'date': '2020-02-14', 'zone': 'Societe',   'temperature': 28.0},
+    {'date': '2020-08-22', 'zone': 'Societe',   'temperature': 28.5},
+    {'date': '2021-05-30', 'zone': 'Societe',   'temperature': 29.0},
+    {'date': '2015-04-10', 'zone': 'Tuamotu',   'temperature': 26.8},
+    {'date': '2020-07-15', 'zone': 'Tuamotu',   'temperature': 27.5},
+    {'date': '2021-09-20', 'zone': 'Tuamotu',   'temperature': 28.0},
+    {'date': '2020-03-15', 'zone': 'Marquises', 'temperature': 25.5},
+    {'date': '2021-07-10', 'zone': 'Marquises', 'temperature': 26.0},
+    {'date': '2022-11-25', 'zone': 'Marquises', 'temperature': 26.5},
+]
+
+def temperature_moyenne(zone, donnees):
+    temperatures = [r['temperature'] for r in donnees if r['zone'] == zone]
+    if not temperatures:
+        return None
+    return sum(temperatures) / len(temperatures)
+
+def detecter_anomalies(zone, seuil, donnees):
+    # TODO : compléter
+    pass
+
+
+def test_detecter_anomalies():
+    # Societe, seuil 1.0 : moy=27.75 → écarts 1.25 aux deux extrêmes
+    assert detecter_anomalies('Societe', 1.0, donnees_test) == ['2010-06-20', '2021-05-30']
+    # Marquises, seuil 0.4 : moy=26.0 → écarts 0.5 aux deux extrêmes
+    assert detecter_anomalies('Marquises', 0.4, donnees_test) == ['2020-03-15', '2022-11-25']
+    # Zone inexistante → liste vide
+    assert detecter_anomalies('Australes', 1.0, donnees_test) == []
+    # Seuil très grand → aucune anomalie
+    assert detecter_anomalies('Societe', 100.0, donnees_test) == []
+    print("Les tests sont validés.")
+
+test_detecter_anomalies()
+      </script>
+    </div>
+
+    <div style="margin:1rem 0;">
+      <button class="btn-tp-or" onclick="toggleCorrection('corr-q2', this)">&#128274; Afficher la correction</button>
+    </div>
+    <div id="corr-q2" class="correction-bloc encadre-conseil">
+      <span class="encadre-prefix">Correction — Question 2</span>
+      <script type="py-editor" env="poly-c2">
+donnees_test = [
+    {'date': '2010-01-15', 'zone': 'Societe',   'temperature': 27.0},
+    {'date': '2010-06-20', 'zone': 'Societe',   'temperature': 26.5},
+    {'date': '2011-03-10', 'zone': 'Societe',   'temperature': 27.5},
+    {'date': '2020-02-14', 'zone': 'Societe',   'temperature': 28.0},
+    {'date': '2020-08-22', 'zone': 'Societe',   'temperature': 28.5},
+    {'date': '2021-05-30', 'zone': 'Societe',   'temperature': 29.0},
+    {'date': '2015-04-10', 'zone': 'Tuamotu',   'temperature': 26.8},
+    {'date': '2020-07-15', 'zone': 'Tuamotu',   'temperature': 27.5},
+    {'date': '2021-09-20', 'zone': 'Tuamotu',   'temperature': 28.0},
+    {'date': '2020-03-15', 'zone': 'Marquises', 'temperature': 25.5},
+    {'date': '2021-07-10', 'zone': 'Marquises', 'temperature': 26.0},
+    {'date': '2022-11-25', 'zone': 'Marquises', 'temperature': 26.5},
+]
+
+def temperature_moyenne(zone, donnees):
+    temperatures = [r['temperature'] for r in donnees if r['zone'] == zone]
+    if not temperatures:
+        return None
+    return sum(temperatures) / len(temperatures)
+
+def detecter_anomalies(zone, seuil, donnees):
+    moyenne = temperature_moyenne(zone, donnees)
+    if moyenne is None:
+        return []
+    anomalies = []
+    for r in donnees:
+        if r['zone'] == zone:
+            if abs(r['temperature'] - moyenne) > seuil:
+                anomalies.append(r['date'])
+    return anomalies
+
+
+def test_detecter_anomalies():
+    assert detecter_anomalies('Societe', 1.0, donnees_test) == ['2010-06-20', '2021-05-30']
+    assert detecter_anomalies('Marquises', 0.4, donnees_test) == ['2020-03-15', '2022-11-25']
+    assert detecter_anomalies('Australes', 1.0, donnees_test) == []
+    assert detecter_anomalies('Societe', 100.0, donnees_test) == []
+    print("Les tests sont validés.")
+
+test_detecter_anomalies()
+      </script>
+      <div style="margin-top:.8rem;">
+        <p>
+          <strong>Réutiliser <code>temperature_moyenne</code> :</strong> ne pas recalculer
+          la moyenne — appeler la fonction déjà écrite. C'est le principe DRY
+          (<em>Don't Repeat Yourself</em>). Si la Q1 contient une erreur, la corriger là
+          corrige aussi la Q2 automatiquement.
+        </p>
+        <p style="margin:0">
+          <strong>Ordre des relevés dans le résultat :</strong> puisqu'on parcourt
+          <code>donnees</code> dans l'ordre, les dates sont renvoyées dans l'ordre d'apparition
+          dans la liste — ce qui correspond à l'ordre chronologique si les données sont triées.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <hr class="sep">
+
+  <!-- QUESTION 3 -->
+  <section id="q3">
+    <h2>Question 3 — Écrire les trois fonctions de test</h2>
+
+    <div class="encadre-question">
+      <span class="encadre-prefix">Énoncé — Question 3</span>
+      <p>
+        <span class="badge-question">Q3</span>
+        Compléter les trois fonctions de test pour <code>evolution_par_decennie</code>.
+        Tes tests doivent permettre d'<strong>identifier le bug présent dans le code</strong>.
+      </p>
+      <ol style="margin:0">
+        <li><code>test_zone_inexistante()</code> — zone qui n'existe pas → dictionnaire vide</li>
+        <li><code>test_une_seule_decennie()</code> — zone Marquises → une seule décennie 2020</li>
+        <li><code>test_plusieurs_decennies()</code> — zone Société → décennies 2010 et 2020</li>
+      </ol>
+    </div>
+
+    <h3>Comment des tests révèlent un bug ?</h3>
+    <p>
+      Le bug change les clés du dictionnaire (<code>201</code> au lieu de <code>2010</code>).
+      Un test qui vérifie que la clé <code>2010</code> est présente dans le résultat
+      va donc échouer avec la version buguée — c'est exactement ce qu'on veut.
+    </p>
+
+    <div class="encadre-conseil">
+      <span class="encadre-prefix">Stratégie — que tester pour chaque cas ?</span>
+      <table class="table-gen">
+        <tr><th>Test</th><th>Zone</th><th>Ce qu'on vérifie</th><th>Valeur attendue</th></tr>
+        <tr><td>Test 1</td><td>Australes (inexistante)</td><td>Résultat = <code>{}</code></td><td><code>== {}</code></td></tr>
+        <tr><td>Test 2</td><td>Marquises (1 décennie)</td><td>Une seule clé : <code>2020</code></td><td><code>2020 in resultat</code> et <code>len == 1</code></td></tr>
+        <tr><td>Test 2</td><td>Marquises</td><td>Clé <code>2020</code> a la bonne valeur</td><td><code>resultat[2020] == 26.0</code></td></tr>
+        <tr><td>Test 3</td><td>Société (2 décennies)</td><td>Deux clés : <code>2010</code> et <code>2020</code></td><td><code>2010 in resultat</code> et <code>2020 in resultat</code></td></tr>
+        <tr><td>Test 3</td><td>Société</td><td>Températures moyennes correctes</td><td><code>resultat[2010] == 27.0</code>, <code>resultat[2020] == 28.5</code></td></tr>
+      </table>
+    </div>
+
+    <div class="encadre-piege">
+      <span class="encadre-prefix">Pourquoi le test 3 révèle le bug</span>
+      <p style="margin:0">
+        Avec le bug : <code>evolution_par_decennie('Societe', donnees_test)</code> renvoie
+        <code>{201: 27.0, 202: 28.5}</code>.<br>
+        Le test <code>assert 2010 in resultat</code> échoue car la clé est <code>201</code>, pas <code>2010</code>.<br>
+        Sans ce test, le bug passerait inaperçu si on ne vérifie que les valeurs (les moyennes sont correctes !)
+        — seules les clés sont fausses.
+      </p>
+    </div>
+
+    <div class="encadre" style="margin-top:1.2rem;">
+      <span class="encadre-prefix">Éditeur Python — Question 3</span>
+      <script type="py-editor" env="poly">
+donnees_test = [
+    {'date': '2010-01-15', 'zone': 'Societe',   'temperature': 27.0},
+    {'date': '2010-06-20', 'zone': 'Societe',   'temperature': 26.5},
+    {'date': '2011-03-10', 'zone': 'Societe',   'temperature': 27.5},
+    {'date': '2020-02-14', 'zone': 'Societe',   'temperature': 28.0},
+    {'date': '2020-08-22', 'zone': 'Societe',   'temperature': 28.5},
+    {'date': '2021-05-30', 'zone': 'Societe',   'temperature': 29.0},
+    {'date': '2015-04-10', 'zone': 'Tuamotu',   'temperature': 26.8},
+    {'date': '2020-07-15', 'zone': 'Tuamotu',   'temperature': 27.5},
+    {'date': '2021-09-20', 'zone': 'Tuamotu',   'temperature': 28.0},
+    {'date': '2020-03-15', 'zone': 'Marquises', 'temperature': 25.5},
+    {'date': '2021-07-10', 'zone': 'Marquises', 'temperature': 26.0},
+    {'date': '2022-11-25', 'zone': 'Marquises', 'temperature': 26.5},
+]
+
+def evolution_par_decennie(zone, donnees):
+    """VERSION BUGUÉE — à ne pas modifier pour tester."""
+    releves_zone = [r for r in donnees if r['zone'] == zone]
+    if not releves_zone: return {}
+    temperatures_par_decennie = {}
+    for releve in releves_zone:
+        annee = int(releve['date'].split('-')[0])
+        decennie = (annee // 10)   # BUG ICI
+        if decennie not in temperatures_par_decennie:
+            temperatures_par_decennie[decennie] = []
+        temperatures_par_decennie[decennie].append(releve['temperature'])
+    moyennes = {}
+    for decennie, temperatures in temperatures_par_decennie.items():
+        moyennes[decennie] = round(sum(temperatures) / len(temperatures), 2)
+    return moyennes
+
+
+def test_zone_inexistante():
+    resultat = evolution_par_decennie('Australes', donnees_test)
+    assert resultat == {}, f"Attendu {{}}, obtenu {resultat}"
+    print("Test 1 (zone inexistante) : OK")
+
+def test_une_seule_decennie():
+    # Marquises : uniquement des années 2020+
+    resultat = evolution_par_decennie('Marquises', donnees_test)
+    # TODO : vérifier qu'il y a une seule décennie, que la clé est bien 2020 (pas 202 !)
+    # et que la moyenne est 26.0
+    pass
+
+def test_plusieurs_decennies():
+    # Société : données en 2010 et 2020
+    resultat = evolution_par_decennie('Societe', donnees_test)
+    # TODO : vérifier que les clés sont 2010 et 2020 (pas 201 et 202 !)
+    # et que les moyennes sont 27.0 et 28.5
+    pass
+
+
+test_zone_inexistante()
+test_une_seule_decennie()
+test_plusieurs_decennies()
+      </script>
+    </div>
+
+    <div style="margin:1rem 0;">
+      <button class="btn-tp-or" onclick="toggleCorrection('corr-q3', this)">&#128274; Afficher la correction Q3</button>
+    </div>
+    <div id="corr-q3" class="correction-bloc encadre-conseil">
+      <span class="encadre-prefix">Correction — Question 3</span>
+      <script type="py-editor" env="poly-c3">
+donnees_test = [
+    {'date': '2010-01-15', 'zone': 'Societe',   'temperature': 27.0},
+    {'date': '2010-06-20', 'zone': 'Societe',   'temperature': 26.5},
+    {'date': '2011-03-10', 'zone': 'Societe',   'temperature': 27.5},
+    {'date': '2020-02-14', 'zone': 'Societe',   'temperature': 28.0},
+    {'date': '2020-08-22', 'zone': 'Societe',   'temperature': 28.5},
+    {'date': '2021-05-30', 'zone': 'Societe',   'temperature': 29.0},
+    {'date': '2015-04-10', 'zone': 'Tuamotu',   'temperature': 26.8},
+    {'date': '2020-07-15', 'zone': 'Tuamotu',   'temperature': 27.5},
+    {'date': '2021-09-20', 'zone': 'Tuamotu',   'temperature': 28.0},
+    {'date': '2020-03-15', 'zone': 'Marquises', 'temperature': 25.5},
+    {'date': '2021-07-10', 'zone': 'Marquises', 'temperature': 26.0},
+    {'date': '2022-11-25', 'zone': 'Marquises', 'temperature': 26.5},
+]
+
+def evolution_par_decennie(zone, donnees):
+    """VERSION BUGUÉE pour que les tests la détectent."""
+    releves_zone = [r for r in donnees if r['zone'] == zone]
+    if not releves_zone: return {}
+    temperatures_par_decennie = {}
+    for releve in releves_zone:
+        annee = int(releve['date'].split('-')[0])
+        decennie = (annee // 10)   # BUG ICI
+        if decennie not in temperatures_par_decennie:
+            temperatures_par_decennie[decennie] = []
+        temperatures_par_decennie[decennie].append(releve['temperature'])
+    moyennes = {}
+    for decennie, temperatures in temperatures_par_decennie.items():
+        moyennes[decennie] = round(sum(temperatures) / len(temperatures), 2)
+    return moyennes
+
+
+def test_zone_inexistante():
+    resultat = evolution_par_decennie('Australes', donnees_test)
+    assert resultat == {}
+    print("Test 1 (zone inexistante) : OK")
+
+def test_une_seule_decennie():
+    # Marquises : toutes les données sont en 2020+ → une seule décennie
+    # Valeur attendue : moy(25.5, 26.0, 26.5) = 26.0
+    resultat = evolution_par_decennie('Marquises', donnees_test)
+    assert len(resultat) == 1, f"Attendu 1 décennie, obtenu {len(resultat)}"
+    assert 2020 in resultat, f"Clé 2020 absente (clés présentes : {list(resultat.keys())})"
+    assert resultat[2020] == 26.0
+    print("Test 2 (une seule décennie) : OK")
+
+def test_plusieurs_decennies():
+    # Société : 2010 (3 relevés) et 2020 (3 relevés)
+    # Moy 2010 = (27.0+26.5+27.5)/3 = 27.0
+    # Moy 2020 = (28.0+28.5+29.0)/3 = 28.5
+    resultat = evolution_par_decennie('Societe', donnees_test)
+    assert len(resultat) == 2, f"Attendu 2 décennies, obtenu {len(resultat)}"
+    assert 2010 in resultat, f"Clé 2010 absente (clés présentes : {list(resultat.keys())})"
+    assert 2020 in resultat, f"Clé 2020 absente (clés présentes : {list(resultat.keys())})"
+    assert resultat[2010] == 27.0
+    assert resultat[2020] == 28.5
+    print("Test 3 (plusieurs décennies) : OK")
+
+
+test_zone_inexistante()
+test_une_seule_decennie()
+test_plusieurs_decennies()
+      </script>
+      <div style="margin-top:.8rem;">
+        <p>
+          <strong>Pourquoi les messages d'assertion sont importants :</strong>
+          écrire <code>assert 2010 in resultat, f"Clé 2020 absente (clés présentes : {list(resultat.keys())})"</code>
+          au lieu d'un simple <code>assert 2010 in resultat</code> permet de voir immédiatement
+          quelles clés ont été générées — ici <code>[201, 202]</code> — ce qui pointe directement vers le bug.
+        </p>
+        <p style="margin:0">
+          <strong>Pourquoi le test 1 ne révèle pas le bug :</strong>
+          la zone inexistante renvoie <code>{}</code> que le code soit bugué ou non.
+          C'est le test 3 qui est décisif.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <hr class="sep">
+
+  <!-- QUESTION 4 -->
+  <section id="q4">
+    <h2>Question 4 — Identifier et corriger le bug</h2>
+
+    <div class="encadre-question">
+      <span class="encadre-prefix">Énoncé — Question 4</span>
+      <p>
+        <span class="badge-question">Q4</span>
+        Après avoir identifié le bug grâce aux tests, corriger <code>evolution_par_decennie</code>.
+      </p>
+    </div>
+
+    <h3>Identification précise du bug</h3>
+
+    <div class="encadre-piege">
+      <span class="encadre-prefix">Le bug — ligne 8 de evolution_par_decennie</span>
+      <pre style="margin:0"><code># LIGNE BUGUÉE :
+decennie = (annee // 10)
+
+# Résultat pour chaque année :
+# 2010 // 10 = 201   ← devrait être 2010
+# 2015 // 10 = 201   ← devrait être 2010
+# 2020 // 10 = 202   ← devrait être 2020
+# 2023 // 10 = 202   ← devrait être 2020</code></pre>
+      <p style="margin-top:.7rem; margin-bottom:0">
+        <code>//</code> donne le <em>quotient</em> de la division par 10 — soit le nombre
+        de décennies écoulées depuis l'an 0. Pour obtenir la décennie en format année,
+        il faut <em>remettre à l'échelle</em> en multipliant par 10.
+      </p>
+    </div>
+
+    <div class="encadre-conseil">
+      <span class="encadre-prefix">Correction — une seule ligne à modifier</span>
+      <pre style="margin:0"><code># AVANT (bugué) :
+decennie = (annee // 10)
+
+# APRÈS (corrigé) :
+decennie = (annee // 10) * 10
+
+# Vérification :
+# (2010 // 10) * 10 = 201 * 10 = 2010  ✓
+# (2015 // 10) * 10 = 201 * 10 = 2010  ✓ (groupé avec 2010)
+# (2020 // 10) * 10 = 202 * 10 = 2020  ✓
+# (2023 // 10) * 10 = 202 * 10 = 2020  ✓</code></pre>
+    </div>
+
+    <div class="encadre-conseil">
+      <span class="encadre-prefix">Résultats avant/après correction — Société</span>
+      <table class="table-gen">
+        <tr><th>Version</th><th>Résultat pour 'Societe'</th><th>Clés correctes ?</th></tr>
+        <tr><td>Buguée</td><td class="bug"><code>{201: 27.0, 202: 28.5}</code></td><td class="bug">❌ 201, 202</td></tr>
+        <tr><td>Corrigée</td><td class="ok"><code>{2010: 27.0, 2020: 28.5}</code></td><td class="ok">✓ 2010, 2020</td></tr>
+      </table>
+      <p style="margin-top:.5rem; margin-bottom:0">
+        Note : les <em>valeurs</em> des moyennes sont identiques dans les deux versions —
+        seules les <em>clés</em> changent. C'est pourquoi un test qui ne vérifie que les valeurs
+        et non les clés ne détecterait pas ce bug.
+      </p>
+    </div>
+
+    <div class="encadre" style="margin-top:1.2rem;">
+      <span class="encadre-prefix">Éditeur Python — Question 4 (version corrigée)</span>
+      <script type="py-editor" env="poly">
+donnees_test = [
+    {'date': '2010-01-15', 'zone': 'Societe',   'temperature': 27.0},
+    {'date': '2010-06-20', 'zone': 'Societe',   'temperature': 26.5},
+    {'date': '2011-03-10', 'zone': 'Societe',   'temperature': 27.5},
+    {'date': '2020-02-14', 'zone': 'Societe',   'temperature': 28.0},
+    {'date': '2020-08-22', 'zone': 'Societe',   'temperature': 28.5},
+    {'date': '2021-05-30', 'zone': 'Societe',   'temperature': 29.0},
+    {'date': '2015-04-10', 'zone': 'Tuamotu',   'temperature': 26.8},
+    {'date': '2020-07-15', 'zone': 'Tuamotu',   'temperature': 27.5},
+    {'date': '2021-09-20', 'zone': 'Tuamotu',   'temperature': 28.0},
+    {'date': '2020-03-15', 'zone': 'Marquises', 'temperature': 25.5},
+    {'date': '2021-07-10', 'zone': 'Marquises', 'temperature': 26.0},
+    {'date': '2022-11-25', 'zone': 'Marquises', 'temperature': 26.5},
+]
+
+def evolution_par_decennie(zone, donnees):
+    """VERSION CORRIGÉE."""
+    releves_zone = [r for r in donnees if r['zone'] == zone]
+    if not releves_zone:
+        return {}
+    temperatures_par_decennie = {}
+    for releve in releves_zone:
+        annee = int(releve['date'].split('-')[0])
+        decennie = (annee // 10) * 10   # CORRIGÉ : * 10 ajouté
+        if decennie not in temperatures_par_decennie:
+            temperatures_par_decennie[decennie] = []
+        temperatures_par_decennie[decennie].append(releve['temperature'])
+    moyennes = {}
+    for decennie, temperatures in temperatures_par_decennie.items():
+        moyennes[decennie] = round(sum(temperatures) / len(temperatures), 2)
+    return moyennes
+
+
+def test_zone_inexistante():
+    assert evolution_par_decennie('Australes', donnees_test) == {}
+
+def test_une_seule_decennie():
+    resultat = evolution_par_decennie('Marquises', donnees_test)
+    assert len(resultat) == 1
+    assert 2020 in resultat
+    assert resultat[2020] == 26.0
+
+def test_plusieurs_decennies():
+    resultat = evolution_par_decennie('Societe', donnees_test)
+    assert len(resultat) == 2
+    assert 2010 in resultat
+    assert 2020 in resultat
+    assert resultat[2010] == 27.0
+    assert resultat[2020] == 28.5
+
+test_zone_inexistante()
+test_une_seule_decennie()
+test_plusieurs_decennies()
+print("Tous les tests sont validés.")
+      </script>
+    </div>
+
+    <div style="margin:1rem 0;">
+      <button class="btn-tp-or" onclick="toggleCorrection('corr-q4', this)">&#128274; Afficher la correction Q4</button>
+    </div>
+    <div id="corr-q4" class="correction-bloc encadre-conseil">
+      <span class="encadre-prefix">Correction — Question 4</span>
+      <p>La correction se résume à ajouter <code>* 10</code> à la ligne du calcul de la décennie :</p>
+      <pre><code># Avant (bugué) :
+decennie = (annee // 10)
+
+# Après (corrigé) :
+decennie = (annee // 10) * 10</code></pre>
+      <p>
+        <strong>Explication mathématique :</strong>
+        <code>annee // 10</code> est la division euclidienne de l'année par 10.
+        Elle donne le quotient — le nombre de décennies depuis l'an 0.
+        Pour retrouver l'année de début de la décennie, on multiplie ce quotient par 10.
+        C'est l'opération inverse : \((annee \div 10) \times 10 = \lfloor annee / 10 \rfloor \times 10\).
+      </p>
+      <p style="margin:0">
+        <strong>Propriété utile :</strong> cette formule s'applique à n'importe quelle granularité temporelle.
+        Pour arrondir au siècle : <code>(annee // 100) * 100</code>.
+        Pour arrondir à la quinzaine : <code>(valeur // 15) * 15</code>.
+      </p>
+    </div>
+  </section>
+
+  <hr class="sep">
+
+  <!-- PIÈGES FRÉQUENTS -->
+  <section id="pieges">
+    <h2>Pièges fréquents &amp; astuces de vérification</h2>
+
+    <div class="encadre-piege">
+      <span class="encadre-prefix">Piège 1 — Oublier le * 10 dans le calcul de décennie</span>
+      <p style="margin:0">
+        <code>annee // 10</code> donne le quotient (201 ou 202), pas la décennie (2010 ou 2020).
+        Le résultat ne lève pas d'erreur Python — les moyennes sont calculées, juste
+        sous des clés incorrectes. Sans tester les clés du dictionnaire, ce bug est invisible.
+      </p>
+    </div>
+
+    <div class="encadre-piege">
+      <span class="encadre-prefix">Piège 2 — Tester seulement les valeurs et pas les clés</span>
+      <p style="margin:0">
+        Le bug de ce sujet ne modifie pas les valeurs des moyennes — il ne change que les clés.
+        <code>assert resultat[201] == 27.0</code> passerait avec la version buguée !
+        Seul <code>assert 2010 in resultat</code> révèle le problème.
+        Un test efficace vérifie <em>à la fois</em> les clés et les valeurs.
+      </p>
+    </div>
+
+    <div class="encadre-piege">
+      <span class="encadre-prefix">Piège 3 — Utiliser == None au lieu de is None</span>
+      <p style="margin:0">
+        En Python, <code>is None</code> est idiomatique pour tester l'absence de valeur.
+        <code>== None</code> fonctionne aussi mais est déconseillé car il peut être trompé
+        par des objets qui redéfinissent <code>__eq__</code>. Les tests du BAC utilisent
+        souvent <code>is None</code> dans les assertions.
+      </p>
+    </div>
+
+    <div class="encadre-piege">
+      <span class="encadre-prefix">Piège 4 — Oublier int() sur le résultat de split</span>
+      <p style="margin:0">
+        <code>date.split('-')[0]</code> renvoie la chaîne <code>"2020"</code>, pas l'entier <code>2020</code>.
+        Sans <code>int(...)</code>, la division entière <code>// 10</code> lève une <code>TypeError</code>.
+        Toujours convertir : <code>annee = int(date.split('-')[0])</code>.
+      </p>
+    </div>
+
+    <div class="encadre-piege">
+      <span class="encadre-prefix">Piège 5 — Comparer des flottants avec ==</span>
+      <p style="margin:0">
+        <code>assert temperature_moyenne('Tuamotu', donnees_test) == 27.43</code> peut échouer
+        à cause des erreurs d'arrondi flottant.
+        Pour les moyennes non-entières, préférer :
+        <code>assert abs(resultat - 27.433) &lt; 0.001</code>.
+        En revanche, <code>27.0</code>, <code>28.5</code>, <code>26.0</code> sont des sommes
+        de nombres avec des représentations binaires exactes — on peut les comparer avec <code>==</code>.
+      </p>
+    </div>
+
+    <!-- Astuces -->
+    <div class="encadre-conseil" style="margin-top:1.5rem;">
+      <span class="encadre-prefix">Astuces de vérification</span>
+      <ul style="margin:0">
+        <li>
+          <strong>Vérifier les clés ET les valeurs :</strong> pour un dictionnaire de résultats,
+          toujours tester <code>assert clé in resultat</code> <em>avant</em>
+          <code>assert resultat[clé] == valeur_attendue</code> — sinon un <code>KeyError</code>
+          masque le vrai problème.
+        </li>
+        <li>
+          <strong>Test de non-régression :</strong> après correction, relancer tous les tests
+          (Q3 + Q4) pour s'assurer que la correction ne casse rien.
+        </li>
+        <li>
+          <strong>Invariant de taille :</strong>
+          <code>len(detecter_anomalies(zone, seuil_tres_grand, donnees)) == 0</code>
+          doit toujours valoir 0 (un seuil infini détecte zéro anomalie).
+        </li>
+        <li>
+          <strong>Invariant symétrique :</strong>
+          <code>detecter_anomalies(zone, 0.0, donnees)</code>
+          doit renvoyer toutes les dates de la zone (écart &gt; 0 est toujours vrai sauf si la valeur
+          est exactement la moyenne).
+        </li>
+      </ul>
+    </div>
+
+    <!-- Mini-exercices -->
+    <h3>Mini-exercices de vérification</h3>
+
+    <div class="encadre">
+      <span class="encadre-prefix">Mini-exercice A — Calcul mental de décennie</span>
+      <p>Pour chaque année, calculer la décennie avec la formule correcte <code>(annee // 10) * 10</code> :</p>
+      <ol>
+        <li>1999</li>
+        <li>2000</li>
+        <li>2009</li>
+        <li>2024</li>
+      </ol>
+      <button class="btn-secondaire" onclick="toggleCorrection('corr-mini-a', this)">Vérifier</button>
+      <div id="corr-mini-a" class="correction-bloc" style="margin-top:.7rem;">
+        <ol>
+          <li><code>(1999 // 10) * 10 = 199 * 10 = 1990</code></li>
+          <li><code>(2000 // 10) * 10 = 200 * 10 = 2000</code></li>
+          <li><code>(2009 // 10) * 10 = 200 * 10 = 2000</code> — groupé avec 2000 !</li>
+          <li><code>(2024 // 10) * 10 = 202 * 10 = 2020</code></li>
+        </ol>
+      </div>
+    </div>
+
+    <div class="encadre">
+      <span class="encadre-prefix">Mini-exercice B — Anomalies Tuamotu</span>
+      <p>
+        Calculer <code>detecter_anomalies('Tuamotu', 0.5, donnees_test)</code> à la main.
+        La moyenne de Tuamotu est \(\frac{26.8 + 27.5 + 28.0}{3} \approx 27.43\) °C.
+      </p>
+      <button class="btn-secondaire" onclick="toggleCorrection('corr-mini-b', this)">Vérifier</button>
+      <div id="corr-mini-b" class="correction-bloc" style="margin-top:.7rem;">
+        <ul style="margin:0">
+          <li><code>|26.8 – 27.43| ≈ 0.63 > 0.5</code> → anomalie → <code>'2015-04-10'</code></li>
+          <li><code>|27.5 – 27.43| ≈ 0.07 ≤ 0.5</code> → normale</li>
+          <li><code>|28.0 – 27.43| ≈ 0.57 > 0.5</code> → anomalie → <code>'2021-09-20'</code></li>
+        </ul>
+        <p style="margin-top:.4rem; margin-bottom:0">Résultat : <code>['2015-04-10', '2021-09-20']</code></p>
+      </div>
+    </div>
+  </section>
+
+  <hr class="sep">
+
+  <!-- RÉCAPITULATIF -->
+  <div class="encadre" style="margin-top:2rem;">
+    <span class="encadre-prefix">Récapitulatif — Ce que tu dois retenir</span>
+    <ul style="margin:0">
+      <li>Filtrer une liste de dictionnaires : <code>[r for r in donnees if r['zone'] == zone]</code></li>
+      <li>Renvoyer <code>None</code> (pas 0) quand la zone est absente — vérifier avec <code>is None</code></li>
+      <li>Valeur absolue : <code>abs(temperature - moyenne)</code>, condition d'anomalie : <code>&gt; seuil</code></li>
+      <li>Extraire l'année : <code>int(date.split('-')[0])</code> — le <code>int()</code> est obligatoire</li>
+      <li>Calcul de décennie correct : <code>(annee // 10) * 10</code> — ne pas oublier <code>* 10</code></li>
+      <li>Bug de ce sujet : <code>annee // 10</code> seul → clés <code>201</code>/<code>202</code> au lieu de <code>2010</code>/<code>2020</code></li>
+      <li>Révéler le bug : tester que les clés du dictionnaire valent bien <code>2010</code> et <code>2020</code></li>
+      <li>Comparer des flottants : éviter <code>==</code> pour les résultats non-entiers → utiliser <code>abs(a-b) &lt; ε</code></li>
+    </ul>
+  </div>
+
+</div><!-- /container-content -->
+
+<footer>
+  Lycée Antoine Watteau — DarkSATHI Li
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+  var btnTop = document.getElementById('btn-top');
+  window.addEventListener('scroll', function () {
+    btnTop.style.display = window.scrollY > 300 ? 'flex' : 'none';
+  });
+  btnTop.addEventListener('click', function () {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  });
+
+  function toggleIndice(id, btn) {
+    var el = document.getElementById(id);
+    if (!el) return;
+    el.classList.toggle('visible');
+    btn.textContent = el.classList.contains('visible')
+      ? btn.textContent.replace('▶', '▼')
+      : btn.textContent.replace('▼', '▶');
+  }
+
+  function toggleCorrection(id, btn) {
+    var el = document.getElementById(id);
+    if (!el) return;
+    el.classList.toggle('visible');
+    if (el.classList.contains('visible')) {
+      btn.textContent = btn.textContent.replace('Afficher', 'Masquer').replace('Vérifier', 'Masquer');
+    } else {
+      btn.textContent = btn.textContent.replace('Masquer', 'Afficher');
+    }
+  }
+</script>
+</body>
+</html>

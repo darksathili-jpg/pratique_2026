@@ -1,0 +1,998 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Fiche – Warming Stripes | NSI Terminale | BAC 2026 Sujet 16</title>
+
+  <!-- Bootstrap 5.3.3 -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Rubik+Dirt&family=Source+Serif+4:ital,opsz,wght@0,8..60,300..900;1,8..60,300..900&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+
+  <!-- MathJax v3 -->
+  <script>
+    MathJax = {
+      tex: { inlineMath: [['\\(', '\\)'], ['$', '$']] },
+      options: { skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre'] }
+    };
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js" async></script>
+
+  <!-- PyScript 2026.3.1 -->
+  <script type="module" src="https://pyscript.net/releases/2026.3.1/core.js"></script>
+
+  <style>
+    :root {
+      --bg-main:    #f8f9fb;
+      --bg-panel:   #eef1f5;
+      --accent:     #2a6496;
+      --accent-or:  #b5610a;
+      --accent-vert:#2e7d32;
+      --accent-rouge:#c0392b;
+      --text-main:  #1a1a1a;
+      --text-muted: #5a6470;
+      --border-radius: 8px;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      background-color: var(--bg-main);
+      color: var(--text-main);
+      font-family: 'Source Serif 4', Georgia, serif;
+      font-size: 1.1rem;
+      line-height: 1.8;
+      margin: 0;
+      padding-bottom: 4rem;
+    }
+
+    h1, h2, h3, h4 {
+      font-family: 'Rubik Dirt', cursive;
+      color: var(--accent);
+      letter-spacing: 0.02em;
+    }
+
+    h1 { font-size: 2.2rem; color: #111; }
+    h2 { font-size: 1.55rem; border-bottom: 2px solid var(--accent); padding-bottom: .3rem; margin-top: 2.5rem; }
+    h3 { font-size: 1.25rem; color: var(--accent-or); margin-top: 1.8rem; }
+    h4 { font-size: 1.05rem; color: var(--accent-vert); }
+
+    p { margin-bottom: 1rem; }
+
+    code, pre, .mono { font-family: 'JetBrains Mono', monospace; font-size: 0.9em; }
+    code { background: #e8edf2; padding: 2px 6px; border-radius: 4px; color: #8b3a00; }
+    pre {
+      background: #f0f3f7;
+      border-left: 3px solid var(--accent);
+      padding: 1rem 1.2rem;
+      border-radius: var(--border-radius);
+      overflow-x: auto;
+      color: #1a1a1a;
+    }
+
+    a { color: var(--accent); text-decoration: underline dotted; }
+    a:hover { color: var(--accent-or); }
+
+    /* ── NAVIGATION ── */
+    #navbar {
+      position: sticky; top: 0; z-index: 1000;
+      background: #2a6496; border-bottom: 2px solid #1a4a70;
+      padding: .5rem 1.5rem;
+      display: flex; gap: .5rem; flex-wrap: wrap; align-items: center;
+    }
+    #navbar span { font-family: 'JetBrains Mono', monospace; font-size: .8rem; color: #ccddf0; margin-right: auto; }
+    #navbar a {
+      font-family: 'JetBrains Mono', monospace; font-size: .8rem; color: #fff;
+      text-decoration: none; padding: .25rem .7rem;
+      border: 1px solid #ccddf0; border-radius: 4px; transition: background .2s;
+    }
+    #navbar a:hover { background: #1a4a70; }
+
+    .container-content { max-width: 860px; margin: 0 auto; padding: 2rem 1.5rem; }
+
+    /* ── ENCADRÉS ── */
+    .encadre, .encadre-conseil, .encadre-indice, .encadre-question {
+      background: #ffffff; border-radius: var(--border-radius);
+      padding: 1.1rem 1.4rem; margin: 1.4rem 0;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+    }
+    .encadre          { border-left: 4px solid var(--accent); }
+    .encadre-conseil  { border-left: 4px solid var(--accent-or); background: #fff8f0; }
+    .encadre-indice   { border-left: 4px solid var(--accent-vert); background: #f0faf0; }
+    .encadre-question { border-left: 4px solid #7b3fa8; background: #faf5ff; }
+
+    .encadre-prefix {
+      font-family: 'JetBrains Mono', monospace; font-size: .72rem;
+      font-variant: small-caps; letter-spacing: .12em; text-transform: uppercase;
+      margin-bottom: .4rem; display: block;
+    }
+    .encadre          .encadre-prefix { color: var(--accent); }
+    .encadre-conseil  .encadre-prefix { color: var(--accent-or); }
+    .encadre-indice   .encadre-prefix { color: var(--accent-vert); }
+    .encadre-question .encadre-prefix { color: #7b3fa8; }
+
+    /* ── BOUTONS ── */
+    .btn-tp, .btn-tp-or, .btn-tp-vert, .btn-secondaire {
+      font-family: 'JetBrains Mono', monospace; font-size: .82rem;
+      border: none; border-radius: 5px; padding: .45rem 1.1rem;
+      cursor: pointer; transition: opacity .2s, transform .1s; margin: .3rem .2rem;
+    }
+    .btn-tp         { background: var(--accent);      color: #fff; }
+    .btn-tp-or      { background: var(--accent-or);   color: #fff; }
+    .btn-tp-vert    { background: var(--accent-vert); color: #fff; }
+    .btn-secondaire { background: #eef1f5; border: 1px solid var(--accent); color: var(--text-main); }
+    .btn-tp:hover, .btn-tp-or:hover, .btn-tp-vert:hover, .btn-secondaire:hover { opacity: .85; transform: translateY(-1px); }
+
+    .badge-question {
+      display: inline-block; font-family: 'JetBrains Mono', monospace; font-size: .8rem;
+      background: #7b3fa8; color: #fff; border-radius: 4px;
+      padding: .15rem .7rem; margin-right: .5rem; vertical-align: middle;
+    }
+
+    .indice-bloc     { display: none; }
+    .indice-bloc.visible { display: block; }
+    .correction-bloc { display: none; }
+    .correction-bloc.visible { display: block; }
+
+    .encadre-piege {
+      background: #fff5f5; border-left: 4px solid var(--accent-rouge);
+      border-radius: var(--border-radius); padding: 1rem 1.4rem;
+      margin: 1.2rem 0; box-shadow: 0 1px 4px rgba(0,0,0,0.07);
+    }
+    .encadre-piege .encadre-prefix {
+      color: var(--accent-rouge); font-family: 'JetBrains Mono', monospace;
+      font-size: .72rem; font-variant: small-caps; letter-spacing: .12em;
+      display: block; margin-bottom: .3rem;
+    }
+
+    /* ── SOMMAIRE ── */
+    #sommaire ol { font-family: 'JetBrains Mono', monospace; font-size: .88rem; line-height: 2.2; }
+    #sommaire a { color: var(--accent); }
+    #sommaire a:hover { color: var(--accent-or); }
+
+    .sep { border: none; border-top: 1px dashed #9ab0c8; margin: 2.5rem 0; opacity: .7; }
+
+    py-editor { display: block; min-height: 100px; }
+
+    /* ── TABLE ── */
+    .table-data {
+      border-collapse: collapse; margin: 1rem auto;
+      font-family: 'JetBrains Mono', monospace; font-size: .82rem; width: 100%;
+    }
+    .table-data th, .table-data td { border: 1px solid #b0c4d8; padding: .3rem .6rem; text-align: center; }
+    .table-data th { background: #dce8f2; color: var(--accent); font-weight: 600; }
+    .table-data tr.positif  { background: #fff0ee; }
+    .table-data tr.negatif  { background: #eef4ff; }
+    .table-data tr:nth-child(even):not(.positif):not(.negatif) { background: #f4f7fb; }
+
+    /* ── WARMING STRIPES DECO ── */
+    .stripes-deco {
+      height: 48px;
+      border-radius: var(--border-radius);
+      background: linear-gradient(to right,
+        #2166ac, #2166ac, #4393c3, #4393c3, #4393c3, #92c5de, #92c5de,
+        #d1e5f0, #d1e5f0, #fddbc7, #fddbc7, #f4a582, #f4a582,
+        #d6604d, #d6604d, #b2182b, #b2182b, #67001f);
+      margin: 1rem 0;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+    }
+
+    /* ── RETOUR EN HAUT ── */
+    #btn-top {
+      position: fixed; bottom: 1.5rem; right: 1.5rem; z-index: 999;
+      background: var(--accent); color: #fff; border: none; border-radius: 50%;
+      width: 44px; height: 44px; font-size: 1.2rem; cursor: pointer;
+      display: none; align-items: center; justify-content: center;
+      font-family: 'JetBrains Mono', monospace;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.25); transition: opacity .2s;
+    }
+    #btn-top:hover { opacity: .8; }
+
+    footer {
+      text-align: center; font-family: 'JetBrains Mono', monospace;
+      font-size: .8rem; color: var(--text-muted);
+      padding: 2rem 1rem 1rem; border-top: 1px solid #d0d8e4;
+    }
+
+    .bug-line { background: #fff0ee; border-left: 3px solid var(--accent-rouge); }
+    .ok-line   { background: #f0faf0; border-left: 3px solid var(--accent-vert); }
+
+    .annee-pill {
+      display: inline-block; font-family: 'JetBrains Mono', monospace;
+      font-size: .75rem; padding: .1rem .5rem; border-radius: 20px;
+      background: #e8f4ff; border: 1px solid #7bb3d8; color: #1a4a70;
+    }
+  </style>
+</head>
+<body>
+
+<div id="pyinit" style="display:none">
+  <script type="py" env="stripes">
+pass
+  </script>
+</div>
+
+<button id="btn-top" title="Retour en haut" aria-label="Retour en haut">▲</button>
+
+<!-- NAVIGATION -->
+<nav id="navbar">
+  <span>NSI Terminale – Sujet 16 – Warming Stripes</span>
+  <a href="#s0">Intro</a>
+  <a href="#s1">Rappels</a>
+  <a href="#s2">Données</a>
+  <a href="#q1">Q1</a>
+  <a href="#q2">Q2</a>
+  <a href="#q3">Q3</a>
+  <a href="#q4">Q4</a>
+  <a href="#pieges">Pièges</a>
+</nav>
+
+<div class="container-content">
+
+  <!-- EN-TÊTE -->
+  <div style="text-align:center; padding: 2rem 0 1rem;">
+    <div style="font-family:'JetBrains Mono',monospace; font-size:.8rem; color:var(--text-muted); margin-bottom:.5rem;">
+      BAC NSI 2026 — Sujet n°16 — Partie pratique
+    </div>
+    <h1>Warming Stripes — Réchauffement climatique<br>
+      <span style="font-size:1.1rem; color:var(--accent); font-family:'Source Serif 4',serif; font-style:italic; font-weight:300;">
+        CSV, recherche, debug, régression linéaire, visualisation — Fiche de révision guidée
+      </span>
+    </h1>
+    <div style="font-family:'JetBrains Mono',monospace; font-size:.8rem; color:var(--text-muted); margin-top:.5rem;">
+      Terminale NSI &nbsp;·&nbsp; Traitement de données &nbsp;·&nbsp; Matplotlib &nbsp;·&nbsp; Algorithmique
+    </div>
+    <!-- Warming stripes décoratifs -->
+    <div class="stripes-deco" title="Représentation symbolique des warming stripes (1851–2025)"></div>
+    <div style="font-family:'JetBrains Mono',monospace; font-size:.68rem; color:var(--text-muted);">
+      ← plus froid &nbsp;&nbsp;&nbsp; 1851 ——————————— 2025 &nbsp;&nbsp;&nbsp; plus chaud →
+    </div>
+  </div>
+
+  <hr class="sep">
+
+  <!-- SOMMAIRE -->
+  <section id="s0">
+    <div id="sommaire" class="encadre">
+      <span class="encadre-prefix">Sommaire</span>
+      <ol>
+        <li><a href="#s1">Rappels – dictionnaires, CSV, recherche dans une liste</a></li>
+        <li><a href="#s2">Le jeu de données – <code>datas.csv</code></a></li>
+        <li><a href="#q1">Question 1 – Écrire <code>ecart_temperature</code> et ses tests</a></li>
+        <li><a href="#q2">Question 2 – Utiliser <code>derniere_annee_ecart_negatif</code></a></li>
+        <li><a href="#q3">Question 3 – Identifier et corriger le bug de <code>moyenne_ecarts</code></a></li>
+        <li><a href="#q4">Question 4 – Compléter <code>graphique</code> — les listes <code>annees</code> et <code>ordonnees</code></a></li>
+        <li><a href="#pieges">Pièges fréquents &amp; astuces de vérification</a></li>
+      </ol>
+    </div>
+  </section>
+
+  <hr class="sep">
+
+  <!-- SECTION 1 : RAPPELS -->
+  <section id="s1">
+    <h2>1 — Rappels essentiels</h2>
+
+    <h3>Rechercher dans une liste de dictionnaires</h3>
+
+    <p>
+      Dans ce sujet, chaque donnée est un dictionnaire avec deux clés :
+      <code>'année'</code> (entier) et <code>'écart'</code> (flottant).
+      Pour trouver la valeur associée à une année précise, on parcourt la liste et on
+      teste chaque dictionnaire :
+    </p>
+
+    <pre>donnees = [{"année": 2020, "écart": 1.01}, {"année": 2021, "écart": 0.99}]
+
+def chercher(donnees, annee_cible):
+    for dico in donnees:
+        if dico["année"] == annee_cible:
+            return dico["écart"]   # trouvé !
+    return None                    # pas dans la liste</pre>
+
+    <div class="encadre-conseil">
+      <span class="encadre-prefix">La valeur sentinelle None</span>
+      <p style="margin:0">
+        Quand une fonction peut ne pas trouver ce qu'elle cherche, la convention Python est de
+        retourner <code>None</code>. C'est une valeur spéciale qui signifie « rien ». On la teste
+        avec <code>if resultat is None:</code> ou <code>if resultat is not None:</code>.
+      </p>
+    </div>
+
+    <h3>Construire une liste par compréhension</h3>
+
+    <pre># Extraire toutes les années d'une liste de dicos
+annees = [dico["année"] for dico in donnees]
+
+# Extraire toutes les valeurs positives uniquement
+positives = [dico["écart"] for dico in donnees if dico["écart"] > 0]</pre>
+
+    <h3>La régression linéaire — intuition sans maths</h3>
+
+    <p>
+      La fonction <code>prevision</code> trouve la droite qui « colle le mieux » aux
+      n dernières années de données, puis lit sur cette droite la valeur prévue pour
+      une année future. Tu n'as pas à réécrire cette fonction — seulement à corriger
+      <code>moyenne_ecarts</code> dont elle dépend.
+    </p>
+
+    <div class="encadre">
+      <span class="encadre-prefix">Définition – écart de température (anomalie)</span>
+      <p style="margin:0">
+        L'<strong>écart de température</strong> (ou anomalie) d'une année est la différence entre
+        la température moyenne mondiale de cette année et la température de référence
+        (moyenne 1901–2000). Un écart <strong>positif</strong> = plus chaud que la référence
+        (bande rouge). Un écart <strong>négatif</strong> = plus froid (bande bleue).
+      </p>
+    </div>
+  </section>
+
+  <hr class="sep">
+
+  <!-- SECTION 2 : DONNÉES -->
+  <section id="s2">
+    <h2>2 — Le jeu de données <code>datas.csv</code></h2>
+
+    <p>
+      Fichier issu de la NOAA (agence américaine). Deux colonnes séparées par une virgule :
+      <code>Year</code> (année) et <code>Anomaly</code> (écart en °C par rapport à la moyenne 1901–2000).
+      Couverture : <strong>1851 à 2025</strong>, soit <strong>175 relevés</strong>.
+    </p>
+
+    <p>
+      La fonction <code>charger</code> fournie lit ce fichier et produit une liste de dictionnaires
+      avec les clés <code>'année'</code> (int) et <code>'écart'</code> (float) — attention aux accents
+      dans les noms de clés, c'est voulu dans le code fourni.
+    </p>
+
+    <table class="table-data">
+      <tr><th>Year (CSV)</th><th>Anomaly (CSV)</th><th>Clé 'année' (int)</th><th>Clé 'écart' (float)</th><th>Interprétation</th></tr>
+      <tr class="negatif"><td>1851</td><td>-0.15</td><td>1851</td><td>-0.15</td><td>🔵 Plus froid</td></tr>
+      <tr class="negatif"><td>1977</td><td>-0.03</td><td>1977</td><td>-0.03</td><td>🔵 Légèrement froid</td></tr>
+      <tr><td>1938</td><td>0</td><td>1938</td><td>0.0</td><td>⚪ Neutre</td></tr>
+      <tr class="positif"><td>1878</td><td>0.14</td><td>1878</td><td>0.14</td><td>🔴 Légèrement chaud</td></tr>
+      <tr class="positif"><td>2020</td><td>1.01</td><td>2020</td><td>1.01</td><td>🔴 +1,01°C</td></tr>
+      <tr class="positif"><td>2025</td><td>1.29</td><td>2025</td><td>1.29</td><td>🔴 Record actuel</td></tr>
+    </table>
+
+    <div class="encadre">
+      <span class="encadre-prefix">Résultats clés à retenir</span>
+      <p>175 relevés (1851–2025). Dernière année à écart négatif : <strong>1977</strong> (−0,03 °C).
+      Prévision 2040 après correction : <strong>≈ +1,57 °C</strong>.</p>
+    </div>
+  </section>
+
+  <hr class="sep">
+
+  <!-- QUESTION 1 -->
+  <section id="q1">
+    <h2>3 — <span class="badge-question">Q1</span> Écrire <code>ecart_temperature</code> et ses tests</h2>
+
+    <div class="encadre-question">
+      <span class="encadre-prefix">Énoncé de la question 1</span>
+      <p>
+        Écrire la fonction <code>ecart_temperature(datas, annee)</code> qui prend en paramètres
+        la liste des données et une année cible. Elle doit renvoyer l'écart de température
+        correspondant à cette année, ou <code>None</code> si l'année n'est pas présente dans les données.
+      </p>
+      <p style="margin:0">
+        Rédiger ensuite un jeu de tests (via des assertions) permettant de vérifier le bon
+        fonctionnement de la fonction, y compris pour une année hors du jeu de données.
+      </p>
+    </div>
+
+    <h3>Aide méthodologique</h3>
+
+    <ol>
+      <li>Parcourir la liste <code>datas</code> avec une boucle <code>for</code>.</li>
+      <li>Pour chaque <code>dico</code>, tester si <code>dico["année"] == annee</code>.</li>
+      <li>Si oui, retourner immédiatement <code>dico["écart"]</code>.</li>
+      <li>Si la boucle se termine sans avoir trouvé, retourner <code>None</code>.</li>
+    </ol>
+
+    <div class="encadre-indice">
+      <span class="encadre-prefix">Indice niveau 1 – structure</span>
+      <button class="btn-secondaire" onclick="toggleBloc('ind1a')">Afficher / masquer</button>
+      <div id="ind1a" class="indice-bloc">
+        <pre>def ecart_temperature(datas, annee):
+    for dico in datas:
+        if dico["???"] == annee:
+            return dico["???"]
+    return ???</pre>
+      </div>
+    </div>
+
+    <div class="encadre-indice">
+      <span class="encadre-prefix">Indice niveau 2 – solution complète</span>
+      <button class="btn-secondaire" onclick="toggleBloc('ind1b')">Afficher / masquer</button>
+      <div id="ind1b" class="indice-bloc">
+        <pre>def ecart_temperature(datas, annee):
+    for dico in datas:
+        if dico["année"] == annee:
+            return dico["écart"]
+    return None</pre>
+      </div>
+    </div>
+
+    <h4>Valeurs exactes attendues pour les assertions</h4>
+
+    <table class="table-data" style="width:auto; margin:0 0 1rem 0;">
+      <tr><th>Appel</th><th>Résultat attendu</th></tr>
+      <tr class="negatif"><td><code>ecart_temperature(datas, 1851)</code></td><td><code>-0.15</code></td></tr>
+      <tr class="positif"><td><code>ecart_temperature(datas, 1878)</code></td><td><code>0.14</code></td></tr>
+      <tr class="positif"><td><code>ecart_temperature(datas, 2020)</code></td><td><code>1.01</code></td></tr>
+      <tr class="positif"><td><code>ecart_temperature(datas, 2025)</code></td><td><code>1.29</code></td></tr>
+      <tr><td><code>ecart_temperature(datas, 1800)</code></td><td><code>None</code></td></tr>
+    </table>
+
+    <h3>Éditeur Python — à toi de jouer !</h3>
+
+    <script type="py-editor" env="stripes">
+# Données simulées (extraites du vrai fichier datas.csv)
+datas = [
+    {"année": 1851, "écart": -0.15},
+    {"année": 1852, "écart": -0.05},
+    {"année": 1878, "écart": 0.14},
+    {"année": 1977, "écart": -0.03},
+    {"année": 1978, "écart": 0.20},
+    {"année": 2020, "écart": 1.01},
+    {"année": 2024, "écart": 1.22},
+    {"année": 2025, "écart": 1.29},
+]
+
+def ecart_temperature(datas, annee):
+    """
+    Renvoie l'écart de température de l'année donnée,
+    ou None si l'année est absente des données.
+    """
+    pass  # REMPLACE CE PASS PAR TON CODE
+
+# ── Fonction de test ──────────────────────────────────────────────────
+def test_ecart_temperature():
+    assert ecart_temperature(datas, 1851) == -0.15
+    assert ecart_temperature(datas, 1878) == 0.14
+    assert ecart_temperature(datas, 2020) == 1.01
+    assert ecart_temperature(datas, 2025) == 1.29
+    assert ecart_temperature(datas, 1800) is None   # année absente → None
+    print("Les tests sont valides.")
+
+test_ecart_temperature()
+    </script>
+
+    <div class="encadre-conseil">
+      <span class="encadre-prefix">Correction – Question 1</span>
+      <button class="btn-tp-or" onclick="toggleBloc('corr1')">Afficher / masquer la correction</button>
+      <div id="corr1" class="correction-bloc">
+        <pre>def ecart_temperature(datas, annee):
+    for dico in datas:
+        if dico["année"] == annee:
+            return dico["écart"]
+    return None
+
+def test_ecart_temperature():
+    assert ecart_temperature(datas, 1851) == -0.15
+    assert ecart_temperature(datas, 1878) == 0.14
+    assert ecart_temperature(datas, 2020) == 1.01
+    assert ecart_temperature(datas, 2025) == 1.29
+    assert ecart_temperature(datas, 1800) is None
+    print("Les tests sont valides.")
+
+test_ecart_temperature()</pre>
+      </div>
+    </div>
+  </section>
+
+  <hr class="sep">
+
+  <!-- QUESTION 2 -->
+  <section id="q2">
+    <h2>4 — <span class="badge-question">Q2</span> Utiliser <code>derniere_annee_ecart_negatif</code></h2>
+
+    <div class="encadre-question">
+      <span class="encadre-prefix">Énoncé de la question 2</span>
+      <p style="margin:0">
+        En utilisant la fonction <code>derniere_annee_ecart_negatif</code> (déjà fournie, qui utilise
+        ta fonction <code>ecart_temperature</code>), déterminer quelle a été la dernière année
+        où la température mondiale était inférieure à la moyenne de référence.
+      </p>
+    </div>
+
+    <h3>Comprendre <code>derniere_annee_ecart_negatif</code></h3>
+
+    <p>
+      Cette fonction est déjà écrite. Voici comment elle fonctionne : elle part de
+      la dernière année du jeu de données (2025), et remonte dans le temps année par année
+      jusqu'à trouver une année avec un écart <strong>strictement négatif</strong>.
+    </p>
+
+    <pre>def derniere_annee_ecart_negatif(datas):
+    annee = max([element["année"] for element in datas])  # → 2025
+    ecart = ecart_temperature(datas, annee)
+    while ecart >= 0:               # tant que l'écart est positif ou nul
+        annee = annee - 1           # on recule d'un an
+        ecart = ecart_temperature(datas, annee)
+    return annee                    # première année avec écart < 0</pre>
+
+    <div class="encadre-conseil">
+      <span class="encadre-prefix">Résultat attendu</span>
+      <p style="margin:0">
+        L'appel <code>derniere_annee_ecart_negatif(datas_temperature)</code>
+        renvoie <strong>1977</strong> (écart = −0,03 °C).
+        Cela signifie que depuis 1978, chaque année a eu une température mondiale
+        supérieure ou égale à la moyenne de référence 1901–2000.
+      </p>
+    </div>
+
+    <h3>Éditeur Python — à toi de jouer !</h3>
+
+    <script type="py-editor" env="stripes">
+# Jeu de données simplifié centré autour de 1977–1980 pour le test
+datas_test = [
+    {"année": 1974, "écart": 0.17},
+    {"année": 1975, "écart": -0.04},
+    {"année": 1976, "écart": 0.01},
+    {"année": 1977, "écart": -0.03},
+    {"année": 1978, "écart": 0.20},
+    {"année": 1979, "écart": 0.11},
+    {"année": 1980, "écart": 0.22},
+]
+
+def ecart_temperature(datas, annee):
+    for dico in datas:
+        if dico["année"] == annee:
+            return dico["écart"]
+    return None
+
+def derniere_annee_ecart_negatif(datas):
+    annee = max([element["année"] for element in datas])
+    ecart = ecart_temperature(datas, annee)
+    while ecart >= 0:
+        annee = annee - 1
+        ecart = ecart_temperature(datas, annee)
+    return annee
+
+# Appel et affichage
+resultat = derniere_annee_ecart_negatif(datas_test)
+print(f"Dernière année à écart négatif : {resultat}")
+print(f"Écart cette année-là : {ecart_temperature(datas_test, resultat)} °C")
+
+# Sur le jeu de données complet (175 années), la réponse est 1977
+# ── Test ──────────────────────────────────────────────────────────────
+assert derniere_annee_ecart_negatif(datas_test) == 1977
+print("Test valide — réponse attendue : 1977")
+    </script>
+
+    <div class="encadre-conseil">
+      <span class="encadre-prefix">Réponse à rédiger pour l'examinateur</span>
+      <button class="btn-tp-or" onclick="toggleBloc('corr2')">Afficher / masquer</button>
+      <div id="corr2" class="correction-bloc">
+        <p>
+          Après avoir écrit <code>ecart_temperature</code>, on appelle :
+        </p>
+        <pre>print(derniere_annee_ecart_negatif(datas_temperature))
+# → 1977</pre>
+        <p>
+          <strong>Interprétation :</strong> La dernière année où la température mondiale
+          était inférieure à la moyenne de référence (1901–2000) est <strong>1977</strong>,
+          avec un écart de −0,03 °C. Depuis 1978, chaque année enregistre une anomalie
+          positive : le réchauffement est continu depuis presque 50 ans.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <hr class="sep">
+
+  <!-- QUESTION 3 -->
+  <section id="q3">
+    <h2>5 — <span class="badge-question">Q3</span> Identifier et corriger le bug de <code>moyenne_ecarts</code></h2>
+
+    <div class="encadre-question">
+      <span class="encadre-prefix">Énoncé de la question 3</span>
+      <p>
+        En exécutant <code>prevision(datas, 2040, 20)</code>, le résultat obtenu semble absurde
+        compte tenu du réchauffement actuel. Cette absurdité provient d'une erreur de logique
+        dans la fonction <code>moyenne_ecarts</code>. Analyser le code, identifier l'erreur,
+        et la corriger. Que devient alors la prévision pour 2040 ?
+      </p>
+    </div>
+
+    <h3>Le code bugué fourni</h3>
+
+    <pre>def moyenne_ecarts(annee_debut, annee_fin, datas):
+    somme = 0
+    compteur = 0
+    for dico in datas:
+        if annee_debut <= dico["année"] and dico["année"] <= annee_fin:
+            somme = somme <span style="background:#ffd6d6; padding:0 2px; border-radius:2px;">- dico["écart"]</span>   # ← BUG ICI
+            compteur += 1
+    return somme / compteur</pre>
+
+    <h3>Analyse du bug</h3>
+
+    <p>
+      Regarde attentivement la ligne de calcul de la somme : au lieu d'<strong>additionner</strong>
+      l'écart à la somme accumulée, le code le <strong>soustrait</strong>.
+    </p>
+
+    <div class="encadre-piege">
+      <span class="encadre-prefix">Bug identifié — soustraction au lieu d'addition</span>
+      <p>
+        <code>somme = somme - dico["écart"]</code> accumule <em>l'opposé</em> des valeurs.
+        Pour des données récentes toutes positives (ex. 0.88, 0.9, 1.22…), la somme devient
+        très négative, la moyenne aussi, et la régression prédit une tendance
+        <em>à la baisse</em> — absurde au vu du réchauffement.
+      </p>
+    </div>
+
+    <h4>Effet concret sur les chiffres</h4>
+
+    <table class="table-data" style="width:auto; margin:0 0 1rem 0;">
+      <tr><th>Version</th><th>Moyenne 2006–2025</th><th>Prévision 2040</th></tr>
+      <tr class="positif"><td>Buguée (<code>-</code>)</td><td>−0,836 °C (faux !)</td><td>−0,1054 °C (absurde)</td></tr>
+      <tr class="negatif"><td>Corrigée (<code>+</code>)</td><td>+0,836 °C ✓</td><td>+1,5666 °C ✓</td></tr>
+    </table>
+
+    <div class="encadre-indice">
+      <span class="encadre-prefix">Indice – la correction</span>
+      <button class="btn-secondaire" onclick="toggleBloc('ind3a')">Afficher / masquer</button>
+      <div id="ind3a" class="indice-bloc">
+        <pre># Remplacer :
+somme = somme - dico["écart"]
+
+# Par :
+somme = somme + dico["écart"]</pre>
+      </div>
+    </div>
+
+    <h3>Éditeur Python — à toi de jouer !</h3>
+
+    <script type="py-editor" env="stripes">
+# Données des 20 dernières années (2006–2025) pour tester
+datas_recentes = [
+    {"année": 2006, "écart": 0.68}, {"année": 2007, "écart": 0.68},
+    {"année": 2008, "écart": 0.59}, {"année": 2009, "écart": 0.58},
+    {"année": 2010, "écart": 0.68}, {"année": 2011, "écart": 0.72},
+    {"année": 2012, "écart": 0.61}, {"année": 2013, "écart": 0.67},
+    {"année": 2014, "écart": 0.69}, {"année": 2015, "écart": 0.76},
+    {"année": 2016, "écart": 0.95}, {"année": 2017, "écart": 1.02},
+    {"année": 2018, "écart": 0.92}, {"année": 2019, "écart": 0.88},
+    {"année": 2020, "écart": 1.01}, {"année": 2021, "écart": 0.99},
+    {"année": 2022, "écart": 0.88}, {"année": 2023, "écart": 0.90},
+    {"année": 2024, "écart": 1.22}, {"année": 2025, "écart": 1.29},
+]
+
+# ── CORRIGE LA LIGNE BUGUÉE ───────────────────────────────────────────
+def moyenne_ecarts(annee_debut, annee_fin, datas):
+    somme = 0
+    compteur = 0
+    for dico in datas:
+        if annee_debut <= dico["année"] and dico["année"] <= annee_fin:
+            somme = somme - dico["écart"]   # ← CORRIGE CETTE LIGNE
+            compteur += 1
+    return somme / compteur
+
+# ── Fonction de test ──────────────────────────────────────────────────
+def test_moyenne_ecarts():
+    # La moyenne des 20 dernières années (2006-2025) doit être positive (~0.836)
+    moy = moyenne_ecarts(2006, 2025, datas_recentes)
+    assert moy > 0, f"La moyenne doit être positive, obtenu : {moy}"
+    assert abs(moy - 0.836) < 0.001, f"Valeur attendue ~0.836, obtenu : {moy}"
+    # Test sur une plage simple
+    d = [{"année": 2000, "écart": 1.0}, {"année": 2001, "écart": 3.0}]
+    assert moyenne_ecarts(2000, 2001, d) == 2.0
+    print("Les tests sont valides.")
+
+test_moyenne_ecarts()
+    </script>
+
+    <div class="encadre-conseil">
+      <span class="encadre-prefix">Correction – Question 3</span>
+      <button class="btn-tp-or" onclick="toggleBloc('corr3')">Afficher / masquer la correction</button>
+      <div id="corr3" class="correction-bloc">
+        <p><strong>Ligne buguée :</strong></p>
+        <pre>somme = somme - dico["écart"]   # soustraction → moyenne négative (faux)</pre>
+        <p><strong>Ligne corrigée :</strong></p>
+        <pre>somme = somme + dico["écart"]   # addition → moyenne correcte</pre>
+        <p><strong>Vérification :</strong></p>
+        <pre>print(prevision(datas_temperature, 2040, 20))
+# → 1.5666...   (environ +1,57 °C, cohérent avec le réchauffement actuel)</pre>
+        <script type="py-editor" env="stripes">
+datas_recentes = [
+    {"année": 2006, "écart": 0.68}, {"année": 2007, "écart": 0.68},
+    {"année": 2008, "écart": 0.59}, {"année": 2009, "écart": 0.58},
+    {"année": 2010, "écart": 0.68}, {"année": 2011, "écart": 0.72},
+    {"année": 2012, "écart": 0.61}, {"année": 2013, "écart": 0.67},
+    {"année": 2014, "écart": 0.69}, {"année": 2015, "écart": 0.76},
+    {"année": 2016, "écart": 0.95}, {"année": 2017, "écart": 1.02},
+    {"année": 2018, "écart": 0.92}, {"année": 2019, "écart": 0.88},
+    {"année": 2020, "écart": 1.01}, {"année": 2021, "écart": 0.99},
+    {"année": 2022, "écart": 0.88}, {"année": 2023, "écart": 0.90},
+    {"année": 2024, "écart": 1.22}, {"année": 2025, "écart": 1.29},
+]
+
+def moyenne_ecarts(annee_debut, annee_fin, datas):
+    somme = 0; compteur = 0
+    for dico in datas:
+        if annee_debut <= dico["année"] <= annee_fin:
+            somme = somme + dico["écart"]  # CORRIGÉ
+            compteur += 1
+    return somme / compteur
+
+def test_moyenne_ecarts():
+    moy = moyenne_ecarts(2006, 2025, datas_recentes)
+    assert moy > 0, f"Doit être positif, obtenu {moy}"
+    assert abs(moy - 0.836) < 0.001
+    d = [{"année": 2000, "écart": 1.0}, {"année": 2001, "écart": 3.0}]
+    assert moyenne_ecarts(2000, 2001, d) == 2.0
+    print("Les tests sont valides.")
+
+test_moyenne_ecarts()
+        </script>
+      </div>
+    </div>
+  </section>
+
+  <hr class="sep">
+
+  <!-- QUESTION 4 -->
+  <section id="q4">
+    <h2>6 — <span class="badge-question">Q4</span> Compléter <code>graphique</code> — les listes <code>annees</code> et <code>ordonnees</code></h2>
+
+    <div class="encadre-question">
+      <span class="encadre-prefix">Énoncé de la question 4</span>
+      <p>
+        On souhaite générer la représentation graphique des warming stripes. Dans la fonction
+        <code>graphique(datas)</code>, le code pour gérer les couleurs est déjà préparé.
+        Compléter le code en générant les listes <code>annees</code> et <code>ordonnees</code>.
+      </p>
+      <p style="margin:0">
+        <strong>Indication :</strong> pour obtenir des bandes colorées de hauteur uniforme couvrant
+        tout le graphique, la liste <code>ordonnees</code> devra contenir la valeur <code>1</code>
+        pour chaque année traitée.
+      </p>
+    </div>
+
+    <h3>Comprendre la structure de <code>graphique</code></h3>
+
+    <p>
+      La fonction utilise <code>ax.bar(annees, ordonnees, ...)</code> pour dessiner
+      des barres verticales. Chaque barre correspond à une année :
+    </p>
+
+    <table class="table-data" style="width:auto; margin:0 0 1rem 0;">
+      <tr><th>Paramètre de <code>bar()</code></th><th>Rôle</th><th>Valeur attendue</th></tr>
+      <tr><td><code>annees</code></td><td>Position horizontale de chaque barre</td><td>Liste des années : [1851, 1852, …, 2025]</td></tr>
+      <tr><td><code>ordonnees</code></td><td>Hauteur de chaque barre</td><td>[1, 1, 1, …, 1] — 175 fois</td></tr>
+      <tr><td><code>color=cmap(norm(temperatures))</code></td><td>Couleur de chaque barre</td><td>Déjà fourni — bleu → rouge</td></tr>
+    </table>
+
+    <div class="encadre-conseil">
+      <span class="encadre-prefix">Pourquoi ordonnees = [1, 1, 1, …] ?</span>
+      <p style="margin:0">
+        Les warming stripes ne montrent <em>pas</em> la valeur de l'écart sur l'axe vertical —
+        l'information est encodée dans la <strong>couleur</strong>, pas dans la hauteur.
+        Toutes les barres ont donc la même hauteur (1), ce qui crée l'effet de « bandes » uniformes.
+        Si on mettait les vraies valeurs d'écart, les barres auraient des hauteurs différentes et
+        certaines seraient négatives — ce n'est pas le rendu voulu.
+      </p>
+    </div>
+
+    <div class="encadre-indice">
+      <span class="encadre-prefix">Indice niveau 1 – deux approches</span>
+      <button class="btn-secondaire" onclick="toggleBloc('ind4a')">Afficher / masquer</button>
+      <div id="ind4a" class="indice-bloc">
+        <pre># Approche 1 : boucle for classique
+annees    = []
+ordonnees = []
+for dico in datas:
+    annees.append(dico["???"])
+    ordonnees.append(???)
+
+# Approche 2 : compréhension de liste
+annees    = [dico["???"] for dico in datas]
+ordonnees = [??? for dico in datas]</pre>
+      </div>
+    </div>
+
+    <div class="encadre-indice">
+      <span class="encadre-prefix">Indice niveau 2 – solution</span>
+      <button class="btn-secondaire" onclick="toggleBloc('ind4b')">Afficher / masquer</button>
+      <div id="ind4b" class="indice-bloc">
+        <pre>annees    = [dico["année"] for dico in datas]
+ordonnees = [1 for dico in datas]
+
+# Version encore plus concise :
+ordonnees = [1] * len(datas)</pre>
+      </div>
+    </div>
+
+    <h3>Éditeur Python — à toi de jouer !</h3>
+
+    <script type="py-editor" env="stripes">
+datas_test = [
+    {"année": 1851, "écart": -0.15},
+    {"année": 1852, "écart": -0.05},
+    {"année": 2023, "écart": 0.90},
+    {"année": 2024, "écart": 1.22},
+    {"année": 2025, "écart": 1.29},
+]
+
+# Complète les deux listes :
+annees    = []   # REMPLACE PAR TON CODE
+ordonnees = []   # REMPLACE PAR TON CODE
+
+# ── Fonction de test ──────────────────────────────────────────────────
+def test_listes_graphique():
+    ann = [dico["année"] for dico in datas_test]
+    ord_ = [1 for dico in datas_test]
+
+    assert ann    == [1851, 1852, 2023, 2024, 2025]
+    assert ord_   == [1, 1, 1, 1, 1]
+    assert len(ann) == len(ord_)
+    print("Les tests sont valides.")
+
+test_listes_graphique()
+
+print("annees    =", annees)
+print("ordonnees =", ordonnees)
+    </script>
+
+    <div class="encadre-conseil">
+      <span class="encadre-prefix">Correction – Question 4</span>
+      <button class="btn-tp-or" onclick="toggleBloc('corr4')">Afficher / masquer la correction</button>
+      <div id="corr4" class="correction-bloc">
+        <pre># À insérer dans la fonction graphique(), à la place des commentaires
+annees    = [dico["année"] for dico in datas]
+ordonnees = [1 for dico in datas]
+
+# La version avec [1] * len(datas) est équivalente et encore plus lisible :
+ordonnees = [1] * len(datas)</pre>
+        <p style="margin:.6rem 0 0">
+          La fonction complète avec les corrections donne le graphique des warming stripes vu en
+          début de fiche. Toutes les barres ont la même hauteur (1), et leur couleur varie du
+          bleu (froid) au rouge (chaud) selon la palette <code>seismic</code> de matplotlib.
+        </p>
+
+        <script type="py-editor" env="stripes">
+datas_test = [
+    {"année": 1851, "écart": -0.15},
+    {"année": 2000, "écart": 0.40},
+    {"année": 2025, "écart": 1.29},
+]
+
+annees    = [dico["année"] for dico in datas_test]
+ordonnees = [1] * len(datas_test)
+
+def test_listes_graphique():
+    assert annees    == [1851, 2000, 2025]
+    assert ordonnees == [1, 1, 1]
+    assert len(annees) == len(ordonnees)
+    print("Les tests sont valides.")
+
+test_listes_graphique()
+        </script>
+      </div>
+    </div>
+  </section>
+
+  <hr class="sep">
+
+  <!-- PIÈGES FRÉQUENTS -->
+  <section id="pieges">
+    <h2>7 — Pièges fréquents &amp; astuces de vérification</h2>
+
+    <div class="encadre-piege">
+      <span class="encadre-prefix">Piège 1 — Retourner 0 au lieu de None pour une année absente (Q1)</span>
+      <p>
+        Si l'année n'est pas dans la liste, la fonction doit retourner <code>None</code>, pas <code>0</code>.
+        Retourner <code>0</code> serait ambigu : 0 est une vraie valeur dans le CSV (années 1938 et 1939).
+        La fonction <code>derniere_annee_ecart_negatif</code> dépend de ce comportement — si tu retournes
+        <code>0</code>, elle pensera que l'écart est nul et continuera à remonter dans le temps indéfiniment.
+      </p>
+      <pre># ❌ Mauvais
+def ecart_temperature(datas, annee):
+    for dico in datas:
+        if dico["année"] == annee:
+            return dico["écart"]
+    return 0   # ambigu : 0 est une vraie valeur !
+
+# ✓ Correct
+    return None</pre>
+    </div>
+
+    <div class="encadre-piege">
+      <span class="encadre-prefix">Piège 2 — Tester None avec == au lieu de is (Q1)</span>
+      <p>
+        En Python, on teste <code>None</code> avec <code>is None</code>, jamais avec <code>== None</code>.
+        Les deux fonctionnent souvent mais <code>is None</code> est la convention correcte et sera
+        exigée dans les assertions.
+      </p>
+      <pre>assert ecart_temperature(datas, 1800) is None    # ✓ correct
+assert ecart_temperature(datas, 1800) == None    # ✗ fonctionne mais déconseillé</pre>
+    </div>
+
+    <div class="encadre-piege">
+      <span class="encadre-prefix">Piège 3 — Confondre les clés du dictionnaire (Q1 et Q4)</span>
+      <p>
+        Les clés du dictionnaire produit par <code>charger()</code> sont <code>"année"</code> et
+        <code>"écart"</code> — <strong>avec accents</strong>. Ce n'est pas habituel en Python
+        mais c'est ce que le code fourni crée. Utiliser <code>"annee"</code> sans accent lève
+        une <code>KeyError</code>.
+      </p>
+      <pre># ❌ KeyError : pas d'accent → clé inexistante
+dico["annee"]   dico["ecart"]
+
+# ✓ Correct : avec accents (comme dans charger())
+dico["année"]   dico["écart"]</pre>
+    </div>
+
+    <div class="encadre-piege">
+      <span class="encadre-prefix">Piège 4 — Mettre les vraies valeurs d'écart dans ordonnees (Q4)</span>
+      <p>
+        L'erreur la plus fréquente à la Q4 est d'écrire :
+        <code>ordonnees = [dico["écart"] for dico in datas]</code>. Le graphique afficherait
+        alors des barres de hauteurs différentes (positives et négatives), ce qui n'est pas
+        du tout un warming stripe. L'indication de l'énoncé est claire : <code>ordonnees</code>
+        doit contenir la valeur <code>1</code> pour chaque année.
+      </p>
+    </div>
+
+    <div class="encadre-piege">
+      <span class="encadre-prefix">Piège 5 — Ne pas voir le signe dans moyenne_ecarts (Q3)</span>
+      <p>
+        Le bug est subtil : <code>somme = somme <strong>-</strong> dico["écart"]</code> au lieu de
+        <code>somme = somme <strong>+</strong> dico["écart"]</code>. Un seul caractère change tout.
+        Pour le repérer, la stratégie est de calculer à la main la moyenne de 2 ou 3 valeurs
+        connues et de vérifier que le résultat de la fonction correspond.
+      </p>
+    </div>
+
+    <div class="encadre-conseil">
+      <span class="encadre-prefix">Astuce — Vérifier la prévision 2040 à la main</span>
+      <p>
+        Après correction, <code>prevision(datas_temperature, 2040, 20)</code> doit donner
+        environ <strong>+1,57 °C</strong>. Si tu obtiens une valeur négative ou proche de zéro,
+        le bug dans <code>moyenne_ecarts</code> n'est pas encore corrigé.
+      </p>
+    </div>
+
+    <div class="encadre-conseil">
+      <span class="encadre-prefix">Astuce — Test rapide de ecart_temperature</span>
+      <p>
+        Avant d'appeler <code>derniere_annee_ecart_negatif</code>, vérifie que ta fonction
+        <code>ecart_temperature</code> renvoie bien <code>None</code> pour une année absente.
+        Si elle renvoie <code>0</code>, la boucle <code>while ecart >= 0</code> ne s'arrêtera
+        jamais sur une année absente et plantera avec une erreur infinie.
+      </p>
+    </div>
+  </section>
+
+  <hr class="sep">
+
+  <footer>Lycée Antoine Watteau — DarkSATHI Li</footer>
+
+</div>
+
+<script>
+  const btnTop = document.getElementById('btn-top');
+  window.addEventListener('scroll', function () {
+    btnTop.style.display = window.scrollY > 300 ? 'flex' : 'none';
+  });
+  btnTop.addEventListener('click', function () {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  });
+
+  function toggleBloc(id) {
+    var el = document.getElementById(id);
+    if (el) el.classList.toggle('visible');
+  }
+</script>
+
+</body>
+</html>

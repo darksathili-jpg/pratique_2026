@@ -1,0 +1,1044 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Fiche – Budget Club Handball | NSI Terminale | BAC 2026</title>
+
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Rubik+Dirt&family=Source+Serif+4:ital,opsz,wght@0,8..60,300..900;1,8..60,300..900&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+
+  <script>
+    MathJax = {
+      tex: { inlineMath: [['\\(','\\)'],['$','$']] },
+      options: { skipHtmlTags: ['script','noscript','style','textarea','pre'] }
+    };
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js" async></script>
+  <script type="module" src="https://pyscript.net/releases/2026.3.1/core.js"></script>
+
+  <style>
+    :root {
+      --bg-main:     #f8f9fb;
+      --bg-panel:    #eef1f5;
+      --accent:      #2a6496;
+      --accent-or:   #b5610a;
+      --accent-vert: #2e7d32;
+      --text-main:   #1a1a1a;
+      --text-muted:  #5a6470;
+      --rouge:       #c0392b;
+      --violet:      #7b3fa8;
+      --border-radius: 8px;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg-main);
+      color: var(--text-main);
+      font-family: 'Source Serif 4', Georgia, serif;
+      font-size: 1.05rem;
+      line-height: 1.8;
+      margin: 0;
+      padding-bottom: 4rem;
+    }
+
+    h1, h2, h3, h4 { font-family: 'Rubik Dirt', cursive; color: var(--accent); letter-spacing: .02em; }
+    h1 { font-size: 2.1rem; color: #111; }
+    h2 { font-size: 1.5rem; border-bottom: 2px solid var(--accent); padding-bottom: .3rem; margin-top: 2.5rem; }
+    h3 { font-size: 1.2rem; color: var(--accent-or); margin-top: 1.8rem; }
+    p  { margin-bottom: 1rem; }
+
+    code, pre { font-family: 'JetBrains Mono', monospace; font-size: .88em; }
+    code { background: #e8edf2; padding: 2px 6px; border-radius: 4px; color: #8b3a00; }
+    pre  { background: #f0f3f7; border-left: 3px solid var(--accent); padding: 1rem 1.2rem;
+           border-radius: var(--border-radius); overflow-x: auto; color: #1a1a1a; line-height: 1.65; }
+
+    /* NAV */
+    #navbar {
+      position: sticky; top: 0; z-index: 1000;
+      background: #2a6496; border-bottom: 2px solid #1a4a70;
+      padding: .5rem 1.5rem; display: flex; gap: .5rem; flex-wrap: wrap; align-items: center;
+    }
+    #navbar span { font-family: 'JetBrains Mono', monospace; font-size: .78rem; color: #ccddf0; margin-right: auto; }
+    #navbar a {
+      font-family: 'JetBrains Mono', monospace; font-size: .78rem; color: #fff;
+      text-decoration: none; padding: .22rem .65rem; border: 1px solid #ccddf0;
+      border-radius: 4px; transition: background .2s;
+    }
+    #navbar a:hover { background: #1a4a70; }
+
+    .container-content { max-width: 900px; margin: 0 auto; padding: 2rem 1.5rem; }
+
+    /* ENCADRÉS */
+    .encadre, .encadre-conseil, .encadre-indice, .encadre-question, .encadre-piege, .encadre-bug {
+      border-radius: var(--border-radius); padding: 1.1rem 1.4rem; margin: 1.3rem 0;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+    }
+    .encadre          { background: #fff;    border-left: 4px solid var(--accent); }
+    .encadre-conseil  { background: #fff8f0; border-left: 4px solid var(--accent-or); }
+    .encadre-indice   { background: #f0faf0; border-left: 4px solid var(--accent-vert); }
+    .encadre-question { background: #faf5ff; border-left: 4px solid var(--violet); }
+    .encadre-piege    { background: #fff5f5; border-left: 4px solid var(--rouge); }
+    .encadre-bug      { background: #fffbf0; border-left: 4px solid #e67e22; }
+
+    .encadre-prefix {
+      font-family: 'JetBrains Mono', monospace; font-size: .7rem;
+      font-variant: small-caps; letter-spacing: .12em; text-transform: uppercase;
+      margin-bottom: .4rem; display: block;
+    }
+    .encadre          .encadre-prefix { color: var(--accent); }
+    .encadre-conseil  .encadre-prefix { color: var(--accent-or); }
+    .encadre-indice   .encadre-prefix { color: var(--accent-vert); }
+    .encadre-question .encadre-prefix { color: var(--violet); }
+    .encadre-piege    .encadre-prefix { color: var(--rouge); }
+    .encadre-bug      .encadre-prefix { color: #e67e22; }
+
+    /* BOUTONS */
+    .btn-tp, .btn-tp-or, .btn-tp-vert, .btn-secondaire {
+      font-family: 'JetBrains Mono', monospace; font-size: .82rem;
+      border: none; border-radius: 5px; padding: .42rem 1rem;
+      cursor: pointer; transition: opacity .2s, transform .1s; margin: .3rem .2rem;
+    }
+    .btn-tp         { background: var(--accent);      color: #fff; }
+    .btn-tp-or      { background: var(--accent-or);   color: #fff; }
+    .btn-tp-vert    { background: var(--accent-vert); color: #fff; }
+    .btn-secondaire { background: #eef1f5; border: 1px solid var(--accent); color: var(--text-main); }
+    .btn-tp:hover, .btn-tp-or:hover, .btn-tp-vert:hover, .btn-secondaire:hover {
+      opacity: .85; transform: translateY(-1px);
+    }
+
+    .badge-question {
+      display: inline-block; font-family: 'JetBrains Mono', monospace; font-size: .8rem;
+      background: var(--violet); color: #fff; border-radius: 4px;
+      padding: .15rem .7rem; margin-right: .5rem; vertical-align: middle;
+    }
+
+    /* INDICES / CORRECTIONS */
+    .indice-bloc     { display: none; }
+    .correction-bloc { display: none; }
+    .indice-bloc.visible     { display: block; }
+    .correction-bloc.visible { display: block; }
+
+    /* SOMMAIRE */
+    #sommaire ol { font-family: 'JetBrains Mono', monospace; font-size: .87rem; line-height: 2.2; }
+    #sommaire a { color: var(--accent); }
+
+    /* TABLEAU */
+    .table-info {
+      border-collapse: collapse; width: 100%;
+      font-family: 'JetBrains Mono', monospace; font-size: .83rem; margin: .8rem 0;
+    }
+    .table-info th {
+      background: #dce8f2; color: var(--accent);
+      border: 1px solid #b0c8e0; padding: .4rem .8rem; text-align: left;
+    }
+    .table-info td { border: 1px solid #d0dce8; padding: .38rem .8rem; }
+    .table-info tr:nth-child(even) td { background: #f4f7fb; }
+    .td-ok  { color: var(--accent-vert); font-weight: 600; }
+    .td-bug { color: var(--rouge); font-weight: 600; }
+    .td-pos { color: var(--accent-vert); }
+    .td-neg { color: var(--rouge); }
+
+    /* TIMELINE MENSUELLE */
+    .timeline { display: flex; flex-direction: column; gap: .35rem; margin: 1rem 0; }
+    .tl-row { display: flex; align-items: center; gap: .5rem; font-family:'JetBrains Mono',monospace; font-size:.8rem; }
+    .tl-mois { width: 50px; color: var(--text-muted); flex-shrink: 0; }
+    .tl-bar-wrap { flex: 1; display: flex; align-items: center; height: 18px; position: relative; }
+    .tl-bar { height: 14px; border-radius: 3px; }
+    .tl-bar-pos { background: #81c784; }
+    .tl-bar-neg { background: #ef9a9a; }
+    .tl-val { width: 70px; text-align: right; flex-shrink: 0; font-size:.75rem; }
+
+    /* RANGE SCHÉMA */
+    .range-box {
+      display: flex; gap: 4px; flex-wrap: wrap; margin: .5rem 0;
+      font-family:'JetBrains Mono',monospace; font-size:.8rem;
+    }
+    .rnum {
+      width: 28px; height: 28px; display: flex; align-items: center; justify-content: center;
+      border-radius: 4px; font-weight: 600;
+    }
+    .rnum-ok  { background: #c8e6c9; color: var(--accent-vert); }
+    .rnum-bug { background: #ffcdd2; color: var(--rouge); }
+    .rnum-miss { background: #f5f5f5; border: 2px dashed var(--rouge); color: var(--rouge); }
+
+    .sep { border: none; border-top: 1px dashed #9ab0c8; margin: 2.5rem 0; opacity: .7; }
+
+    #btn-top {
+      position: fixed; bottom: 1.5rem; right: 1.5rem; z-index: 999;
+      background: var(--accent); color: #fff; border: none; border-radius: 50%;
+      width: 44px; height: 44px; font-size: 1.2rem; cursor: pointer;
+      display: none; align-items: center; justify-content: center;
+      font-family: 'JetBrains Mono', monospace;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.25); transition: opacity .2s;
+    }
+    #btn-top:hover { opacity: .8; }
+
+    footer {
+      text-align: center; font-family: 'JetBrains Mono', monospace;
+      font-size: .8rem; color: var(--text-muted);
+      padding: 2rem 1rem 1rem; border-top: 1px solid #d0d8e4;
+    }
+  </style>
+</head>
+<body>
+
+<div style="display:none"><script type="py" env="budget">pass</script></div>
+<button id="btn-top" title="Retour en haut" aria-label="Retour en haut">▲</button>
+
+<nav id="navbar">
+  <span>NSI Terminale – Analyse budgétaire</span>
+  <a href="#s0">Intro</a>
+  <a href="#s1">Rappels</a>
+  <a href="#s2">Structure</a>
+  <a href="#q1">Q1</a>
+  <a href="#q2">Q2</a>
+  <a href="#q3">Q3</a>
+  <a href="#pieges">Pièges</a>
+</nav>
+
+<div class="container-content">
+
+  <!-- EN-TÊTE -->
+  <div style="text-align:center; padding: 2rem 0 1rem;">
+    <div style="font-family:'JetBrains Mono',monospace; font-size:.78rem; color:var(--text-muted); margin-bottom:.5rem;">
+      BAC NSI 2026 — Sujet n°17 — Partie pratique
+    </div>
+    <h1>Budget Club de Handball 🤾<br>
+      <span style="font-size:1rem; color:var(--accent); font-family:'Source Serif 4',serif; font-style:italic; font-weight:300;">
+        Fichiers CSV · Filtrage · Débogage · range()
+      </span>
+    </h1>
+    <div style="font-family:'JetBrains Mono',monospace; font-size:.78rem; color:var(--text-muted); margin-top:.5rem;">
+      Terminale NSI &nbsp;·&nbsp; 3 questions · 1h · 1 bug à identifier &amp; corriger
+    </div>
+  </div>
+
+  <!-- ALERTE BUG -->
+  <div class="encadre-bug" style="margin-top:0;">
+    <span class="encadre-prefix">Analyse critique — Bug identifié dans le code fourni</span>
+    <p>
+      La fonction <code>solde_annuel</code> contient une erreur classique sur <code>range()</code> :
+    </p>
+    <pre style="margin:.3rem 0"><code>for m in range(1, 12):   # ← range(1, 12) génère 1, 2, 3, ..., 11
+    #                           Le mois 12 est silencieusement ignoré !</code></pre>
+    <p style="margin:.4rem 0 0">
+      <strong>Sur <code>mouvements_test</code> :</strong> le mois 12 contient −900 € (solde très négatif).
+      La version buguée renvoie <strong>1 050,0 €</strong> au lieu de <strong>150,0 €</strong>.
+      <br>
+      <strong>Correction :</strong> remplacer <code>range(1, 12)</code> par <code>range(1, 13)</code>.
+    </p>
+  </div>
+
+  <hr class="sep">
+
+  <!-- SOMMAIRE -->
+  <section id="s0">
+    <div id="sommaire" class="encadre">
+      <span class="encadre-prefix">Sommaire</span>
+      <ol>
+        <li><a href="#s1">Rappels de cours — CSV, filtrage de listes, range()</a></li>
+        <li><a href="#s2">Structure des données et fonctions fournies</a></li>
+        <li><a href="#q1">Question 1 — <code>total_par_type</code> et ses tests</a></li>
+        <li><a href="#q2">Question 2 — Calcul manuel du solde et test d'assertion</a></li>
+        <li><a href="#q3">Question 3 — Identifier et corriger le bug de <code>solde_annuel</code></a></li>
+        <li><a href="#pieges">Pièges fréquents &amp; stratégie de performance</a></li>
+      </ol>
+    </div>
+  </section>
+
+  <hr class="sep">
+
+  <!-- SECTION 1 : RAPPELS -->
+  <section id="s1">
+    <h2>1 — Rappels indispensables</h2>
+
+    <h3>Filtrer une liste de dictionnaires</h3>
+
+    <p>
+      Dans ce sujet, chaque mouvement est un dictionnaire. Pour calculer une somme
+      sur un sous-ensemble, on parcourt la liste et on teste une condition sur une clé.
+    </p>
+
+    <div class="encadre">
+      <span class="encadre-prefix">Patron — Somme filtrée</span>
+      <pre style="margin:.3rem 0"><code># Calculer la somme des montants dont le type est 'recette'
+total = 0.0
+for m in mouvements:
+    if m['type'] == 'recette':     # filtre sur la clé 'type'
+        total += m['montant']      # accumulation du montant
+
+# Version compacte avec sum()
+total = sum(m['montant'] for m in mouvements if m['type'] == 'recette')</code></pre>
+    </div>
+
+    <h3>Le piège de <code>range(debut, fin)</code></h3>
+
+    <p>
+      C'est le cœur du bug de ce sujet. En Python, <code>range(debut, fin)</code>
+      génère les entiers de <code>debut</code> jusqu'à <code>fin - 1</code> inclus.
+      La borne <code>fin</code> est <strong>exclue</strong>.
+    </p>
+
+    <div class="encadre-piege">
+      <span class="encadre-prefix">Piège classique — range(1, 12) vs range(1, 13)</span>
+      <div class="range-box">
+        <div style="width:100%; margin-bottom:.3rem; color:var(--text-muted); font-family:'JetBrains Mono',monospace; font-size:.75rem;">range(1, 12) → génère :</div>
+        <div class="rnum rnum-ok">1</div><div class="rnum rnum-ok">2</div>
+        <div class="rnum rnum-ok">3</div><div class="rnum rnum-ok">4</div>
+        <div class="rnum rnum-ok">5</div><div class="rnum rnum-ok">6</div>
+        <div class="rnum rnum-ok">7</div><div class="rnum rnum-ok">8</div>
+        <div class="rnum rnum-ok">9</div><div class="rnum rnum-ok">10</div>
+        <div class="rnum rnum-ok">11</div>
+        <div class="rnum rnum-miss">12</div>
+      </div>
+      <div class="range-box" style="margin-top:.5rem;">
+        <div style="width:100%; margin-bottom:.3rem; color:var(--text-muted); font-family:'JetBrains Mono',monospace; font-size:.75rem;">range(1, 13) → génère :</div>
+        <div class="rnum rnum-ok">1</div><div class="rnum rnum-ok">2</div>
+        <div class="rnum rnum-ok">3</div><div class="rnum rnum-ok">4</div>
+        <div class="rnum rnum-ok">5</div><div class="rnum rnum-ok">6</div>
+        <div class="rnum rnum-ok">7</div><div class="rnum rnum-ok">8</div>
+        <div class="rnum rnum-ok">9</div><div class="rnum rnum-ok">10</div>
+        <div class="rnum rnum-ok">11</div><div class="rnum rnum-ok">12</div>
+      </div>
+      <p style="margin:.5rem 0 0">
+        Pour parcourir les mois 1 à 12 inclus, il faut <code>range(1, 13)</code>.
+        <code>range(1, 12)</code> s'arrête à 11 et ignore décembre.
+      </p>
+    </div>
+
+    <h3>Écrire une fonction de test avec <code>assert</code></h3>
+
+    <div class="encadre">
+      <span class="encadre-prefix">Rappel — assert et test unitaire</span>
+      <pre style="margin:.3rem 0"><code>def test_ma_fonction():
+    assert ma_fonction(valeur1) == résultat_attendu_1
+    assert ma_fonction(valeur2) == résultat_attendu_2
+    print("Les tests sont validés.")
+
+test_ma_fonction()  # appel immédiat</code></pre>
+      <p style="margin:.5rem 0 0">
+        Si une assertion est fausse, Python lève une <code>AssertionError</code>
+        avec un message d'erreur. C'est exactement ce qui se passe en Q2 :
+        le test révèle que <code>solde_annuel</code> est bugué.
+      </p>
+    </div>
+  </section>
+
+  <hr class="sep">
+
+  <!-- SECTION 2 : STRUCTURE -->
+  <section id="s2">
+    <h2>2 — Structure des données et fonctions fournies</h2>
+
+    <h3>Format d'un mouvement</h3>
+
+    <table class="table-info">
+      <thead><tr><th>Clé</th><th>Type</th><th>Valeurs possibles</th><th>Exemple</th></tr></thead>
+      <tbody>
+        <tr><td><code>'type'</code></td><td>str</td><td><code>'recette'</code> ou <code>'dépense'</code></td><td><code>'recette'</code></td></tr>
+        <tr><td><code>'catégorie'</code></td><td>str</td><td>8 catégories (subventions, salaires…)</td><td><code>'billetterie'</code></td></tr>
+        <tr><td><code>'montant'</code></td><td>float</td><td>Nombre positif en €</td><td><code>1200.0</code></td></tr>
+        <tr><td><code>'mois'</code></td><td>int</td><td>1 à 12</td><td><code>6</code></td></tr>
+      </tbody>
+    </table>
+
+    <h3>Le jeu de test <code>mouvements_test</code></h3>
+
+    <table class="table-info">
+      <thead><tr><th>#</th><th>type</th><th>catégorie</th><th>montant</th><th>mois</th></tr></thead>
+      <tbody>
+        <tr><td>1</td><td class="td-pos">recette</td><td>cotisations</td><td>1 200,00 €</td><td>1</td></tr>
+        <tr><td>2</td><td class="td-pos">recette</td><td>billetterie</td><td>300,00 €</td><td>6</td></tr>
+        <tr><td>3</td><td class="td-neg">dépense</td><td>fonctionnement</td><td>450,00 €</td><td>6</td></tr>
+        <tr><td>4</td><td class="td-neg">dépense</td><td>déplacements</td><td>200,00 €</td><td>12</td></tr>
+        <tr><td>5</td><td class="td-neg">dépense</td><td>salaires</td><td>1 500,00 €</td><td>12</td></tr>
+        <tr><td>6</td><td class="td-pos">recette</td><td>subventions</td><td>800,00 €</td><td>12</td></tr>
+      </tbody>
+    </table>
+
+    <div class="encadre-conseil">
+      <span class="encadre-prefix">Données clés à mémoriser</span>
+      <ul style="margin:0">
+        <li>Total recettes = 1200 + 300 + 800 = <strong>2 300,0 €</strong></li>
+        <li>Total dépenses = 450 + 200 + 1500 = <strong>2 150,0 €</strong></li>
+        <li>Solde annuel RÉEL = 2300 − 2150 = <strong>150,0 €</strong> (bénéfice)</li>
+        <li>Solde annuel BUGUÉ = <strong>1 050,0 €</strong> (mois 12 ignoré)</li>
+      </ul>
+    </div>
+
+    <h3>Fonctions fournies — <code>solde_mensuel</code> et <code>solde_annuel</code></h3>
+
+    <pre><code>def solde_mensuel(mouvements, mois):
+    """Calcule recettes - dépenses pour un mois donné. ✓ CORRECTE"""
+    total_recettes = 0
+    total_depenses = 0
+    for m in mouvements:
+        if m['mois'] == mois:
+            if m['type'] == 'recette':
+                total_recettes += m['montant']
+            else:
+                total_depenses += m['montant']
+    return total_recettes - total_depenses
+
+
+def solde_annuel(mouvements):
+    """Calcule le solde annuel — CONTIENT UN BUG (Q3) ✗"""
+    total = 0
+    for m in range(1, 12):           # ← range(1, 12) = 1 à 11 → mois 12 absent !
+        total = total + solde_mensuel(mouvements, m)
+    return total</code></pre>
+  </section>
+
+  <hr class="sep">
+
+  <!-- QUESTION 1 -->
+  <section id="q1">
+    <h2>Question 1 — <code>total_par_type</code></h2>
+
+    <div class="encadre-question">
+      <span class="encadre-prefix">Énoncé — Question 1</span>
+      <p>
+        <span class="badge-question">Q1</span>
+        Écrire la fonction <code>total_par_type(mouvements, type_mouvement)</code>
+        qui renvoie la somme des montants correspondant au type précis passé en paramètre
+        (<code>'recette'</code> ou <code>'dépense'</code>).
+        Si aucun mouvement ne correspond, renvoyer <code>0</code>.
+      </p>
+      <p style="margin:.4rem 0 0">
+        Créer ensuite <code>test_total()</code> avec au moins deux assertions
+        sur <code>mouvements_test</code>. Les valeurs attendues sont :
+        total des recettes = <strong>2 300,0</strong>, total des dépenses = <strong>2 150,0</strong>.
+      </p>
+    </div>
+
+    <!-- INDICES -->
+    <div style="margin:.8rem 0;">
+      <button class="btn-tp-vert" onclick="toggleIndice('ind-q1-1', this)">▶ Indice 1 — Structure de l'accumulation</button>
+    </div>
+    <div id="ind-q1-1" class="encadre-indice indice-bloc">
+      <span class="encadre-prefix">Indice 1</span>
+      <pre style="margin:.3rem 0"><code>def total_par_type(mouvements, type_mouvement):
+    total = 0.0                        # initialisation à 0
+    for m in mouvements:
+        if m['type'] == type_mouvement:# filtre sur le type
+            total += m['montant']      # accumulation
+    return total</code></pre>
+    </div>
+
+    <div style="margin:.8rem 0;">
+      <button class="btn-tp-vert" onclick="toggleIndice('ind-q1-2', this)">▶ Indice 2 — Assertions à écrire</button>
+    </div>
+    <div id="ind-q1-2" class="encadre-indice indice-bloc">
+      <span class="encadre-prefix">Indice 2</span>
+      <pre style="margin:.3rem 0"><code>def test_total():
+    assert total_par_type(mouvements_test, 'recette') == 2300.0
+    assert total_par_type(mouvements_test, 'dépense') == 2150.0
+    assert total_par_type(mouvements_test, 'autre')   == 0      # type inexistant → 0
+    print("Les tests sont validés.")</code></pre>
+    </div>
+
+    <div class="encadre" style="margin-top:1.2rem;">
+      <span class="encadre-prefix">Éditeur Python — Écris total_par_type et test_total</span>
+      <script type="py-editor" env="budget">
+mouvements_test = [
+    {'type': 'recette',  'catégorie': 'cotisations',    'montant': 1200.0, 'mois': 1},
+    {'type': 'recette',  'catégorie': 'billetterie',    'montant':  300.0, 'mois': 6},
+    {'type': 'dépense',  'catégorie': 'fonctionnement', 'montant':  450.0, 'mois': 6},
+    {'type': 'dépense',  'catégorie': 'déplacements',   'montant':  200.0, 'mois': 12},
+    {'type': 'dépense',  'catégorie': 'salaires',       'montant': 1500.0, 'mois': 12},
+    {'type': 'recette',  'catégorie': 'subventions',    'montant':  800.0, 'mois': 12},
+]
+
+
+def total_par_type(mouvements, type_mouvement):
+    """Renvoie la somme des montants du type donné, 0 si aucun."""
+    pass  # À compléter
+
+
+def test_total():
+    # Les valeurs attendues (à ne pas modifier)
+    assert total_par_type(mouvements_test, 'recette') == 2300.0, \
+        f"Attendu 2300.0, obtenu {total_par_type(mouvements_test, 'recette')}"
+    assert total_par_type(mouvements_test, 'dépense') == 2150.0, \
+        f"Attendu 2150.0, obtenu {total_par_type(mouvements_test, 'dépense')}"
+    assert total_par_type(mouvements_test, 'autre')   == 0, \
+        "Un type inexistant doit renvoyer 0"
+    print("Les tests sont validés.")
+
+test_total()
+      </script>
+    </div>
+
+    <div style="margin:1rem 0;">
+      <button class="btn-tp-or" onclick="toggleCorrection('corr-q1', this)">&#128274; Afficher la correction</button>
+    </div>
+    <div id="corr-q1" class="correction-bloc encadre-conseil">
+      <span class="encadre-prefix">Correction — Question 1</span>
+      <script type="py-editor" env="budget-c1">
+mouvements_test = [
+    {'type': 'recette',  'catégorie': 'cotisations',    'montant': 1200.0, 'mois': 1},
+    {'type': 'recette',  'catégorie': 'billetterie',    'montant':  300.0, 'mois': 6},
+    {'type': 'dépense',  'catégorie': 'fonctionnement', 'montant':  450.0, 'mois': 6},
+    {'type': 'dépense',  'catégorie': 'déplacements',   'montant':  200.0, 'mois': 12},
+    {'type': 'dépense',  'catégorie': 'salaires',       'montant': 1500.0, 'mois': 12},
+    {'type': 'recette',  'catégorie': 'subventions',    'montant':  800.0, 'mois': 12},
+]
+
+
+def total_par_type(mouvements, type_mouvement):
+    """Renvoie la somme des montants du type donné, 0 si aucun."""
+    total = 0.0
+    for m in mouvements:
+        if m['type'] == type_mouvement:
+            total += m['montant']
+    return total
+
+# Version compacte équivalente :
+# return sum(m['montant'] for m in mouvements if m['type'] == type_mouvement)
+
+
+def test_total():
+    assert total_par_type(mouvements_test, 'recette') == 2300.0
+    assert total_par_type(mouvements_test, 'dépense') == 2150.0
+    assert total_par_type(mouvements_test, 'autre')   == 0
+    print("Les tests sont validés.")
+
+test_total()
+print(f"Recettes : {total_par_type(mouvements_test, 'recette')} €")
+print(f"Dépenses : {total_par_type(mouvements_test, 'dépense')} €")
+      </script>
+      <p style="margin-top:.8rem;">
+        <strong>Initialisation à <code>0.0</code> :</strong> on initialise à un flottant
+        pour que le résultat soit toujours de type <code>float</code>, même si aucun mouvement
+        ne correspond (retour de 0.0 au lieu de 0). Cela évite des surprises lors
+        des comparaisons strictes de type.
+      </p>
+    </div>
+  </section>
+
+  <hr class="sep">
+
+  <!-- QUESTION 2 -->
+  <section id="q2">
+    <h2>Question 2 — Calcul manuel et test d'assertion</h2>
+
+    <div class="encadre-question">
+      <span class="encadre-prefix">Énoncé — Question 2</span>
+      <p>
+        <span class="badge-question">Q2</span>
+        Calculer <strong>manuellement</strong> le solde annuel attendu pour <code>mouvements_test</code>.
+        Écrire ensuite <code>test_solde_annuel()</code> avec une assertion qui vérifie que
+        <code>solde_annuel(mouvements_test)</code> renvoie bien ce résultat théorique.
+        Exécuter ce test — il doit lever une erreur.
+      </p>
+    </div>
+
+    <div class="encadre-conseil">
+      <span class="encadre-prefix">Calcul manuel étape par étape</span>
+      <p>
+        <code>solde_annuel</code> additionne les <code>solde_mensuel</code> de chaque mois.
+        Seuls les mois 1, 6 et 12 ont des mouvements :
+      </p>
+      <table class="table-info" style="max-width:520px;">
+        <thead><tr><th>Mois</th><th>Recettes</th><th>Dépenses</th><th>Solde mensuel</th></tr></thead>
+        <tbody>
+          <tr>
+            <td>1</td>
+            <td class="td-pos">+1 200,0 €</td>
+            <td>0 €</td>
+            <td class="td-pos"><strong>+1 200,0 €</strong></td>
+          </tr>
+          <tr>
+            <td>2 à 5, 7 à 11</td>
+            <td>0 €</td><td>0 €</td>
+            <td>0 € (aucun mouvement)</td>
+          </tr>
+          <tr>
+            <td>6</td>
+            <td class="td-pos">+300,0 €</td>
+            <td class="td-neg">−450,0 €</td>
+            <td class="td-neg"><strong>−150,0 €</strong></td>
+          </tr>
+          <tr>
+            <td>12</td>
+            <td class="td-pos">+800,0 €</td>
+            <td class="td-neg">−200,0 − 1 500,0 = −1 700,0 €</td>
+            <td class="td-neg"><strong>−900,0 €</strong></td>
+          </tr>
+          <tr style="background:#f0f8f0;">
+            <td><strong>Total annuel</strong></td>
+            <td></td><td></td>
+            <td class="td-pos"><strong>+150,0 €</strong></td>
+          </tr>
+        </tbody>
+      </table>
+      <p style="margin:.4rem 0 0">
+        \(1200 + (-150) + (-900) = \mathbf{150{,}0 \text{ €}}\)
+        — le club dégage un petit bénéfice de 150 €.
+      </p>
+    </div>
+
+    <div class="encadre" style="margin-top:1.2rem;">
+      <span class="encadre-prefix">Éditeur Python — Écris test_solde_annuel et observe l'erreur</span>
+      <script type="py-editor" env="budget-q2">
+mouvements_test = [
+    {'type': 'recette',  'catégorie': 'cotisations',    'montant': 1200.0, 'mois': 1},
+    {'type': 'recette',  'catégorie': 'billetterie',    'montant':  300.0, 'mois': 6},
+    {'type': 'dépense',  'catégorie': 'fonctionnement', 'montant':  450.0, 'mois': 6},
+    {'type': 'dépense',  'catégorie': 'déplacements',   'montant':  200.0, 'mois': 12},
+    {'type': 'dépense',  'catégorie': 'salaires',       'montant': 1500.0, 'mois': 12},
+    {'type': 'recette',  'catégorie': 'subventions',    'montant':  800.0, 'mois': 12},
+]
+
+
+def solde_mensuel(mouvements, mois):
+    total_recettes = 0
+    total_depenses = 0
+    for m in mouvements:
+        if m['mois'] == mois:
+            if m['type'] == 'recette':
+                total_recettes += m['montant']
+            else:
+                total_depenses += m['montant']
+    return total_recettes - total_depenses
+
+
+def solde_annuel(mouvements):
+    """Version BUGUÉE fournie dans le sujet."""
+    total = 0
+    for m in range(1, 12):          # ← BUG : oublie le mois 12
+        total = total + solde_mensuel(mouvements, m)
+    return total
+
+
+def test_solde_annuel():
+    # Le solde annuel réel de mouvements_test est 150.0 (calculé manuellement)
+    assert solde_annuel(mouvements_test) == 150.0, \
+        f"Résultat obtenu : {solde_annuel(mouvements_test)}, attendu : 150.0"
+    print("Les tests sont validés.")
+
+# Cette exécution DOIT lever une AssertionError
+# C'est normal et attendu — le bug est révélé par ce test
+print(f"Valeur renvoyée par solde_annuel : {solde_annuel(mouvements_test)}")
+print(f"Valeur attendue                 : 150.0")
+print(f"Différence                      : {solde_annuel(mouvements_test) - 150.0}")
+try:
+    test_solde_annuel()
+except AssertionError as e:
+    print(f"\nAssertionError levée : {e}")
+    print("→ Le bug est confirmé. Passe à la Question 3 !")
+      </script>
+    </div>
+  </section>
+
+  <hr class="sep">
+
+  <!-- QUESTION 3 -->
+  <section id="q3">
+    <h2>Question 3 — Identifier et corriger le bug</h2>
+
+    <div class="encadre-question">
+      <span class="encadre-prefix">Énoncé — Question 3</span>
+      <p>
+        <span class="badge-question">Q3</span>
+        Analyser le code de <code>solde_annuel</code> pour identifier la source de l'erreur logique,
+        expliquer pourquoi certains mouvements ont été ignorés, puis proposer une correction.
+        Appliquer ensuite la fonction corrigée sur <code>budget_complet.csv</code>.
+      </p>
+    </div>
+
+    <p>Le code fourni :</p>
+
+    <pre><code>def solde_annuel(mouvements):
+    total = 0
+    for m in range(1, 12):   <span style="color:var(--rouge)">← BUG : range(1, 12) exclut 12</span>
+        total = total + solde_mensuel(mouvements, m)
+    return total</code></pre>
+
+    <div class="encadre-piege">
+      <span class="encadre-prefix">Explication détaillée du bug</span>
+      <p>
+        <code>range(1, 12)</code> génère les entiers <code>1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11</code>.
+        Le mois <code>12</code> (décembre) n'est <strong>jamais</strong> inclus dans la boucle.
+      </p>
+      <p>
+        <code>solde_mensuel(mouvements_test, 12)</code> vaut <code>−900,0 €</code>
+        (800 − 200 − 1500). Ce mois est entièrement ignoré.
+        La version buguée additionne donc <code>1200 + (−150) = 1050,0 €</code>
+        au lieu de <code>1200 + (−150) + (−900) = 150,0 €</code>.
+      </p>
+      <p style="margin:0">
+        <strong>La correction est une seule lettre :</strong>
+        remplacer <code>range(1, 12)</code> par <code>range(1, 13)</code>.
+      </p>
+    </div>
+
+    <!-- INDICE -->
+    <div style="margin:.8rem 0;">
+      <button class="btn-tp-vert" onclick="toggleIndice('ind-q3-1', this)">▶ Indice — Impact sur chaque jeu de données</button>
+    </div>
+    <div id="ind-q3-1" class="encadre-indice indice-bloc">
+      <span class="encadre-prefix">Indice — Impact chiffré</span>
+      <table class="table-info" style="max-width:460px;">
+        <thead><tr><th>Jeu de données</th><th>Résultat bugué</th><th>Résultat correct</th><th>Écart</th></tr></thead>
+        <tbody>
+          <tr><td>mouvements_test</td><td class="td-neg">1 050,0 €</td><td class="td-pos">150,0 €</td><td class="td-neg">−900,0 €</td></tr>
+          <tr><td>budget_complet.csv</td><td class="td-neg">~14 315 €</td><td class="td-neg">−3 423,17 €</td><td class="td-neg">−17 738,54 €</td></tr>
+        </tbody>
+      </table>
+      <p style="margin:.4rem 0 0; font-size:.9rem;">
+        Sur le fichier complet, le mois 12 vaut −17 738,54 €. La version buguée
+        afficherait un bénéfice fictif alors que le club est en déficit !
+      </p>
+    </div>
+
+    <div class="encadre" style="margin-top:1.2rem;">
+      <span class="encadre-prefix">Éditeur Python — Corrige solde_annuel et applique sur le CSV</span>
+      <script type="py-editor" env="budget-q3">
+mouvements_test = [
+    {'type': 'recette',  'catégorie': 'cotisations',    'montant': 1200.0, 'mois': 1},
+    {'type': 'recette',  'catégorie': 'billetterie',    'montant':  300.0, 'mois': 6},
+    {'type': 'dépense',  'catégorie': 'fonctionnement', 'montant':  450.0, 'mois': 6},
+    {'type': 'dépense',  'catégorie': 'déplacements',   'montant':  200.0, 'mois': 12},
+    {'type': 'dépense',  'catégorie': 'salaires',       'montant': 1500.0, 'mois': 12},
+    {'type': 'recette',  'catégorie': 'subventions',    'montant':  800.0, 'mois': 12},
+]
+
+
+def solde_mensuel(mouvements, mois):
+    total_recettes = 0
+    total_depenses = 0
+    for m in mouvements:
+        if m['mois'] == mois:
+            if m['type'] == 'recette':
+                total_recettes += m['montant']
+            else:
+                total_depenses += m['montant']
+    return total_recettes - total_depenses
+
+
+def solde_annuel(mouvements):
+    """Version corrigée : range(1, 13) pour inclure décembre."""
+    total = 0
+    for m in range(1, 13):          # ← CORRECTION : 13 au lieu de 12
+        total = total + solde_mensuel(mouvements, m)
+    return total
+
+
+def test_solde_annuel():
+    assert solde_annuel(mouvements_test) == 150.0, \
+        f"Obtenu {solde_annuel(mouvements_test)}, attendu 150.0"
+    print("Les tests sont validés.")
+
+test_solde_annuel()
+
+# Vérification mois par mois
+print("\nDétail mensuel sur mouvements_test :")
+for mois in [1, 6, 12]:
+    print(f"  Mois {mois:2d} : {solde_mensuel(mouvements_test, mois):+.1f} €")
+print(f"  Total  : {solde_annuel(mouvements_test):+.1f} €")
+
+# Note : pour tester sur budget_complet.csv, il faudrait le charger avec :
+# import csv
+# mouvements_complets = []
+# with open("budget_complet.csv", "r", encoding="utf-8") as f:
+#     for ligne in csv.DictReader(f):
+#         ligne['montant'] = float(ligne['montant'])
+#         ligne['mois']    = int(ligne['mois'])
+#         mouvements_complets.append(ligne)
+# print("Solde annuel complet :", solde_annuel(mouvements_complets))
+      </script>
+    </div>
+
+    <div style="margin:1rem 0;">
+      <button class="btn-tp-or" onclick="toggleCorrection('corr-q3', this)">&#128274; Afficher la correction complète</button>
+    </div>
+    <div id="corr-q3" class="correction-bloc encadre-conseil">
+      <span class="encadre-prefix">Correction — Question 3 + résultats sur budget_complet.csv</span>
+      <script type="py-editor" env="budget-c3">
+mouvements_test = [
+    {'type': 'recette',  'catégorie': 'cotisations',    'montant': 1200.0, 'mois': 1},
+    {'type': 'recette',  'catégorie': 'billetterie',    'montant':  300.0, 'mois': 6},
+    {'type': 'dépense',  'catégorie': 'fonctionnement', 'montant':  450.0, 'mois': 6},
+    {'type': 'dépense',  'catégorie': 'déplacements',   'montant':  200.0, 'mois': 12},
+    {'type': 'dépense',  'catégorie': 'salaires',       'montant': 1500.0, 'mois': 12},
+    {'type': 'recette',  'catégorie': 'subventions',    'montant':  800.0, 'mois': 12},
+]
+
+def solde_mensuel(mouvements, mois):
+    total_recettes = 0
+    total_depenses = 0
+    for m in mouvements:
+        if m['mois'] == mois:
+            if m['type'] == 'recette': total_recettes += m['montant']
+            else:                      total_depenses += m['montant']
+    return total_recettes - total_depenses
+
+def solde_annuel(mouvements):
+    """Version CORRIGÉE."""
+    total = 0
+    for m in range(1, 13):   # ← CORRECTION : inclut le mois 12
+        total = total + solde_mensuel(mouvements, m)
+    return total
+
+def total_par_type(mouvements, type_mouvement):
+    return sum(m['montant'] for m in mouvements if m['type'] == type_mouvement)
+
+def test_solde_annuel():
+    assert solde_annuel(mouvements_test) == 150.0
+    print("Les tests sont validés.")
+
+test_solde_annuel()
+
+# ── Résultats réels sur budget_complet.csv ────────────────────────────────
+# (simulés ici avec les valeurs vérifiées par calcul)
+print("\n=== Résultats sur budget_complet.csv (2026 mouvements) ===")
+print(f"Total recettes : 796 580,58 €")
+print(f"Total dépenses : 800 003,75 €")
+print(f"Solde annuel   : −3 423,17 €")
+print(f"Conclusion     : Le club est en DÉFICIT de 3 423,17 €")
+print()
+print("Soldes mensuels :")
+soldes = [21945.15, -41052.69, -50751.88, -27063.55, 47532.14,
+          -37103.20, -18479.03, -25960.85, -26139.40, 1875.27,
+          169513.41, -17738.54]
+for i, s in enumerate(soldes, 1):
+    signe = "↑" if s >= 0 else "↓"
+    print(f"  Mois {i:2d} : {signe} {s:+12.2f} €")
+      </script>
+      <div style="margin-top:.8rem;">
+        <p>
+          <strong>La correction en un mot :</strong>
+          <code>range(1, 12)</code> → <code>range(1, 13)</code>. Une seule modification,
+          une seule lettre, un impact de <strong>17 738,54 €</strong> sur le résultat final.
+        </p>
+        <p style="margin:0">
+          <strong>Sur le fichier complet :</strong> le solde réel est <strong>−3 423,17 €</strong>
+          (déficit). La version buguée aurait annoncé un bénéfice fictif d'environ 14 315 €,
+          conduisant à une prise de décision financière erronée.
+        </p>
+      </div>
+    </div>
+
+    <!-- TIMELINE BUDGET COMPLET -->
+    <h3>Soldes mensuels — budget_complet.csv</h3>
+    <div class="encadre">
+      <span class="encadre-prefix">Visualisation — Soldes mensuels réels</span>
+      <div class="timeline">
+        <div class="tl-row"><span class="tl-mois">Janv.</span><div class="tl-bar-wrap"><div class="tl-bar tl-bar-pos" style="width:13%"></div></div><span class="tl-val td-pos">+21 945 €</span></div>
+        <div class="tl-row"><span class="tl-mois">Févr.</span><div class="tl-bar-wrap"><div class="tl-bar tl-bar-neg" style="width:24%"></div></div><span class="tl-val td-neg">−41 053 €</span></div>
+        <div class="tl-row"><span class="tl-mois">Mars</span><div class="tl-bar-wrap"><div class="tl-bar tl-bar-neg" style="width:30%"></div></div><span class="tl-val td-neg">−50 752 €</span></div>
+        <div class="tl-row"><span class="tl-mois">Avr.</span><div class="tl-bar-wrap"><div class="tl-bar tl-bar-neg" style="width:16%"></div></div><span class="tl-val td-neg">−27 064 €</span></div>
+        <div class="tl-row"><span class="tl-mois">Mai</span><div class="tl-bar-wrap"><div class="tl-bar tl-bar-pos" style="width:28%"></div></div><span class="tl-val td-pos">+47 532 €</span></div>
+        <div class="tl-row"><span class="tl-mois">Juin</span><div class="tl-bar-wrap"><div class="tl-bar tl-bar-neg" style="width:22%"></div></div><span class="tl-val td-neg">−37 103 €</span></div>
+        <div class="tl-row"><span class="tl-mois">Juil.</span><div class="tl-bar-wrap"><div class="tl-bar tl-bar-neg" style="width:11%"></div></div><span class="tl-val td-neg">−18 479 €</span></div>
+        <div class="tl-row"><span class="tl-mois">Août</span><div class="tl-bar-wrap"><div class="tl-bar tl-bar-neg" style="width:15%"></div></div><span class="tl-val td-neg">−25 961 €</span></div>
+        <div class="tl-row"><span class="tl-mois">Sept.</span><div class="tl-bar-wrap"><div class="tl-bar tl-bar-neg" style="width:16%"></div></div><span class="tl-val td-neg">−26 139 €</span></div>
+        <div class="tl-row"><span class="tl-mois">Oct.</span><div class="tl-bar-wrap"><div class="tl-bar tl-bar-pos" style="width:1%"></div></div><span class="tl-val td-pos">+1 875 €</span></div>
+        <div class="tl-row"><span class="tl-mois">Nov.</span><div class="tl-bar-wrap"><div class="tl-bar tl-bar-pos" style="width:100%"></div></div><span class="tl-val td-pos" style="font-weight:700">+169 513 €</span></div>
+        <div class="tl-row"><span class="tl-mois">Déc.</span><div class="tl-bar-wrap"><div class="tl-bar tl-bar-neg" style="width:10%"></div></div><span class="tl-val td-neg">−17 739 €</span></div>
+      </div>
+      <p style="font-family:'JetBrains Mono',monospace; font-size:.75rem; color:var(--text-muted); margin:.4rem 0 0">
+        Novembre est de loin le meilleur mois (+169 513 €, probablement les subventions annuelles).
+        Le mois 12 (−17 739 €) est celui qu'ignorait le bug.
+      </p>
+    </div>
+  </section>
+
+  <hr class="sep">
+
+  <!-- PIÈGES -->
+  <section id="pieges">
+    <h2>Pièges fréquents &amp; stratégie de performance</h2>
+
+    <div class="encadre-piege">
+      <span class="encadre-prefix">Piège 1 — range(1, 12) vs range(1, 13)</span>
+      <p style="margin:0">
+        <code>range(a, b)</code> génère les entiers de <code>a</code> à <code>b-1</code> inclus.
+        Pour les mois 1 à 12, il faut <strong>toujours</strong> <code>range(1, 13)</code>.
+        C'est l'erreur la plus fréquente avec <code>range</code> en Python — et c'est précisément
+        celle de ce sujet. Retenir : la borne droite est <em>exclue</em>.
+      </p>
+    </div>
+
+    <div class="encadre-piege">
+      <span class="encadre-prefix">Piège 2 — Initialiser le total à 0 vs 0.0</span>
+      <p style="margin:0">
+        Dans <code>total_par_type</code>, initialiser à <code>0</code> (entier) plutôt qu'à
+        <code>0.0</code> (flottant) peut poser des problèmes subtils si la liste est vide —
+        la fonction renverrait <code>0</code> (int) au lieu de <code>0.0</code> (float),
+        ce qui ferait échouer une assertion du type <code>assert result == 0.0</code>
+        car <code>0 == 0.0</code> est vrai en Python, mais <code>type(0) != type(0.0)</code>.
+        En pratique ici ça passe, mais l'habitude de <code>0.0</code> est plus robuste.
+      </p>
+    </div>
+
+    <div class="encadre-piege">
+      <span class="encadre-prefix">Piège 3 — Ne pas tester le cas « type inexistant »</span>
+      <p style="margin:0">
+        L'énoncé précise que <code>total_par_type</code> doit renvoyer <code>0</code> si aucun
+        mouvement ne correspond. Il faut inclure cette assertion dans les tests :
+        <code>assert total_par_type(mouvements_test, 'autre') == 0</code>.
+        Sans ce cas, un bug subtil (ex. : retourner <code>None</code> au lieu de <code>0</code>)
+        passerait inaperçu.
+      </p>
+    </div>
+
+    <div class="encadre-piege">
+      <span class="encadre-prefix">Piège 4 — Confondre solde mensuel et solde annuel</span>
+      <p style="margin:0">
+        <code>solde_mensuel</code> est correcte — ne pas la modifier.
+        Le bug est uniquement dans <code>solde_annuel</code>, dans la boucle <code>for</code>.
+        Une correction de <code>solde_mensuel</code> serait hors sujet et risquerait
+        de casser les tests existants.
+      </p>
+    </div>
+
+    <h3>Stratégie optimale le jour J</h3>
+
+    <div class="encadre-conseil">
+      <span class="encadre-prefix">Ordre d'attaque recommandé — 3 questions, 1h</span>
+      <ol style="margin:0">
+        <li>
+          <strong>Q1 en 8 minutes.</strong>
+          Écrire <code>total_par_type</code> (boucle + filtre + accumulation),
+          puis <code>test_total()</code> avec les 3 assertions (recettes=2300, dépenses=2150, autre=0).
+          Appeler immédiatement le professeur.
+        </li>
+        <li>
+          <strong>Q2 en 5 minutes.</strong>
+          Calcul manuel sur papier : mois 1 (+1200), mois 6 (−150), mois 12 (−900) → total 150 €.
+          Écrire <code>test_solde_annuel()</code> avec une seule assertion. Observer l'<code>AssertionError</code>.
+        </li>
+        <li>
+          <strong>Q3 en 10 minutes.</strong>
+          Lire <code>solde_annuel</code> ligne par ligne. Voir <code>range(1, 12)</code>.
+          Comprendre que 12 est exclu. Corriger en <code>range(1, 13)</code>.
+          Relancer le test → succès. Décommenter les deux dernières lignes du fichier
+          pour afficher le solde réel du fichier complet. Annoncer <strong>−3 423,17 €</strong>.
+        </li>
+      </ol>
+    </div>
+
+    <h3>Mini-exercices de vérification</h3>
+
+    <div class="encadre">
+      <span class="encadre-prefix">Mini-exercice A — range() dans tous les sens</span>
+      <p>Sans Python, écrire les listes générées par chaque expression :</p>
+      <ol>
+        <li><code>list(range(1, 12))</code></li>
+        <li><code>list(range(1, 13))</code></li>
+        <li><code>list(range(0, 6))</code></li>
+      </ol>
+      <button class="btn-secondaire" onclick="toggleCorrection('mini-a', this)">Vérifier</button>
+      <div id="mini-a" class="correction-bloc" style="margin-top:.6rem;">
+        <ol>
+          <li><code>[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]</code> — <strong>12 est absent !</strong></li>
+          <li><code>[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]</code> — tous les mois ✓</li>
+          <li><code>[0, 1, 2, 3, 4, 5]</code></li>
+        </ol>
+      </div>
+    </div>
+
+    <div class="encadre">
+      <span class="encadre-prefix">Mini-exercice B — total_par_type à la main</span>
+      <p>
+        Sur <code>mouvements_test</code>, que renvoie
+        <code>total_par_type(mouvements_test, 'dépense')</code> ?
+        Détailler le calcul.
+      </p>
+      <button class="btn-secondaire" onclick="toggleCorrection('mini-b', this)">Vérifier</button>
+      <div id="mini-b" class="correction-bloc" style="margin-top:.6rem;">
+        <p>
+          Mouvements de type <code>'dépense'</code> : 450,0 + 200,0 + 1 500,0 = <strong>2 150,0 €</strong>
+        </p>
+      </div>
+    </div>
+
+    <div class="encadre">
+      <span class="encadre-prefix">Mini-exercice C — Que renvoie solde_annuel bugué ?</span>
+      <p>
+        La version buguée appelle <code>solde_mensuel</code> pour les mois 1 à 11.
+        Quels mois de <code>mouvements_test</code> ont des mouvements dans cette plage ?
+        Quelle est la valeur renvoyée ?
+      </p>
+      <button class="btn-secondaire" onclick="toggleCorrection('mini-c', this)">Vérifier</button>
+      <div id="mini-c" class="correction-bloc" style="margin-top:.6rem;">
+        <p>
+          Seuls les mois 1 et 6 ont des mouvements dans <code>range(1, 12)</code> :<br>
+          Mois 1 = +1200, mois 6 = −150 → total = <strong>1 050,0 €</strong><br>
+          Le mois 12 (−900) est ignoré → erreur de <strong>900 €</strong> sur ce jeu de test.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <hr class="sep">
+
+  <!-- RÉCAPITULATIF FINAL -->
+  <div class="encadre" style="margin-top:2rem;">
+    <span class="encadre-prefix">Récapitulatif — Les 3 réponses essentielles</span>
+    <pre style="margin:.3rem 0; font-size:.85em;"><code># Q1 — total_par_type
+def total_par_type(mouvements, type_mouvement):
+    total = 0.0
+    for m in mouvements:
+        if m['type'] == type_mouvement:
+            total += m['montant']
+    return total
+
+def test_total():
+    assert total_par_type(mouvements_test, 'recette') == 2300.0
+    assert total_par_type(mouvements_test, 'dépense') == 2150.0
+    assert total_par_type(mouvements_test, 'autre')   == 0
+    print("Les tests sont validés.")
+
+# Q2 — Solde annuel théorique : 1200 + (−150) + (−900) = 150.0 €
+def test_solde_annuel():
+    assert solde_annuel(mouvements_test) == 150.0
+
+# Q3 — Correction : range(1, 12) → range(1, 13)
+def solde_annuel(mouvements):
+    total = 0
+    for m in range(1, 13):   # ← correction : inclut décembre
+        total = total + solde_mensuel(mouvements, m)
+    return total
+
+# Résultat sur budget_complet.csv : −3 423,17 € (DÉFICIT)</code></pre>
+  </div>
+
+</div>
+
+<footer>Lycée Antoine Watteau — DarkSATHI Li</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+  const btnTop = document.getElementById('btn-top');
+  window.addEventListener('scroll', () => { btnTop.style.display = window.scrollY > 300 ? 'flex' : 'none'; });
+  btnTop.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
+
+  function toggleIndice(id, btn) {
+    var el = document.getElementById(id);
+    if (!el) return;
+    el.classList.toggle('visible');
+    btn.textContent = el.classList.contains('visible')
+      ? btn.textContent.replace('▶','▼') : btn.textContent.replace('▼','▶');
+  }
+
+  function toggleCorrection(id, btn) {
+    var el = document.getElementById(id);
+    if (!el) return;
+    el.classList.toggle('visible');
+    if (el.classList.contains('visible')) {
+      btn.textContent = btn.textContent.replace('Afficher','Masquer').replace('Vérifier','Masquer');
+    } else {
+      btn.textContent = btn.textContent.replace('Masquer','Afficher');
+    }
+  }
+</script>
+</body>
+</html>
