@@ -660,16 +660,6 @@ def evolution(population, nb_proies):
     return population_suivante, nb_proies
 
 # --- À toi de jouer : crée la population et la boucle de 5 jours ---
-population = [
-    Coccinelle("femelle", 10, 2),
-    Coccinelle("femelle", 10, 2),
-    Coccinelle("male",    10, 2)
-]
-nb_proies = 200
-
-for jour in range(1, 6):
-    population, nb_proies = evolution(population, nb_proies)
-    print(f"Jour {jour} : {len(population)} coccinelle(s), {nb_proies} puceron(s)")
       </script>
     </div>
 
