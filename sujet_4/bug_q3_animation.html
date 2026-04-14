@@ -1,0 +1,1014 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bug Q3 — Modifier une liste pendant son parcours | NSI Terminale</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Rubik+Dirt&family=JetBrains+Mono:wght@400;600;700&family=Source+Serif+4:ital,opsz,wght@0,8..60,300..900;1,8..60,300..900&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --bg:        #080a14;
+      --surface:   #0e1120;
+      --surface2:  #141728;
+      --border:    #1e2340;
+      --violet:    #6c63ff;
+      --violet-d:  #4a43cc;
+      --green:     #00d4aa;
+      --orange:    #ff8c42;
+      --red:       #ff4560;
+      --red-d:     #c0392b;
+      --yellow:    #ffd166;
+      --text:      #e8ecf5;
+      --text-muted:#7a84a8;
+      --mono:      'JetBrains Mono', monospace;
+      --serif:     'Source Serif 4', serif;
+      --display:   'Rubik Dirt', cursive;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--serif);
+      font-size: 1.05rem;
+      line-height: 1.75;
+      min-height: 100vh;
+    }
+
+    /* ── HEADER ── */
+    header {
+      background: linear-gradient(135deg, #0a0c1e 0%, #12163a 60%, #0e1120 100%);
+      border-bottom: 1px solid var(--border);
+      padding: 2.5rem 2rem 2rem;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    header::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(ellipse 60% 50% at 20% 50%, rgba(108,99,255,.12) 0%, transparent 70%),
+        radial-gradient(ellipse 50% 60% at 80% 50%, rgba(0,212,170,.08) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .badge-nsi {
+      display: inline-block;
+      font-family: var(--mono);
+      font-size: .72rem;
+      font-weight: 600;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+      background: rgba(108,99,255,.18);
+      color: var(--violet);
+      border: 1px solid rgba(108,99,255,.35);
+      border-radius: 4px;
+      padding: .25rem .8rem;
+      margin-bottom: 1rem;
+    }
+
+    header h1 {
+      font-family: var(--display);
+      font-size: clamp(1.6rem, 4vw, 2.6rem);
+      color: var(--text);
+      letter-spacing: .03em;
+      line-height: 1.2;
+      font-weight: lighter;
+    }
+
+    header h1 span {
+      color: var(--red);
+    }
+
+    header p.subtitle {
+      font-family: var(--mono);
+      font-size: .82rem;
+      color: var(--text-muted);
+      margin-top: .7rem;
+    }
+
+    /* ── LAYOUT ── */
+    .container {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 2rem 1.5rem 4rem;
+    }
+
+    /* ── SECTIONS ── */
+    .section-title {
+      font-family: var(--display);
+      font-size: 1.3rem;
+      color: var(--violet);
+      margin: 2.5rem 0 1rem;
+      display: flex;
+      align-items: center;
+      gap: .7rem;
+    }
+
+    .section-title::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: linear-gradient(to right, var(--border), transparent);
+    }
+
+    .num {
+      font-family: var(--mono);
+      font-size: .75rem;
+      background: rgba(108,99,255,.2);
+      color: var(--violet);
+      border: 1px solid rgba(108,99,255,.3);
+      border-radius: 3px;
+      padding: .1rem .5rem;
+    }
+
+    /* ── CARD ── */
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 1.4rem 1.6rem;
+      margin: 1.2rem 0;
+    }
+
+    .card.danger {
+      border-color: rgba(255,69,96,.3);
+      background: #130c10;
+    }
+
+    .card.success {
+      border-color: rgba(0,212,170,.25);
+      background: #081310;
+    }
+
+    .card-label {
+      font-family: var(--mono);
+      font-size: .7rem;
+      font-weight: 700;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      margin-bottom: .7rem;
+      display: block;
+    }
+
+    .card.danger  .card-label { color: var(--red); }
+    .card.success .card-label { color: var(--green); }
+    .card         .card-label { color: var(--violet); }
+
+    /* ── CODE BLOCK ── */
+    pre.code-block {
+      background: #060810;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 1.1rem 1.3rem;
+      font-family: var(--mono);
+      font-size: .83rem;
+      line-height: 1.8;
+      overflow-x: auto;
+      color: #c9d1e0;
+    }
+
+    .kw  { color: #c792ea; }
+    .fn  { color: #82aaff; }
+    .str { color: #c3e88d; }
+    .num-lit { color: #f78c6c; }
+    .cmt { color: #546e7a; font-style: italic; }
+    .hi-bug { color: var(--red); font-weight: 700; }
+    .hi-ok  { color: var(--green); font-weight: 700; }
+
+    /* ── ANIMATION PRINCIPALE ── */
+    #anim-wrapper {
+      background: #060810;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1.8rem;
+      margin: 1.5rem 0;
+      position: relative;
+    }
+
+    #anim-title {
+      font-family: var(--mono);
+      font-size: .72rem;
+      font-weight: 700;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-bottom: 1.4rem;
+    }
+
+    /* Zone liste */
+    #list-zone {
+      position: relative;
+      margin-bottom: 1.8rem;
+    }
+
+    .list-label {
+      font-family: var(--mono);
+      font-size: .68rem;
+      color: var(--text-muted);
+      margin-bottom: .5rem;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+    }
+
+    #list-cells {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+      min-height: 68px;
+      align-items: flex-end;
+    }
+
+    .cell {
+      width: 88px;
+      border-radius: 7px;
+      border: 2px solid transparent;
+      transition: all .35s cubic-bezier(.4,0,.2,1);
+      overflow: hidden;
+      position: relative;
+    }
+
+    .cell-inner {
+      padding: .55rem .5rem;
+      text-align: center;
+    }
+
+    .cell-index {
+      font-family: var(--mono);
+      font-size: .6rem;
+      color: var(--text-muted);
+      margin-bottom: .2rem;
+    }
+
+    .cell-temp {
+      font-family: var(--mono);
+      font-size: 1.05rem;
+      font-weight: 700;
+      line-height: 1;
+    }
+
+    .cell-jour {
+      font-family: var(--mono);
+      font-size: .6rem;
+      color: var(--text-muted);
+      margin-top: .2rem;
+    }
+
+    /* états des cellules */
+    .cell.normal {
+      background: var(--surface2);
+      border-color: var(--border);
+    }
+    .cell.normal .cell-temp { color: var(--text); }
+
+    .cell.current {
+      background: rgba(108,99,255,.2);
+      border-color: var(--violet);
+      box-shadow: 0 0 16px rgba(108,99,255,.35);
+      transform: translateY(-4px);
+    }
+    .cell.current .cell-temp { color: var(--violet); }
+
+    .cell.extreme {
+      background: rgba(255,69,96,.18);
+      border-color: var(--red);
+      box-shadow: 0 0 14px rgba(255,69,96,.3);
+    }
+    .cell.extreme .cell-temp { color: var(--red); }
+
+    .cell.kept {
+      background: rgba(0,212,170,.12);
+      border-color: var(--green);
+    }
+    .cell.kept .cell-temp { color: var(--green); }
+
+    .cell.removing {
+      opacity: 0;
+      transform: scale(.5) translateY(-20px);
+      border-color: var(--red);
+    }
+
+    .cell.skipped {
+      background: rgba(255,140,66,.15);
+      border-color: var(--orange);
+      box-shadow: 0 0 14px rgba(255,140,66,.3);
+    }
+    .cell.skipped .cell-temp { color: var(--orange); }
+
+    .cell.ghost {
+      opacity: .25;
+    }
+
+    /* Flèche pointeur */
+    #pointer-row {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+      min-height: 26px;
+      margin-top: 2px;
+      align-items: flex-start;
+    }
+
+    .ptr-slot {
+      width: 88px;
+      text-align: center;
+      font-family: var(--mono);
+      font-size: 1rem;
+      color: var(--violet);
+      opacity: 0;
+      transition: opacity .3s;
+    }
+
+    .ptr-slot.active { opacity: 1; }
+
+    /* ── ZONE ÉTAT ── */
+    #state-panel {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: .8rem;
+      margin: 1rem 0;
+    }
+
+    .state-box {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 7px;
+      padding: .7rem 1rem;
+    }
+
+    .state-box-label {
+      font-family: var(--mono);
+      font-size: .62rem;
+      text-transform: uppercase;
+      letter-spacing: .1em;
+      color: var(--text-muted);
+      margin-bottom: .3rem;
+    }
+
+    .state-box-val {
+      font-family: var(--mono);
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--violet);
+    }
+
+    /* ── NARRATIVE BOX ── */
+    #narrative {
+      background: var(--surface2);
+      border-left: 3px solid var(--violet);
+      border-radius: 0 7px 7px 0;
+      padding: .8rem 1.1rem;
+      font-family: var(--serif);
+      font-size: .92rem;
+      line-height: 1.65;
+      color: var(--text);
+      min-height: 3.2rem;
+      transition: background .3s;
+    }
+
+    #narrative.danger-msg {
+      border-left-color: var(--red);
+      background: rgba(255,69,96,.06);
+    }
+
+    #narrative.skip-msg {
+      border-left-color: var(--orange);
+      background: rgba(255,140,66,.06);
+    }
+
+    #narrative.ok-msg {
+      border-left-color: var(--green);
+      background: rgba(0,212,170,.05);
+    }
+
+    /* ── CONTRÔLES ── */
+    #controls {
+      display: flex;
+      gap: .7rem;
+      flex-wrap: wrap;
+      margin-top: 1.4rem;
+      align-items: center;
+    }
+
+    button.btn-anim {
+      font-family: var(--mono);
+      font-size: .78rem;
+      font-weight: 600;
+      letter-spacing: .05em;
+      border: none;
+      border-radius: 6px;
+      padding: .5rem 1.1rem;
+      cursor: pointer;
+      transition: opacity .2s, transform .1s;
+    }
+
+    button.btn-anim:hover { opacity: .85; transform: translateY(-1px); }
+    button.btn-anim:active { transform: translateY(0); }
+    button.btn-anim:disabled { opacity: .3; cursor: not-allowed; transform: none; }
+
+    .btn-primary   { background: var(--violet); color: #fff; }
+    .btn-secondary { background: var(--surface2); color: var(--text); border: 1px solid var(--border); }
+    .btn-danger    { background: var(--red); color: #fff; }
+    .btn-success   { background: var(--green); color: #060810; }
+
+    #speed-label {
+      font-family: var(--mono);
+      font-size: .72rem;
+      color: var(--text-muted);
+    }
+
+    input[type=range] {
+      accent-color: var(--violet);
+      width: 90px;
+    }
+
+    /* ── LÉGENDE ── */
+    .legend {
+      display: flex;
+      gap: 1.2rem;
+      flex-wrap: wrap;
+      margin: 1rem 0;
+    }
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: .4rem;
+      font-family: var(--mono);
+      font-size: .72rem;
+      color: var(--text-muted);
+    }
+
+    .legend-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 2px;
+    }
+
+    /* ── COMPARAISON AVANT/APRÈS ── */
+    .compare-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+      margin: 1rem 0;
+    }
+
+    @media (max-width: 600px) {
+      .compare-grid { grid-template-columns: 1fr; }
+      #state-panel  { grid-template-columns: 1fr; }
+    }
+
+    /* ── HIGHLIGHT RÉSULTAT FINAL ── */
+    #result-reveal {
+      display: none;
+      background: rgba(255,69,96,.07);
+      border: 1px solid rgba(255,69,96,.3);
+      border-radius: 8px;
+      padding: 1rem 1.3rem;
+      margin: 1rem 0;
+    }
+
+    #result-reveal.show { display: block; animation: fadeIn .4s ease; }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(6px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .result-row {
+      display: flex;
+      align-items: center;
+      gap: .7rem;
+      font-family: var(--mono);
+      font-size: .82rem;
+      margin: .35rem 0;
+    }
+
+    .result-expected { color: var(--green); }
+    .result-got      { color: var(--red); }
+
+    /* ── RÈGLE D'OR ── */
+    .golden-rule {
+      background: linear-gradient(135deg, rgba(108,99,255,.15) 0%, rgba(0,212,170,.08) 100%);
+      border: 1px solid rgba(108,99,255,.3);
+      border-radius: 10px;
+      padding: 1.3rem 1.6rem;
+      margin: 1.5rem 0;
+      text-align: center;
+    }
+
+    .golden-rule p {
+      font-family: var(--mono);
+      font-size: .95rem;
+      font-weight: 700;
+      color: var(--text);
+      line-height: 1.6;
+    }
+
+    .golden-rule p span { color: var(--red); }
+
+    /* ── FOOTER ── */
+    footer {
+      text-align: center;
+      font-family: var(--mono);
+      font-size: .75rem;
+      color: var(--text-muted);
+      padding: 2rem 1rem 1.5rem;
+      border-top: 1px solid var(--border);
+    }
+
+    /* ── PILL TAG ── */
+    .tag {
+      display: inline-block;
+      font-family: var(--mono);
+      font-size: .67rem;
+      font-weight: 600;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      border-radius: 3px;
+      padding: .12rem .55rem;
+      margin: .1rem;
+    }
+
+    .tag-red    { background: rgba(255,69,96,.15); color: var(--red); border: 1px solid rgba(255,69,96,.25); }
+    .tag-orange { background: rgba(255,140,66,.15); color: var(--orange); border: 1px solid rgba(255,140,66,.25); }
+    .tag-green  { background: rgba(0,212,170,.12); color: var(--green); border: 1px solid rgba(0,212,170,.2); }
+    .tag-violet { background: rgba(108,99,255,.15); color: var(--violet); border: 1px solid rgba(108,99,255,.25); }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="badge-nsi">NSI Terminale — Sujet Plantes en serre</div>
+  <h1>Question 3 — <span>Le bug</span> du parcours modifié</h1>
+  <p class="subtitle">Modifier une liste pendant qu'on la parcourt avec <code style="color:#c792ea">for</code> — animation interactive</p>
+</header>
+
+<div class="container">
+
+  <!-- ── CONTEXTE ── -->
+  <div class="section-title"><span class="num">01</span> Le code buggué</div>
+
+  <div class="card danger">
+    <span class="card-label">Code fourni dans culture.py — VERSION BUGUÉE</span>
+    <pre class="code-block"><span class="kw">def</span> <span class="fn">purger_mesures_extremes</span>(liste_mesures):
+    <span class="kw">for</span> mesure <span class="kw">in</span> liste_mesures:          <span class="cmt"># parcours direct de la liste</span>
+        <span class="kw">if</span> mesure[<span class="str">'temperature'</span>] &lt; <span class="num-lit">20</span> <span class="kw">or</span> mesure[<span class="str">'temperature'</span>] &gt; <span class="num-lit">25</span>:
+            <span class="hi-bug">liste_mesures.remove(mesure)  # ← BUG : on modifie pendant le parcours !</span>
+    <span class="kw">return</span> liste_mesures</pre>
+  </div>
+
+  <p style="color:var(--text-muted); font-size:.9rem;">
+    La fonction est censée <strong style="color:var(--text)">ne garder que les mesures entre 20°C et 25°C</strong>.
+    Elle supprime les extrêmes avec <code style="color:#c792ea">.remove()</code> pendant le parcours <code style="color:#c792ea">for</code>.
+    Résultat : certaines mesures extrêmes <em>survivent</em> sans que Python ne lève la moindre erreur.
+  </p>
+
+  <!-- ── ANIMATION ── -->
+  <div class="section-title"><span class="num">02</span> Animation pas à pas</div>
+
+  <div id="anim-wrapper">
+    <div id="anim-title">SIMULATION — purger_mesures_extremes([18.0, 19.0, 22.0, 28.0, 29.0])</div>
+
+    <div class="legend">
+      <div class="legend-item"><div class="legend-dot" style="background:var(--violet); border:1px solid var(--violet)"></div> Élément en cours d'examen</div>
+      <div class="legend-item"><div class="legend-dot" style="background:rgba(255,69,96,.5); border:1px solid var(--red)"></div> Valeur extrême — supprimée</div>
+      <div class="legend-item"><div class="legend-dot" style="background:rgba(255,140,66,.4); border:1px solid var(--orange)"></div> Élément <strong>SAUTÉ</strong> (bug !)</div>
+      <div class="legend-item"><div class="legend-dot" style="background:rgba(0,212,170,.3); border:1px solid var(--green)"></div> Valeur dans la plage — conservée</div>
+    </div>
+
+    <div class="list-label">Liste <code style="font-size:.68rem">liste_mesures</code> — état courant</div>
+    <div id="list-zone">
+      <div id="list-cells"></div>
+      <div id="pointer-row"></div>
+    </div>
+
+    <div id="state-panel">
+      <div class="state-box">
+        <div class="state-box-label">Indice interne Python</div>
+        <div class="state-box-val" id="state-idx">—</div>
+      </div>
+      <div class="state-box">
+        <div class="state-box-label">Longueur de la liste</div>
+        <div class="state-box-val" id="state-len">5</div>
+      </div>
+    </div>
+
+    <div id="narrative">Appuie sur <strong>Étape suivante</strong> pour démarrer la simulation.</div>
+
+    <div id="result-reveal">
+      <p style="font-family:var(--mono); font-size:.7rem; color:var(--red); font-weight:700; letter-spacing:.1em; text-transform:uppercase; margin-bottom:.6rem;">Résultat de la fonction</p>
+      <div class="result-row">
+        <span class="tag tag-green">Attendu</span>
+        <span class="result-expected">[ { température: 22.0°C — Jour 3 } ]</span>
+      </div>
+      <div class="result-row">
+        <span class="tag tag-red">Obtenu</span>
+        <span class="result-got" id="result-got-text">...</span>
+      </div>
+      <p style="font-family:var(--serif); font-size:.85rem; color:var(--text-muted); margin-top:.7rem;">
+        Les mesures <strong style="color:var(--orange)">19.0°C (J2)</strong> et <strong style="color:var(--orange)">29.0°C (J5)</strong>
+        ont été <em>sautées</em> — elles sont restées dans la liste malgré leurs valeurs extrêmes.
+      </p>
+    </div>
+
+    <div id="controls">
+      <button class="btn-anim btn-primary" id="btn-next" onclick="nextStep()">Étape suivante</button>
+      <button class="btn-anim btn-secondary" id="btn-auto" onclick="toggleAuto()">Lecture auto</button>
+      <button class="btn-anim btn-secondary" id="btn-reset" onclick="resetAnim()">Recommencer</button>
+      <span id="speed-label">Vitesse :</span>
+      <input type="range" id="speed-slider" min="300" max="1800" value="900" step="100">
+    </div>
+  </div>
+
+  <!-- ── EXPLICATION MÉCANIQUE ── -->
+  <div class="section-title"><span class="num">03</span> La mécanique du bug</div>
+
+  <p>
+    La boucle <code style="color:#c792ea">for mesure in liste_mesures</code> maintient un
+    <strong>compteur d'indice interne</strong> que Python incrémente automatiquement à chaque tour.
+    Ce compteur est <em>aveugle</em> aux suppressions : il avance de 1 quoi qu'il arrive.
+  </p>
+
+  <div class="card">
+    <span class="card-label">Mécanisme — Décalage après suppression</span>
+    <pre class="code-block">Liste initiale  :  [<span class="num-lit">18.0</span>, <span class="num-lit">19.0</span>, <span class="num-lit">22.0</span>, <span class="num-lit">28.0</span>, <span class="num-lit">29.0</span>]
+Indices         :   [  0  ,   1  ,   2  ,   3  ,   4  ]
+
+<span class="cmt">── Itération 1 : indice = 0 ──</span>
+Lecture → <span class="hi-bug">18.0</span> (extrême)
+<span class="hi-bug">.remove(18.0)</span> → la liste se compacte :
+Après           :  [<span class="hi-bug">19.0</span>, <span class="num-lit">22.0</span>, <span class="num-lit">28.0</span>, <span class="num-lit">29.0</span>]
+Indices         :   [ 0  ,   1  ,   2  ,   3  ]
+
+<span class="cmt">── Itération 2 : indice = 1 ──</span>       ← Python avance à 1
+<span class="hi-bug">⚠ 19.0 est maintenant à l'indice 0 — Python le SAUTE !</span>
+Lecture → <span class="num-lit">22.0</span> (dans la plage, conservé)
+
+<span class="cmt">── Itération 3 : indice = 2 ──</span>
+Lecture → <span class="hi-bug">28.0</span> (extrême)
+<span class="hi-bug">.remove(28.0)</span> → compactage :
+Après           :  [<span class="hi-bug">19.0</span>, <span class="num-lit">22.0</span>, <span class="hi-bug">29.0</span>]
+                                         ↑ passé de l'indice 3 à l'indice 2
+
+<span class="cmt">── Itération 4 : indice = 3 ──</span>       ← hors bornes → fin de boucle
+<span class="hi-bug">29.0 n'est jamais examiné !</span>
+
+<span class="cmt">Résultat retourné : [19.0, 22.0, 29.0]  — 19.0 et 29.0 auraient dû être supprimés</span></pre>
+  </div>
+
+  <!-- ── RÈGLE D'OR ── -->
+  <div class="golden-rule">
+    <p>
+      Règle absolue en Python :<br>
+      <span>ne jamais supprimer ou ajouter des éléments</span> dans une liste<br>
+      pendant qu'on la parcourt avec <span>for</span>
+    </p>
+    <p style="font-size:.78rem; font-weight:400; color:var(--text-muted); margin-top:.6rem;">
+      Aucune exception n'est levée — le bug est silencieux et le résultat est incorrect.
+    </p>
+  </div>
+
+  <!-- ── SOLUTION ── -->
+  <div class="section-title"><span class="num">04</span> La correction (Q4)</div>
+
+  <p>
+    La solution idiomatique en Python est la <strong>compréhension de liste</strong> :
+    au lieu de modifier la liste en place, on en crée une <em>nouvelle</em> contenant
+    uniquement les éléments à garder.
+  </p>
+
+  <div class="compare-grid">
+    <div class="card danger">
+      <span class="card-label">Version buguée</span>
+      <pre class="code-block" style="font-size:.78rem;"><span class="kw">def</span> <span class="fn">purger</span>(liste_mesures):
+    <span class="kw">for</span> m <span class="kw">in</span> liste_mesures:
+        <span class="kw">if</span> m[<span class="str">'temperature'</span>] &lt; <span class="num-lit">20</span> \
+        <span class="kw">or</span> m[<span class="str">'temperature'</span>] &gt; <span class="num-lit">25</span>:
+            <span class="hi-bug">liste_mesures.remove(m)</span>
+    <span class="kw">return</span> liste_mesures</pre>
+    </div>
+    <div class="card success">
+      <span class="card-label">Version corrigée</span>
+      <pre class="code-block" style="font-size:.78rem;"><span class="kw">def</span> <span class="fn">purger</span>(liste_mesures):
+    <span class="kw">return</span> [
+        m <span class="kw">for</span> m <span class="kw">in</span> liste_mesures
+        <span class="hi-ok">if 20 &lt;= m['temperature'] &lt;= 25</span>
+    ]
+
+<span class="cmt"># La liste originale n'est pas touchée.</span>
+<span class="cmt"># On garde ce qui est dans la plage.</span></pre>
+    </div>
+  </div>
+
+  <div class="card success">
+    <span class="card-label">Trace d'exécution — Version corrigée sur [18.0, 19.0, 22.0, 28.0, 29.0]</span>
+    <pre class="code-block"><span class="cmt">Parcours de la liste ORIGINALE (inchangée) :</span>
+  18.0 → <span class="hi-bug">hors plage</span> → non inclus
+  19.0 → <span class="hi-bug">hors plage</span> → non inclus
+  22.0 → <span class="hi-ok">dans [20,25]</span> → inclus
+  28.0 → <span class="hi-bug">hors plage</span> → non inclus
+  29.0 → <span class="hi-bug">hors plage</span> → non inclus   ← jamais sauté !
+
+<span class="hi-ok">Résultat : [ {'jour': 3, 'temperature': 22.0, ...} ]</span></pre>
+  </div>
+
+  <!-- ── RÉSUMÉ VISUEL ── -->
+  <div class="section-title"><span class="num">05</span> À retenir</div>
+
+  <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap:1rem; margin:1rem 0;">
+    <div class="card">
+      <span class="card-label">Pourquoi ça arrive</span>
+      <p style="font-size:.9rem; color:var(--text-muted); margin:0;">
+        La boucle <code style="color:#c792ea">for</code> utilise un compteur d'indice interne.
+        Quand un élément est supprimé, tous les suivants <em>reculent d'un cran</em>.
+        L'indice avance quand même — l'élément qui a reculé est sauté.
+      </p>
+    </div>
+    <div class="card">
+      <span class="card-label">Pourquoi c'est dangereux</span>
+      <p style="font-size:.9rem; color:var(--text-muted); margin:0;">
+        Python <strong style="color:var(--red)">ne lève aucune exception</strong>.
+        Le code s'exécute jusqu'à la fin sans message d'erreur.
+        Le bug est <em>silencieux</em> : seul un test attentif le révèle.
+      </p>
+    </div>
+    <div class="card">
+      <span class="card-label">La solution</span>
+      <p style="font-size:.9rem; color:var(--text-muted); margin:0;">
+        Utiliser une <strong style="color:var(--green)">compréhension de liste</strong> :
+        <code style="color:#c3e88d">[x for x in l if condition]</code>.
+        On crée une nouvelle liste — l'originale n'est jamais modifiée pendant le parcours.
+      </p>
+    </div>
+  </div>
+
+</div>
+
+<footer>Lycée Antoine Watteau — DarkSATHI Li &nbsp;·&nbsp; NSI Terminale BAC 2026</footer>
+
+<script>
+  // ── DONNÉES ──
+  const DATA_INIT = [
+    { jour: 1, temp: 18.0 },
+    { jour: 2, temp: 19.0 },
+    { jour: 3, temp: 22.0 },
+    { jour: 4, temp: 28.0 },
+    { jour: 5, temp: 29.0 },
+  ];
+
+  // ── ÉTAT ──
+  let state = null;
+  let autoTimer = null;
+  let isAuto = false;
+
+  function getDelay() {
+    return parseInt(document.getElementById('speed-slider').value);
+  }
+
+  // Calcule le scénario complet : liste des étapes avec l'état de la liste et l'action
+  function buildSteps() {
+    const steps = [];
+
+    // Étape 0 : état initial
+    let list = DATA_INIT.map((d, i) => ({ ...d, origIdx: i }));
+    steps.push({
+      phase: 'init',
+      list: list.map(x => ({ ...x })),
+      internalIdx: null,
+      action: null,
+      current: null,
+      narrative: 'État initial — <strong>5 mesures</strong> dans la liste. L\'indice interne Python commence à 0.',
+      narrativeClass: '',
+    });
+
+    let workList = list.map(x => ({ ...x }));
+    let internalIdx = 0;
+
+    while (internalIdx < workList.length) {
+      const item = workList[internalIdx];
+      const isExtreme = item.temp < 20 || item.temp > 25;
+
+      // Étape : examen de l'élément
+      steps.push({
+        phase: 'examine',
+        list: workList.map(x => ({ ...x })),
+        internalIdx,
+        current: item.origIdx,
+        action: null,
+        narrative: `Itération — indice interne = <strong style="color:var(--violet)">${internalIdx}</strong>. Examen de la mesure <strong>Jour ${item.jour}</strong> : température = <strong style="color:var(--violet)">${item.temp}°C</strong>.`,
+        narrativeClass: '',
+      });
+
+      if (isExtreme) {
+        // Étape : suppression
+        const removed = workList[internalIdx];
+        workList.splice(internalIdx, 1);
+
+        // Y a-t-il un élément sauté ? (celui qui était juste après le supprimé)
+        const skippedItem = workList[internalIdx] || null;
+
+        steps.push({
+          phase: 'remove',
+          list: workList.map(x => ({ ...x })),
+          internalIdx,
+          current: null,
+          removed: removed,
+          skipped: skippedItem ? skippedItem.origIdx : null,
+          action: 'remove',
+          narrative: `<strong style="color:var(--red)">Suppression</strong> — ${removed.temp}°C est hors plage [20-25]. <code>.remove()</code> est appelé. La liste perd un élément et se <em>compacte</em>.${skippedItem ? ` <strong style="color:var(--orange)">⚠ Attention : ${skippedItem.temp}°C (J${skippedItem.jour}) passe à l'indice ${internalIdx} — il sera SAUTÉ !</strong>` : ''}`,
+          narrativeClass: skippedItem ? 'skip-msg' : 'danger-msg',
+        });
+
+        // l'indice interne n'augmente pas après une suppression
+        // (il pointe déjà sur l'élément suivant qui a glissé)
+        // MAIS Python l'incrémente quand même !
+        internalIdx++; // Python incrémente aveuglément
+
+      } else {
+        // Étape : conservation
+        steps.push({
+          phase: 'keep',
+          list: workList.map(x => ({ ...x })),
+          internalIdx,
+          current: item.origIdx,
+          action: 'keep',
+          narrative: `<strong style="color:var(--green)">Conservé</strong> — ${item.temp}°C est dans la plage [20, 25]. L'indice interne passe de ${internalIdx} à ${internalIdx + 1}.`,
+          narrativeClass: 'ok-msg',
+        });
+        internalIdx++;
+      }
+    }
+
+    // Étape finale
+    steps.push({
+      phase: 'done',
+      list: workList.map(x => ({ ...x })),
+      internalIdx: null,
+      current: null,
+      action: 'done',
+      narrative: `<strong style="color:var(--red)">Fin de boucle</strong> — l'indice dépasse la longueur de la liste. La fonction retourne la liste modifiée. <strong style="color:var(--orange)">Résultat : ${workList.map(x => x.temp + '°C').join(', ')}</strong> — les valeurs extrêmes 19.0°C et 29.0°C ont survécu !`,
+      narrativeClass: 'danger-msg',
+    });
+
+    return steps;
+  }
+
+  function initState() {
+    state = {
+      steps: buildSteps(),
+      stepIdx: 0,
+    };
+    renderStep(state.steps[0]);
+    document.getElementById('result-reveal').classList.remove('show');
+    document.getElementById('btn-next').disabled = false;
+  }
+
+  function renderStep(step) {
+    const cellsEl    = document.getElementById('list-cells');
+    const ptrEl      = document.getElementById('pointer-row');
+    const idxEl      = document.getElementById('state-idx');
+    const lenEl      = document.getElementById('state-len');
+    const narrativeEl = document.getElementById('narrative');
+
+    // Déterminer quels origIdx sont "skipped" dans cette étape
+    const skippedOrigIdx = step.skipped ?? null;
+
+    // Construire les cellules
+    // On affiche toujours DATA_INIT en gris fantôme + liste courante par-dessus
+    // Non : on affiche uniquement la liste courante, avec coloration
+
+    cellsEl.innerHTML = '';
+    ptrEl.innerHTML   = '';
+
+    step.list.forEach((item, listPos) => {
+      const cell = document.createElement('div');
+      cell.className = 'cell ';
+
+      if (step.phase === 'done') {
+        // coloration finale
+        const isExtreme = item.temp < 20 || item.temp > 25;
+        if (isExtreme) {
+          cell.className += 'skipped'; // survivant parasite
+        } else {
+          cell.className += 'kept';
+        }
+      } else if (step.internalIdx === listPos && step.phase === 'examine') {
+        cell.className += 'current';
+      } else if (step.skipped === item.origIdx) {
+        cell.className += 'skipped';
+      } else if (step.action === 'keep' && step.current === item.origIdx) {
+        cell.className += 'kept';
+      } else {
+        cell.className += 'normal';
+      }
+
+      cell.innerHTML = `
+        <div class="cell-inner">
+          <div class="cell-index">idx ${listPos}</div>
+          <div class="cell-temp">${item.temp.toFixed(1)}</div>
+          <div class="cell-jour">Jour ${item.jour}</div>
+        </div>`;
+
+      cellsEl.appendChild(cell);
+
+      // Pointeur
+      const ptr = document.createElement('div');
+      ptr.className = 'ptr-slot';
+      if (step.internalIdx === listPos && step.phase === 'examine') {
+        ptr.textContent = '▲';
+        ptr.classList.add('active');
+      } else if (step.internalIdx === listPos && step.phase === 'remove') {
+        ptr.textContent = '▲';
+        ptr.classList.add('active');
+        ptr.style.color = 'var(--orange)';
+      }
+      ptrEl.appendChild(ptr);
+    });
+
+    // Indice
+    idxEl.textContent = step.internalIdx !== null ? step.internalIdx : '—';
+    lenEl.textContent = step.list.length;
+
+    // Narrative
+    narrativeEl.className = 'narrative ' + (step.narrativeClass || '');
+    narrativeEl.innerHTML = step.narrative;
+  }
+
+  function nextStep() {
+    if (!state) { initState(); return; }
+    if (state.stepIdx >= state.steps.length - 1) return;
+
+    state.stepIdx++;
+    const step = state.steps[state.stepIdx];
+    renderStep(step);
+
+    if (step.phase === 'done') {
+      document.getElementById('btn-next').disabled = true;
+      showResult(step.list);
+      if (isAuto) stopAuto();
+    }
+  }
+
+  function showResult(finalList) {
+    const el = document.getElementById('result-reveal');
+    el.classList.add('show');
+    const gotText = finalList.map(x => `${x.temp.toFixed(1)}°C (J${x.jour})`).join(', ');
+    document.getElementById('result-got-text').textContent = '[ ' + gotText + ' ]';
+  }
+
+  function resetAnim() {
+    if (isAuto) stopAuto();
+    initState();
+  }
+
+  function toggleAuto() {
+    if (isAuto) {
+      stopAuto();
+    } else {
+      startAuto();
+    }
+  }
+
+  function startAuto() {
+    isAuto = true;
+    document.getElementById('btn-auto').textContent = 'Pause';
+    document.getElementById('btn-auto').classList.add('btn-danger');
+    document.getElementById('btn-auto').classList.remove('btn-secondary');
+    scheduleNext();
+  }
+
+  function stopAuto() {
+    isAuto = false;
+    clearTimeout(autoTimer);
+    document.getElementById('btn-auto').textContent = 'Lecture auto';
+    document.getElementById('btn-auto').classList.remove('btn-danger');
+    document.getElementById('btn-auto').classList.add('btn-secondary');
+  }
+
+  function scheduleNext() {
+    if (!isAuto) return;
+    autoTimer = setTimeout(() => {
+      if (!state || state.stepIdx >= state.steps.length - 1) {
+        stopAuto();
+        return;
+      }
+      nextStep();
+      scheduleNext();
+    }, getDelay());
+  }
+
+  // Init au chargement
+  window.addEventListener('DOMContentLoaded', initState);
+</script>
+</body>
+</html>
