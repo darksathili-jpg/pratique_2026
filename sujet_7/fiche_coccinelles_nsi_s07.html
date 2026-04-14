@@ -1047,13 +1047,6 @@ def reproduction_v2(self):
     """
     Reproduction avec maturité sexuelle à 20 jours.
     """
-    descendants = []
-    # Ajoute la condition self.age >= 20 ici
-    if self.sexe == "femelle" and self.niv_nutrition >= 2 and self.age >= 20:
-        descendants.append(Coccinelle("male", 0, 0))
-        descendants.append(Coccinelle("femelle", 0, 0))
-        self.niv_nutrition = 0
-    return descendants
 
 def a_survecu_v2(self):
     """
