@@ -1,0 +1,968 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Fiche – Empreinte Carbone Numérique | NSI Terminale | BAC 2026 Sujet 20</title>
+
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Rubik+Dirt&family=Source+Serif+4:ital,opsz,wght@0,8..60,300..900;1,8..60,300..900&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+
+  <script>
+    MathJax = {
+      tex: { inlineMath: [['\\(','\\)'],['$','$']] },
+      options: { skipHtmlTags: ['script','noscript','style','textarea','pre'] }
+    };
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js" async></script>
+  <script type="module" src="https://pyscript.net/releases/2026.3.1/core.js"></script>
+
+  <style>
+    :root {
+      --bg-main:    #f8f9fb;
+      --accent:     #2a6496;
+      --accent-or:  #b5610a;
+      --accent-vert:#2e7d32;
+      --accent-rouge:#c0392b;
+      --text-main:  #1a1a1a;
+      --text-muted: #5a6470;
+      --br: 8px;
+    }
+    *, *::before, *::after { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      background: var(--bg-main); color: var(--text-main);
+      font-family: 'Source Serif 4', Georgia, serif;
+      font-size: 1.1rem; line-height: 1.8; margin: 0; padding-bottom: 4rem;
+    }
+    h1,h2,h3,h4 { font-family: 'Rubik Dirt', cursive; color: var(--accent); letter-spacing: .02em; }
+    h1 { font-size: 2.2rem; color: #111; }
+    h2 { font-size: 1.55rem; border-bottom: 2px solid var(--accent); padding-bottom: .3rem; margin-top: 2.5rem; }
+    h3 { font-size: 1.25rem; color: var(--accent-or); margin-top: 1.8rem; }
+    h4 { font-size: 1.05rem; color: var(--accent-vert); }
+    p { margin-bottom: 1rem; }
+    code,pre,.mono { font-family: 'JetBrains Mono', monospace; font-size: .9em; }
+    code { background: #e8edf2; padding: 2px 6px; border-radius: 4px; color: #8b3a00; }
+    pre { background: #f0f3f7; border-left: 3px solid var(--accent); padding: 1rem 1.2rem; border-radius: var(--br); overflow-x: auto; }
+    a { color: var(--accent); text-decoration: underline dotted; }
+    a:hover { color: var(--accent-or); }
+
+    #navbar {
+      position: sticky; top: 0; z-index: 1000;
+      background: #2a6496; border-bottom: 2px solid #1a4a70;
+      padding: .5rem 1.5rem; display: flex; gap: .5rem; flex-wrap: wrap; align-items: center;
+    }
+    #navbar span { font-family: 'JetBrains Mono',monospace; font-size:.8rem; color:#ccddf0; margin-right:auto; }
+    #navbar a {
+      font-family: 'JetBrains Mono',monospace; font-size:.8rem; color:#fff;
+      text-decoration:none; padding:.25rem .7rem; border:1px solid #ccddf0; border-radius:4px; transition:background .2s;
+    }
+    #navbar a:hover { background:#1a4a70; }
+
+    .container-content { max-width: 860px; margin: 0 auto; padding: 2rem 1.5rem; }
+
+    .encadre,.encadre-conseil,.encadre-indice,.encadre-question {
+      background:#fff; border-radius:var(--br); padding:1.1rem 1.4rem; margin:1.4rem 0;
+      box-shadow:0 1px 4px rgba(0,0,0,.08);
+    }
+    .encadre          { border-left:4px solid var(--accent); }
+    .encadre-conseil  { border-left:4px solid var(--accent-or); background:#fff8f0; }
+    .encadre-indice   { border-left:4px solid var(--accent-vert); background:#f0faf0; }
+    .encadre-question { border-left:4px solid #7b3fa8; background:#faf5ff; }
+    .encadre-piege    { background:#fff5f5; border-left:4px solid var(--accent-rouge); border-radius:var(--br); padding:1rem 1.4rem; margin:1.2rem 0; box-shadow:0 1px 4px rgba(0,0,0,.07); }
+
+    .encadre-prefix {
+      font-family:'JetBrains Mono',monospace; font-size:.72rem;
+      font-variant:small-caps; letter-spacing:.12em; text-transform:uppercase;
+      margin-bottom:.4rem; display:block;
+    }
+    .encadre          .encadre-prefix { color:var(--accent); }
+    .encadre-conseil  .encadre-prefix { color:var(--accent-or); }
+    .encadre-indice   .encadre-prefix { color:var(--accent-vert); }
+    .encadre-question .encadre-prefix { color:#7b3fa8; }
+    .encadre-piege    .encadre-prefix { color:var(--accent-rouge); }
+
+    .btn-tp,.btn-tp-or,.btn-tp-vert,.btn-secondaire {
+      font-family:'JetBrains Mono',monospace; font-size:.82rem; border:none;
+      border-radius:5px; padding:.45rem 1.1rem; cursor:pointer; transition:opacity .2s,transform .1s; margin:.3rem .2rem;
+    }
+    .btn-tp         { background:var(--accent);       color:#fff; }
+    .btn-tp-or      { background:var(--accent-or);    color:#fff; }
+    .btn-tp-vert    { background:var(--accent-vert);  color:#fff; }
+    .btn-secondaire { background:#eef1f5; border:1px solid var(--accent); color:var(--text-main); }
+    .btn-tp:hover,.btn-tp-or:hover,.btn-tp-vert:hover,.btn-secondaire:hover { opacity:.85; transform:translateY(-1px); }
+
+    .badge-question {
+      display:inline-block; font-family:'JetBrains Mono',monospace; font-size:.8rem;
+      background:#7b3fa8; color:#fff; border-radius:4px; padding:.15rem .7rem; margin-right:.5rem; vertical-align:middle;
+    }
+
+    .indice-bloc     { display:none; }
+    .indice-bloc.visible { display:block; }
+    .correction-bloc { display:none; }
+    .correction-bloc.visible { display:block; }
+
+    #sommaire ol { font-family:'JetBrains Mono',monospace; font-size:.88rem; line-height:2.2; }
+    #sommaire a { color:var(--accent); }
+
+    .sep { border:none; border-top:1px dashed #9ab0c8; margin:2.5rem 0; opacity:.7; }
+    py-editor { display:block; min-height:100px; }
+
+    .table-data {
+      border-collapse:collapse; margin:1rem auto;
+      font-family:'JetBrains Mono',monospace; font-size:.82rem; width:100%;
+    }
+    .table-data th,.table-data td { border:1px solid #b0c4d8; padding:.3rem .6rem; text-align:center; }
+    .table-data th  { background:#dce8f2; color:var(--accent); font-weight:600; }
+    .table-data tr.fort   { background:#ffe5e5; }
+    .table-data tr.moyen  { background:#fff3cd; }
+    .table-data tr.faible { background:#e8f5e9; }
+    .table-data tr:nth-child(even):not(.fort):not(.moyen):not(.faible) { background:#f4f7fb; }
+
+    #btn-top {
+      position:fixed; bottom:1.5rem; right:1.5rem; z-index:999;
+      background:var(--accent); color:#fff; border:none; border-radius:50%;
+      width:44px; height:44px; font-size:1.2rem; cursor:pointer;
+      display:none; align-items:center; justify-content:center;
+      font-family:'JetBrains Mono',monospace; box-shadow:0 2px 12px rgba(0,0,0,.25);
+    }
+    #btn-top:hover { opacity:.8; }
+    footer { text-align:center; font-family:'JetBrains Mono',monospace; font-size:.8rem; color:var(--text-muted); padding:2rem 1rem 1rem; border-top:1px solid #d0d8e4; }
+  </style>
+</head>
+<body>
+
+<div id="pyinit" style="display:none">
+  <script type="py" env="empreinte">pass</script>
+</div>
+
+<button id="btn-top" title="Retour en haut" aria-label="Retour en haut">▲</button>
+
+<nav id="navbar">
+  <span>NSI Terminale – Sujet 20 – Empreinte carbone numérique</span>
+  <a href="#s0">Intro</a>
+  <a href="#s1">Rappels</a>
+  <a href="#s2">Données</a>
+  <a href="#q1">Q1</a>
+  <a href="#q2">Q2</a>
+  <a href="#q3">Q3</a>
+  <a href="#q4">Q4</a>
+  <a href="#pieges">Pièges</a>
+</nav>
+
+<div class="container-content">
+
+  <div style="text-align:center; padding:2rem 0 1rem;">
+    <div style="font-family:'JetBrains Mono',monospace;font-size:.8rem;color:var(--text-muted);margin-bottom:.5rem;">
+      BAC NSI 2026 — Sujet n°20 — Partie pratique
+    </div>
+    <h1>Empreinte carbone du numérique<br>
+      <span style="font-size:1.1rem;color:var(--accent);font-family:'Source Serif 4',serif;font-style:italic;font-weight:300;">
+        Dictionnaires, parcours, classification, tests, division par zéro — Fiche de révision guidée
+      </span>
+    </h1>
+    <div style="font-family:'JetBrains Mono',monospace;font-size:.8rem;color:var(--text-muted);margin-top:.5rem;">
+      Terminale NSI &nbsp;·&nbsp; Traitement de données &nbsp;·&nbsp; Dictionnaires &nbsp;·&nbsp; Assertions &amp; Debugging
+    </div>
+  </div>
+
+  <hr class="sep">
+
+  <!-- SOMMAIRE -->
+  <section id="s0">
+    <div id="sommaire" class="encadre">
+      <span class="encadre-prefix">Sommaire</span>
+      <ol>
+        <li><a href="#s1">Rappels – dictionnaires, parcours, gestion des clés absentes</a></li>
+        <li><a href="#s2">Les données – <code>EMISSIONS</code> et utilisateurs</a></li>
+        <li><a href="#q1">Question 1 – Écrire <code>calculer_empreinte</code></a></li>
+        <li><a href="#q2">Question 2 – Écrire <code>classer_par_impact</code></a></li>
+        <li><a href="#q3">Question 3 – Compléter <code>test_comparer</code> avec 2 tests justifiés</a></li>
+        <li><a href="#q4">Question 4 – Identifier et corriger le bug de <code>comparer_v2</code></a></li>
+        <li><a href="#pieges">Pièges fréquents &amp; astuces de vérification</a></li>
+      </ol>
+    </div>
+  </section>
+
+  <hr class="sep">
+
+  <!-- SECTION 1 : RAPPELS -->
+  <section id="s1">
+    <h2>1 — Rappels essentiels</h2>
+
+    <h3>Parcourir un dictionnaire</h3>
+    <p>
+      Il existe trois façons de parcourir un dictionnaire, selon ce dont tu as besoin :
+    </p>
+    <pre>d = {'a': 10, 'b': 20}
+
+for cle in d:               # parcourt les clés
+    print(cle)              # → 'a', 'b'
+
+for cle, valeur in d.items():  # parcourt paires (clé, valeur)
+    print(cle, valeur)      # → 'a' 10  puis  'b' 20
+
+for valeur in d.values():   # parcourt seulement les valeurs
+    print(valeur)           # → 10, 20</pre>
+
+    <h3>Tester si une clé existe</h3>
+    <pre>if 'emails_simples' in utilisateur:
+    print("L'utilisateur envoie des emails")
+
+# Méthode .get() — valeur par défaut si clé absente
+quantite = utilisateur.get('emails_simples', 0)  # 0 si absent</pre>
+
+    <div class="encadre-conseil">
+      <span class="encadre-prefix">Clé absente ≠ valeur nulle</span>
+      <p style="margin:0">
+        Si un utilisateur n'a pas la clé <code>'streaming_hd'</code>, ça ne veut pas dire qu'il
+        fait 0 heure de streaming HD — ça veut dire qu'on n'a pas l'information.
+        La convention dans ce sujet est : activité absente = 0 émission.
+        <code>utilisateur.get('streaming_hd', 0)</code> gère ça proprement.
+      </p>
+    </div>
+
+    <h3>Construire un dictionnaire résultat</h3>
+    <pre>resultat = {'fort': [], 'moyen': [], 'faible': []}   # init avec listes vides
+
+for activite in mon_dico:
+    emission = mon_dico[activite] * EMISSIONS[activite]
+    if emission >= 1000:
+        resultat['fort'].append(activite)
+    elif emission >= 200:
+        resultat['moyen'].append(activite)
+    else:
+        resultat['faible'].append(activite)</pre>
+
+    <h3>La division par zéro — l'erreur de la Q4</h3>
+    <pre>10 / 0    # → ZeroDivisionError: division by zero</pre>
+    <p>
+      Cette erreur se produit quand le <strong>dénominateur</strong> vaut 0. Dans <code>comparer_v2</code>,
+      le dénominateur est <code>emission1</code>. Si l'utilisateur 1 n'a pas l'activité,
+      <code>emission1 = 0</code> et la division explose. La correction consiste à
+      <strong>tester avant de diviser</strong>.
+    </p>
+  </section>
+
+  <hr class="sep">
+
+  <!-- SECTION 2 : DONNÉES -->
+  <section id="s2">
+    <h2>2 — Les données du sujet</h2>
+
+    <h3>Le dictionnaire <code>EMISSIONS</code> — émissions unitaires</h3>
+
+    <table class="table-data">
+      <tr><th>Clé Python</th><th>Activité</th><th>Émission unitaire</th><th>Unité</th></tr>
+      <tr><td><code>'emails_simples'</code></td><td>Email sans pièce jointe</td><td>4 gCO2e</td><td>par email</td></tr>
+      <tr><td><code>'emails_pj'</code></td><td>Email avec pièce jointe</td><td>19 gCO2e</td><td>par email</td></tr>
+      <tr><td><code>'streaming_sd'</code></td><td>Streaming vidéo SD</td><td>36 gCO2e</td><td>par heure</td></tr>
+      <tr><td><code>'streaming_hd'</code></td><td>Streaming vidéo HD</td><td>100 gCO2e</td><td>par heure</td></tr>
+      <tr><td><code>'recherches'</code></td><td>Recherche web</td><td>7 gCO2e</td><td>par recherche</td></tr>
+      <tr><td><code>'stockage_cloud'</code></td><td>Stockage cloud</td><td>10 gCO2e</td><td>par Go par mois</td></tr>
+    </table>
+
+    <h3>Les utilisateurs fournis — émissions détaillées</h3>
+
+    <table class="table-data">
+      <tr><th>Activité</th><th>Émission/u</th><th>u1 (qté→gCO2e)</th><th>u2 (qté→gCO2e)</th><th>u3 (qté→gCO2e)</th></tr>
+      <tr class="faible"><td>emails_simples</td><td>×4</td><td>150 → 600</td><td>100 → 400</td><td>50 → 200</td></tr>
+      <tr class="faible"><td>emails_pj</td><td>×19</td><td>20 → 380</td><td>absent → 0</td><td>5 → 95</td></tr>
+      <tr class="faible"><td>streaming_sd</td><td>×36</td><td>10 → 360</td><td>absent → 0</td><td>30 → 1080</td></tr>
+      <tr class="fort"><td>streaming_hd</td><td>×100</td><td>25 → 2500</td><td>15 → 1500</td><td>5 → 500</td></tr>
+      <tr class="fort"><td>recherches</td><td>×7</td><td>500 → 3500</td><td>10 → 70</td><td>200 → 1400</td></tr>
+      <tr class="faible"><td>stockage_cloud</td><td>×10</td><td>15 → 150</td><td>absent → 0</td><td>5 → 50</td></tr>
+      <tr style="font-weight:600;"><td colspan="2">TOTAL</td><td>7 490 gCO2e</td><td>1 970 gCO2e</td><td>3 325 gCO2e</td></tr>
+    </table>
+
+    <div class="encadre">
+      <span class="encadre-prefix">Valeurs clés à retenir</span>
+      <p>
+        <code>calculer_empreinte(utilisateur1)</code> → <strong>7490</strong> (donné par l'énoncé)<br>
+        <code>calculer_empreinte(utilisateur2)</code> → <strong>1970</strong><br>
+        <code>calculer_empreinte(utilisateur6)</code> → <strong>0</strong> (dictionnaire vide)
+      </p>
+    </div>
+  </section>
+
+  <hr class="sep">
+
+  <!-- QUESTION 1 -->
+  <section id="q1">
+    <h2>3 — <span class="badge-question">Q1</span> Écrire <code>calculer_empreinte</code></h2>
+
+    <div class="encadre-question">
+      <span class="encadre-prefix">Énoncé de la question 1</span>
+      <p style="margin:0">
+        Écrire la fonction <code>calculer_empreinte(utilisateur)</code> qui prend en paramètre
+        un dictionnaire représentant les usages d'un utilisateur et qui renvoie l'empreinte
+        carbone totale mensuelle en gCO2e (type entier). Par exemple,
+        <code>calculer_empreinte(utilisateur1)</code> renvoie <strong>7490</strong>.
+      </p>
+    </div>
+
+    <h3>Aide méthodologique</h3>
+    <ol>
+      <li>Initialiser un accumulateur <code>total = 0</code>.</li>
+      <li>Parcourir les activités de l'utilisateur avec <code>for activite, quantite in utilisateur.items()</code>.</li>
+      <li>Pour chaque activité, vérifier qu'elle existe dans <code>EMISSIONS</code> (sécurité).</li>
+      <li>Ajouter <code>quantite * EMISSIONS[activite]</code> à <code>total</code>.</li>
+      <li>Retourner <code>total</code>.</li>
+    </ol>
+
+    <div class="encadre-indice">
+      <span class="encadre-prefix">Indice niveau 1 – structure</span>
+      <button class="btn-secondaire" onclick="toggleBloc('ind1a')">Afficher / masquer</button>
+      <div id="ind1a" class="indice-bloc">
+        <pre>def calculer_empreinte(utilisateur):
+    total = 0
+    for activite, quantite in utilisateur.items():
+        if activite in EMISSIONS:
+            total += ???
+    return total</pre>
+      </div>
+    </div>
+
+    <div class="encadre-indice">
+      <span class="encadre-prefix">Indice niveau 2 – solution complète</span>
+      <button class="btn-secondaire" onclick="toggleBloc('ind1b')">Afficher / masquer</button>
+      <div id="ind1b" class="indice-bloc">
+        <pre>def calculer_empreinte(utilisateur):
+    total = 0
+    for activite, quantite in utilisateur.items():
+        if activite in EMISSIONS:
+            total += quantite * EMISSIONS[activite]
+    return total</pre>
+      </div>
+    </div>
+
+    <h3>Éditeur Python — à toi de jouer !</h3>
+
+    <script type="py-editor" env="empreinte">
+EMISSIONS = {
+    'emails_simples': 4, 'emails_pj': 19,
+    'streaming_sd': 36,  'streaming_hd': 100,
+    'recherches': 7,     'stockage_cloud': 10
+}
+
+utilisateur1 = {'emails_simples': 150, 'emails_pj': 20, 'streaming_sd': 10,
+                'streaming_hd': 25, 'recherches': 500, 'stockage_cloud': 15}
+utilisateur2 = {'streaming_hd': 15, 'emails_simples': 100, 'recherches': 10}
+utilisateur6 = {}
+
+def calculer_empreinte(utilisateur):
+    """Renvoie l'empreinte carbone totale mensuelle en gCO2e."""
+    pass  # REMPLACE CE PASS PAR TON CODE
+
+# ── Fonction de test ──────────────────────────────────────────────────
+def test_calculer_empreinte():
+    assert calculer_empreinte(utilisateur1) == 7490   # valeur donnée par l'énoncé
+    assert calculer_empreinte(utilisateur2) == 1970   # 1500 + 400 + 70
+    assert calculer_empreinte(utilisateur6) == 0      # dictionnaire vide
+    print("Les tests sont valides.")
+
+test_calculer_empreinte()
+    </script>
+
+    <div class="encadre-conseil">
+      <span class="encadre-prefix">Correction – Question 1</span>
+      <button class="btn-tp-or" onclick="toggleBloc('corr1')">Afficher / masquer la correction</button>
+      <div id="corr1" class="correction-bloc">
+        <pre>def calculer_empreinte(utilisateur):
+    total = 0
+    for activite, quantite in utilisateur.items():
+        if activite in EMISSIONS:
+            total += quantite * EMISSIONS[activite]
+    return total
+
+def test_calculer_empreinte():
+    assert calculer_empreinte(utilisateur1) == 7490
+    assert calculer_empreinte(utilisateur2) == 1970
+    assert calculer_empreinte(utilisateur6) == 0
+    print("Les tests sont valides.")
+
+test_calculer_empreinte()</pre>
+        <p style="margin:.6rem 0 0">
+          Détail du calcul pour <code>utilisateur1</code> :
+          150×4 + 20×19 + 10×36 + 25×100 + 500×7 + 15×10
+          = 600 + 380 + 360 + 2500 + 3500 + 150 = <strong>7490</strong>
+        </p>
+
+        <script type="py-editor" env="empreinte">
+EMISSIONS = {'emails_simples': 4, 'emails_pj': 19, 'streaming_sd': 36,
+             'streaming_hd': 100, 'recherches': 7, 'stockage_cloud': 10}
+utilisateur1 = {'emails_simples': 150, 'emails_pj': 20, 'streaming_sd': 10,
+                'streaming_hd': 25, 'recherches': 500, 'stockage_cloud': 15}
+utilisateur2 = {'streaming_hd': 15, 'emails_simples': 100, 'recherches': 10}
+utilisateur6 = {}
+
+def calculer_empreinte(utilisateur):
+    total = 0
+    for activite, quantite in utilisateur.items():
+        if activite in EMISSIONS:
+            total += quantite * EMISSIONS[activite]
+    return total
+
+def test_calculer_empreinte():
+    assert calculer_empreinte(utilisateur1) == 7490
+    assert calculer_empreinte(utilisateur2) == 1970
+    assert calculer_empreinte(utilisateur6) == 0
+    print("Les tests sont valides.")
+
+test_calculer_empreinte()
+        </script>
+      </div>
+    </div>
+  </section>
+
+  <hr class="sep">
+
+  <!-- QUESTION 2 -->
+  <section id="q2">
+    <h2>4 — <span class="badge-question">Q2</span> Écrire <code>classer_par_impact</code></h2>
+
+    <div class="encadre-question">
+      <span class="encadre-prefix">Énoncé de la question 2</span>
+      <p>
+        Écrire la fonction <code>classer_par_impact(utilisateur)</code> qui renvoie un dictionnaire
+        avec trois clés <code>'fort'</code>, <code>'moyen'</code>, <code>'faible'</code>, chacune
+        associée à une liste des noms des activités selon les critères :
+      </p>
+      <ul style="margin:0">
+        <li>Impact <strong>fort</strong> : émissions ≥ 1000 gCO2e</li>
+        <li>Impact <strong>moyen</strong> : 200 ≤ émissions &lt; 1000 gCO2e</li>
+        <li>Impact <strong>faible</strong> : émissions &lt; 200 gCO2e</li>
+      </ul>
+    </div>
+
+    <h3>Aide méthodologique</h3>
+    <ol>
+      <li>Initialiser <code>resultat = {'fort': [], 'moyen': [], 'faible': []}</code>.</li>
+      <li>Parcourir les activités de l'utilisateur.</li>
+      <li>Calculer l'émission de chaque activité.</li>
+      <li>Utiliser <code>if / elif / else</code> pour classer dans la bonne liste.</li>
+      <li>Retourner <code>resultat</code>.</li>
+    </ol>
+
+    <h4>Résultats attendus pour vérification</h4>
+
+    <table class="table-data">
+      <tr><th>Activité</th><th>Émission u2</th><th>Classe</th></tr>
+      <tr class="fort"><td>streaming_hd</td><td>15 × 100 = 1500</td><td>fort (≥ 1000)</td></tr>
+      <tr class="moyen"><td>emails_simples</td><td>100 × 4 = 400</td><td>moyen (200 ≤ x &lt; 1000)</td></tr>
+      <tr class="faible"><td>recherches</td><td>10 × 7 = 70</td><td>faible (&lt; 200)</td></tr>
+    </table>
+
+    <div class="encadre-indice">
+      <span class="encadre-prefix">Indice niveau 1 – structure</span>
+      <button class="btn-secondaire" onclick="toggleBloc('ind2a')">Afficher / masquer</button>
+      <div id="ind2a" class="indice-bloc">
+        <pre>def classer_par_impact(utilisateur):
+    resultat = {'fort': [], 'moyen': [], 'faible': []}
+    for activite, quantite in utilisateur.items():
+        if activite in EMISSIONS:
+            emission = ???
+            if emission >= 1000:
+                resultat[???].append(activite)
+            elif emission >= ???:
+                resultat[???].append(activite)
+            else:
+                resultat[???].append(activite)
+    return resultat</pre>
+      </div>
+    </div>
+
+    <h3>Éditeur Python — à toi de jouer !</h3>
+
+    <script type="py-editor" env="empreinte">
+EMISSIONS = {'emails_simples': 4, 'emails_pj': 19, 'streaming_sd': 36,
+             'streaming_hd': 100, 'recherches': 7, 'stockage_cloud': 10}
+
+utilisateur1 = {'emails_simples': 150, 'emails_pj': 20, 'streaming_sd': 10,
+                'streaming_hd': 25, 'recherches': 500, 'stockage_cloud': 15}
+utilisateur2 = {'streaming_hd': 15, 'emails_simples': 100, 'recherches': 10}
+utilisateur6 = {}
+
+def classer_par_impact(utilisateur):
+    """Classifie chaque activité selon son niveau d'émission."""
+    pass  # REMPLACE CE PASS PAR TON CODE
+
+# ── Fonction de test ──────────────────────────────────────────────────
+def test_classer_par_impact():
+    res2 = classer_par_impact(utilisateur2)
+    assert res2 == {'fort': ['streaming_hd'], 'moyen': ['emails_simples'], 'faible': ['recherches']}
+    res6 = classer_par_impact(utilisateur6)
+    assert res6 == {'fort': [], 'moyen': [], 'faible': []}
+    res1 = classer_par_impact(utilisateur1)
+    assert 'streaming_hd' in res1['fort']
+    assert 'recherches'   in res1['fort']
+    print("Les tests sont valides.")
+
+test_classer_par_impact()
+    </script>
+
+    <div class="encadre-conseil">
+      <span class="encadre-prefix">Correction – Question 2</span>
+      <button class="btn-tp-or" onclick="toggleBloc('corr2')">Afficher / masquer la correction</button>
+      <div id="corr2" class="correction-bloc">
+        <pre>def classer_par_impact(utilisateur):
+    resultat = {'fort': [], 'moyen': [], 'faible': []}
+    for activite, quantite in utilisateur.items():
+        if activite in EMISSIONS:
+            emission = quantite * EMISSIONS[activite]
+            if emission >= 1000:
+                resultat['fort'].append(activite)
+            elif emission >= 200:
+                resultat['moyen'].append(activite)
+            else:
+                resultat['faible'].append(activite)
+    return resultat</pre>
+        <p style="margin:.6rem 0 .3rem"><strong>Classification complète de utilisateur1 :</strong></p>
+        <table class="table-data" style="width:auto;">
+          <tr><th>Activité</th><th>Émission</th><th>Classe</th></tr>
+          <tr class="moyen"><td>emails_simples</td><td>600</td><td>moyen</td></tr>
+          <tr class="moyen"><td>emails_pj</td><td>380</td><td>moyen</td></tr>
+          <tr class="moyen"><td>streaming_sd</td><td>360</td><td>moyen</td></tr>
+          <tr class="fort"><td>streaming_hd</td><td>2500</td><td>fort</td></tr>
+          <tr class="fort"><td>recherches</td><td>3500</td><td>fort</td></tr>
+          <tr class="faible"><td>stockage_cloud</td><td>150</td><td>faible</td></tr>
+        </table>
+
+        <script type="py-editor" env="empreinte">
+EMISSIONS = {'emails_simples': 4, 'emails_pj': 19, 'streaming_sd': 36,
+             'streaming_hd': 100, 'recherches': 7, 'stockage_cloud': 10}
+utilisateur2 = {'streaming_hd': 15, 'emails_simples': 100, 'recherches': 10}
+utilisateur6 = {}
+utilisateur1 = {'emails_simples': 150, 'emails_pj': 20, 'streaming_sd': 10,
+                'streaming_hd': 25, 'recherches': 500, 'stockage_cloud': 15}
+
+def classer_par_impact(utilisateur):
+    resultat = {'fort': [], 'moyen': [], 'faible': []}
+    for activite, quantite in utilisateur.items():
+        if activite in EMISSIONS:
+            emission = quantite * EMISSIONS[activite]
+            if emission >= 1000:
+                resultat['fort'].append(activite)
+            elif emission >= 200:
+                resultat['moyen'].append(activite)
+            else:
+                resultat['faible'].append(activite)
+    return resultat
+
+def test_classer_par_impact():
+    res2 = classer_par_impact(utilisateur2)
+    assert res2 == {'fort': ['streaming_hd'], 'moyen': ['emails_simples'], 'faible': ['recherches']}
+    res6 = classer_par_impact(utilisateur6)
+    assert res6 == {'fort': [], 'moyen': [], 'faible': []}
+    res1 = classer_par_impact(utilisateur1)
+    assert 'streaming_hd' in res1['fort']
+    assert 'recherches'   in res1['fort']
+    print("Les tests sont valides.")
+
+test_classer_par_impact()
+        </script>
+      </div>
+    </div>
+  </section>
+
+  <hr class="sep">
+
+  <!-- QUESTION 3 -->
+  <section id="q3">
+    <h2>5 — <span class="badge-question">Q3</span> Compléter <code>test_comparer</code></h2>
+
+    <div class="encadre-question">
+      <span class="encadre-prefix">Énoncé de la question 3</span>
+      <p style="margin:0">
+        Compléter la fonction <code>test_comparer</code> en ajoutant au moins deux tests pertinents
+        qui vérifient différents aspects du comportement de la fonction. Pour chaque test, donner
+        une brève justification. D'autres utilisateurs peuvent être créés.
+      </p>
+    </div>
+
+    <h3>Rappel : ce que fait <code>comparer</code></h3>
+    <p>
+      <code>comparer(u1, u2)</code> renvoie un dictionnaire avec, pour chaque activité de
+      <code>EMISSIONS</code>, la valeur <code>émission_u2 − émission_u1</code>.
+      Si une activité est absente chez un utilisateur, son émission vaut 0.
+    </p>
+
+    <h3>Quels cas sont importants à tester ?</h3>
+
+    <table class="table-data">
+      <tr><th>Cas à tester</th><th>Pourquoi c'est important</th><th>Résultat attendu</th></tr>
+      <tr><td>Activité absente chez u1</td><td>Vérifie la gestion des activités manquantes (défaut à 0)</td><td>diff = +émission_u2</td></tr>
+      <tr><td>Activité absente chez u2</td><td>Vérifie la symétrie — absent = 0 dans les deux sens</td><td>diff = −émission_u1</td></tr>
+      <tr><td>Utilisateurs identiques</td><td>Vérifie que la différence est 0 pour toutes les activités</td><td>Toutes les valeurs = 0</td></tr>
+      <tr><td>Deux utilisateurs vides</td><td>Cas limite — aucune activité des deux côtés</td><td>Toutes les valeurs = 0</td></tr>
+    </table>
+
+    <h3>Valeurs exactes pour les assertions</h3>
+
+    <pre># comparer(utilisateur4, utilisateur5) — déjà dans le code fourni
+# utilisateur4 = {'emails_simples': 100, 'recherches': 50}
+# utilisateur5 = {'emails_simples': 50,  'recherches': 100}
+# emails_simples : (50-100)×4 = -200    → diff = -200  ✓
+# recherches     : (100-50)×7 = +350    → diff = +350  ✓
+
+# comparer(utilisateur1, utilisateur2)
+# emails_pj     : (0-20)×19  = -380
+# streaming_sd  : (0-10)×36  = -360
+# streaming_hd  : (15-25)×100 = -1000
+# recherches    : (10-500)×7  = -3430
+
+# comparer(u, u) pour tout u → toutes les différences = 0</pre>
+
+    <h3>Éditeur Python — à toi de jouer !</h3>
+
+    <script type="py-editor" env="empreinte">
+EMISSIONS = {'emails_simples': 4, 'emails_pj': 19, 'streaming_sd': 36,
+             'streaming_hd': 100, 'recherches': 7, 'stockage_cloud': 10}
+
+utilisateur4 = {'emails_simples': 100, 'recherches': 50}
+utilisateur5 = {'emails_simples': 50, 'recherches': 100}
+utilisateur6 = {}
+
+def comparer(u1, u2):
+    differences = {}
+    for activite in EMISSIONS:
+        quantite1 = 0
+        quantite2 = 0
+        if activite in u1:
+            quantite1 = u1[activite]
+        if activite in u2:
+            quantite2 = u2[activite]
+        emission1 = quantite1 * EMISSIONS[activite]
+        emission2 = quantite2 * EMISSIONS[activite]
+        differences[activite] = emission2 - emission1
+    return differences
+
+def test_comparer():
+    # Test fourni par l'énoncé
+    diff = comparer(utilisateur4, utilisateur5)
+    assert diff['emails_simples'] == -200   # (50-100) × 4
+    assert diff['recherches'] == 350        # (100-50) × 7
+
+    # TEST 1 : activité absente chez u1 (doit valoir 0 pour u1)
+    # streaming_hd absent chez u4, présent chez u5 (0 heure ici, mais le principe)
+    # On crée un cas explicite
+    ua = {'emails_simples': 0}
+    ub = {'streaming_hd': 5}
+    diff_ab = comparer(ua, ub)
+    assert diff_ab['streaming_hd'] == 500   # (5-0) × 100 = 500
+    # Justification : vérifie que l'absence d'une activité chez u1 est bien traitée comme 0
+
+    # TEST 2 : deux utilisateurs identiques → toutes les différences sont 0
+    diff_id = comparer(utilisateur4, utilisateur4)
+    for activite in EMISSIONS:
+        assert diff_id[activite] == 0
+    # Justification : si u1 == u2, l'écart doit être nul pour toute activité
+
+    # TEST 3 : deux utilisateurs vides
+    diff_vide = comparer(utilisateur6, utilisateur6)
+    for activite in EMISSIONS:
+        assert diff_vide[activite] == 0
+    # Justification : cas limite — aucune activité des deux côtés
+
+    print("Les tests sont valides.")
+
+test_comparer()
+    </script>
+
+    <div class="encadre-conseil">
+      <span class="encadre-prefix">Correction – Question 3</span>
+      <button class="btn-tp-or" onclick="toggleBloc('corr3')">Afficher / masquer la correction</button>
+      <div id="corr3" class="correction-bloc">
+        <pre>def test_comparer():
+    # Test donné
+    diff = comparer(utilisateur4, utilisateur5)
+    assert diff['emails_simples'] == -200   # (50-100) × 4
+    assert diff['recherches'] == 350        # (100-50) × 7
+
+    # TEST 1 : activité absente chez u1 → traitée comme émission = 0
+    ua = {'emails_simples': 0}
+    ub = {'streaming_hd': 5}
+    diff_ab = comparer(ua, ub)
+    assert diff_ab['streaming_hd'] == 500   # (5-0) × 100
+    # Justification : vérifie que l'absence d'activité chez u1 vaut bien 0
+
+    # TEST 2 : utilisateurs identiques → toutes différences = 0
+    diff_id = comparer(utilisateur4, utilisateur4)
+    for activite in EMISSIONS:
+        assert diff_id[activite] == 0
+    # Justification : u1 == u2 → écart nul partout
+
+    print("Les tests sont valides.")</pre>
+      </div>
+    </div>
+  </section>
+
+  <hr class="sep">
+
+  <!-- QUESTION 4 -->
+  <section id="q4">
+    <h2>6 — <span class="badge-question">Q4</span> Identifier et corriger le bug de <code>comparer_v2</code></h2>
+
+    <div class="encadre-question">
+      <span class="encadre-prefix">Énoncé de la question 4</span>
+      <p style="margin:0">
+        Dans certains cas, la fonction <code>comparer_v2</code> provoque une erreur.
+        Identifier dans quels cas l'erreur se produit et proposer une correction.
+      </p>
+    </div>
+
+    <h3>Le code fourni — version buguée</h3>
+
+    <pre>def comparer_v2(u1, u2):
+    ecarts = {}
+    for activite in EMISSIONS:
+        quantite1 = 0
+        quantite2 = 0
+        if activite in u1:
+            quantite1 = u1[activite]
+        if activite in u2:
+            quantite2 = u2[activite]
+        emission1 = quantite1 * EMISSIONS[activite]
+        emission2 = quantite2 * EMISSIONS[activite]
+        ecarts[activite] = (emission2 - emission1) / emission1 * 100  # ← BUG si emission1 == 0
+    return ecarts</pre>
+
+    <h3>Identification du bug</h3>
+
+    <p>
+      La formule \(\frac{emission_2 - emission_1}{emission_1} \times 100\) divise par
+      <code>emission1</code>. Or si l'activité est absente chez l'utilisateur 1,
+      <code>quantite1 = 0</code> donc <code>emission1 = 0 × EMISSIONS[activite] = 0</code>.
+      La division <code>/ 0</code> lève une <code>ZeroDivisionError</code>.
+    </p>
+
+    <div class="encadre-piege">
+      <span class="encadre-prefix">Cas qui provoquent l'erreur</span>
+      <p>
+        L'erreur se produit quand <strong>l'utilisateur 1 n'a pas une activité</strong> (clé absente dans son
+        dictionnaire), car cela donne <code>emission1 = 0</code>.
+      </p>
+      <p>Exemple : <code>comparer_v2(utilisateur4, utilisateur5)</code> plante car
+      <code>utilisateur4</code> n'a pas <code>'emails_pj'</code>, <code>'streaming_sd'</code>,
+      <code>'streaming_hd'</code>, ni <code>'stockage_cloud'</code> → 4 divisions par zéro.</p>
+    </div>
+
+    <h3>Correction</h3>
+
+    <p>
+      Avant de diviser, tester si <code>emission1 == 0</code>. Si oui, on ne peut pas calculer
+      un pourcentage d'écart — on peut mettre <code>None</code> pour signaler
+      « non applicable ».
+    </p>
+
+    <div class="encadre-indice">
+      <span class="encadre-prefix">Indice – la correction</span>
+      <button class="btn-secondaire" onclick="toggleBloc('ind4a')">Afficher / masquer</button>
+      <div id="ind4a" class="indice-bloc">
+        <pre>if emission1 == 0:
+    ecarts[activite] = None   # impossible de calculer un % par rapport à 0
+else:
+    ecarts[activite] = (emission2 - emission1) / emission1 * 100</pre>
+      </div>
+    </div>
+
+    <h3>Éditeur Python — à toi de jouer !</h3>
+
+    <script type="py-editor" env="empreinte">
+EMISSIONS = {'emails_simples': 4, 'emails_pj': 19, 'streaming_sd': 36,
+             'streaming_hd': 100, 'recherches': 7, 'stockage_cloud': 10}
+
+utilisateur4 = {'emails_simples': 100, 'recherches': 50}
+utilisateur5 = {'emails_simples': 50, 'recherches': 100}
+
+# ── CORRIGE LA LIGNE BUGUÉE ───────────────────────────────────────────
+def comparer_v2(u1, u2):
+    ecarts = {}
+    for activite in EMISSIONS:
+        quantite1 = 0
+        quantite2 = 0
+        if activite in u1:
+            quantite1 = u1[activite]
+        if activite in u2:
+            quantite2 = u2[activite]
+        emission1 = quantite1 * EMISSIONS[activite]
+        emission2 = quantite2 * EMISSIONS[activite]
+        ecarts[activite] = (emission2 - emission1) / emission1 * 100  # ← CORRIGE CETTE LIGNE
+    return ecarts
+
+# ── Fonction de test ──────────────────────────────────────────────────
+def test_comparer_v2():
+    # Ne doit plus planter avec u4 et u5
+    res = comparer_v2(utilisateur4, utilisateur5)
+    assert res is not None   # la fonction retourne bien quelque chose
+
+    # emails_simples : (50-100)/100*100*4/400 = -50.0%
+    assert abs(res['emails_simples'] - (-50.0)) < 0.001
+
+    # recherches : (100-50)/50*100*7/350 = +100.0%
+    assert abs(res['recherches'] - 100.0) < 0.001
+
+    # Activités absentes chez u4 → emission1 = 0 → None (ou pas d'erreur)
+    assert res['streaming_hd'] is None or res['streaming_hd'] == 0  # selon ta correction
+
+    print("Les tests sont valides.")
+
+test_comparer_v2()
+    </script>
+
+    <div class="encadre-conseil">
+      <span class="encadre-prefix">Correction – Question 4</span>
+      <button class="btn-tp-or" onclick="toggleBloc('corr4')">Afficher / masquer la correction</button>
+      <div id="corr4" class="correction-bloc">
+        <p><strong>Identification :</strong> L'erreur se produit quand l'utilisateur 1 n'a pas
+        une activité donnée, ce qui donne <code>emission1 = 0</code> et provoque une
+        <code>ZeroDivisionError</code>.</p>
+        <p><strong>Correction :</strong></p>
+        <pre>def comparer_v2(u1, u2):
+    ecarts = {}
+    for activite in EMISSIONS:
+        quantite1 = 0
+        quantite2 = 0
+        if activite in u1:
+            quantite1 = u1[activite]
+        if activite in u2:
+            quantite2 = u2[activite]
+        emission1 = quantite1 * EMISSIONS[activite]
+        emission2 = quantite2 * EMISSIONS[activite]
+        if emission1 == 0:                                    # ← AJOUTÉ
+            ecarts[activite] = None                           # non calculable
+        else:
+            ecarts[activite] = (emission2 - emission1) / emission1 * 100
+    return ecarts</pre>
+        <p><strong>Résultat de <code>comparer_v2(utilisateur4, utilisateur5)</code> après correction :</strong></p>
+        <pre>{'emails_simples': -50.0,
+ 'emails_pj':       None,    # u4 absent → non calculable
+ 'streaming_sd':    None,    # u4 absent → non calculable
+ 'streaming_hd':    None,    # u4 absent → non calculable
+ 'recherches':      100.0,
+ 'stockage_cloud':  None}</pre>
+
+        <script type="py-editor" env="empreinte">
+EMISSIONS = {'emails_simples': 4, 'emails_pj': 19, 'streaming_sd': 36,
+             'streaming_hd': 100, 'recherches': 7, 'stockage_cloud': 10}
+utilisateur4 = {'emails_simples': 100, 'recherches': 50}
+utilisateur5 = {'emails_simples': 50, 'recherches': 100}
+
+def comparer_v2(u1, u2):
+    ecarts = {}
+    for activite in EMISSIONS:
+        quantite1 = u1.get(activite, 0)
+        quantite2 = u2.get(activite, 0)
+        emission1 = quantite1 * EMISSIONS[activite]
+        emission2 = quantite2 * EMISSIONS[activite]
+        if emission1 == 0:
+            ecarts[activite] = None
+        else:
+            ecarts[activite] = (emission2 - emission1) / emission1 * 100
+    return ecarts
+
+def test_comparer_v2():
+    res = comparer_v2(utilisateur4, utilisateur5)
+    assert abs(res['emails_simples'] - (-50.0)) < 0.001
+    assert abs(res['recherches'] - 100.0) < 0.001
+    assert res['streaming_hd'] is None
+    print("Les tests sont valides.")
+
+test_comparer_v2()
+print(comparer_v2(utilisateur4, utilisateur5))
+        </script>
+      </div>
+    </div>
+  </section>
+
+  <hr class="sep">
+
+  <!-- PIÈGES FRÉQUENTS -->
+  <section id="pieges">
+    <h2>7 — Pièges fréquents &amp; astuces de vérification</h2>
+
+    <div class="encadre-piege">
+      <span class="encadre-prefix">Piège 1 — Parcourir EMISSIONS au lieu de l'utilisateur (Q1)</span>
+      <p>
+        Si tu parcours <code>EMISSIONS</code> au lieu de <code>utilisateur</code>, tu tentes d'accéder
+        à <code>utilisateur[activite]</code> pour une activité absente → <code>KeyError</code>.
+        Il faut parcourir l'utilisateur (ce qu'il a) et vérifier que chaque activité est dans
+        <code>EMISSIONS</code>.
+      </p>
+      <pre># ❌ KeyError si l'utilisateur n'a pas toutes les activités
+for activite in EMISSIONS:
+    total += utilisateur[activite] * EMISSIONS[activite]
+
+# ✓ Correct : parcourir l'utilisateur
+for activite, quantite in utilisateur.items():
+    if activite in EMISSIONS:
+        total += quantite * EMISSIONS[activite]</pre>
+    </div>
+
+    <div class="encadre-piege">
+      <span class="encadre-prefix">Piège 2 — Oublier les listes vides dans classer_par_impact (Q2)</span>
+      <p>
+        Si tu crées le dictionnaire résultat au fur et à mesure, tu risques de ne pas créer
+        la clé <code>'faible'</code> si aucune activité n'est faible. L'initialisation
+        <code>resultat = {'fort': [], 'moyen': [], 'faible': []}</code> garantit que les
+        trois clés existent toujours.
+      </p>
+    </div>
+
+    <div class="encadre-piege">
+      <span class="encadre-prefix">Piège 3 — Écrire elif emission &gt; 200 au lieu de &gt;= 200 (Q2)</span>
+      <p>
+        Les seuils de l'énoncé sont <strong>inclusifs</strong> : <em>200 ≤ émissions &lt; 1000</em>.
+        Une activité à exactement 200 gCO2e est de niveau moyen, pas faible.
+        Utiliser <code>&gt;</code> au lieu de <code>&gt;=</code> classerait 200 en faible — faux.
+      </p>
+      <pre>if emission >= 1000:          # ✓ ≥ 1000 → fort
+elif emission >= 200:         # ✓ ≥ 200 → moyen
+else:                         # ✓ < 200 → faible</pre>
+    </div>
+
+    <div class="encadre-piege">
+      <span class="encadre-prefix">Piège 4 — Ne pas justifier les tests dans test_comparer (Q3)</span>
+      <p>
+        L'énoncé exige explicitement une <em>brève justification</em> pour chaque test ajouté.
+        Un test sans commentaire sera pénalisé. Écris une ligne de commentaire
+        (<code># Justification : ...</code>) pour chaque assertion ajoutée.
+      </p>
+    </div>
+
+    <div class="encadre-piege">
+      <span class="encadre-prefix">Piège 5 — Corriger le bug de comparer_v2 en ignorant les cas None (Q4)</span>
+      <p>
+        Certains élèves corrigent le bug en filtrant les activités absentes avec <code>continue</code>
+        (ce qui fait que la clé n'existe pas dans le résultat). L'énoncé indique que la fonction
+        traite <em>toutes les activités</em> de <code>EMISSIONS</code>. Il vaut mieux mettre
+        <code>None</code> pour les cas non calculables plutôt que d'omettre la clé.
+      </p>
+    </div>
+
+    <div class="encadre-conseil">
+      <span class="encadre-prefix">Astuce — Vérifier calculer_empreinte manuellement</span>
+      <p>
+        Pour <code>utilisateur2</code> (streaming_hd=15, emails_simples=100, recherches=10) :
+        15×100 + 100×4 + 10×7 = 1500 + 400 + 70 = <strong>1970</strong>.
+        Si ton résultat est différent, l'erreur est dans le parcours ou la multiplication.
+      </p>
+    </div>
+  </section>
+
+  <hr class="sep">
+
+  <footer>Lycée Antoine Watteau — DarkSATHI Li</footer>
+
+</div>
+
+<script>
+  const btnTop = document.getElementById('btn-top');
+  window.addEventListener('scroll', () => { btnTop.style.display = window.scrollY > 300 ? 'flex' : 'none'; });
+  btnTop.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
+  function toggleBloc(id) { const el = document.getElementById(id); if (el) el.classList.toggle('visible'); }
+</script>
+</body>
+</html>
