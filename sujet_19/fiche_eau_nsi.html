@@ -1,0 +1,1284 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Fiche – Gestion de l'eau | NSI Terminale | BAC 2026</title>
+
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Rubik+Dirt&family=Source+Serif+4:ital,opsz,wght@0,8..60,300..900;1,8..60,300..900&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+
+  <script>
+    MathJax = {
+      tex: { inlineMath: [['\\(','\\)'],['$','$']] },
+      options: { skipHtmlTags: ['script','noscript','style','textarea','pre'] }
+    };
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js" async></script>
+  <script type="module" src="https://pyscript.net/releases/2026.3.1/core.js"></script>
+
+  <style>
+    :root {
+      --bg-main:     #f8f9fb;
+      --accent:      #2a6496;
+      --accent-or:   #b5610a;
+      --accent-vert: #2e7d32;
+      --text-main:   #1a1a1a;
+      --text-muted:  #5a6470;
+      --rouge:       #c0392b;
+      --violet:      #7b3fa8;
+      --bleu-eau:    #0277bd;
+      --border-radius: 8px;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg-main);
+      color: var(--text-main);
+      font-family: 'Source Serif 4', Georgia, serif;
+      font-size: 1.05rem;
+      line-height: 1.8;
+      margin: 0;
+      padding-bottom: 4rem;
+    }
+
+    h1, h2, h3, h4 { font-family: 'Rubik Dirt', cursive; color: var(--accent); letter-spacing: .02em; }
+    h1 { font-size: 2.1rem; color: #111; }
+    h2 { font-size: 1.5rem; border-bottom: 2px solid var(--accent); padding-bottom: .3rem; margin-top: 2.5rem; }
+    h3 { font-size: 1.2rem; color: var(--accent-or); margin-top: 1.8rem; }
+    p  { margin-bottom: 1rem; }
+
+    code, pre { font-family: 'JetBrains Mono', monospace; font-size: .88em; }
+    code { background: #e8edf2; padding: 2px 6px; border-radius: 4px; color: #8b3a00; }
+    pre  { background: #f0f3f7; border-left: 3px solid var(--accent); padding: 1rem 1.2rem;
+           border-radius: var(--border-radius); overflow-x: auto; color: #1a1a1a; line-height: 1.65; }
+
+    /* NAV */
+    #navbar {
+      position: sticky; top: 0; z-index: 1000;
+      background: #2a6496; border-bottom: 2px solid #1a4a70;
+      padding: .5rem 1.5rem; display: flex; gap: .5rem; flex-wrap: wrap; align-items: center;
+    }
+    #navbar span { font-family: 'JetBrains Mono', monospace; font-size: .78rem; color: #ccddf0; margin-right: auto; }
+    #navbar a {
+      font-family: 'JetBrains Mono', monospace; font-size: .78rem; color: #fff;
+      text-decoration: none; padding: .22rem .65rem; border: 1px solid #ccddf0;
+      border-radius: 4px; transition: background .2s;
+    }
+    #navbar a:hover { background: #1a4a70; }
+
+    .container-content { max-width: 900px; margin: 0 auto; padding: 2rem 1.5rem; }
+
+    /* ENCADRÉS */
+    .encadre, .encadre-conseil, .encadre-indice, .encadre-question, .encadre-piege, .encadre-bug {
+      border-radius: var(--border-radius); padding: 1.1rem 1.4rem; margin: 1.3rem 0;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+    }
+    .encadre          { background: #fff;    border-left: 4px solid var(--accent); }
+    .encadre-conseil  { background: #fff8f0; border-left: 4px solid var(--accent-or); }
+    .encadre-indice   { background: #f0faf0; border-left: 4px solid var(--accent-vert); }
+    .encadre-question { background: #faf5ff; border-left: 4px solid var(--violet); }
+    .encadre-piege    { background: #fff5f5; border-left: 4px solid var(--rouge); }
+    .encadre-bug      { background: #fffbf0; border-left: 4px solid #e67e22; }
+
+    .encadre-prefix {
+      font-family: 'JetBrains Mono', monospace; font-size: .7rem;
+      font-variant: small-caps; letter-spacing: .12em; text-transform: uppercase;
+      margin-bottom: .4rem; display: block;
+    }
+    .encadre          .encadre-prefix { color: var(--accent); }
+    .encadre-conseil  .encadre-prefix { color: var(--accent-or); }
+    .encadre-indice   .encadre-prefix { color: var(--accent-vert); }
+    .encadre-question .encadre-prefix { color: var(--violet); }
+    .encadre-piege    .encadre-prefix { color: var(--rouge); }
+    .encadre-bug      .encadre-prefix { color: #e67e22; }
+
+    /* BOUTONS */
+    .btn-tp, .btn-tp-or, .btn-tp-vert, .btn-secondaire {
+      font-family: 'JetBrains Mono', monospace; font-size: .82rem;
+      border: none; border-radius: 5px; padding: .42rem 1rem;
+      cursor: pointer; transition: opacity .2s, transform .1s; margin: .3rem .2rem;
+    }
+    .btn-tp         { background: var(--accent);      color: #fff; }
+    .btn-tp-or      { background: var(--accent-or);   color: #fff; }
+    .btn-tp-vert    { background: var(--accent-vert); color: #fff; }
+    .btn-secondaire { background: #eef1f5; border: 1px solid var(--accent); color: var(--text-main); }
+    .btn-tp:hover, .btn-tp-or:hover, .btn-tp-vert:hover, .btn-secondaire:hover {
+      opacity: .85; transform: translateY(-1px);
+    }
+
+    .badge-question {
+      display: inline-block; font-family: 'JetBrains Mono', monospace; font-size: .8rem;
+      background: var(--violet); color: #fff; border-radius: 4px;
+      padding: .15rem .7rem; margin-right: .5rem; vertical-align: middle;
+    }
+
+    /* INDICES / CORRECTIONS */
+    .indice-bloc     { display: none; }
+    .correction-bloc { display: none; }
+    .indice-bloc.visible     { display: block; }
+    .correction-bloc.visible { display: block; }
+
+    /* SOMMAIRE */
+    #sommaire ol { font-family: 'JetBrains Mono', monospace; font-size: .87rem; line-height: 2.2; }
+    #sommaire a { color: var(--accent); }
+
+    /* TABLEAU */
+    .table-info {
+      border-collapse: collapse; width: 100%;
+      font-family: 'JetBrains Mono', monospace; font-size: .83rem; margin: .8rem 0;
+    }
+    .table-info th {
+      background: #dce8f2; color: var(--accent);
+      border: 1px solid #b0c8e0; padding: .4rem .8rem; text-align: left;
+    }
+    .table-info td { border: 1px solid #d0dce8; padding: .38rem .8rem; }
+    .table-info tr:nth-child(even) td { background: #f4f7fb; }
+    .td-ok    { color: var(--accent-vert); font-weight: 600; }
+    .td-bug   { color: var(--rouge); font-weight: 600; }
+    .td-warn  { color: #e67e22; font-weight: 600; }
+    .td-eau   { color: var(--bleu-eau); }
+
+    /* JAUGE EAU */
+    .reservoir-card {
+      display: flex; align-items: center; gap: .7rem;
+      font-family: 'JetBrains Mono', monospace; font-size: .8rem;
+      margin: .35rem 0;
+    }
+    .rc-nom  { width: 90px; color: var(--text-muted); flex-shrink: 0; font-size:.75rem; }
+    .rc-dist { width: 70px; color: var(--text-muted); flex-shrink: 0; font-size:.72rem; font-style:italic; }
+    .rc-track { flex: 1; background: #e8edf2; border-radius: 4px; height: 14px; overflow: hidden; position: relative; }
+    .rc-fill  { height: 100%; border-radius: 4px; }
+    .rc-fill-ok      { background: #4fc3f7; }
+    .rc-fill-warn    { background: #ffb74d; }
+    .rc-fill-penurie { background: #ef5350; }
+    .rc-pct { width: 45px; text-align: right; flex-shrink: 0; font-size:.75rem; }
+    .rc-badge { font-size:.65rem; background: var(--rouge); color:#fff; border-radius:3px; padding:1px 4px; margin-left:3px; }
+
+    /* DIAGRAMME DISTRICT */
+    .district-bar {
+      display: flex; align-items: center; gap: .6rem;
+      font-family: 'JetBrains Mono', monospace; font-size: .8rem; margin: .35rem 0;
+    }
+    .db-nom   { width: 80px; color: var(--text-muted); flex-shrink: 0; }
+    .db-track { flex: 1; background: #e8edf2; border-radius: 4px; height: 16px; overflow: hidden; }
+    .db-fill  { height: 100%; border-radius: 4px; }
+    .db-fill-ok   { background: #81c784; }
+    .db-fill-vuln { background: #ef9a9a; }
+    .db-val   { width: 80px; text-align: right; flex-shrink: 0; font-size:.75rem; }
+
+    /* SEUIL BARRE */
+    .seuil-ligne {
+      position: relative; border-top: 2px dashed var(--rouge);
+      margin: .8rem 0; font-family:'JetBrains Mono',monospace; font-size:.72rem; color:var(--rouge);
+      padding-top: .2rem;
+    }
+
+    .sep { border: none; border-top: 1px dashed #9ab0c8; margin: 2.5rem 0; opacity: .7; }
+
+    #btn-top {
+      position: fixed; bottom: 1.5rem; right: 1.5rem; z-index: 999;
+      background: var(--accent); color: #fff; border: none; border-radius: 50%;
+      width: 44px; height: 44px; font-size: 1.2rem; cursor: pointer;
+      display: none; align-items: center; justify-content: center;
+      font-family: 'JetBrains Mono', monospace;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.25); transition: opacity .2s;
+    }
+    #btn-top:hover { opacity: .8; }
+
+    footer {
+      text-align: center; font-family: 'JetBrains Mono', monospace;
+      font-size: .8rem; color: var(--text-muted);
+      padding: 2rem 1rem 1rem; border-top: 1px solid #d0d8e4;
+    }
+  </style>
+</head>
+<body>
+
+<div style="display:none"><script type="py" env="eau">pass</script></div>
+<button id="btn-top" title="Retour en haut" aria-label="Retour en haut">▲</button>
+
+<nav id="navbar">
+  <span>NSI Terminale – Gestion des réservoirs</span>
+  <a href="#s0">Intro</a>
+  <a href="#s1">Rappels</a>
+  <a href="#s2">Données</a>
+  <a href="#q1">Q1</a>
+  <a href="#q2">Q2</a>
+  <a href="#q3">Q3</a>
+  <a href="#q4">Q4</a>
+  <a href="#pieges">Pièges</a>
+</nav>
+
+<div class="container-content">
+
+  <!-- EN-TÊTE -->
+  <div style="text-align:center; padding: 2rem 0 1rem;">
+    <div style="font-family:'JetBrains Mono',monospace; font-size:.78rem; color:var(--text-muted); margin-bottom:.5rem;">
+      BAC NSI 2026 — Sujet n°19 — Partie pratique
+    </div>
+    <h1>Gestion de l'eau en Polynésie 🌊<br>
+      <span style="font-size:1rem; color:var(--accent); font-family:'Source Serif 4',serif; font-style:italic; font-weight:300;">
+        Dictionnaires · Filtrage · Débogage · Analyse par district
+      </span>
+    </h1>
+    <div style="font-family:'JetBrains Mono',monospace; font-size:.78rem; color:var(--text-muted); margin-top:.5rem;">
+      Terminale NSI &nbsp;·&nbsp; 4 questions · 1h · 1 bug à identifier &amp; corriger
+    </div>
+  </div>
+
+  <!-- ALERTE BUG -->
+  <div class="encadre-bug" style="margin-top:0;">
+    <span class="encadre-prefix">Analyse critique — Bug identifié dans le code fourni</span>
+    <p>
+      La fonction <code>volume_moyen</code> divise par <code>len(reservoirs) - 1</code>
+      au lieu de <code>len(reservoirs)</code> :
+    </p>
+    <pre style="margin:.3rem 0"><code>moyenne = somme_totale / (len(reservoirs)-1)   # ← BUG : diviseur trop petit</code></pre>
+    <p style="margin:.4rem 0 0">
+      Sur 10 réservoirs : renvoie <strong>52 222 L</strong> au lieu de <strong>47 000 L</strong>.
+      Avec 1 seul réservoir : lève une <code>ZeroDivisionError</code> (division par 0 !).
+      Avec 2 réservoirs de volume identique : renvoie le double du volume réel.
+      <strong>Correction :</strong> remplacer <code>len(reservoirs) - 1</code> par <code>len(reservoirs)</code>.
+    </p>
+  </div>
+
+  <hr class="sep">
+
+  <!-- SOMMAIRE -->
+  <section id="s0">
+    <div id="sommaire" class="encadre">
+      <span class="encadre-prefix">Sommaire</span>
+      <ol>
+        <li><a href="#s1">Rappels de cours — Dictionnaires, filtrage, accumulation</a></li>
+        <li><a href="#s2">Les données du sujet — réservoirs et districts</a></li>
+        <li><a href="#q1">Question 1 — <code>est_en_penurie</code> : taux de remplissage</a></li>
+        <li><a href="#q2">Question 2 — <code>volume_par_district</code> : agrégation par clé</a></li>
+        <li><a href="#q3">Question 3 — Tester et corriger <code>volume_moyen</code></a></li>
+        <li><a href="#q4">Question 4 — <code>districts_vulnerables</code> : analyse globale</a></li>
+        <li><a href="#pieges">Pièges fréquents &amp; stratégie de performance</a></li>
+      </ol>
+    </div>
+  </section>
+
+  <hr class="sep">
+
+  <!-- SECTION 1 : RAPPELS -->
+  <section id="s1">
+    <h2>1 — Rappels indispensables</h2>
+
+    <h3>Chercher un élément dans une liste de dictionnaires</h3>
+
+    <p>
+      Deux besoins reviennent dans ce sujet : trouver un élément précis par son nom,
+      et agréger des valeurs selon une clé (le district). Les deux reposent sur la même
+      structure de parcours.
+    </p>
+
+    <div class="encadre">
+      <span class="encadre-prefix">Patron 1 — Recherche par nom</span>
+      <pre style="margin:.3rem 0"><code>def trouver_par_nom(reservoirs, nom):
+    for r in reservoirs:
+        if r["nom"] == nom:
+            return r      # trouvé → on renvoie le dictionnaire
+    return None           # pas trouvé (ne devrait pas arriver selon l'énoncé)</code></pre>
+    </div>
+
+    <div class="encadre">
+      <span class="encadre-prefix">Patron 2 — Agrégation par clé (volume par district)</span>
+      <pre style="margin:.3rem 0"><code>resultat = {}                           # dictionnaire de résultats
+for r in reservoirs:
+    cle = r["district"]                 # clé d'agrégation
+    if cle not in resultat:
+        resultat[cle] = 0               # initialiser à 0 si absent
+    resultat[cle] += r["volume"]        # accumuler
+</code></pre>
+    </div>
+
+    <h3>Calculer un taux de remplissage</h3>
+
+    <div class="encadre-conseil">
+      <span class="encadre-prefix">Formule — Taux de remplissage</span>
+      <p style="margin:0">
+        $$\text{taux} = \frac{\text{volume}}{\text{capacite}} \times 100$$
+        Un réservoir est en <strong>pénurie</strong> si ce taux est <em>strictement inférieur</em> à 20 %.
+        La condition Python est donc : <code>volume / capacite * 100 &lt; 20</code>.
+      </p>
+    </div>
+
+    <h3>Construire la moyenne — le diviseur correct</h3>
+
+    <div class="encadre-piege">
+      <span class="encadre-prefix">La moyenne — erreur classique de diviseur</span>
+      <p>
+        La moyenne de \(n\) valeurs se calcule en divisant leur somme par <strong>\(n\)</strong>,
+        pas par \(n-1\) (qui est le diviseur de la variance en statistiques).
+      </p>
+      <pre style="margin:.3rem 0"><code># CORRECT
+moyenne = somme / len(liste)
+
+# INCORRECT (bug du sujet)
+moyenne = somme / (len(liste) - 1)   # divise par n-1 → résultat trop grand
+                                      # et ZeroDivisionError si liste de 1 élément</code></pre>
+    </div>
+  </section>
+
+  <hr class="sep">
+
+  <!-- SECTION 2 : DONNÉES -->
+  <section id="s2">
+    <h2>2 — Les données du sujet</h2>
+
+    <h3>Les 10 réservoirs</h3>
+
+    <!-- JAUGES VISUELLES -->
+    <div class="encadre">
+      <span class="encadre-prefix">État des réservoirs — taux de remplissage</span>
+      <div style="margin:.5rem 0;">
+        <div class="reservoir-card">
+          <span class="rc-nom">Vaitiare</span><span class="rc-dist">Fare</span>
+          <div class="rc-track"><div class="rc-fill rc-fill-ok" style="width:90.5%"></div></div>
+          <span class="rc-pct">90,5 %</span>
+        </div>
+        <div class="reservoir-card">
+          <span class="rc-nom">Teanavai</span><span class="rc-dist">Avera</span>
+          <div class="rc-track"><div class="rc-fill rc-fill-ok" style="width:81.8%"></div></div>
+          <span class="rc-pct">81,8 %</span>
+        </div>
+        <div class="reservoir-card">
+          <span class="rc-nom">Vaipuna</span><span class="rc-dist">Hiva Oro</span>
+          <div class="rc-track"><div class="rc-fill rc-fill-ok" style="width:75.0%"></div></div>
+          <span class="rc-pct">75,0 %</span>
+        </div>
+        <div class="reservoir-card">
+          <span class="rc-nom">Faaroa</span><span class="rc-dist">Avera</span>
+          <div class="rc-track"><div class="rc-fill rc-fill-ok" style="width:66.7%"></div></div>
+          <span class="rc-pct">66,7 %</span>
+        </div>
+        <div class="reservoir-card">
+          <span class="rc-nom">Nuiavai</span><span class="rc-dist">Tepua</span>
+          <div class="rc-track"><div class="rc-fill rc-fill-ok" style="width:55.0%"></div></div>
+          <span class="rc-pct">55,0 %</span>
+        </div>
+        <div class="reservoir-card">
+          <span class="rc-nom">Farepape</span><span class="rc-dist">Fare</span>
+          <div class="rc-track"><div class="rc-fill rc-fill-ok" style="width:37.5%"></div></div>
+          <span class="rc-pct">37,5 %</span>
+        </div>
+        <div class="reservoir-card">
+          <span class="rc-nom">Matavai</span><span class="rc-dist">Tepua</span>
+          <div class="rc-track"><div class="rc-fill rc-fill-ok" style="width:35.7%"></div></div>
+          <span class="rc-pct">35,7 %</span>
+        </div>
+        <div class="reservoir-card">
+          <span class="rc-nom">Ana'itea</span><span class="rc-dist">Hiva Oro</span>
+          <div class="rc-track"><div class="rc-fill rc-fill-ok" style="width:35.3%"></div></div>
+          <span class="rc-pct">35,3 %</span>
+        </div>
+        <div class="reservoir-card">
+          <span class="rc-nom">Vaihere</span><span class="rc-dist">Fare</span>
+          <div class="rc-track"><div class="rc-fill rc-fill-warn" style="width:21.1%"></div></div>
+          <span class="rc-pct">21,1 %</span>
+        </div>
+        <div class="reservoir-card">
+          <span class="rc-nom">Motuavai</span><span class="rc-dist">Tepua</span>
+          <div class="rc-track"><div class="rc-fill rc-fill-penurie" style="width:11.1%"></div></div>
+          <span class="rc-pct td-bug">11,1 %<span class="rc-badge">PÉNURIE</span></span>
+        </div>
+      </div>
+      <p style="font-family:'JetBrains Mono',monospace; font-size:.72rem; color:var(--text-muted); margin:.4rem 0 0">
+        <span style="background:#4fc3f7; border-radius:2px; padding:1px 6px;">&nbsp;</span> Normal &nbsp;
+        <span style="background:#ffb74d; border-radius:2px; padding:1px 6px;">&nbsp;</span> Faible (&lt;30%) &nbsp;
+        <span style="background:#ef5350; border-radius:2px; padding:1px 6px;">&nbsp;</span> Pénurie (&lt;20%)
+      </p>
+    </div>
+
+    <h3>Données tabulaires</h3>
+
+    <table class="table-info">
+      <thead><tr><th>nom</th><th>capacite</th><th>volume</th><th>district</th><th>taux</th></tr></thead>
+      <tbody>
+        <tr><td>Nuiavai</td><td>100 000</td><td>55 000</td><td>Tepua</td><td>55,0 %</td></tr>
+        <tr><td>Farepape</td><td>120 000</td><td>45 000</td><td>Fare</td><td>37,5 %</td></tr>
+        <tr><td>Vaipuna</td><td>80 000</td><td>60 000</td><td>Hiva Oro</td><td>75,0 %</td></tr>
+        <tr><td>Vaihere</td><td>95 000</td><td>20 000</td><td>Fare</td><td>21,1 %</td></tr>
+        <tr><td>Teanavai</td><td>110 000</td><td>90 000</td><td>Avera</td><td>81,8 %</td></tr>
+        <tr><td>Matavai</td><td>70 000</td><td>25 000</td><td>Tepua</td><td>35,7 %</td></tr>
+        <tr><td>Ana'itea</td><td>85 000</td><td>30 000</td><td>Hiva Oro</td><td>35,3 %</td></tr>
+        <tr><td>Faaroa</td><td>60 000</td><td>40 000</td><td>Avera</td><td>66,7 %</td></tr>
+        <tr><td>Vaitiare</td><td>105 000</td><td>95 000</td><td>Fare</td><td>90,5 %</td></tr>
+        <tr><td style="color:var(--rouge); font-weight:600">Motuavai</td><td>90 000</td><td style="color:var(--rouge)">10 000</td><td>Tepua</td><td class="td-bug">11,1 % ⚠</td></tr>
+      </tbody>
+    </table>
+
+    <div class="encadre-conseil">
+      <span class="encadre-prefix">Chiffres clés à retenir</span>
+      <ul style="margin:0">
+        <li><strong>1 seul réservoir en pénurie</strong> : Motuavai (11,1 % &lt; 20 %)</li>
+        <li><strong>Volume total</strong> : 470 000 L — <strong>Volume moyen correct</strong> : 47 000 L</li>
+        <li><strong>Volume moyen bugué</strong> : 52 222 L (diviseur = 9 au lieu de 10)</li>
+        <li><strong>District vulnérable</strong> : Tepua (vol. moyen 30 000 L &lt; seuil 37 600 L)</li>
+      </ul>
+    </div>
+  </section>
+
+  <hr class="sep">
+
+  <!-- QUESTION 1 -->
+  <section id="q1">
+    <h2>Question 1 — <code>est_en_penurie</code></h2>
+
+    <div class="encadre-question">
+      <span class="encadre-prefix">Énoncé — Question 1</span>
+      <p style="margin:0">
+        <span class="badge-question">Q1</span>
+        Écrire la fonction <code>est_en_penurie(reservoirs, nom)</code> qui prend
+        une liste de réservoirs et un nom, et renvoie <code>True</code> si le réservoir
+        correspondant a un taux de remplissage <strong>strictement inférieur à 20 %</strong>,
+        <code>False</code> sinon. On suppose que le nom est toujours présent dans la liste.
+      </p>
+    </div>
+
+    <div class="encadre-conseil">
+      <span class="encadre-prefix">Attention — La condition est STRICTE</span>
+      <p style="margin:0">
+        « Strictement inférieur à 20 % » → condition Python : <code>taux &lt; 20</code>.
+        Un réservoir à exactement 20,0 % n'est <strong>pas</strong> en pénurie.
+        Vérifie avec Vaihere (21,1 %) qui doit renvoyer <code>False</code>,
+        et Motuavai (11,1 %) qui doit renvoyer <code>True</code>.
+      </p>
+    </div>
+
+    <!-- INDICES -->
+    <div style="margin:.8rem 0;">
+      <button class="btn-tp-vert" onclick="toggleIndice('ind-q1-1', this)">▶ Indice 1 — Trouver le réservoir puis calculer</button>
+    </div>
+    <div id="ind-q1-1" class="encadre-indice indice-bloc">
+      <span class="encadre-prefix">Indice 1</span>
+      <pre style="margin:.3rem 0"><code>for r in reservoirs:
+    if r["nom"] == nom:          # on a trouvé le bon réservoir
+        taux = r["volume"] / r["capacite"] * 100
+        return taux < 20         # True si pénurie, False sinon</code></pre>
+    </div>
+
+    <div style="margin:.8rem 0;">
+      <button class="btn-tp-vert" onclick="toggleIndice('ind-q1-2', this)">▶ Indice 2 — Utiliser taux_remplissage fourni</button>
+    </div>
+    <div id="ind-q1-2" class="encadre-indice indice-bloc">
+      <span class="encadre-prefix">Indice 2</span>
+      <p style="margin:0">
+        Le fichier contient déjà une fonction <code>taux_remplissage(reservoir)</code>
+        qui prend un dictionnaire réservoir et renvoie le taux. Tu peux t'en servir :
+      </p>
+      <pre style="margin:.3rem 0"><code>for r in reservoirs:
+    if r["nom"] == nom:
+        return taux_remplissage(r) < 20</code></pre>
+    </div>
+
+    <div class="encadre" style="margin-top:1.2rem;">
+      <span class="encadre-prefix">Éditeur Python — Écris est_en_penurie</span>
+      <script type="py-editor" env="eau">
+reservoirs = [
+    {"nom": "Nuiavai",   "capacite": 100000, "volume": 55000, "district": "Tepua"},
+    {"nom": "Farepape",  "capacite": 120000, "volume": 45000, "district": "Fare"},
+    {"nom": "Vaipuna",   "capacite":  80000, "volume": 60000, "district": "Hiva Oro"},
+    {"nom": "Vaihere",   "capacite":  95000, "volume": 20000, "district": "Fare"},
+    {"nom": "Teanavai",  "capacite": 110000, "volume": 90000, "district": "Avera"},
+    {"nom": "Matavai",   "capacite":  70000, "volume": 25000, "district": "Tepua"},
+    {"nom": "Anaitea",   "capacite":  85000, "volume": 30000, "district": "Hiva Oro"},
+    {"nom": "Faaroa",    "capacite":  60000, "volume": 40000, "district": "Avera"},
+    {"nom": "Vaitiare",  "capacite": 105000, "volume": 95000, "district": "Fare"},
+    {"nom": "Motuavai",  "capacite":  90000, "volume": 10000, "district": "Tepua"},
+]
+
+
+def est_en_penurie(reservoirs, nom):
+    """Renvoie True si le réservoir nommé nom est en pénurie (taux < 20%)."""
+    pass  # À compléter
+
+
+def test_est_en_penurie():
+    # Seul réservoir en pénurie : Motuavai (10000/90000 = 11.1%)
+    assert est_en_penurie(reservoirs, "Motuavai") == True
+    # Vaihere : 20000/95000 = 21.05% → pas en pénurie (strictement < 20 !)
+    assert est_en_penurie(reservoirs, "Vaihere")  == False
+    # Nuiavai : 55% → OK
+    assert est_en_penurie(reservoirs, "Nuiavai")  == False
+    # Vaitiare : 90.5% → OK
+    assert est_en_penurie(reservoirs, "Vaitiare") == False
+    print("Les tests sont validés.")
+
+test_est_en_penurie()
+      </script>
+    </div>
+
+    <div style="margin:1rem 0;">
+      <button class="btn-tp-or" onclick="toggleCorrection('corr-q1', this)">&#128274; Afficher la correction</button>
+    </div>
+    <div id="corr-q1" class="correction-bloc encadre-conseil">
+      <span class="encadre-prefix">Correction — Question 1</span>
+      <script type="py-editor" env="eau-c1">
+reservoirs = [
+    {"nom": "Nuiavai",   "capacite": 100000, "volume": 55000, "district": "Tepua"},
+    {"nom": "Farepape",  "capacite": 120000, "volume": 45000, "district": "Fare"},
+    {"nom": "Vaipuna",   "capacite":  80000, "volume": 60000, "district": "Hiva Oro"},
+    {"nom": "Vaihere",   "capacite":  95000, "volume": 20000, "district": "Fare"},
+    {"nom": "Teanavai",  "capacite": 110000, "volume": 90000, "district": "Avera"},
+    {"nom": "Matavai",   "capacite":  70000, "volume": 25000, "district": "Tepua"},
+    {"nom": "Anaitea",   "capacite":  85000, "volume": 30000, "district": "Hiva Oro"},
+    {"nom": "Faaroa",    "capacite":  60000, "volume": 40000, "district": "Avera"},
+    {"nom": "Vaitiare",  "capacite": 105000, "volume": 95000, "district": "Fare"},
+    {"nom": "Motuavai",  "capacite":  90000, "volume": 10000, "district": "Tepua"},
+]
+
+
+def est_en_penurie(reservoirs, nom):
+    """Renvoie True si le réservoir nommé nom est en pénurie (taux < 20%)."""
+    for r in reservoirs:
+        if r["nom"] == nom:
+            taux = r["volume"] / r["capacite"] * 100
+            return taux < 20   # True si pénurie, False sinon
+
+
+def test_est_en_penurie():
+    assert est_en_penurie(reservoirs, "Motuavai") == True   # 11.1% → pénurie
+    assert est_en_penurie(reservoirs, "Vaihere")  == False  # 21.1% → OK
+    assert est_en_penurie(reservoirs, "Nuiavai")  == False  # 55.0% → OK
+    assert est_en_penurie(reservoirs, "Vaitiare") == False  # 90.5% → OK
+    print("Les tests sont validés.")
+
+test_est_en_penurie()
+
+# Affichage de tous les réservoirs en pénurie
+print("\nRéservoirs en pénurie :")
+for r in reservoirs:
+    if est_en_penurie(reservoirs, r["nom"]):
+        taux = r["volume"] / r["capacite"] * 100
+        print(f"  {r['nom']} ({r['district']}) : {taux:.1f}%")
+      </script>
+    </div>
+  </section>
+
+  <hr class="sep">
+
+  <!-- QUESTION 2 -->
+  <section id="q2">
+    <h2>Question 2 — <code>volume_par_district</code></h2>
+
+    <div class="encadre-question">
+      <span class="encadre-prefix">Énoncé — Question 2</span>
+      <p style="margin:0">
+        <span class="badge-question">Q2</span>
+        Écrire la fonction <code>volume_par_district(reservoirs)</code> qui renvoie
+        un dictionnaire associant chaque nom de district au <strong>volume total</strong>
+        d'eau disponible dans ce district.
+      </p>
+    </div>
+
+    <div class="encadre-conseil">
+      <span class="encadre-prefix">Résultats attendus sur les données du sujet</span>
+      <div style="margin:.5rem 0;">
+        <div class="district-bar">
+          <span class="db-nom">Fare</span>
+          <div class="db-track"><div class="db-fill db-fill-ok" style="width:100%"></div></div>
+          <span class="db-val td-ok">160 000 L</span>
+        </div>
+        <div class="district-bar">
+          <span class="db-nom">Avera</span>
+          <div class="db-track"><div class="db-fill db-fill-ok" style="width:81%"></div></div>
+          <span class="db-val td-ok">130 000 L</span>
+        </div>
+        <div class="district-bar">
+          <span class="db-nom">Hiva Oro</span>
+          <div class="db-track"><div class="db-fill db-fill-ok" style="width:56%"></div></div>
+          <span class="db-val">90 000 L</span>
+        </div>
+        <div class="district-bar">
+          <span class="db-nom">Tepua</span>
+          <div class="db-track"><div class="db-fill db-fill-vuln" style="width:56%"></div></div>
+          <span class="db-val td-bug">90 000 L</span>
+        </div>
+      </div>
+      <p style="font-family:'JetBrains Mono',monospace; font-size:.74rem; color:var(--text-muted); margin:.3rem 0 0">
+        Total : 160 000 + 130 000 + 90 000 + 90 000 = 470 000 L
+      </p>
+    </div>
+
+    <!-- INDICE -->
+    <div style="margin:.8rem 0;">
+      <button class="btn-tp-vert" onclick="toggleIndice('ind-q2-1', this)">▶ Indice — Patron d'agrégation par clé</button>
+    </div>
+    <div id="ind-q2-1" class="encadre-indice indice-bloc">
+      <span class="encadre-prefix">Indice</span>
+      <pre style="margin:.3rem 0"><code>volumes = {}
+for r in reservoirs:
+    d = r["district"]
+    if d not in volumes:
+        volumes[d] = 0       # première rencontre → initialiser à 0
+    volumes[d] += r["volume"]  # accumuler
+return volumes</code></pre>
+    </div>
+
+    <div class="encadre" style="margin-top:1.2rem;">
+      <span class="encadre-prefix">Éditeur Python — Écris volume_par_district</span>
+      <script type="py-editor" env="eau-q2">
+reservoirs = [
+    {"nom": "Nuiavai",   "capacite": 100000, "volume": 55000, "district": "Tepua"},
+    {"nom": "Farepape",  "capacite": 120000, "volume": 45000, "district": "Fare"},
+    {"nom": "Vaipuna",   "capacite":  80000, "volume": 60000, "district": "Hiva Oro"},
+    {"nom": "Vaihere",   "capacite":  95000, "volume": 20000, "district": "Fare"},
+    {"nom": "Teanavai",  "capacite": 110000, "volume": 90000, "district": "Avera"},
+    {"nom": "Matavai",   "capacite":  70000, "volume": 25000, "district": "Tepua"},
+    {"nom": "Anaitea",   "capacite":  85000, "volume": 30000, "district": "Hiva Oro"},
+    {"nom": "Faaroa",    "capacite":  60000, "volume": 40000, "district": "Avera"},
+    {"nom": "Vaitiare",  "capacite": 105000, "volume": 95000, "district": "Fare"},
+    {"nom": "Motuavai",  "capacite":  90000, "volume": 10000, "district": "Tepua"},
+]
+
+
+def volume_par_district(reservoirs):
+    """Renvoie {district: volume_total} pour chaque district."""
+    pass  # À compléter
+
+
+def test_volume_par_district():
+    vpd = volume_par_district(reservoirs)
+    # 4 districts au total
+    assert len(vpd) == 4
+    # Fare : 45000 + 20000 + 95000 = 160000
+    assert vpd["Fare"]     == 160000
+    # Avera : 90000 + 40000 = 130000
+    assert vpd["Avera"]    == 130000
+    # Hiva Oro : 60000 + 30000 = 90000
+    assert vpd["Hiva Oro"] == 90000
+    # Tepua : 55000 + 25000 + 10000 = 90000
+    assert vpd["Tepua"]    == 90000
+    # Somme totale = 470000
+    assert sum(vpd.values()) == 470000
+    print("Les tests sont validés.")
+
+test_volume_par_district()
+      </script>
+    </div>
+
+    <div style="margin:1rem 0;">
+      <button class="btn-tp-or" onclick="toggleCorrection('corr-q2', this)">&#128274; Afficher la correction</button>
+    </div>
+    <div id="corr-q2" class="correction-bloc encadre-conseil">
+      <span class="encadre-prefix">Correction — Question 2</span>
+      <script type="py-editor" env="eau-c2">
+reservoirs = [
+    {"nom": "Nuiavai",   "capacite": 100000, "volume": 55000, "district": "Tepua"},
+    {"nom": "Farepape",  "capacite": 120000, "volume": 45000, "district": "Fare"},
+    {"nom": "Vaipuna",   "capacite":  80000, "volume": 60000, "district": "Hiva Oro"},
+    {"nom": "Vaihere",   "capacite":  95000, "volume": 20000, "district": "Fare"},
+    {"nom": "Teanavai",  "capacite": 110000, "volume": 90000, "district": "Avera"},
+    {"nom": "Matavai",   "capacite":  70000, "volume": 25000, "district": "Tepua"},
+    {"nom": "Anaitea",   "capacite":  85000, "volume": 30000, "district": "Hiva Oro"},
+    {"nom": "Faaroa",    "capacite":  60000, "volume": 40000, "district": "Avera"},
+    {"nom": "Vaitiare",  "capacite": 105000, "volume": 95000, "district": "Fare"},
+    {"nom": "Motuavai",  "capacite":  90000, "volume": 10000, "district": "Tepua"},
+]
+
+
+def volume_par_district(reservoirs):
+    """Renvoie {district: volume_total} pour chaque district."""
+    volumes = {}
+    for r in reservoirs:
+        d = r["district"]
+        if d not in volumes:
+            volumes[d] = 0          # initialiser si première rencontre
+        volumes[d] += r["volume"]   # accumuler
+    return volumes
+
+
+def test_volume_par_district():
+    vpd = volume_par_district(reservoirs)
+    assert len(vpd)            == 4
+    assert vpd["Fare"]         == 160000
+    assert vpd["Avera"]        == 130000
+    assert vpd["Hiva Oro"]     == 90000
+    assert vpd["Tepua"]        == 90000
+    assert sum(vpd.values())   == 470000
+    print("Les tests sont validés.")
+
+test_volume_par_district()
+print("\nVolume par district :")
+for d, v in volume_par_district(reservoirs).items():
+    print(f"  {d:12s} : {v:7d} L")
+      </script>
+    </div>
+  </section>
+
+  <hr class="sep">
+
+  <!-- QUESTION 3 -->
+  <section id="q3">
+    <h2>Question 3 — Tester et corriger <code>volume_moyen</code></h2>
+
+    <div class="encadre-question">
+      <span class="encadre-prefix">Énoncé — Question 3</span>
+      <p>
+        <span class="badge-question">Q3</span>
+        La fonction <code>volume_moyen</code> est incorrecte. Proposer des assertions
+        qui mettent le ou les problèmes en évidence, puis proposer une version corrigée.
+      </p>
+    </div>
+
+    <p>Le code fourni :</p>
+    <pre><code>def volume_moyen(reservoirs):
+    somme_totale = 0
+    for r in reservoirs:
+        somme_totale += r["volume"]
+    moyenne = somme_totale / <span style="color:var(--rouge); font-weight:600">(len(reservoirs)-1)</span>   # ← BUG
+    return moyenne</code></pre>
+
+    <div class="encadre-piege">
+      <span class="encadre-prefix">Analyse du bug — diviseur n-1 au lieu de n</span>
+      <p>
+        Le diviseur devrait être <code>len(reservoirs)</code> (le nombre de réservoirs),
+        mais il est <code>len(reservoirs) - 1</code>.
+      </p>
+      <table class="table-info" style="max-width:520px;">
+        <thead><tr><th>Cas</th><th>Résultat bugué</th><th>Résultat attendu</th><th>Problème</th></tr></thead>
+        <tbody>
+          <tr>
+            <td>1 réservoir (vol. 42 000)</td>
+            <td class="td-bug">ZeroDivisionError</td>
+            <td class="td-ok">42 000</td>
+            <td>Division par zéro !</td>
+          </tr>
+          <tr>
+            <td>2 réservoirs (vol. 1 000 chacun)</td>
+            <td class="td-bug">2 000</td>
+            <td class="td-ok">1 000</td>
+            <td>Double du réel</td>
+          </tr>
+          <tr>
+            <td>10 réservoirs (total 470 000)</td>
+            <td class="td-bug">52 222 L</td>
+            <td class="td-ok">47 000 L</td>
+            <td>+11,1 % de surestimation</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="encadre-conseil">
+      <span class="encadre-prefix">Les 3 assertions demandées par l'énoncé</span>
+      <pre style="margin:.3rem 0"><code># 1. Cas simple : 2 réservoirs de même volume → moyenne = ce volume
+r2 = [{"volume": 1000, "capacite": 5000}, {"volume": 1000, "capacite": 5000}]
+assert volume_moyen(r2) == 1000   # ÉCHOUE avec le bug (renvoie 2000)
+
+# 2. Moyenne ≤ volume maximal présent dans la liste
+max_vol = max(r["volume"] for r in reservoirs)
+assert volume_moyen(reservoirs) <= max_vol   # ÉCHOUE si moyennage incorrect
+
+# 3. Moyenne ≤ capacité maximale
+max_cap = max(r["capacite"] for r in reservoirs)
+assert volume_moyen(reservoirs) <= max_cap   # passe dans ce cas précis</code></pre>
+    </div>
+
+    <div class="encadre" style="margin-top:1.2rem;">
+      <span class="encadre-prefix">Éditeur Python — Écris les assertions et la version corrigée</span>
+      <script type="py-editor" env="eau-q3">
+reservoirs = [
+    {"nom": "Nuiavai",   "capacite": 100000, "volume": 55000, "district": "Tepua"},
+    {"nom": "Farepape",  "capacite": 120000, "volume": 45000, "district": "Fare"},
+    {"nom": "Vaipuna",   "capacite":  80000, "volume": 60000, "district": "Hiva Oro"},
+    {"nom": "Vaihere",   "capacite":  95000, "volume": 20000, "district": "Fare"},
+    {"nom": "Teanavai",  "capacite": 110000, "volume": 90000, "district": "Avera"},
+    {"nom": "Matavai",   "capacite":  70000, "volume": 25000, "district": "Tepua"},
+    {"nom": "Anaitea",   "capacite":  85000, "volume": 30000, "district": "Hiva Oro"},
+    {"nom": "Faaroa",    "capacite":  60000, "volume": 40000, "district": "Avera"},
+    {"nom": "Vaitiare",  "capacite": 105000, "volume": 95000, "district": "Fare"},
+    {"nom": "Motuavai",  "capacite":  90000, "volume": 10000, "district": "Tepua"},
+]
+
+
+# ── Version BUGUÉE (ne pas modifier) ──────────────────────────────────────
+def volume_moyen_bugue(reservoirs):
+    somme_totale = 0
+    for r in reservoirs:
+        somme_totale += r["volume"]
+    moyenne = somme_totale / (len(reservoirs) - 1)   # ← BUG
+    return moyenne
+
+
+# ── Version CORRIGÉE (à compléter) ────────────────────────────────────────
+def volume_moyen(reservoirs):
+    """Renvoie le volume moyen correct."""
+    pass  # À corriger !
+
+
+def test_volume_moyen():
+    # Test 1 : 2 réservoirs de même volume → moyenne = ce volume
+    r2 = [{"volume": 1000, "capacite": 5000, "nom":"A", "district":"X"},
+          {"volume": 1000, "capacite": 5000, "nom":"B", "district":"X"}]
+    assert volume_moyen(r2) == 1000, \
+        f"2 réservoirs de 1000L → attendu 1000, obtenu {volume_moyen(r2)}"
+
+    # Test 2 : moyenne ≤ volume maximal de la liste
+    max_vol = max(r["volume"] for r in reservoirs)
+    assert volume_moyen(reservoirs) <= max_vol, \
+        "La moyenne ne peut pas dépasser le volume maximum !"
+
+    # Test 3 : valeur exacte sur les données du sujet
+    assert volume_moyen(reservoirs) == 47000.0, \
+        f"Attendu 47000.0, obtenu {volume_moyen(reservoirs)}"
+
+    print("Les tests sont validés.")
+
+# Observe d'abord le bug
+print(f"Version buguée (2 réservoirs 1000L) : {volume_moyen_bugue([{'volume':1000,'capacite':5000,'nom':'A','district':'X'},{'volume':1000,'capacite':5000,'nom':'B','district':'X'}])}")
+print(f"Valeur attendue                     : 1000")
+print()
+test_volume_moyen()
+      </script>
+    </div>
+
+    <div style="margin:1rem 0;">
+      <button class="btn-tp-or" onclick="toggleCorrection('corr-q3', this)">&#128274; Afficher la correction</button>
+    </div>
+    <div id="corr-q3" class="correction-bloc encadre-conseil">
+      <span class="encadre-prefix">Correction — Question 3</span>
+      <script type="py-editor" env="eau-c3">
+reservoirs = [
+    {"nom": "Nuiavai",   "capacite": 100000, "volume": 55000, "district": "Tepua"},
+    {"nom": "Farepape",  "capacite": 120000, "volume": 45000, "district": "Fare"},
+    {"nom": "Vaipuna",   "capacite":  80000, "volume": 60000, "district": "Hiva Oro"},
+    {"nom": "Vaihere",   "capacite":  95000, "volume": 20000, "district": "Fare"},
+    {"nom": "Teanavai",  "capacite": 110000, "volume": 90000, "district": "Avera"},
+    {"nom": "Matavai",   "capacite":  70000, "volume": 25000, "district": "Tepua"},
+    {"nom": "Anaitea",   "capacite":  85000, "volume": 30000, "district": "Hiva Oro"},
+    {"nom": "Faaroa",    "capacite":  60000, "volume": 40000, "district": "Avera"},
+    {"nom": "Vaitiare",  "capacite": 105000, "volume": 95000, "district": "Fare"},
+    {"nom": "Motuavai",  "capacite":  90000, "volume": 10000, "district": "Tepua"},
+]
+
+
+def volume_moyen(reservoirs):
+    """Renvoie le volume moyen d'eau disponible sur tous les réservoirs."""
+    somme_totale = 0
+    for r in reservoirs:
+        somme_totale += r["volume"]
+    return somme_totale / len(reservoirs)   # ← CORRECTION : len(reservoirs)
+
+
+def test_volume_moyen():
+    r2 = [{"volume": 1000, "capacite": 5000, "nom":"A", "district":"X"},
+          {"volume": 1000, "capacite": 5000, "nom":"B", "district":"X"}]
+    assert volume_moyen(r2) == 1000
+    max_vol = max(r["volume"] for r in reservoirs)
+    assert volume_moyen(reservoirs) <= max_vol
+    assert volume_moyen(reservoirs) == 47000.0
+    print("Les tests sont validés.")
+
+test_volume_moyen()
+print(f"\nVolume moyen corrigé : {volume_moyen(reservoirs)} L")
+print(f"(470 000 L / 10 réservoirs = 47 000 L)")
+      </script>
+      <p style="margin-top:.8rem;">
+        <strong>La correction en un mot :</strong> remplacer <code>(len(reservoirs)-1)</code>
+        par <code>len(reservoirs)</code>. La formule de la moyenne est
+        \(\bar{x} = \frac{\sum x_i}{n}\), pas \(\frac{\sum x_i}{n-1}\)
+        (ce dernier est le dénominateur de la variance corrigée, sans rapport ici).
+      </p>
+    </div>
+  </section>
+
+  <hr class="sep">
+
+  <!-- QUESTION 4 -->
+  <section id="q4">
+    <h2>Question 4 — Districts vulnérables</h2>
+
+    <div class="encadre-question">
+      <span class="encadre-prefix">Énoncé — Question 4</span>
+      <p>
+        <span class="badge-question">Q4</span>
+        Proposer une adaptation du code permettant d'identifier les districts vulnérables
+        (dont le volume moyen est inférieur à un seuil relatif du volume moyen global,
+        par exemple 80 %, ce seuil étant passé en paramètre), puis proposer une stratégie
+        de gestion pour améliorer leur situation.
+      </p>
+    </div>
+
+    <div class="encadre-conseil">
+      <span class="encadre-prefix">Analyse complète des districts</span>
+      <table class="table-info">
+        <thead>
+          <tr>
+            <th>District</th>
+            <th>Réservoirs</th>
+            <th>Vol. total</th>
+            <th>Vol. moyen</th>
+            <th>vs seuil 37 600 L</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Avera</td>
+            <td>Teanavai, Faaroa</td>
+            <td>130 000 L</td>
+            <td class="td-ok">65 000 L</td>
+            <td class="td-ok">OK (+73 %)</td>
+          </tr>
+          <tr>
+            <td>Fare</td>
+            <td>Farepape, Vaihere, Vaitiare</td>
+            <td>160 000 L</td>
+            <td class="td-ok">53 333 L</td>
+            <td class="td-ok">OK (+42 %)</td>
+          </tr>
+          <tr>
+            <td>Hiva Oro</td>
+            <td>Vaipuna, Ana'itea</td>
+            <td>90 000 L</td>
+            <td class="td-ok">45 000 L</td>
+            <td class="td-ok">OK (+20 %)</td>
+          </tr>
+          <tr style="background:#fff5f5;">
+            <td><strong style="color:var(--rouge)">Tepua</strong></td>
+            <td>Nuiavai, Matavai, <strong style="color:var(--rouge)">Motuavai</strong></td>
+            <td>90 000 L</td>
+            <td class="td-bug">30 000 L</td>
+            <td class="td-bug">⚠ VULNÉRABLE (−20 %)</td>
+          </tr>
+        </tbody>
+      </table>
+      <p style="margin:.4rem 0 0; font-size:.9rem;">
+        Seuil = vol. moyen global × 80 % = 47 000 × 0,80 = <strong>37 600 L</strong>.
+        Seul Tepua (30 000 L) est en dessous de ce seuil.
+        Il est particulièrement fragilisé par Motuavai (seulement 10 000 L sur 90 000).
+      </p>
+    </div>
+
+    <!-- INDICE -->
+    <div style="margin:.8rem 0;">
+      <button class="btn-tp-vert" onclick="toggleIndice('ind-q4-1', this)">▶ Indice — Structure de la fonction</button>
+    </div>
+    <div id="ind-q4-1" class="encadre-indice indice-bloc">
+      <span class="encadre-prefix">Indice</span>
+      <pre style="margin:.3rem 0"><code>def districts_vulnerables(reservoirs, seuil_relatif=0.80):
+    vol_moy_global = volume_moyen(reservoirs)
+    seuil          = vol_moy_global * seuil_relatif
+
+    # Regrouper les réservoirs par district (reservoirs_par_district existe déjà !)
+    rpd = reservoirs_par_district(reservoirs)
+
+    vulnerables = []
+    for district, ress in rpd.items():
+        vol_moy_district = volume_moyen(ress)
+        if vol_moy_district < seuil:
+            vulnerables.append(district)
+    return vulnerables</code></pre>
+    </div>
+
+    <div class="encadre" style="margin-top:1.2rem;">
+      <span class="encadre-prefix">Éditeur Python — Complète la fonction et teste-la</span>
+      <script type="py-editor" env="eau-q4">
+reservoirs = [
+    {"nom": "Nuiavai",   "capacite": 100000, "volume": 55000, "district": "Tepua"},
+    {"nom": "Farepape",  "capacite": 120000, "volume": 45000, "district": "Fare"},
+    {"nom": "Vaipuna",   "capacite":  80000, "volume": 60000, "district": "Hiva Oro"},
+    {"nom": "Vaihere",   "capacite":  95000, "volume": 20000, "district": "Fare"},
+    {"nom": "Teanavai",  "capacite": 110000, "volume": 90000, "district": "Avera"},
+    {"nom": "Matavai",   "capacite":  70000, "volume": 25000, "district": "Tepua"},
+    {"nom": "Anaitea",   "capacite":  85000, "volume": 30000, "district": "Hiva Oro"},
+    {"nom": "Faaroa",    "capacite":  60000, "volume": 40000, "district": "Avera"},
+    {"nom": "Vaitiare",  "capacite": 105000, "volume": 95000, "district": "Fare"},
+    {"nom": "Motuavai",  "capacite":  90000, "volume": 10000, "district": "Tepua"},
+]
+
+def volume_moyen(reservoirs):
+    return sum(r["volume"] for r in reservoirs) / len(reservoirs)
+
+def reservoirs_par_district(reservoirs):
+    rpd = {}
+    for r in reservoirs:
+        d = r["district"]
+        if d not in rpd:
+            rpd[d] = []
+        rpd[d].append(r)
+    return rpd
+
+
+def districts_vulnerables(reservoirs, seuil_relatif=0.80):
+    """Renvoie la liste des districts dont le vol. moyen < seuil_relatif * vol. moyen global."""
+    pass  # À compléter
+
+
+def test_districts_vulnerables():
+    # Avec seuil à 80% : seul Tepua est vulnérable
+    assert districts_vulnerables(reservoirs) == ["Tepua"], \
+        f"Attendu ['Tepua'], obtenu {districts_vulnerables(reservoirs)}"
+    # Avec seuil à 100% : tous les districts sous la moyenne globale sont vulnérables
+    # Tepua (30000) et Hiva Oro (45000) < 47000
+    vuln_100 = districts_vulnerables(reservoirs, seuil_relatif=1.0)
+    assert "Tepua"    in vuln_100
+    assert "Hiva Oro" in vuln_100
+    # Avec seuil à 0 : aucun district vulnérable
+    assert districts_vulnerables(reservoirs, seuil_relatif=0.0) == []
+    print("Les tests sont validés.")
+
+test_districts_vulnerables()
+      </script>
+    </div>
+
+    <div style="margin:1rem 0;">
+      <button class="btn-tp-or" onclick="toggleCorrection('corr-q4', this)">&#128274; Afficher la correction + stratégie</button>
+    </div>
+    <div id="corr-q4" class="correction-bloc encadre-conseil">
+      <span class="encadre-prefix">Correction — Question 4</span>
+      <script type="py-editor" env="eau-c4">
+reservoirs = [
+    {"nom": "Nuiavai",   "capacite": 100000, "volume": 55000, "district": "Tepua"},
+    {"nom": "Farepape",  "capacite": 120000, "volume": 45000, "district": "Fare"},
+    {"nom": "Vaipuna",   "capacite":  80000, "volume": 60000, "district": "Hiva Oro"},
+    {"nom": "Vaihere",   "capacite":  95000, "volume": 20000, "district": "Fare"},
+    {"nom": "Teanavai",  "capacite": 110000, "volume": 90000, "district": "Avera"},
+    {"nom": "Matavai",   "capacite":  70000, "volume": 25000, "district": "Tepua"},
+    {"nom": "Anaitea",   "capacite":  85000, "volume": 30000, "district": "Hiva Oro"},
+    {"nom": "Faaroa",    "capacite":  60000, "volume": 40000, "district": "Avera"},
+    {"nom": "Vaitiare",  "capacite": 105000, "volume": 95000, "district": "Fare"},
+    {"nom": "Motuavai",  "capacite":  90000, "volume": 10000, "district": "Tepua"},
+]
+
+def volume_moyen(reservoirs):
+    return sum(r["volume"] for r in reservoirs) / len(reservoirs)
+
+def reservoirs_par_district(reservoirs):
+    rpd = {}
+    for r in reservoirs:
+        d = r["district"]
+        if d not in rpd: rpd[d] = []
+        rpd[d].append(r)
+    return rpd
+
+
+def districts_vulnerables(reservoirs, seuil_relatif=0.80):
+    """Renvoie la liste des districts dont le vol. moyen < seuil_relatif * vol. moyen global."""
+    vol_moy_global = volume_moyen(reservoirs)
+    seuil          = vol_moy_global * seuil_relatif
+    rpd = reservoirs_par_district(reservoirs)
+    vulnerables = []
+    for district, ress in rpd.items():
+        vol_moy_district = volume_moyen(ress)
+        if vol_moy_district < seuil:
+            vulnerables.append(district)
+    return vulnerables
+
+
+def test_districts_vulnerables():
+    assert districts_vulnerables(reservoirs) == ["Tepua"]
+    vuln_100 = districts_vulnerables(reservoirs, seuil_relatif=1.0)
+    assert "Tepua"    in vuln_100
+    assert "Hiva Oro" in vuln_100
+    assert districts_vulnerables(reservoirs, seuil_relatif=0.0) == []
+    print("Les tests sont validés.")
+
+test_districts_vulnerables()
+
+# Rapport complet
+print(f"\n=== Rapport districts ===")
+vol_global = volume_moyen(reservoirs)
+seuil_80   = vol_global * 0.80
+print(f"Vol. moyen global : {vol_global:.0f} L")
+print(f"Seuil (80%)       : {seuil_80:.0f} L")
+print()
+rpd = reservoirs_par_district(reservoirs)
+for d, ress in sorted(rpd.items()):
+    vm = volume_moyen(ress)
+    flag = "⚠ VULNÉRABLE" if vm < seuil_80 else "OK"
+    print(f"  {d:12s} : {vm:8.0f} L  {flag}")
+      </script>
+      <div style="margin-top:1rem;">
+        <h4 style="color:var(--accent-or);">Stratégie de gestion pour le district Tepua</h4>
+        <p>
+          Le district Tepua est vulnérable à cause de Motuavai (11,1 % — en pénurie)
+          et de Matavai (35,7 %). Voici les leviers d'action possibles :
+        </p>
+        <ol>
+          <li>
+            <strong>Transfert d'eau prioritaire :</strong> utiliser la fonction <code>taux_remplissage</code>
+            pour identifier les réservoirs d'autres districts qui peuvent céder de l'eau.
+            Teanavai (Avera, 81,8 %) et Vaitiare (Fare, 90,5 %) sont de bons candidats.
+            Un transfert par camion-citerne vers Motuavai est envisageable.
+          </li>
+          <li>
+            <strong>Restriction temporaire :</strong> réduire la consommation dans le district Tepua
+            jusqu'à ce que les précipitations rétablissent les niveaux.
+          </li>
+          <li>
+            <strong>Alertes automatiques :</strong> utiliser <code>est_en_penurie</code> et
+            <code>districts_vulnerables</code> dans un tableau de bord qui déclenche des alertes
+            dès qu'un seuil critique est atteint.
+          </li>
+          <li>
+            <strong>Priorisation des captages :</strong> orienter les captages naturels vers
+            les réservoirs de Tepua pendant la prochaine saison des pluies.
+          </li>
+        </ol>
+      </div>
+    </div>
+  </section>
+
+  <hr class="sep">
+
+  <!-- PIÈGES -->
+  <section id="pieges">
+    <h2>Pièges fréquents &amp; stratégie de performance</h2>
+
+    <div class="encadre-piege">
+      <span class="encadre-prefix">Piège 1 — Diviser par n-1 au lieu de n pour la moyenne</span>
+      <p style="margin:0">
+        C'est le bug de ce sujet. La moyenne d'une liste de \(n\) valeurs se calcule
+        en divisant par \(n\), pas par \(n-1\). Le diviseur \(n-1\) est utilisé
+        pour la <em>variance corrigée</em> en statistiques — notion hors-programme NSI.
+        Sur une liste d'un seul élément, \(n-1 = 0\) provoque une <code>ZeroDivisionError</code>.
+      </p>
+    </div>
+
+    <div class="encadre-piege">
+      <span class="encadre-prefix">Piège 2 — Condition stricte vs non stricte</span>
+      <p style="margin:0">
+        La pénurie est définie « strictement inférieure à 20 % » → <code>taux &lt; 20</code>.
+        Un réservoir à exactement 20,0 % n'est <em>pas</em> en pénurie. Toujours vérifier
+        les cas limites dans les tests : Vaihere est à 21,05 % (pas en pénurie) et
+        Motuavai à 11,11 % (en pénurie).
+      </p>
+    </div>
+
+    <div class="encadre-piege">
+      <span class="encadre-prefix">Piège 3 — Oublier d'initialiser la clé du dictionnaire</span>
+      <p style="margin:0">
+        Dans <code>volume_par_district</code>, si tu tentes directement
+        <code>volumes[d] += r["volume"]</code> sans initialiser <code>volumes[d] = 0</code>
+        lors de la première rencontre du district, Python lève une <code>KeyError</code>.
+        La vérification <code>if d not in volumes: volumes[d] = 0</code> est indispensable.
+      </p>
+    </div>
+
+    <div class="encadre-piege">
+      <span class="encadre-prefix">Piège 4 — Réutiliser les fonctions fournies</span>
+      <p style="margin:0">
+        Le code fourni contient déjà <code>reservoirs_par_district</code> qui regroupe les
+        réservoirs par district. Pour Q4, il faut <em>réutiliser</em> cette fonction plutôt
+        que de la réécrire. De même, <code>taux_remplissage</code> peut être appelé dans
+        <code>est_en_penurie</code>. Lire toutes les fonctions fournies avant de coder.
+      </p>
+    </div>
+
+    <h3>Stratégie optimale le jour J</h3>
+
+    <div class="encadre-conseil">
+      <span class="encadre-prefix">Ordre d'attaque recommandé — 4 questions, 1h</span>
+      <ol style="margin:0">
+        <li><strong>Q1 — 8 min :</strong> boucle pour trouver par nom + calcul taux + comparaison stricte &lt; 20. Tester avec Motuavai (True) et Vaihere (False).</li>
+        <li><strong>Q2 — 8 min :</strong> patron d'agrégation par clé. Vérifier que Fare = 160 000, Tepua = 90 000, total = 470 000.</li>
+        <li><strong>Q3 — 10 min :</strong> lire le code, repérer <code>len(reservoirs)-1</code>, écrire les 3 assertions qui échouent, corriger en <code>len(reservoirs)</code>, vérifier que la moyenne vaut 47 000.</li>
+        <li><strong>Q4 — 12 min :</strong> écrire <code>districts_vulnerables</code> en réutilisant <code>volume_moyen</code> et <code>reservoirs_par_district</code>. Identifier Tepua comme seul district vulnérable. Proposer 3–4 mesures de gestion à l'oral.</li>
+      </ol>
+    </div>
+
+    <h3>Mini-exercices de vérification</h3>
+
+    <div class="encadre">
+      <span class="encadre-prefix">Mini-exercice A — Taux de remplissage à la main</span>
+      <p>Calculer le taux de remplissage de Motuavai (volume = 10 000, capacite = 90 000). Est-il en pénurie ?</p>
+      <button class="btn-secondaire" onclick="toggleCorrection('mini-a', this)">Vérifier</button>
+      <div id="mini-a" class="correction-bloc" style="margin-top:.6rem;">
+        <p>\(\frac{10000}{90000} \times 100 = 11{,}11\%\)</p>
+        <p style="margin:0">11,11 % &lt; 20 % → <strong>en pénurie</strong>. <code>est_en_penurie</code> doit renvoyer <code>True</code>.</p>
+      </div>
+    </div>
+
+    <div class="encadre">
+      <span class="encadre-prefix">Mini-exercice B — Volume total du district Fare</span>
+      <p>Fare contient Farepape (45 000), Vaihere (20 000), Vaitiare (95 000). Quel est le volume total ?</p>
+      <button class="btn-secondaire" onclick="toggleCorrection('mini-b', this)">Vérifier</button>
+      <div id="mini-b" class="correction-bloc" style="margin-top:.6rem;">
+        <p style="margin:0">45 000 + 20 000 + 95 000 = <strong>160 000 L</strong></p>
+      </div>
+    </div>
+
+    <div class="encadre">
+      <span class="encadre-prefix">Mini-exercice C — Bug de volume_moyen</span>
+      <p>Que renvoie <code>volume_moyen_bugue</code> pour une liste de 3 réservoirs de volumes 10, 20 et 30 ? Quelle est la valeur attendue ?</p>
+      <button class="btn-secondaire" onclick="toggleCorrection('mini-c', this)">Vérifier</button>
+      <div id="mini-c" class="correction-bloc" style="margin-top:.6rem;">
+        <p>Somme = 60, diviseur bugué = 3-1 = 2 → <strong>30</strong> (faux).</p>
+        <p style="margin:0">Valeur attendue : 60 / 3 = <strong>20</strong>.</p>
+      </div>
+    </div>
+  </section>
+
+  <hr class="sep">
+
+  <div class="encadre" style="margin-top:2rem;">
+    <span class="encadre-prefix">Récapitulatif — Les 4 réponses essentielles en un coup d'œil</span>
+    <pre style="margin:.3rem 0; font-size:.84em;"><code># Q1 — est_en_penurie
+def est_en_penurie(reservoirs, nom):
+    for r in reservoirs:
+        if r["nom"] == nom:
+            return r["volume"] / r["capacite"] * 100 < 20
+
+# Q2 — volume_par_district
+def volume_par_district(reservoirs):
+    volumes = {}
+    for r in reservoirs:
+        d = r["district"]
+        if d not in volumes: volumes[d] = 0
+        volumes[d] += r["volume"]
+    return volumes
+
+# Q3 — volume_moyen corrigé (1 mot changé)
+moyenne = somme_totale / len(reservoirs)   # ← supprimer le -1
+
+# Q3 — résultats : bugué=52222 L, correct=47000 L
+
+# Q4 — districts_vulnerables
+def districts_vulnerables(reservoirs, seuil_relatif=0.80):
+    seuil = volume_moyen(reservoirs) * seuil_relatif
+    rpd   = reservoirs_par_district(reservoirs)
+    return [d for d, ress in rpd.items() if volume_moyen(ress) < seuil]
+
+# Q4 — résultat : ["Tepua"] (vol. moyen 30 000 L < seuil 37 600 L)</code></pre>
+  </div>
+
+</div>
+
+<footer>Lycée Antoine Watteau — DarkSATHI Li</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+  const btnTop = document.getElementById('btn-top');
+  window.addEventListener('scroll', () => { btnTop.style.display = window.scrollY > 300 ? 'flex' : 'none'; });
+  btnTop.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
+
+  function toggleIndice(id, btn) {
+    var el = document.getElementById(id);
+    if (!el) return;
+    el.classList.toggle('visible');
+    btn.textContent = el.classList.contains('visible')
+      ? btn.textContent.replace('▶','▼') : btn.textContent.replace('▼','▶');
+  }
+
+  function toggleCorrection(id, btn) {
+    var el = document.getElementById(id);
+    if (!el) return;
+    el.classList.toggle('visible');
+    if (el.classList.contains('visible')) {
+      btn.textContent = btn.textContent.replace('Afficher','Masquer').replace('Vérifier','Masquer');
+    } else {
+      btn.textContent = btn.textContent.replace('Masquer','Afficher');
+    }
+  }
+</script>
+</body>
+</html>
