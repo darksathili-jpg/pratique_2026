@@ -1141,6 +1141,534 @@ def test_ameliorations():
     </div>
 
   </section>
+  <!-- ════════════════════════════════════════════════════════
+     SIMULATION INTERACTIVE — APRÈS QUESTION 4
+     ════════════════════════════════════════════════════════ -->
+<section id="simu-interactive">
+  <h2>Simulation interactive — exploration du modèle</h2>
+
+  <p>
+    Avec le modèle amélioré de la question 4, on peut explorer
+    combien de coccinelles sont nécessaires pour éliminer 1&nbsp;000 pucerons en 30&nbsp;jours.
+    Le graphique de gauche montre le <strong>seuil critique</strong>&nbsp;;
+    le graphique de droite illustre la <strong>dynamique prédateur/proie</strong> d'un tirage représentatif.
+  </p>
+
+  <div class="encadre-conseil" style="margin-bottom:1rem;">
+    <span class="encadre-prefix">Paramètres du sujet 7 — respectés à la lettre</span>
+    <p style="margin:0; font-size:.9rem;">
+      Durée max : <strong>30 jours</strong> &nbsp;&middot;&nbsp;
+      Pucerons initiaux : <strong>1&nbsp;000</strong> &nbsp;&middot;&nbsp;
+      Coccinelles : <code>age=10</code>, <code>niv_nutrition=2</code> &nbsp;&middot;&nbsp;
+      Chaque barre = <strong>200 tirages Monte-Carlo</strong>.
+      Le modèle JS est une traduction instruction par instruction du Python du sujet.
+    </p>
+  </div>
+
+  <div class="encadre-piege" style="margin-bottom:1.2rem;">
+    <span class="encadre-prefix">Ce que tu vas observer — et pourquoi c'est normal</span>
+    <p style="margin:0; font-size:.9rem;">
+      Le taux de succès passe brutalement de 0&nbsp;% à ~90&nbsp;% puis 100&nbsp;% sur 1 ou 2 valeurs de&nbsp;n.
+      Ce <strong>seuil critique</strong> n'est pas un bug : c'est la compétition entre deux croissances exponentielles
+      (pucerons +20&nbsp;%/jour, coccinelles en avalanche dès la masse critique).
+      En dessous du seuil, les pucerons l'emportent toujours&nbsp;; au-dessus, les coccinelles l'emportent presque toujours.
+    </p>
+  </div>
+
+  <div class="encadre" style="margin-bottom:1.5rem;">
+    <span class="encadre-prefix">Réglages</span>
+    <div style="display:flex; flex-wrap:wrap; gap:2rem; align-items:center; margin:.8rem 0;">
+
+      <label style="font-family:'JetBrains Mono',monospace; font-size:.88rem;">
+        Min coccinelles
+        <input type="range" id="sl-min" min="1" max="15" value="3"
+               style="width:110px; margin:0 .5rem; vertical-align:middle;">
+        <span id="val-min" style="font-weight:600;">3</span>
+      </label>
+
+      <label style="font-family:'JetBrains Mono',monospace; font-size:.88rem;">
+        Max coccinelles
+        <input type="range" id="sl-max" min="2" max="20" value="12"
+               style="width:110px; margin:0 .5rem; vertical-align:middle;">
+        <span id="val-max" style="font-weight:600;">12</span>
+      </label>
+
+      <label style="font-family:'JetBrains Mono',monospace; font-size:.88rem;">
+        Ratio femelles
+        <input type="range" id="sl-ratio" min="10" max="90" value="50" step="10"
+               style="width:110px; margin:0 .5rem; vertical-align:middle;">
+        <span id="val-ratio" style="font-weight:600;">50&nbsp;%</span>
+      </label>
+
+      <button id="btn-simu" class="btn-tp" style="font-size:.9rem; padding:.5rem 1.3rem;">
+        Simuler &#x2197;
+      </button>
+    </div>
+    <p id="simu-status" style="font-family:'JetBrains Mono',monospace; font-size:.82rem;
+       color:var(--text-muted); margin:0;"></p>
+  </div>
+
+  <!-- Légende -->
+  <div style="display:flex; gap:1.2rem; flex-wrap:wrap; margin-bottom:.8rem;
+              font-family:'JetBrains Mono',monospace; font-size:.8rem; align-items:center;">
+    <span style="display:flex; align-items:center; gap:.4rem;">
+      <span style="width:14px;height:14px;background:#2e7d32;border-radius:2px;display:inline-block;"></span>
+      &ge;&nbsp;80&thinsp;% succès
+    </span>
+    <span style="display:flex; align-items:center; gap:.4rem;">
+      <span style="width:14px;height:14px;background:#e07b00;border-radius:2px;display:inline-block;"></span>
+      50–79&thinsp;%
+    </span>
+    <span style="display:flex; align-items:center; gap:.4rem;">
+      <span style="width:14px;height:14px;background:#c0392b;border-radius:2px;display:inline-block;"></span>
+      &lt;&nbsp;50&thinsp;%
+    </span>
+  </div>
+
+  <canvas id="chart-succes" height="220"
+          style="width:100%; border:1px solid #d0d8e4; border-radius:8px;
+                 background:#fff; margin-bottom:1.5rem;"></canvas>
+
+  <canvas id="chart-trajec" height="260"
+          style="width:100%; border:1px solid #d0d8e4; border-radius:8px;
+                 background:#fff; margin-bottom:1.5rem;"></canvas>
+
+<!-- QUESTIONS DE RÉFLEXION -->
+  <div class="encadre-question" style="margin-top:1.5rem;">
+    <span class="encadre-prefix">Questions de réflexion</span>
+
+    <!-- Q-R 1 -->
+    <p>
+      <span class="badge-question">R1</span>
+      Quel est le nombre minimal de coccinelles qui garantit un taux &ge;&nbsp;80&nbsp;% de succès ?
+    </p>
+    <div style="margin:.4rem 0 .8rem;">
+      <button class="btn-tp-vert" onclick="toggleCorrection('corr-r1', this)">&#x25B6; Voir la réponse</button>
+    </div>
+    <div id="corr-r1" class="correction-bloc encadre-indice">
+      <span class="encadre-prefix">Réponse — R1</span>
+      <p>
+        Le seuil minimal est <strong>n&nbsp;=&nbsp;7 coccinelles</strong> (ratio 50&nbsp;% femelles,
+        1&nbsp;000 tirages, 30&nbsp;jours, 1&nbsp;000 pucerons).
+      </p>
+      <table class="table-attrs" style="margin:.6rem 0;">
+        <tr><th>n</th><th>Taux de succès</th></tr>
+        <tr><td>3 à 6</td><td>0&nbsp;%</td></tr>
+        <tr><td><strong>7</strong></td><td><strong>≈&nbsp;93&nbsp;%</strong></td></tr>
+        <tr><td>8 et +</td><td>100&nbsp;%</td></tr>
+      </table>
+      <p style="margin:0;">
+        Ce saut brutal s'explique par la compétition entre deux croissances exponentielles :
+        les pucerons (+20&nbsp;%/jour) et les coccinelles (doublement par paires tous les 2&nbsp;jours
+        une fois la maturité sexuelle atteinte).
+        En dessous de n&nbsp;=&nbsp;7, les pucerons progressent plus vite que les coccinelles ne
+        peuvent en produire. À n&nbsp;=&nbsp;7, la masse critique de femelles matures est atteinte
+        juste avant la limite des 30&nbsp;jours.
+        Il n'existe pas de zone intermédiaire stable : c'est un <strong>seuil critique</strong>
+        au sens mathématique.
+      </p>
+    </div>
+
+    <hr style="border:none; border-top:1px dashed #c8a8e8; margin:.8rem 0;">
+
+    <!-- Q-R 2 -->
+    <p>
+      <span class="badge-question">R2</span>
+      Que se passe-t-il si tu montes le ratio femelles à&nbsp;70&nbsp;% avec ce même n&nbsp;minimal ?
+    </p>
+    <div style="margin:.4rem 0 .8rem;">
+      <button class="btn-tp-vert" onclick="toggleCorrection('corr-r2', this)">&#x25B6; Voir la réponse</button>
+    </div>
+    <div id="corr-r2" class="correction-bloc encadre-indice">
+      <span class="encadre-prefix">Réponse — R2</span>
+      <p>
+        Passer de 50&nbsp;% à 70&nbsp;% de femelles avec n&nbsp;=&nbsp;7 fait passer le taux de succès
+        de <strong>≈&nbsp;93&nbsp;% à 100&nbsp;%</strong>.
+        Avec 7&nbsp;coccinelles et ratio&nbsp;70&nbsp;%, on obtient 5&nbsp;femelles au lieu de 4.
+        Comme seules les femelles se reproduisent, cela accélère la croissance de la population
+        au moment clé (autour du jour&nbsp;10, quand les premières femelles atteignent 20&nbsp;jours).
+        La masse critique est atteinte plus tôt, laissant davantage de marge avant la limite des 30&nbsp;jours.
+      </p>
+      <div class="encadre-piege" style="margin:.6rem 0 0; padding:.7rem 1rem;">
+        <span class="encadre-prefix">Attention — le ratio ne compense pas un n trop faible</span>
+        <p style="margin:0; font-size:.9rem;">
+          Passer à 70&nbsp;% ne permet <em>pas</em> de descendre à n&nbsp;=&nbsp;6 :
+          la simulation confirme 0&nbsp;% de succès pour n&nbsp;=&nbsp;6 quel que soit le ratio testé.
+          Le <strong>nombre total</strong> de coccinelles est le facteur limitant premier,
+          avant même le ratio.
+        </p>
+      </div>
+    </div>
+
+    <hr style="border:none; border-top:1px dashed #c8a8e8; margin:.8rem 0;">
+
+    <!-- Q-R 3 -->
+    <p>
+      <span class="badge-question">R3</span>
+      Pourquoi les pucerons atteignent-ils un pic <em>avant</em> de chuter ? À quel jour cela se produit-il ?
+    </p>
+    <div style="margin:.4rem 0 .8rem;">
+      <button class="btn-tp-vert" onclick="toggleCorrection('corr-r3', this)">&#x25B6; Voir la réponse</button>
+    </div>
+    <div id="corr-r3" class="correction-bloc encadre-indice">
+      <span class="encadre-prefix">Réponse — R3</span>
+      <p>
+        Le pic se produit au <strong>jour&nbsp;18</strong> en médiane
+        (plage&nbsp;: jours&nbsp;16 à&nbsp;20 selon le tirage).
+        Ce n'est pas paradoxal : les pucerons continuent de croître pendant toute la phase où
+        les coccinelles ne sont pas encore assez nombreuses pour renverser la tendance.
+      </p>
+      <p>La dynamique se déroule en deux phases :</p>
+      <ul>
+        <li>
+          <strong>Jours 0 à ~17</strong> : les 7&nbsp;coccinelles mangent plusieurs dizaines de pucerons
+          par jour, mais le +20&nbsp;% quotidien des pucerons compense et au-delà.
+          Les pucerons passent de 1&nbsp;000 à environ 3&nbsp;500–3&nbsp;600.
+        </li>
+        <li>
+          <strong>À partir du jour ~18</strong> : la population de coccinelles a suffisamment grossi
+          pour que la prédation totale quotidienne dépasse l'apport de la natalité des pucerons.
+          La balance s'inverse et les pucerons déclinent rapidement.
+        </li>
+      </ul>
+      <p style="margin:0;">
+        On peut estimer ce point d'équilibre : si chaque coccinelle mange en moyenne ~15&nbsp;proies/jour
+        (régime d'abondance), il faut au moins
+        \( \frac{3\,500 \times 0{,}2}{15} \approx 47 \) coccinelles
+        pour stopper la croissance — ce qui correspond précisément au jour&nbsp;18 dans la trajectoire.
+      </p>
+    </div>
+
+    <hr style="border:none; border-top:1px dashed #c8a8e8; margin:.8rem 0;">
+
+    <!-- Q-R 4 -->
+    <p>
+      <span class="badge-question">R4</span>
+      La courbe des coccinelles est en escalier — pourquoi ?
+    </p>
+    <div style="margin:.4rem 0 .8rem;">
+      <button class="btn-tp-vert" onclick="toggleCorrection('corr-r4', this)">&#x25B6; Voir la réponse</button>
+    </div>
+    <div id="corr-r4" class="correction-bloc encadre-indice">
+      <span class="encadre-prefix">Réponse — R4</span>
+      <p>
+        La courbe est en escalier parce que la reproduction se produit par
+        <strong>vagues synchronisées de +8&nbsp;individus tous les 2&nbsp;jours</strong>,
+        et non en continu. Trois raisons superposées l'expliquent :
+      </p>
+      <ol>
+        <li>
+          <strong>La maturité sexuelle à 20&nbsp;jours</strong> crée un délai uniforme :
+          toutes les femelles de la population initiale (<code>age=10</code> au départ)
+          atteignent 20&nbsp;jours au même moment — au <strong>jour&nbsp;10</strong>.
+          Elles se reproduisent toutes le même tour, générant une première vague synchrone
+          de 8&nbsp;nouveau-nés (4&nbsp;femelles × 2&nbsp;descendants&nbsp;=&nbsp;8).
+        </li>
+        <li>
+          <strong>Le cycle de 2&nbsp;jours</strong> entre deux reproductions d'une même femelle :
+          après s'être reproduite, <code>niv_nutrition</code> est remis à&nbsp;0.
+          Il faut au moins 2&nbsp;bonnes chasses consécutives (≥&nbsp;10&nbsp;proies chacune)
+          pour remonter à <code>niv&nbsp;=&nbsp;2</code> et se reproduire à nouveau.
+          D'où les <strong>paliers de 2&nbsp;jours</strong> entre chaque marche.
+        </li>
+        <li>
+          <strong>Les nouveau-nés naissent tous à <code>age=0</code></strong> :
+          ils n'atteindront la maturité sexuelle que 20&nbsp;jours plus tard,
+          hors de la fenêtre des 30&nbsp;jours. Ce sont donc exclusivement les mères
+          de la population initiale qui produisent les vagues visibles dans la simulation.
+        </li>
+      </ol>
+      <p>
+        La trajectoire annotée (seed&nbsp;2026) illustre ce mécanisme à la perfection :
+      </p>
+      <pre><code>Jour 10 : +8  (1re vague — 4 femelles âgées de 20 jours)
+Jour 12 : +8  (2e vague — mêmes femelles, niv rechargé)
+Jour 14 : +8
+Jour 16 : +8
+Jour 18 : +8
+Jour 20 : +8
+Jour 22 : +8
+Jour 24 : +7  (légère mortalité commence)
+Jour 25 : -3  (pénurie de pucerons → morts par faim)</code></pre>
+      <p style="margin:0;">
+        Les marches descendent en fin de simulation parce que les pucerons se raréfient :
+        les coccinelles ne mangent plus assez, <code>niv_nutrition</code> chute à&nbsp;0,
+        et le risque de mort par faim (1/3, ajouté en Q4) commence à éliminer des individus.
+      </p>
+    </div>
+
+  </div>
+
+</section>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
+
+<script>
+(function () {
+
+  /* ── Curseurs ── */
+  const slMin   = document.getElementById('sl-min');
+  const slMax   = document.getElementById('sl-max');
+  const slRatio = document.getElementById('sl-ratio');
+  const valMin   = document.getElementById('val-min');
+  const valMax   = document.getElementById('val-max');
+  const valRatio = document.getElementById('val-ratio');
+  const status   = document.getElementById('simu-status');
+
+  slMin.addEventListener('input', () => {
+    valMin.textContent = slMin.value;
+    if (+slMax.value < +slMin.value) { slMax.value = slMin.value; valMax.textContent = slMax.value; }
+  });
+  slMax.addEventListener('input', () => {
+    valMax.textContent = slMax.value;
+    if (+slMin.value > +slMax.value) { slMin.value = slMax.value; valMin.textContent = slMin.value; }
+  });
+  slRatio.addEventListener('input', () => { valRatio.textContent = slRatio.value + ' %'; });
+
+  /* ─────────────────────────────────────────────────────────────
+   * MODÈLE JS — traduction instruction par instruction du Python
+   * sujet 7 + corrections Q4.
+   * Référence : fiche_coccinelles_nsi_s07.html, éditeurs Q1 + Q4.
+   * ───────────────────────────────────────────────────────────── */
+
+  /* Générateur entier aléatoire [a, b] — équivalent de random.randint */
+  function randInt(a, b) {
+    return Math.floor(Math.random() * (b - a + 1)) + a;
+  }
+
+  /* PRNG reproductible (Mulberry32) pour le tirage "représentatif" */
+  function mulberry32(seed) {
+    return function () {
+      seed |= 0; seed = seed + 0x6D2B79F5 | 0;
+      let t = Math.imul(seed ^ seed >>> 15, 1 | seed);
+      t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t;
+      return ((t ^ t >>> 14) >>> 0) / 4294967296;
+    };
+  }
+
+  class Coccinelle {
+    constructor(sexe, age, niv, rng) {
+      this.sexe = sexe;
+      this.age  = age;
+      this.niv  = niv;
+      /* esperance_de_vie = random.randint(200, 350) */
+      const r = rng || Math.random.bind(Math);
+      this._rng = rng || null;
+      this.esperance = Math.floor(r() * 151) + 200;  // [200..350]
+    }
+
+    /* Traduction exacte de chasser() */
+    chasser(nbProies, nbCocci) {
+      if (nbCocci === 0) return nbProies;
+      const dispo = nbProies / nbCocci;
+      let consomme;
+      if      (dispo > 20) consomme = randInt(12, 20);
+      else if (dispo > 10) consomme = randInt(8, 15);
+      else                 consomme = randInt(3, 8);
+      consomme = Math.min(consomme, nbProies);
+      if (consomme >= 10) this.niv += 1;
+      else                this.niv = Math.max(0, this.niv - 1);
+      return nbProies - consomme;
+    }
+
+    /* Q4 — maturité sexuelle age >= 20 */
+    reproduction() {
+      if (this.sexe === 'femelle' && this.niv >= 2 && this.age >= 20) {
+        this.niv = 0;
+        return [new Coccinelle('male', 0, 0), new Coccinelle('femelle', 0, 0)];
+      }
+      return [];
+    }
+
+    /* Q4 — a_survecu avec risque mort par faim 1/3 */
+    aSurvecu() {
+      this.age += 1;                          // age incrémenté avant reproduction()
+      if (this.niv === 0 && Math.random() < 1/3) return false;
+      return this.age < this.esperance;
+    }
+  }
+
+  /*
+   * evolution() — traduction STRICTE du Python :
+   *   1. nb_coccinelles figé AVANT la boucle
+   *   2. Pour chaque coccinelle : chasser → aSurvecu → reproduction
+   *      reproduction() appelée sur TOUTES les coccinelles du tour,
+   *      y compris celles qui viennent de mourir (fidèle au Python)
+   *   3. nb_proies *= 1.2 une seule fois, à la fin
+   *   4. Math.trunc() = int() Python sur positifs
+   */
+  function evolution(pop, nbProies) {
+    const nbCocci    = pop.length;
+    const suivante   = [];
+    const nouveauNes = [];
+
+    for (const c of pop) {
+      nbProies = c.chasser(nbProies, nbCocci);
+      if (c.aSurvecu()) suivante.push(c);
+      for (const d of c.reproduction()) nouveauNes.push(d);
+    }
+
+    nbProies = Math.trunc(nbProies * 1.2);
+    return [suivante.concat(nouveauNes), nbProies];
+  }
+
+  /* simulation_simple — 30 jours max, 1000 pucerons (sujet 7 exact) */
+  function simuler(pop, nbProies, collectTraj) {
+    const hC = collectTraj ? [pop.length] : null;
+    const hP = collectTraj ? [nbProies]   : null;
+    let j = 0;
+    while (j < 30 && pop.length > 0 && nbProies > 0) {
+      [pop, nbProies] = evolution(pop, nbProies);
+      j++;
+      if (collectTraj) { hC.push(pop.length); hP.push(nbProies); }
+    }
+    return { succes: nbProies === 0, jours: j, hC, hP };
+  }
+
+  function creerPop(n, ratioF) {
+    const nbF = Math.round(n * ratioF);
+    const pop = [];
+    for (let i = 0; i < nbF;  i++) pop.push(new Coccinelle('femelle', 10, 2));
+    for (let i = nbF; i < n;  i++) pop.push(new Coccinelle('male',    10, 2));
+    return pop;
+  }
+
+  /* ── Graphiques ── */
+  const chartBar = new Chart(
+    document.getElementById('chart-succes').getContext('2d'),
+    {
+      type: 'bar',
+      data: { labels: [], datasets: [{
+        label: 'Succès (%)', data: [], backgroundColor: [], borderRadius: 4
+      }]},
+      options: {
+        responsive: true,
+        plugins: {
+          legend: { display: false },
+          title: { display: true,
+            text: 'Taux de succès selon le nombre de coccinelles initiales (200 tirages · 30 j · 1 000 pucerons)',
+            font: { family: "'JetBrains Mono', monospace", size: 11 }
+          },
+          tooltip: { callbacks: {
+            label: ctx => ` ${ctx.parsed.y} % de succès sur 200 tirages`
+          }}
+        },
+        scales: {
+          y: { min: 0, max: 100, title: { display: true, text: 'Succès (%)' } },
+          x: { title: { display: true, text: 'Coccinelles initiales' } }
+        }
+      }
+    }
+  );
+
+  const chartLine = new Chart(
+    document.getElementById('chart-trajec').getContext('2d'),
+    {
+      type: 'line',
+      data: {
+        labels: [],
+        datasets: [
+          { label: 'Pucerons', data: [], yAxisID: 'yP',
+            borderColor: '#c0392b', backgroundColor: 'rgba(192,57,43,0.08)',
+            fill: true, tension: 0.35, pointRadius: 2 },
+          { label: 'Coccinelles', data: [], yAxisID: 'yC',
+            borderColor: '#2a6496', borderDash: [5, 3],
+            fill: false, tension: 0.1, pointRadius: 2 }
+        ]
+      },
+      options: {
+        responsive: true,
+        plugins: {
+          title: { display: true,
+            text: 'Trajectoire d\'un tirage représentatif (n au seuil de bascule)',
+            font: { family: "'JetBrains Mono', monospace", size: 11 }
+          }
+        },
+        scales: {
+          yP: { type: 'linear', position: 'left',
+                title: { display: true, text: 'Pucerons' } },
+          yC: { type: 'linear', position: 'right',
+                title: { display: true, text: 'Coccinelles' },
+                grid: { drawOnChartArea: false } }
+        }
+      }
+    }
+  );
+
+  /* ── Lancement ── */
+  const NB_TIRAGES = 200;
+
+  document.getElementById('btn-simu').addEventListener('click', () => {
+    const minN  = +slMin.value;
+    const maxN  = +slMax.value;
+    const ratio = +slRatio.value / 100;
+
+    document.getElementById('btn-simu').disabled = true;
+    status.textContent = 'Simulation en cours…';
+
+    setTimeout(() => {
+      const labels   = [];
+      const taux     = [];
+      const couleurs = [];
+
+      /* n au seuil : valeur avec le plus grand gradient (taux le plus proche de 50) */
+      let nSeuil  = minN;
+      let distMin = Infinity;
+      let trajC   = null;
+      let trajP   = null;
+
+      for (let n = minN; n <= maxN; n++) {
+        let nbSucces = 0;
+
+        for (let t = 0; t < NB_TIRAGES; t++) {
+          const res = simuler(creerPop(n, ratio), 1000, false);
+          if (res.succes) nbSucces++;
+        }
+
+        const pct = Math.round(nbSucces / NB_TIRAGES * 100);
+        labels.push(String(n));
+        taux.push(pct);
+        couleurs.push(pct >= 80 ? '#2e7d32' : pct >= 50 ? '#e07b00' : '#c0392b');
+
+        /* seuil = n dont le taux est le plus proche de 50% (zone la plus instructive) */
+        const dist = Math.abs(pct - 50);
+        if (dist < distMin) { distMin = dist; nSeuil = n; }
+      }
+
+      /* Mise à jour barres */
+      chartBar.data.labels                      = labels;
+      chartBar.data.datasets[0].data            = taux;
+      chartBar.data.datasets[0].backgroundColor = couleurs;
+      chartBar.update();
+
+      /* Trajectoire : tirage déterministe au n de seuil (seed fixe pour reproductibilité) */
+      /* On prend simplement le premier tirage "succès" pour n=nSeuil, sinon le dernier */
+      let trajTrouvee = false;
+      for (let essai = 0; essai < 50; essai++) {
+        const res = simuler(creerPop(nSeuil, ratio), 1000, true);
+        if (res.succes || essai === 49) {
+          trajC = res.hC;
+          trajP = res.hP;
+          trajTrouvee = res.succes;
+          break;
+        }
+      }
+
+      const axe = trajP.map((_, i) => i);
+      chartLine.data.labels            = axe;
+      chartLine.data.datasets[0].data  = trajP;
+      chartLine.data.datasets[1].data  = trajC;
+      chartLine.options.plugins.title.text =
+        `Trajectoire — n=${nSeuil} coccinelle(s) au seuil (${taux[nSeuil - minN]} % de succès) · ${trajTrouvee ? 'tirage réussi' : 'tirage échoué'}`;
+      chartLine.update();
+
+      status.textContent = `Terminé. Seuil critique détecté : n = ${nSeuil} coccinelle(s).`;
+      document.getElementById('btn-simu').disabled = false;
+    }, 30);
+  });
+
+})();
+</script>
 
   <hr class="sep">
 
