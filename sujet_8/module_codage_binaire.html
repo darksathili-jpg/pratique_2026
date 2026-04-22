@@ -1,0 +1,1030 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Module interactif – Codage binaire | NSI</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Rubik+Dirt&family=Source+Serif+4:ital,opsz,wght@0,8..60,300..900;1,8..60,300..900&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+
+<style>
+:root {
+  --bg-main:    #f8f9fb;
+  --bg-panel:   #eef1f5;
+  --bg-cours:   #ffffff;
+  --accent:     #2a6496;
+  --accent-or:  #b5610a;
+  --accent-vert:#2e7d32;
+  --accent-red: #c0392b;
+  --text-main:  #1a1a1a;
+  --text-muted: #5a6470;
+  --radius:     8px;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--bg-main);
+  color: var(--text-main);
+  font-family: 'Source Serif 4', Georgia, serif;
+  font-size: 1.05rem;
+  line-height: 1.8;
+}
+
+/* ═══ NAVIGATION ONGLETS ═══ */
+.module-wrapper {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 2rem 1.5rem 4rem;
+}
+
+.module-header {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+.module-header .badge {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: .75rem;
+  color: var(--text-muted);
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  margin-bottom: .5rem;
+}
+.module-header h2 {
+  font-family: 'Rubik Dirt', cursive;
+  font-size: 1.8rem;
+  color: var(--accent);
+  border: none;
+  margin: 0 0 .4rem;
+  font-weight: lighter;
+}
+.module-header p {
+  font-size: .95rem;
+  color: var(--text-muted);
+  font-style: italic;
+}
+
+/* Onglets */
+.tabs {
+  display: flex;
+  gap: 4px;
+  border-bottom: 2px solid #c8d8e8;
+  margin-bottom: 1.8rem;
+  overflow-x: auto;
+}
+.tab-btn {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: .78rem;
+  padding: .5rem 1rem;
+  background: none;
+  border: none;
+  border-bottom: 3px solid transparent;
+  margin-bottom: -2px;
+  cursor: pointer;
+  color: var(--text-muted);
+  white-space: nowrap;
+  transition: color .2s, border-color .2s;
+  letter-spacing: .04em;
+}
+.tab-btn:hover { color: var(--accent); }
+.tab-btn.active {
+  color: var(--accent);
+  border-bottom-color: var(--accent);
+  font-weight: 600;
+}
+.tab-btn.tab-or.active   { color: var(--accent-or); border-bottom-color: var(--accent-or); }
+.tab-btn.tab-vert.active { color: var(--accent-vert); border-bottom-color: var(--accent-vert); }
+.tab-btn.tab-red.active  { color: var(--accent-red); border-bottom-color: var(--accent-red); }
+
+/* Panneaux */
+.tab-panel { display: none; }
+.tab-panel.active { display: block; }
+
+/* ═══ COMPOSANTS COMMUNS ═══ */
+.encadre, .encadre-or, .encadre-vert, .encadre-red {
+  background: #fff;
+  border-radius: var(--radius);
+  padding: 1rem 1.3rem;
+  margin: 1.2rem 0;
+  box-shadow: 0 1px 4px rgba(0,0,0,.07);
+}
+.encadre     { border-left: 4px solid var(--accent); }
+.encadre-or  { border-left: 4px solid var(--accent-or);  background: #fff8f0; }
+.encadre-vert{ border-left: 4px solid var(--accent-vert);background: #f0faf0; }
+.encadre-red { border-left: 4px solid var(--accent-red); background: #fff5f5; }
+
+.lbl {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: .7rem;
+  letter-spacing: .13em;
+  text-transform: uppercase;
+  display: block;
+  margin-bottom: .35rem;  
+}
+.lbl-blue  { color: var(--accent); }
+.lbl-or    { color: var(--accent-or); }
+.lbl-vert  { color: var(--accent-vert); }
+.lbl-red   { color: var(--accent-red); }
+
+h3.section-title {
+  font-family: 'Rubik Dirt', cursive;
+  font-size: 1.1rem;
+  color: var(--accent-or);
+  margin: 1.8rem 0 .6rem;
+  font-weight: lighter;
+}
+
+/* ═══ VISUALISEUR BITS ═══ */
+.bits-display {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 3px;
+  margin: .8rem 0;
+  align-items: center;
+}
+.bit-cell {
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 1rem;
+  font-weight: 600;
+  border-radius: 5px;
+  transition: background .25s, color .25s, transform .2s;
+}
+.bit-cell.b0 { background: #e8edf2; color: #8090a0; }
+.bit-cell.b1 { background: #2a6496; color: #fff; transform: translateY(-2px); }
+.bit-cell.b1-or { background: #b5610a; color: #fff; transform: translateY(-2px); }
+.bit-cell.b1-vert { background: #2e7d32; color: #fff; transform: translateY(-2px); }
+.bit-cell.b1-red  { background: #c0392b; color: #fff; transform: translateY(-2px); }
+.bit-sep {
+  width: 1px;
+  height: 36px;
+  background: #9ab0c8;
+  margin: 0 4px;
+}
+.bit-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: .65rem;
+  color: var(--text-muted);
+  text-align: center;
+  margin-top: 2px;
+}
+.bits-group {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* ═══ CONTRÔLES ═══ */
+.ctrl-row {
+  display: flex;
+  align-items: center;
+  gap: .8rem;
+  flex-wrap: wrap;
+  margin: 1rem 0;
+}
+.ctrl-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: .82rem;
+  color: var(--text-muted);
+  white-space: nowrap;
+}
+input[type="range"] {
+  -webkit-appearance: none;
+  height: 5px;
+  border-radius: 3px;
+  background: #c8d8e8;
+  outline: none;
+  flex: 1;
+  min-width: 140px;
+}
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 18px; height: 18px;
+  border-radius: 50%;
+  background: var(--accent);
+  cursor: pointer;
+}
+input[type="number"], input[type="text"] {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: .9rem;
+  padding: .35rem .7rem;
+  border: 1px solid #c8d8e8;
+  border-radius: var(--radius);
+  background: #fff;
+  color: var(--text-main);
+  width: 120px;
+}
+input[type="number"]:focus, input[type="text"]:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 2px rgba(42,100,150,.15);
+}
+
+.btn {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: .8rem;
+  border: none;
+  border-radius: 5px;
+  padding: .4rem 1rem;
+  cursor: pointer;
+  transition: opacity .2s, transform .1s;
+}
+.btn:hover { opacity: .85; transform: translateY(-1px); }
+.btn-blue  { background: var(--accent);       color: #fff; }
+.btn-or    { background: var(--accent-or);    color: #fff; }
+.btn-vert  { background: var(--accent-vert);  color: #fff; }
+.btn-red   { background: var(--accent-red);   color: #fff; }
+.btn-ghost { background: #eef1f5; border: 1px solid var(--accent); color: var(--text-main); }
+
+/* ═══ RÉSULTAT ═══ */
+.result-box {
+  background: var(--bg-panel);
+  border-radius: var(--radius);
+  padding: .8rem 1.1rem;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: .88rem;
+  margin: .8rem 0;
+  line-height: 1.9;
+}
+.result-box .val { font-weight: 600; }
+.result-box .val-blue  { color: var(--accent); }
+.result-box .val-or    { color: var(--accent-or); }
+.result-box .val-vert  { color: var(--accent-vert); }
+.result-box .val-red   { color: var(--accent-red); }
+
+/* ═══ ANIMATION ÉTAPES ═══ */
+.step-highlight {
+  background: #fff7e0;
+  border: 1px dashed var(--accent-or);
+  border-radius: var(--radius);
+  padding: .6rem 1rem;
+  margin: .5rem 0;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: .82rem;
+  color: var(--accent-or);
+}
+
+/* ═══ TABLE POIDS ═══ */
+.weights-table {
+  display: flex;
+  gap: 2px;
+  margin: .6rem 0;
+  flex-wrap: wrap;
+}
+.weight-cell {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+}
+.weight-val {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: .65rem;
+  color: var(--text-muted);
+  background: #e8edf2;
+  padding: 1px 4px;
+  border-radius: 3px;
+  white-space: nowrap;
+}
+
+/* ═══ FLOTTANT IEEE 754 ═══ */
+.ieee-zone {
+  display: flex;
+  gap: 4px;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  margin: .8rem 0;
+}
+.ieee-group {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+.ieee-group-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: .65rem;
+  text-align: center;
+  padding: 2px 4px;
+  border-radius: 3px;
+}
+.ieee-sign-lbl  { background: #fde8d8; color: #8b3a00; }
+.ieee-exp-lbl   { background: #d8eafe; color: var(--accent); }
+.ieee-mant-lbl  { background: #d8f5e3; color: var(--accent-vert); }
+.ieee-bits-row  { display: flex; gap: 2px; }
+
+/* ═══ SECTION LIMITE 0.1 ═══ */
+.fraction-steps {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: .82rem;
+  background: #fff;
+  border: 1px solid #c8d8e8;
+  border-radius: var(--radius);
+  padding: .8rem 1rem;
+  margin: .8rem 0;
+  max-height: 220px;
+  overflow-y: auto;
+  line-height: 2;
+}
+.frac-line { display: flex; gap: .5rem; align-items: center; }
+.frac-int  { width: 20px; text-align: center; font-weight: 600; }
+.frac-bit-1 { color: var(--accent-red); font-weight: 700; }
+.frac-bit-0 { color: #8090a0; }
+
+/* ═══ COMPTEUR ERREUR ═══ */
+.error-counter {
+  display: inline-block;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 1.4rem;
+  font-weight: 600;
+  color: var(--accent-red);
+  background: #fff5f5;
+  border: 1px solid #f0b8b8;
+  border-radius: var(--radius);
+  padding: .3rem .9rem;
+}
+
+/* ═══ QUIZ ═══ */
+.quiz-option {
+  display: block;
+  width: 100%;
+  text-align: left;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: .85rem;
+  padding: .5rem 1rem;
+  margin: .3rem 0;
+  border: 1px solid #c8d8e8;
+  border-radius: var(--radius);
+  background: #fff;
+  cursor: pointer;
+  transition: background .2s, border-color .2s;
+}
+.quiz-option:hover { background: #eef1f5; border-color: var(--accent); }
+.quiz-option.correct  { background: #e8f5e9; border-color: var(--accent-vert); color: var(--accent-vert); }
+.quiz-option.wrong    { background: #ffebee; border-color: var(--accent-red);  color: var(--accent-red); }
+.quiz-feedback { display: none; font-size: .9rem; margin-top: .5rem; padding: .5rem .8rem; border-radius: var(--radius); }
+.quiz-feedback.show   { display: block; }
+.quiz-feedback.ok  { background: #e8f5e9; color: var(--accent-vert); }
+.quiz-feedback.ko  { background: #ffebee; color: var(--accent-red); }
+
+/* ═══ RESPONSIVE ═══ */
+@media (max-width: 600px) {
+  .bit-cell { width: 28px; height: 28px; font-size: .85rem; }
+  .ctrl-row { flex-direction: column; align-items: flex-start; }
+}
+</style>
+</head>
+<body>
+
+<div class="module-wrapper">
+
+  <!-- EN-TÊTE -->
+  <div class="module-header">
+    <div class="badge">Module interactif — Avant le Sujet 8 — BAC NSI 2026</div>
+    <h2>🔢 Du décimal au binaire</h2>
+    <p>Entiers · Relatifs · Flottants · Pourquoi 0,1 n'existe pas en binaire</p>
+  </div>
+
+  <!-- ONGLETS -->
+  <div class="tabs" role="tablist">
+    <button class="tab-btn active"         onclick="showTab('t1',this)"         role="tab">① Entiers naturels</button>
+    <button class="tab-btn tab-or"         onclick="showTab('t2',this)"         role="tab">② Entiers relatifs</button>
+    <button class="tab-btn tab-vert"       onclick="showTab('t3',this)"         role="tab">③ Flottants IEEE 754</button>
+    <button class="tab-btn tab-red"        onclick="showTab('t4',this)"         role="tab">④ La limite de 0,1</button>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════════════════
+       ONGLET 1 — ENTIERS NATURELS
+  ══════════════════════════════════════════════════════════════ -->
+  <div id="t1" class="tab-panel active">
+
+    <div class="encadre">
+      <span class="lbl lbl-blue">Principe</span>
+      <p style="margin:0">En base 2, chaque bit a un <strong>poids</strong> qui est une puissance de 2.
+      On additionne les puissances dont le bit vaut 1.
+      Déplace le curseur pour voir la conversion en direct.</p>
+    </div>
+
+    <h3 class="section-title">Convertir un entier décimal → binaire sur 8 bits</h3>
+
+    <div class="ctrl-row">
+      <span class="ctrl-label">Valeur :</span>
+      <input type="range" id="slider-nat" min="0" max="255" value="42" oninput="updateNat()">
+      <input type="number" id="input-nat" min="0" max="255" value="42" oninput="syncNat(this.value)">
+    </div>
+
+    <!-- Poids -->
+    <div id="weights-nat" class="weights-table"></div>
+
+    <!-- Bits -->
+    <div id="bits-nat" class="bits-display"></div>
+
+    <!-- Calcul détaillé -->
+    <div id="result-nat" class="result-box"></div>
+
+    <!-- Algo division successive -->
+    <h3 class="section-title">Algorithme : divisions successives par 2</h3>
+    <div class="encadre-or">
+      <span class="lbl lbl-or">Méthode</span>
+      <p style="margin:0">On divise le nombre par 2 en notant les restes. En lisant les restes <strong>de bas en haut</strong>,
+      on obtient l'écriture binaire.</p>
+    </div>
+
+    <div id="divs-nat" class="fraction-steps"></div>
+
+    <!-- Mini-quiz -->
+    <h3 class="section-title">✏️ Vérification rapide</h3>
+    <div class="encadre">
+      <span class="lbl lbl-blue">Question</span>
+      <p>Quelle est la valeur décimale de <code>00110101</code> ?</p>
+      <button class="quiz-option" onclick="checkQ('q1a','ko','q1fb')">17</button>
+      <button class="quiz-option" onclick="checkQ('q1b','ok','q1fb')">53</button>
+      <button class="quiz-option" onclick="checkQ('q1c','ko','q1fb')">69</button>
+      <div id="q1fb" class="quiz-feedback">
+        <span id="q1fb-text"></span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════════════════
+       ONGLET 2 — ENTIERS RELATIFS (complément à 2)
+  ══════════════════════════════════════════════════════════════ -->
+  <div id="t2" class="tab-panel">
+
+    <div class="encadre-or">
+      <span class="lbl lbl-or">Problème</span>
+      <p style="margin:0">Comment stocker des nombres <strong>négatifs</strong> avec seulement des 0 et des 1 ?
+      La solution : le <strong>complément à 2</strong>. L'astuce est d'utiliser le bit de poids fort
+      comme <em>signe</em> négatif.</p>
+    </div>
+
+    <h3 class="section-title">Représentation en complément à 2 sur 8 bits</h3>
+
+    <div class="ctrl-row">
+      <span class="ctrl-label">Valeur :</span>
+      <input type="range" id="slider-rel" min="-128" max="127" value="-42" oninput="updateRel()">
+      <input type="number" id="input-rel" min="-128" max="127" value="-42" oninput="syncRel(this.value)">
+    </div>
+
+    <div id="bits-rel" class="bits-display"></div>
+    <div id="result-rel" class="result-box"></div>
+
+    <!-- Explication méthode -->
+    <h3 class="section-title">Comment construire le complément à 2</h3>
+    <div id="steps-ca2" class="encadre"></div>
+
+    <!-- Interprétation -->
+    <div class="encadre-vert">
+      <span class="lbl lbl-vert">Règle du bit de signe</span>
+      <p style="margin:0">
+        Sur <em>n</em> bits, le bit de poids fort a le poids <strong>−2<sup>n−1</sup></strong> (négatif !).
+        Sur 8 bits : −128. Les 7 autres bits restent positifs.
+        Plage représentable : de −128 à +127.
+      </p>
+    </div>
+
+    <!-- Quiz -->
+    <h3 class="section-title">✏️ Vérification rapide</h3>
+    <div class="encadre">
+      <span class="lbl lbl-or">Question</span>
+      <p>Que vaut <code>11111111</code> en complément à 2 sur 8 bits ?</p>
+      <button class="quiz-option" onclick="checkQ('q2a','ko','q2fb')">255</button>
+      <button class="quiz-option" onclick="checkQ('q2b','ko','q2fb')">127</button>
+      <button class="quiz-option" onclick="checkQ('q2c','ok','q2fb')">−1</button>
+      <div id="q2fb" class="quiz-feedback"><span id="q2fb-text"></span></div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════════════════
+       ONGLET 3 — FLOTTANTS IEEE 754
+  ══════════════════════════════════════════════════════════════ -->
+  <div id="t3" class="tab-panel">
+
+    <div class="encadre-vert">
+      <span class="lbl lbl-vert">Structure</span>
+      <p>Un flottant 32 bits (simple précision) se décompose en <strong>3 zones</strong> :</p>
+      <ul style="margin:.3rem 0 0 1.2rem">
+        <li><strong style="color:#8b3a00">S</strong> — 1 bit de signe</li>
+        <li><strong style="color:var(--accent)">E</strong> — 8 bits d'exposant (biais 127)</li>
+        <li><strong style="color:var(--accent-vert)">M</strong> — 23 bits de mantisse (fraction)</li>
+      </ul>
+      <p style="margin-top:.5rem">Valeur = (−1)<sup>S</sup> × 2<sup>E−127</sup> × 1.M</p>
+    </div>
+
+    <h3 class="section-title">Explorer un flottant 32 bits</h3>
+
+    <div class="ctrl-row">
+      <span class="ctrl-label">Nombre :</span>
+      <input type="text" id="input-float" value="0.15625" oninput="updateFloat()" style="width:140px">
+      <button class="btn btn-vert" onclick="updateFloat()">Analyser</button>
+    </div>
+
+    <div id="ieee-display" class="ieee-zone"></div>
+    <div id="result-float" class="result-box"></div>
+
+    <!-- Exemples rapides -->
+    <h3 class="section-title">Exemples prédéfinis</h3>
+    <div style="display:flex; flex-wrap:wrap; gap:.5rem; margin:.5rem 0">
+      <button class="btn btn-ghost" onclick="setFloat(1.0)">1.0</button>
+      <button class="btn btn-ghost" onclick="setFloat(-1.0)">−1.0</button>
+      <button class="btn btn-ghost" onclick="setFloat(0.5)">0.5</button>
+      <button class="btn btn-ghost" onclick="setFloat(0.25)">0.25</button>
+      <button class="btn btn-ghost" onclick="setFloat(3.14)">3.14</button>
+      <button class="btn btn-ghost" onclick="setFloat(0.1)">0.1 ⚠️</button>
+      <button class="btn btn-ghost" onclick="setFloat(0.2)">0.2 ⚠️</button>
+      <button class="btn btn-ghost" onclick="setFloat(100.0)">100.0</button>
+    </div>
+
+    <!-- Quiz -->
+    <h3 class="section-title">✏️ Vérification rapide</h3>
+    <div class="encadre">
+      <span class="lbl lbl-vert">Question</span>
+      <p>Pourquoi un float 32 bits ne peut représenter qu'environ 7 chiffres significatifs ?</p>
+      <button class="quiz-option" onclick="checkQ('q3a','ko','q3fb')">Parce que 32 < 100</button>
+      <button class="quiz-option" onclick="checkQ('q3b','ok','q3fb')">La mantisse a 23 bits → 2²³ ≈ 8 millions ≈ 10⁷</button>
+      <button class="quiz-option" onclick="checkQ('q3c','ko','q3fb')">À cause du bit de signe</button>
+      <div id="q3fb" class="quiz-feedback"><span id="q3fb-text"></span></div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════════════════
+       ONGLET 4 — POURQUOI 0,1 EST IMPOSSIBLE
+  ══════════════════════════════════════════════════════════════ -->
+  <div id="t4" class="tab-panel">
+
+    <div class="encadre-red">
+      <span class="lbl lbl-red">Le paradoxe</span>
+      <p style="margin:0">
+        <code>0.1</code> s'écrit en une seule touche sur ton clavier. Pourtant, <strong>aucun ordinateur
+        ne peut le stocker exactement</strong> en binaire. Son écriture en base 2 est <em>infinie et périodique</em>,
+        comme <code>1/3 = 0.333…</code> en base 10.
+      </p>
+    </div>
+
+    <h3 class="section-title">Multiplications successives par 2</h3>
+
+    <div class="encadre">
+      <span class="lbl lbl-blue">Méthode</span>
+      <p style="margin:0">Pour convertir la partie fractionnaire, on multiplie par 2 en extrayant la partie entière (0 ou 1).
+      Si le résultat ne tombe jamais sur 0, la représentation est infinie.</p>
+    </div>
+
+    <div class="ctrl-row">
+      <span class="ctrl-label">Nombre :</span>
+      <input type="text" id="input-frac" value="0.1" style="width:100px">
+      <button class="btn btn-red" onclick="updateFrac()">Analyser</button>
+      <button class="btn btn-ghost" onclick="setFrac(0.1)">0.1</button>
+      <button class="btn btn-ghost" onclick="setFrac(0.2)">0.2</button>
+      <button class="btn btn-ghost" onclick="setFrac(0.5)">0.5</button>
+      <button class="btn btn-ghost" onclick="setFrac(0.125)">0.125</button>
+      <button class="btn btn-ghost" onclick="setFrac(0.3)">0.3</button>
+    </div>
+
+    <div id="frac-result" class="result-box"></div>
+    <div id="frac-steps" class="fraction-steps"></div>
+
+    <!-- Simulation accumulation -->
+    <h3 class="section-title">L'accumulation d'erreurs en comptabilité</h3>
+
+    <div class="encadre-or">
+      <span class="lbl lbl-or">Démonstration</span>
+      <p style="margin:0">Additionne <code>0.1</code> un grand nombre de fois. L'erreur grandit…</p>
+    </div>
+
+    <div class="ctrl-row">
+      <span class="ctrl-label">Nb d'additions :</span>
+      <input type="range" id="slider-accum" min="1" max="1000000000" value="10" oninput="updateAccum()">
+      <span id="accum-n" style="font-family:'JetBrains Mono',monospace; font-size:.85rem; width:50px">10</span>
+    </div>
+
+    <div id="accum-result" class="result-box"></div>
+
+    <!-- Visualiseur 0.1 + 0.2 -->
+    <h3 class="section-title">Le classique : <code>0.1 + 0.2 ≠ 0.3</code></h3>
+
+    <div id="classic-demo" class="encadre-red">
+      <span class="lbl lbl-red">En Python</span>
+      <pre style="background:none; border:none; padding:0; margin:.3rem 0 0">
+>>> 0.1 + 0.2
+0.30000000000000004
+
+>>> 0.1 + 0.2 == 0.3
+False</pre>
+    </div>
+
+    <div id="repr-demo" class="result-box" style="margin-top:.5rem"></div>
+
+    <!-- Conclusion : pourquoi BCD -->
+    <div class="encadre-vert" style="margin-top:1.5rem">
+      <span class="lbl lbl-vert">Et donc… le BCD !</span>
+      <p style="margin:0">
+        Le codage <strong>BCD</strong> résout ce problème en ne convertissant <em>jamais</em>
+        l'ensemble du nombre en binaire : chaque <strong>chiffre décimal</strong> est codé
+        séparément sur 4 bits. Ainsi, <code>0.1</code> devient
+        <code>['0000', '0001']</code> — et il n'y a plus d'erreur d'arrondi lors des additions.
+      </p>
+    </div>
+
+    <!-- Quiz final -->
+    <h3 class="section-title">✏️ Vérification finale</h3>
+    <div class="encadre">
+      <span class="lbl lbl-red">Question</span>
+      <p>Quelle fraction en base 2 a une représentation binaire <strong>finie</strong> ?</p>
+      <button class="quiz-option" onclick="checkQ('q4a','ko','q4fb')">1/10</button>
+      <button class="quiz-option" onclick="checkQ('q4b','ko','q4fb')">1/3</button>
+      <button class="quiz-option" onclick="checkQ('q4c','ok','q4fb')">1/8</button>
+      <button class="quiz-option" onclick="checkQ('q4d','ko','q4fb')">1/5</button>
+      <div id="q4fb" class="quiz-feedback"><span id="q4fb-text"></span></div>
+    </div>
+  </div>
+
+</div><!-- /module-wrapper -->
+
+<script>
+/* ════════════════════════════════════════
+   NAVIGATION ONGLETS
+════════════════════════════════════════ */
+function showTab(id, btn) {
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  btn.classList.add('active');
+}
+
+/* ════════════════════════════════════════
+   HELPERS BITS
+════════════════════════════════════════ */
+function toBin8(n) {
+  return ((n & 0xFF) >>> 0).toString(2).padStart(8, '0');
+}
+
+function renderBits(container, binStr, colorClass, labels) {
+  container.innerHTML = '';
+  for (let i = 0; i < binStr.length; i++) {
+    const g = document.createElement('div');
+    g.className = 'bits-group';
+    const cell = document.createElement('div');
+    const b = binStr[i];
+    cell.className = 'bit-cell ' + (b === '1' ? (colorClass || 'b1') : 'b0');
+    cell.textContent = b;
+    g.appendChild(cell);
+    if (labels) {
+      const lbl = document.createElement('div');
+      lbl.className = 'bit-label';
+      lbl.textContent = labels[i] !== undefined ? labels[i] : '';
+      g.appendChild(lbl);
+    }
+    container.appendChild(g);
+  }
+}
+
+/* ════════════════════════════════════════
+   ONGLET 1 — ENTIERS NATURELS
+════════════════════════════════════════ */
+function updateNat() {
+  const v = parseInt(document.getElementById('slider-nat').value);
+  document.getElementById('input-nat').value = v;
+  renderNat(v);
+}
+function syncNat(val) {
+  let v = parseInt(val);
+  if (isNaN(v)) v = 0;
+  v = Math.max(0, Math.min(255, v));
+  document.getElementById('slider-nat').value = v;
+  document.getElementById('input-nat').value = v;
+  renderNat(v);
+}
+function renderNat(v) {
+  const bin = toBin8(v);
+  // Poids
+  const wc = document.getElementById('weights-nat');
+  wc.innerHTML = '';
+  for (let i = 0; i < 8; i++) {
+    const p = Math.pow(2, 7 - i);
+    const wCell = document.createElement('div');
+    wCell.className = 'weight-cell';
+    wCell.innerHTML = `<div class="weight-val">2<sup>${7-i}</sup>=${p}</div>`;
+    wc.appendChild(wCell);
+  }
+  // Bits
+  const labels = [];
+  for (let i = 0; i < 8; i++) labels.push('2^' + (7-i));
+  renderBits(document.getElementById('bits-nat'), bin, 'b1', null);
+  // Résultat
+  let terms = [];
+  for (let i = 0; i < 8; i++) if (bin[i] === '1') terms.push(`2<sup>${7-i}</sup>`);
+  const res = document.getElementById('result-nat');
+  res.innerHTML = `Binaire : <span class="val val-blue">${bin}</span><br>
+Décimal : <span class="val val-blue">${v}</span><br>
+Calcul  : ${terms.length ? terms.join(' + ') + ' = <span class="val val-blue">' + v + '</span>' : '0'}`;
+  // Divisions successives
+  renderDivs(v);
+}
+function renderDivs(n) {
+  const el = document.getElementById('divs-nat');
+  if (n === 0) { el.innerHTML = '<span style="color:var(--text-muted)">0 → binaire : 0</span>'; return; }
+  let lines = [];
+  let tmp = n;
+  while (tmp > 0) {
+    lines.push({ q: Math.floor(tmp / 2), r: tmp % 2, n: tmp });
+    tmp = Math.floor(tmp / 2);
+  }
+  el.innerHTML = lines.map(l =>
+    `<div class="frac-line">
+      <span style="width:60px;text-align:right;color:var(--text-muted)">${l.n}</span>
+      <span style="color:var(--text-muted)">÷ 2 =</span>
+      <span style="width:50px">${l.q}</span>
+      <span style="color:var(--text-muted)">reste</span>
+      <span class="${l.r ? 'frac-bit-1' : 'frac-bit-0'} frac-int">${l.r}</span>
+    </div>`
+  ).join('') + `<div style="margin-top:.4rem;color:var(--text-muted)">→ lire les restes <strong>de bas en haut</strong> : <strong style="color:var(--accent)">${toBin8(n)}</strong></div>`;
+}
+// Init
+renderNat(42);
+
+/* ════════════════════════════════════════
+   ONGLET 2 — ENTIERS RELATIFS
+════════════════════════════════════════ */
+function updateRel() {
+  const v = parseInt(document.getElementById('slider-rel').value);
+  document.getElementById('input-rel').value = v;
+  renderRel(v);
+}
+function syncRel(val) {
+  let v = parseInt(val);
+  if (isNaN(v)) v = 0;
+  v = Math.max(-128, Math.min(127, v));
+  document.getElementById('slider-rel').value = v;
+  document.getElementById('input-rel').value = v;
+  renderRel(v);
+}
+function renderRel(v) {
+  // Complément à 2 sur 8 bits
+  const unsigned = ((v & 0xFF) >>> 0);
+  const bin = unsigned.toString(2).padStart(8, '0');
+  // Colorer le bit de signe différemment
+  const bitsEl = document.getElementById('bits-rel');
+  bitsEl.innerHTML = '';
+  for (let i = 0; i < 8; i++) {
+    const g = document.createElement('div');
+    g.className = 'bits-group';
+    const cell = document.createElement('div');
+    if (i === 0) {
+      cell.className = 'bit-cell ' + (bin[i] === '1' ? 'b1-red' : 'b0');
+    } else {
+      cell.className = 'bit-cell ' + (bin[i] === '1' ? 'b1' : 'b0');
+    }
+    cell.textContent = bin[i];
+    g.appendChild(cell);
+    if (i === 0) {
+      const lbl = document.createElement('div');
+      lbl.className = 'bit-label';
+      lbl.textContent = 'signe';
+      g.appendChild(lbl);
+    }
+    bitsEl.appendChild(g);
+    if (i === 0) {
+      const sep = document.createElement('div');
+      sep.className = 'bit-sep';
+      bitsEl.appendChild(sep);
+    }
+  }
+  // Résultat
+  const res = document.getElementById('result-rel');
+  const signBit = bin[0];
+  const signContrib = signBit === '1' ? -128 : 0;
+  let posTerms = [];
+  for (let i = 1; i < 8; i++) if (bin[i] === '1') posTerms.push(`2<sup>${7-i}</sup>`);
+  res.innerHTML = `Décimal  : <span class="val ${v < 0 ? 'val-red' : 'val-blue'}">${v}</span><br>
+Binaire  : <span style="color:var(--accent-red)">${bin[0]}</span><span class="val val-blue">${bin.slice(1)}</span><br>
+Calcul   : ${signBit==='1'?'<span class="val-red">−128</span> + ':''}${posTerms.length ? posTerms.join(' + ') : '0'} = <span class="val ${v<0?'val-red':'val-blue'}">${v}</span>`;
+
+  // Étapes complément à 2
+  const stepsEl = document.getElementById('steps-ca2');
+  if (v >= 0) {
+    stepsEl.innerHTML = `<span class="lbl lbl-blue">Méthode (positif → même chose qu'un entier naturel)</span>
+    <p style="margin:0">Le nombre est positif : on code simplement sa valeur absolue sur 8 bits.</p>
+    <div class="step-highlight">1. Écriture binaire de ${v} : <strong>${bin}</strong></div>`;
+  } else {
+    const absVal = -v;
+    const absbin = absVal.toString(2).padStart(8, '0');
+    const inv = absbin.split('').map(b => b === '0' ? '1' : '0').join('');
+    stepsEl.innerHTML = `<span class="lbl lbl-or">Méthode complément à 2 pour ${v}</span>
+    <div class="step-highlight">1. Écrire la valeur absolue ${absVal} sur 8 bits : <strong>${absbin}</strong></div>
+    <div class="step-highlight">2. Inverser tous les bits (complément à 1) : <strong>${inv}</strong></div>
+    <div class="step-highlight">3. Ajouter 1 au résultat : <strong>${bin}</strong> ✓</div>
+    <p style="margin:.5rem 0 0; font-size:.88rem">Vérification : <strong style="color:var(--accent-red)">−128</strong> + ${posTerms.length ? posTerms.join(' + ') : '0'} = <strong>${v}</strong></p>`;
+  }
+}
+renderRel(-42);
+
+/* ════════════════════════════════════════
+   ONGLET 3 — FLOTTANTS IEEE 754
+════════════════════════════════════════ */
+function floatToBits(f) {
+  const buf = new ArrayBuffer(4);
+  new DataView(buf).setFloat32(0, f, false);
+  const bytes = new Uint8Array(buf);
+  return Array.from(bytes).map(b => b.toString(2).padStart(8, '0')).join('');
+}
+
+function setFloat(v) {
+  document.getElementById('input-float').value = v;
+  updateFloat();
+}
+
+function updateFloat() {
+  const raw = parseFloat(document.getElementById('input-float').value);
+  if (isNaN(raw)) return;
+  const bits = floatToBits(raw);
+  const sign  = bits[0];
+  const expBits = bits.slice(1, 9);
+  const mantBits = bits.slice(9);
+  const expVal = parseInt(expBits, 2);
+  const biais = 127;
+  const exposant = expVal - biais;
+  const mantVal = parseInt(mantBits, 2) / Math.pow(2, 23);
+  const recons = Math.pow(-1, parseInt(sign)) * Math.pow(2, exposant) * (1 + mantVal);
+
+  // Affichage zones
+  const disp = document.getElementById('ieee-display');
+  disp.innerHTML = '';
+
+  // Signe
+  const gS = document.createElement('div');
+  gS.className = 'ieee-group';
+  gS.innerHTML = `<div class="ieee-group-label ieee-sign-lbl">Signe (1 bit)</div>
+    <div class="ieee-bits-row">
+      <div class="bit-cell ${sign==='1'?'b1-red':'b0'}">${sign}</div>
+    </div>`;
+  disp.appendChild(gS);
+
+  // Exposant
+  const gE = document.createElement('div');
+  gE.className = 'ieee-group';
+  let eBits = '';
+  for (const b of expBits) eBits += `<div class="bit-cell ${b==='1'?'b1':'b0'}">${b}</div>`;
+  gE.innerHTML = `<div class="ieee-group-label ieee-exp-lbl">Exposant (8 bits) = ${expVal} − 127 = ${exposant}</div>
+    <div class="ieee-bits-row">${eBits}</div>`;
+  disp.appendChild(gE);
+
+  // Mantisse
+  const gM = document.createElement('div');
+  gM.className = 'ieee-group';
+  let mBits = '';
+  for (const b of mantBits) mBits += `<div class="bit-cell ${b==='1'?'b1-vert':'b0'}" style="width:22px;height:22px;font-size:.75rem">${b}</div>`;
+  gM.innerHTML = `<div class="ieee-group-label ieee-mant-lbl">Mantisse (23 bits)</div>
+    <div class="ieee-bits-row" style="flex-wrap:wrap;gap:2px">${mBits}</div>`;
+  disp.appendChild(gM);
+
+  // Résultat
+  const res = document.getElementById('result-float');
+  const exact = recons === raw;
+  const errorBits = bits === floatToBits(raw);
+  res.innerHTML = `Nombre saisi    : <span class="val val-vert">${raw}</span><br>
+Signe           : (−1)<sup>${sign}</sup> = ${sign==='1'?'−1':'+1'}<br>
+Exposant stocké : ${expVal} → réel = ${expVal} − 127 = <span class="val val-blue">${exposant}</span><br>
+Mantisse        : 1.${mantBits} ≈ 1 + ${mantVal.toFixed(8)}<br>
+Valeur reconstruite : <span class="val ${exact?'val-vert':'val-red'}">${recons}</span>
+${!exact ? `<br><span style="color:var(--accent-red)">⚠ Erreur de représentation : ${(recons - raw).toExponential(4)}</span>` : '<br><span style="color:var(--accent-vert)">✓ Représentation exacte</span>'}`;
+}
+updateFloat();
+
+/* ════════════════════════════════════════
+   ONGLET 4 — LIMITE 0.1
+════════════════════════════════════════ */
+function setFrac(v) {
+  document.getElementById('input-frac').value = v;
+  updateFrac();
+}
+
+function updateFrac() {
+  const raw = parseFloat(document.getElementById('input-frac').value);
+  if (isNaN(raw) || raw <= 0 || raw >= 1) {
+    document.getElementById('frac-result').innerHTML = '<span style="color:var(--accent-red)">Entrer un nombre entre 0 et 1 (exclus)</span>';
+    return;
+  }
+
+  const MAX_STEPS = 64;
+  let cur = raw;
+  let bits = '';
+  let steps = [];
+  let periodic = false;
+  const seen = new Map();
+
+  for (let i = 0; i < MAX_STEPS; i++) {
+    // Arrondi pour détecter la périodicité
+    const key = cur.toPrecision(15);
+    if (seen.has(key)) {
+      periodic = true;
+      break;
+    }
+    seen.set(key, i);
+    const doubled = cur * 2;
+    const intPart = Math.floor(doubled);
+    bits += intPart;
+    steps.push({ cur: cur.toPrecision(6), doubled: doubled.toPrecision(6), bit: intPart });
+    cur = doubled - intPart;
+    if (cur === 0) break;
+  }
+
+  const isFinite = !periodic && cur === 0;
+  const resEl = document.getElementById('frac-result');
+  resEl.innerHTML = `Nombre    : <span class="val val-blue">${raw}</span><br>
+Binaire   : <span class="val ${isFinite ? 'val-vert' : 'val-red'}">0.${bits}${periodic ? '…<em>(périodique, infini)</em>' : ''}</span><br>
+Fini ?    : <span class="val ${isFinite ? 'val-vert' : 'val-red'}">${isFinite ? '✓ OUI — représentable exactement' : '✗ NON — représentation infinie → arrondi inévitable'}</span>`;
+
+  const stepsEl = document.getElementById('frac-steps');
+  stepsEl.innerHTML = steps.map((s, i) =>
+    `<div class="frac-line">
+      <span style="color:var(--text-muted);width:28px">×2</span>
+      <span style="width:90px;color:var(--text-muted)">${s.cur}</span>
+      <span style="color:var(--text-muted)">→</span>
+      <span style="width:90px">${s.doubled}</span>
+      <span style="color:var(--text-muted)">bit ${i+1} =</span>
+      <span class="${s.bit ? 'frac-bit-1' : 'frac-bit-0'} frac-int">${s.bit}</span>
+    </div>`
+  ).join('') + (periodic ? `<div style="color:var(--accent-red);margin-top:.4rem">↻ Valeur déjà rencontrée → cycle infini !</div>` : '');
+}
+
+/* Accumulation */
+function updateAccum() {
+  const n = parseInt(document.getElementById('slider-accum').value);
+  document.getElementById('accum-n').textContent = n;
+  let sum = 0;
+  for (let i = 0; i < n; i++) sum += 0.1;
+  const expected = Math.round(n * 10) / 10; // n * 0.1 exact
+  const error = Math.abs(sum - expected);
+  const res = document.getElementById('accum-result');
+  res.innerHTML = `0.1 + 0.1 + … (${n} fois)<br>
+Résultat flottant  : <span class="val ${error > 1e-14 ? 'val-red' : 'val-vert'}">${sum}</span><br>
+Valeur attendue    : <span class="val val-blue">${expected.toFixed(1)}</span><br>
+Erreur accumulée   : <span class="val val-red">${error.toExponential(3)}</span> ${error > 1e-10 ? '⚠️' : ''}`;
+}
+
+// Représentation exacte de 0.1 et 0.2
+const repr01 = document.getElementById('repr-demo');
+if (repr01) {
+  repr01.innerHTML = `Représentation réelle stockée :<br>
+0.1 → <span class="val val-red">${(0.1).toPrecision(20)}</span><br>
+0.2 → <span class="val val-red">${(0.2).toPrecision(20)}</span><br>
+0.1 + 0.2 = <span class="val val-red">${(0.1 + 0.2).toPrecision(20)}</span><br>
+0.3       = <span class="val val-blue">${(0.3).toPrecision(20)}</span>`;
+}
+
+// Init onglet 4
+setFrac(0.1);
+updateAccum();
+
+/* ════════════════════════════════════════
+   QUIZ
+════════════════════════════════════════ */
+const quizAnswers = {
+  q1a: 'ko', q1b: 'ok', q1c: 'ko',
+  q2a: 'ko', q2b: 'ko', q2c: 'ok',
+  q3a: 'ko', q3b: 'ok', q3c: 'ko',
+  q4a: 'ko', q4b: 'ko', q4c: 'ok', q4d: 'ko'
+};
+const quizExplanations = {
+  q1b: '32 + 16 + 4 + 1 = 53 ✓',
+  q1a: '17 = 00010001. Il ne faut pas confondre avec la valeur du bit de poids 4.',
+  q1c: '69 = 01000101. Recalcule les poids.',
+  q2c: '−128 + 64+32+16+8+4+2+1 = −128+127 = −1 ✓',
+  q2a: '255 serait correct en entier non signé, pas en complément à 2.',
+  q2b: '127 = 01111111. Or le bit de signe est 1, donc négatif.',
+  q3b: 'La mantisse a 23 bits → 2²³ = 8 388 608 ≈ 10⁷ valeurs distinctes ✓',
+  q3a: 'Le nombre de bits influe sur la précision, pas la comparaison avec 100.',
+  q3c: 'Le bit de signe détermine le signe, pas la précision.',
+  q4c: '1/8 = 0.001 en binaire — exact car 8 = 2³ ✓',
+  q4a: '1/10 = 0.1 → écriture binaire infinie (c\'est justement le sujet !)',
+  q4b: '1/3 → 0.010101… infini, comme en base 10.',
+  q4d: '1/5 = 0.2 → 0.001100110011… infini également.'
+};
+
+let quizDone = {};
+
+function checkQ(optId, result, fbId) {
+  if (quizDone[fbId]) return;
+  quizDone[fbId] = true;
+  const fb = document.getElementById(fbId);
+  const fbText = document.getElementById(fbId + '-text');
+  // Colorer l'option cliquée
+  const prefix = optId.replace(/[abc d]$/, '');
+  document.querySelectorAll(`[onclick*="${fbId}"]`).forEach(btn => {
+    const oid = btn.getAttribute('onclick').match(/'([^']+)'/)[1];
+    if (oid === optId) btn.classList.add(result);
+    else if (quizAnswers[oid] === 'ok') btn.classList.add('correct');
+    btn.style.pointerEvents = 'none';
+  });
+  fb.classList.add('show', result === 'ok' ? 'ok' : 'ko');
+  fbText.innerHTML = (result === 'ok' ? '✓ Correct ! ' : '✗ Incorrect. ') + (quizExplanations[optId] || '');
+}
+</script>
+</body>
+</html>
