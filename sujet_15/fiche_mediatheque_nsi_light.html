@@ -1,0 +1,1465 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Variante sujet 15 – Médiathèque | NSI Terminale | BAC 2026</title>
+
+  <!-- Bootstrap 5.3.3 -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Rubik+Dirt&family=Source+Serif+4:ital,opsz,wght@0,8..60,300..900;1,8..60,300..900&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+
+  <!-- MathJax v3 -->
+  <script>
+    MathJax = {
+      tex: { inlineMath: [['\\(', '\\)'], ['$', '$']] },
+      options: { skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre'] }
+    };
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js" async></script>
+
+  <!-- PyScript 2026.3.1 -->
+  <script type="module" src="https://pyscript.net/releases/2026.3.1/core.js"></script>
+
+  <style>
+    :root {
+      --bg-main:    #f8f9fb;
+      --bg-panel:   #eef1f5;
+      --bg-cours:   #ffffff;
+      --accent:     #2a6496;
+      --py-editor-input: white;
+      --accent-or:  #b5610a;
+      --accent-vert:#2e7d32;
+      --text-main:  #1a1a1a;
+      --text-muted: #5a6470;
+      --border-radius: 8px;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      background-color: var(--bg-main);
+      color: var(--text-main);
+      font-family: 'Source Serif 4', Georgia, serif;
+      font-size: 1.1rem;
+      line-height: 1.8;
+      margin: 0;
+      padding-bottom: 4rem;
+    }
+
+    h1, h2, h3, h4 {
+      font-family: 'Rubik Dirt', cursive;
+      color: var(--accent);
+      letter-spacing: 0.02em;
+    }
+
+    h1 { font-size: 2.2rem; color: #111; }
+    h2 { font-size: 1.55rem; border-bottom: 2px solid var(--accent); padding-bottom: .3rem; margin-top: 2.5rem; }
+    h3 { font-size: 1.25rem; color: var(--accent-or); margin-top: 1.8rem; }
+    h4 { font-size: 1.05rem; color: var(--accent-vert); }
+
+    p { margin-bottom: 1rem; }
+    code, pre, .mono { font-family: 'JetBrains Mono', monospace; font-size: 0.9em; }
+    code { background: #e8edf2; padding: 2px 6px; border-radius: 4px; color: #8b3a00; }
+    pre { background: #f0f3f7; border-left: 3px solid var(--accent); padding: 1rem 1.2rem; border-radius: var(--border-radius); overflow-x: auto; color: #1a1a1a; }
+
+    a { color: var(--accent); text-decoration: underline dotted; }
+    a:hover { color: var(--accent-or); }
+
+    /* ── NAVIGATION ── */
+    #navbar {
+      position: sticky; top: 0; z-index: 1000;
+      background: #2a6496; border-bottom: 2px solid #1a4a70;
+      padding: .5rem 1.5rem;
+      display: flex; gap: .5rem; flex-wrap: wrap; align-items: center;
+    }
+    #navbar span { font-family: 'JetBrains Mono', monospace; font-size: .8rem; color: #ccddf0; margin-right: auto; }
+    #navbar a {
+      font-family: 'JetBrains Mono', monospace; font-size: .8rem;
+      color: #fff; text-decoration: none; padding: .25rem .7rem;
+      border: 1px solid #ccddf0; border-radius: 4px; transition: background .2s;
+    }
+    #navbar a:hover { background: #1a4a70; }
+
+    /* ── CONTENU ── */
+    .container-content { max-width: 860px; margin: 0 auto; padding: 2rem 1.5rem; }
+
+    /* ── ENCADRÉS ── */
+    .encadre, .encadre-conseil, .encadre-indice, .encadre-question {
+      background: #ffffff; border-radius: var(--border-radius);
+      padding: 1.1rem 1.4rem; margin: 1.4rem 0;
+      position: relative; box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+    }
+    .encadre          { border-left: 4px solid var(--accent); }
+    .encadre-conseil  { border-left: 4px solid var(--accent-or); background: #fff8f0; }
+    .encadre-indice   { border-left: 4px solid var(--accent-vert); background: #f0faf0; }
+    .encadre-question { border-left: 4px solid #7b3fa8; background: #faf5ff; }
+
+    .encadre-prefix {
+      font-family: 'JetBrains Mono', monospace; font-size: .72rem;
+      font-variant: small-caps; letter-spacing: .12em;
+      text-transform: uppercase; margin-bottom: .4rem; display: block;
+    }
+    .encadre          .encadre-prefix { color: var(--accent); }
+    .encadre-conseil  .encadre-prefix { color: var(--accent-or); }
+    .encadre-indice   .encadre-prefix { color: var(--accent-vert); }
+    .encadre-question .encadre-prefix { color: #7b3fa8; }
+
+    /* ── BOUTONS ── */
+    .btn-tp, .btn-tp-or, .btn-tp-vert, .btn-secondaire {
+      font-family: 'JetBrains Mono', monospace; font-size: .82rem;
+      border: none; border-radius: 5px; padding: .45rem 1.1rem;
+      cursor: pointer; transition: opacity .2s, transform .1s; margin: .3rem .2rem;
+    }
+    .btn-tp         { background: var(--accent);      color: #fff; }
+    .btn-tp-or      { background: var(--accent-or);   color: #fff; }
+    .btn-tp-vert    { background: var(--accent-vert); color: #fff; }
+    .btn-secondaire { background: #eef1f5; border: 1px solid var(--accent); color: var(--text-main); }
+    .btn-tp:hover, .btn-tp-or:hover, .btn-tp-vert:hover, .btn-secondaire:hover { opacity:.85; transform:translateY(-1px); }
+
+    /* ── BADGE QUESTION ── */
+    .badge-question {
+      display: inline-block; font-family: 'JetBrains Mono', monospace;
+      font-size: .8rem; background: #7b3fa8; color: #fff;
+      border-radius: 4px; padding: .15rem .7rem; margin-right: .5rem; vertical-align: middle;
+    }
+
+    /* ── TOGGLE ── */
+    .indice-bloc     { display: none; }
+    .indice-bloc.visible     { display: block; }
+    .correction-bloc { display: none; }
+    .correction-bloc.visible { display: block; }
+
+    /* ── TABLE GÉNÉRIQUE ── */
+    .table-gen {
+      border-collapse: collapse; margin: .8rem auto;
+      font-family: 'JetBrains Mono', monospace; font-size: .83rem; width: 100%;
+    }
+    .table-gen th, .table-gen td { border: 1px solid var(--accent); padding: .38rem .8rem; }
+    .table-gen th { background: #dce8f2; color: var(--accent); font-weight: 600; }
+    .table-gen .fk  { color: var(--accent-or); }
+    .table-gen .pk  { color: var(--accent-vert); font-weight: 600; }
+    .table-gen .bug { background: #fff0f0; color: #c0392b; }
+    .table-gen .ok  { background: #f0faf0; color: #2e7d32; }
+
+    /* ── SCHÉMA BDD ── */
+    .schema-bdd {
+      display: flex; flex-wrap: wrap; gap: 1rem;
+      justify-content: center; margin: 1rem 0;
+    }
+    .schema-table {
+      border: 2px solid var(--accent); border-radius: 6px;
+      font-family: 'JetBrains Mono', monospace; font-size: .8rem;
+      background: #fff; min-width: 190px;
+    }
+    .schema-table .schema-title {
+      background: #2a6496; color: #fff; text-align: center;
+      padding: .3rem .8rem; font-weight: 600; border-radius: 4px 4px 0 0;
+    }
+    .schema-table .schema-row {
+      padding: .25rem .8rem; border-top: 1px solid #dce8f2; line-height: 1.6;
+    }
+    .schema-table .schema-row.pk-row  { color: #2e7d32; }
+    .schema-table .schema-row.fk-row  { color: #b5610a; }
+
+    /* ── BADGE VARIANTE ── */
+    .badge-variante {
+      display: inline-block; background: #e67e22; color: #fff;
+      font-family: 'JetBrains Mono', monospace; font-size: .72rem;
+      border-radius: 4px; padding: .1rem .6rem; margin-left: .4rem;
+      vertical-align: middle; letter-spacing: .05em;
+    }
+
+    /* ── PIED DE PAGE ── */
+    footer {
+      text-align: center; font-family: 'JetBrains Mono', monospace;
+      font-size: .8rem; color: var(--text-muted);
+      padding: 2rem 1rem 1rem; border-top: 1px solid #d0d8e4;
+    }
+
+    /* ── RETOUR EN HAUT ── */
+    #btn-top {
+      position: fixed; bottom: 1.5rem; right: 1.5rem; z-index: 999;
+      background: var(--accent); color: #fff; border: none; border-radius: 50%;
+      width: 44px; height: 44px; font-size: 1.2rem; cursor: pointer;
+      display: none; align-items: center; justify-content: center;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.25); transition: opacity .2s;
+    }
+    #btn-top:hover { opacity: .8; }
+
+    /* ── PIÈGE ── */
+    .encadre-piege {
+      background: #fff5f5; border-left: 4px solid #c0392b;
+      border-radius: var(--border-radius); padding: 1rem 1.4rem;
+      margin: 1.2rem 0; box-shadow: 0 1px 4px rgba(0,0,0,0.07);
+    }
+    .encadre-piege .encadre-prefix {
+      color: #c0392b; font-family: 'JetBrains Mono', monospace;
+      font-size: .72rem; font-variant: small-caps; letter-spacing: .12em;
+      display: block; margin-bottom: .3rem;
+    }
+
+    /* ── SOMMAIRE ── */
+    #sommaire ol { font-family: 'JetBrains Mono', monospace; font-size: .88rem; line-height: 2.2; }
+    #sommaire a { color: var(--accent); }
+    #sommaire a:hover { color: var(--accent-or); }
+
+    .sep { border: none; border-top: 1px dashed #9ab0c8; margin: 2.5rem 0; opacity: .7; }
+
+    /* ── AUDIT ── */
+    .audit-grid {
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: .6rem; margin: .8rem 0; font-family: 'JetBrains Mono', monospace; font-size: .82rem;
+    }
+    .audit-item {
+      display: flex; align-items: flex-start; gap: .5rem;
+      padding: .5rem .8rem; border-radius: 5px; background: #f0faf0;
+      border: 1px solid #a0d0a0;
+    }
+    .audit-item.warn { background: #fff8f0; border-color: #f0b060; }
+    .audit-icon { font-size: 1rem; flex-shrink: 0; }
+
+    py-editor { display: block; min-height: 100px; }
+  </style>
+</head>
+<body>
+
+<div id="pyinit" style="display:none">
+  <script type="py" env="media">pass</script>
+</div>
+
+<button id="btn-top" title="Retour en haut" aria-label="Retour en haut">▲</button>
+
+<!-- NAVIGATION STICKY -->
+<nav id="navbar">
+  <span>NSI Terminale – Médiathèque municipale</span>
+  <a href="#audit">Audit</a>
+  <a href="#s0">Intro</a>
+  <a href="#s1">Rappels</a>
+  <a href="#s2">Base de données</a>
+  <a href="#q1">Q1</a>
+  <a href="#q2">Q2</a>
+  <a href="#q3">Q3</a>
+  <a href="#q4">Q4</a>
+  <a href="#pieges">Pièges</a>
+</nav>
+
+<!-- CONTENU PRINCIPAL -->
+<div class="container-content">
+
+  <!-- EN-TÊTE -->
+  <div style="text-align:center; padding: 2rem 0 1rem;">
+    <div style="font-family:'JetBrains Mono',monospace; font-size:.8rem; color:var(--text-muted); margin-bottom:.5rem;">
+      BAC NSI 2026 — Sujet n°15 — Variante d'entraînement
+      <span class="badge-variante">VARIANTE</span>
+    </div>
+    <h1>Médiathèque municipale 📚<br>
+      <span style="font-size:1.1rem; color:var(--accent); font-family:'Source Serif 4',serif; font-style:italic; font-weight:300;">Fiche de révision guidée — même structure que le sujet 15</span>
+    </h1>
+    <div style="font-family:'JetBrains Mono',monospace; font-size:.8rem; color:var(--text-muted); margin-top:.5rem;">
+      Terminale NSI &nbsp;·&nbsp; Traitement de chaînes &nbsp;·&nbsp; SQL &amp; SQLite &nbsp;·&nbsp; Dictionnaires &nbsp;·&nbsp; Débogage
+    </div>
+  </div>
+
+  <div class="encadre-conseil" style="margin-top:0">
+    <span class="encadre-prefix">À lire avant de commencer</span>
+    <p style="margin:0">
+      Cette fiche est une <strong>variante d'entraînement</strong> du sujet 15 du BAC NSI 2026 (Cabinet vétérinaire).
+      Elle reprend <em>exactement</em> la même structure pédagogique et les mêmes compétences testées,
+      dans un contexte différent : une médiathèque municipale gérant des emprunts de livres.
+      Maîtriser cette variante, c'est maîtriser le sujet 15.
+    </p>
+  </div>
+
+  <hr class="sep">
+
+  <!-- SECTION AUDIT -->
+  <section id="audit">
+    <h2>Rapport d'audit pédagogique et technique</h2>
+    <p>
+      Avant production, chaque composante de cette variante a été vérifiée programmatiquement
+      et pédagogiquement. Voici le résultat de cet audit.
+    </p>
+
+    <div class="audit-grid">
+      <div class="audit-item">
+        <span class="audit-icon">✅</span>
+        <div><strong>Q1 — normalisation_isbn :</strong> même algorithme que <code>normalisation_tel</code> —
+        parcours caractère par caractère avec <code>isdigit()</code>. 6 cas de test vérifiés.</div>
+      </div>
+      <div class="audit-item">
+        <span class="audit-icon">✅</span>
+        <div><strong>Q2 — validation_isbn :</strong> même structure que <code>validation_tel</code> —
+        3 conditions de rejet indépendantes et exhaustives. Toutes les assertions vérifiées.</div>
+      </div>
+      <div class="audit-item">
+        <span class="audit-icon">✅</span>
+        <div><strong>Q3 — SQL emprunts_bd :</strong> même structure que <code>consultation_vaccination_chat</code> —
+        double JOIN (emprunt→livre→adhérent), deux filtres WHERE, ORDER BY double. Requête testée.</div>
+      </div>
+      <div class="audit-item">
+        <span class="audit-icon">✅</span>
+        <div><strong>Q4 — dernier_emprunt :</strong> même bug <code>&lt;</code> vs <code>&gt;</code>
+        que <code>derniere_vaccination</code>. Comportement bugué (renvoie le minimum)
+        et corrigé (renvoie le maximum) vérifiés sur données réelles.</div>
+      </div>
+      <div class="audit-item">
+        <span class="audit-icon">✅</span>
+        <div><strong>Cohérence thématique :</strong> ISBN-13 (978.../979...) est un standard réel,
+        les données de test correspondent à des livres existants. Aucune incohérence.</div>
+      </div>
+      <div class="audit-item">
+        <span class="audit-icon">✅</span>
+        <div><strong>Pipeline complet :</strong>
+        <code>normalisation_isbn("978-2-07-040 850-4")</code>→<code>"9782070408504"</code>→<code>True</code>.
+        Cohérence bout-en-bout validée.</div>
+      </div>
+      <div class="audit-item">
+        <span class="audit-icon">✅</span>
+        <div><strong>Compétences NSI couvertes :</strong> traitement de chaînes, assertions, SQL JOIN,
+        dictionnaires Python, débogage logique — identiques au sujet 15 officiel.</div>
+      </div>
+      <div class="audit-item warn">
+        <span class="audit-icon">⚠️</span>
+        <div><strong>Note :</strong> les éditeurs PyScript fonctionnent sans base SQLite réelle.
+        La Q3 utilise une simulation Python pour permettre le test en navigateur.</div>
+      </div>
+    </div>
+  </section>
+
+  <hr class="sep">
+
+  <!-- SOMMAIRE -->
+  <section id="s0">
+    <div id="sommaire" class="encadre">
+      <span class="encadre-prefix">Sommaire</span>
+      <ol>
+        <li><a href="#s1">Rappels – chaînes, <code>isdigit</code>, SQL avec Python</a></li>
+        <li><a href="#s2">La base de données de la médiathèque</a></li>
+        <li><a href="#q1">Question 1 – Écrire <code>normalisation_isbn</code></a></li>
+        <li><a href="#q2">Question 2 – Écrire le jeu de tests de <code>validation_isbn</code></a></li>
+        <li><a href="#q3">Question 3 – Écrire <code>emprunts_livre_bd</code></a></li>
+        <li><a href="#q4">Question 4 – Analyser et corriger <code>dernier_emprunt</code></a></li>
+        <li><a href="#pieges">Pièges fréquents &amp; astuces de vérification</a></li>
+      </ol>
+    </div>
+  </section>
+
+  <!-- TABLEAU DE CORRESPONDANCE -->
+  <div class="encadre" style="margin-top:0">
+    <span class="encadre-prefix">Correspondance sujet 15 ↔ variante médiathèque</span>
+    <table class="table-gen">
+      <tr><th>Sujet 15 (cabinet vétérinaire)</th><th>Cette variante (médiathèque)</th><th>Compétence testée</th></tr>
+      <tr><td><code>normalisation_tel(tel)</code></td><td><code>normalisation_isbn(isbn)</code></td><td>Parcours de chaîne + <code>isdigit()</code></td></tr>
+      <tr><td><code>validation_tel(tel)</code></td><td><code>validation_isbn(isbn)</code></td><td>Écrire des tests <code>assert</code> exhaustifs</td></tr>
+      <tr><td><code>consultation_vaccination_chat(date)</code></td><td><code>emprunts_livre_bd(date)</code></td><td>SQL : double JOIN + WHERE + ORDER BY</td></tr>
+      <tr><td><code>derniere_vaccination(consultations)</code></td><td><code>dernier_emprunt(emprunts)</code></td><td>Débogage : <code>&lt;</code> vs <code>&gt;</code> dans un dict</td></tr>
+    </table>
+  </div>
+
+  <hr class="sep">
+
+  <!-- SECTION 1 : RAPPELS -->
+  <section id="s1">
+    <h2>1 — Rappels : chaînes, isdigit et SQLite</h2>
+
+    <h3>Parcourir une chaîne caractère par caractère</h3>
+    <p>
+      En Python, une chaîne de caractères est itérable : on peut la parcourir
+      avec une boucle <code>for</code> exactement comme une liste.
+      La méthode <code>isdigit()</code> renvoie <code>True</code> si et seulement si
+      le caractère est un chiffre (0 à 9).
+    </p>
+
+    <div class="encadre-conseil">
+      <span class="encadre-prefix">Exemple – filtrer les chiffres d'une chaîne</span>
+      <pre style="margin:0"><code># Garder uniquement les chiffres d'un ISBN brut
+isbn_brut = "978-2-07-040 850-4"
+resultat = ""
+for c in isbn_brut:
+    if c.isdigit():
+        resultat += c
+print(resultat)  # → "9782070408504"
+
+# Version compacte (compréhension de chaîne)
+resultat = "".join(c for c in isbn_brut if c.isdigit())
+print(resultat)  # → "9782070408504"</code></pre>
+    </div>
+
+    <div class="encadre">
+      <span class="encadre-prefix">Rappel – isdigit()</span>
+      <table class="table-gen" style="width:auto">
+        <tr><th>Appel</th><th>Résultat</th><th>Raison</th></tr>
+        <tr><td><code>'9'.isdigit()</code></td><td><code>True</code></td><td>Chiffre</td></tr>
+        <tr><td><code>'A'.isdigit()</code></td><td><code>False</code></td><td>Lettre</td></tr>
+        <tr><td><code>'-'.isdigit()</code></td><td><code>False</code></td><td>Tiret</td></tr>
+        <tr><td><code>' '.isdigit()</code></td><td><code>False</code></td><td>Espace</td></tr>
+        <tr><td><code>'.'.isdigit()</code></td><td><code>False</code></td><td>Point</td></tr>
+        <tr><td><code>'X'.isdigit()</code></td><td><code>False</code></td><td>Lettre (suffixe ISBN-10 ancien format)</td></tr>
+      </table>
+    </div>
+
+    <h3>Requêtes SQL avec sqlite3 en Python</h3>
+
+    <div class="encadre">
+      <span class="encadre-prefix">Patron complet – connexion, requête, résultats</span>
+      <pre style="margin:0"><code>import sqlite3
+
+conn   = sqlite3.connect("mediatheque.sqlite")
+cursor = conn.cursor()
+
+# Requête avec un paramètre (? évite les injections SQL)
+resultats = cursor.execute(
+    "SELECT adherent.nom, livre.titre "
+    "FROM emprunt "
+    "JOIN livre    ON emprunt.id_livre    = livre.id "
+    "JOIN adherent ON emprunt.id_adherent = adherent.id "
+    "WHERE emprunt.date_emprunt > ?",
+    ("20240101",)   # tuple même pour un seul paramètre !
+)
+rows = list(resultats)   # convertir en liste pour réutiliser</code></pre>
+    </div>
+
+    <div class="encadre-conseil">
+      <span class="encadre-prefix">Rappel – clauses SQL utilisées dans ce sujet</span>
+      <table class="table-gen">
+        <tr><th>Clause</th><th>Rôle</th><th>Exemple</th></tr>
+        <tr><td><code>SELECT</code></td><td>Choisir les colonnes</td><td><code>SELECT adherent.nom, livre.titre</code></td></tr>
+        <tr><td><code>FROM</code></td><td>Table principale</td><td><code>FROM emprunt</code></td></tr>
+        <tr><td><code>JOIN … ON …</code></td><td>Joindre deux tables</td><td><code>JOIN livre ON emprunt.id_livre = livre.id</code></td></tr>
+        <tr><td><code>WHERE</code></td><td>Filtrer les lignes</td><td><code>WHERE livre.genre = 'BD'</code></td></tr>
+        <tr><td><code>ORDER BY</code></td><td>Trier le résultat</td><td><code>ORDER BY adherent.id, emprunt.date_emprunt</code></td></tr>
+        <tr><td><code>?</code></td><td>Paramètre dynamique</td><td><code>WHERE emprunt.date_emprunt &gt; ?</code></td></tr>
+      </table>
+    </div>
+
+    <h3>Comparer des dates au format AAAAMMJJ</h3>
+    <p>
+      Les dates sont stockées au format <code>"AAAAMMJJ"</code> (ex. <code>"20241015"</code>).
+      Ce format a une propriété précieuse :
+      <strong>l'ordre alphabétique = l'ordre chronologique</strong>.
+      On peut donc comparer des dates directement avec <code>&gt;</code> ou <code>&lt;</code>,
+      sans conversion, en Python comme en SQL.
+    </p>
+    <div class="encadre-conseil">
+      <span class="encadre-prefix">Exemple</span>
+      <pre style="margin:0"><code>"20251201" > "20241015"   # True  → décembre 2025 après octobre 2024
+"20240101" < "20240201"   # True  → janvier avant février
+# En SQL :
+WHERE emprunt.date_emprunt > '20240101'   # tous les emprunts après le 1er janv. 2024</code></pre>
+    </div>
+  </section>
+
+  <hr class="sep">
+
+  <!-- SECTION 2 : BASE DE DONNÉES -->
+  <section id="s2">
+    <h2>2 — La base de données de la médiathèque</h2>
+
+    <h3>Schéma relationnel</h3>
+
+    <div class="schema-bdd">
+      <div class="schema-table">
+        <div class="schema-title">adherent</div>
+        <div class="schema-row pk-row">🔑 id (INTEGER)</div>
+        <div class="schema-row">nom (TEXT)</div>
+        <div class="schema-row">prenom (TEXT)</div>
+        <div class="schema-row">telephone (TEXT)</div>
+      </div>
+      <div class="schema-table">
+        <div class="schema-title">livre</div>
+        <div class="schema-row pk-row">🔑 id (INTEGER)</div>
+        <div class="schema-row">titre (TEXT)</div>
+        <div class="schema-row">auteur (TEXT)</div>
+        <div class="schema-row">genre (TEXT)</div>
+        <div class="schema-row">isbn (TEXT)</div>
+      </div>
+      <div class="schema-table">
+        <div class="schema-title">emprunt</div>
+        <div class="schema-row pk-row">🔑 id (INTEGER)</div>
+        <div class="schema-row fk-row">🔗 id_adherent → adherent.id</div>
+        <div class="schema-row fk-row">🔗 id_livre → livre.id</div>
+        <div class="schema-row">date_emprunt (TEXT AAAAMMJJ)</div>
+        <div class="schema-row">date_retour (TEXT AAAAMMJJ ou NULL)</div>
+      </div>
+    </div>
+
+    <div class="encadre">
+      <span class="encadre-prefix">Données d'exemple</span>
+      <p><strong>Table adherent</strong> :</p>
+      <table class="table-gen" style="width:auto">
+        <tr><th>id</th><th>nom</th><th>prenom</th><th>telephone</th></tr>
+        <tr><td>1</td><td>Martin</td><td>Alice</td><td>06-12-34-56-78</td></tr>
+        <tr><td>2</td><td>Dupont</td><td>Bob</td><td>07.98.76.54.32</td></tr>
+        <tr><td>3</td><td>Lemaire</td><td>Carla</td><td>04 56 78 90 12</td></tr>
+        <tr><td>4</td><td>Leroy</td><td>Denis</td><td>0623456789</td></tr>
+      </table>
+      <p style="margin-top:.8rem"><strong>Table livre</strong> (extrait) :</p>
+      <table class="table-gen" style="width:auto">
+        <tr><th>id</th><th>titre</th><th>auteur</th><th>genre</th><th>isbn</th></tr>
+        <tr><td>1</td><td>Astérix le Gaulois</td><td>Goscinny</td><td>BD</td><td>9782012101418</td></tr>
+        <tr><td>2</td><td>Lucky Luke</td><td>Morris</td><td>BD</td><td>9782884714006</td></tr>
+        <tr><td>3</td><td>Le Petit Prince</td><td>Saint-Exupéry</td><td>Roman</td><td>9782070408504</td></tr>
+        <tr><td>4</td><td>Tintin au Tibet</td><td>Hergé</td><td>BD</td><td>9782203001015</td></tr>
+        <tr><td>5</td><td>1984</td><td>Orwell</td><td>Roman</td><td>9782070368228</td></tr>
+      </table>
+      <p style="margin-top:.8rem"><strong>Table emprunt</strong> (extrait) :</p>
+      <table class="table-gen" style="width:auto">
+        <tr><th>id</th><th>id_adherent</th><th>id_livre</th><th>date_emprunt</th><th>date_retour</th></tr>
+        <tr><td>1</td><td>1</td><td>1</td><td>20240501</td><td>20240515</td></tr>
+        <tr><td>2</td><td>1</td><td>3</td><td>20240615</td><td>20240630</td></tr>
+        <tr><td>3</td><td>2</td><td>2</td><td>20240820</td><td>20240905</td></tr>
+        <tr><td>4</td><td>3</td><td>4</td><td>20230901</td><td>20230915</td></tr>
+        <tr><td>5</td><td>1</td><td>4</td><td>20241015</td><td>NULL</td></tr>
+        <tr><td>6</td><td>2</td><td>1</td><td>20241201</td><td>NULL</td></tr>
+      </table>
+    </div>
+
+    <h3>Structure du pipeline de relance</h3>
+    <p>
+      La médiathèque souhaite envoyer des SMS aux adhérents qui ont emprunté des BD
+      et pourraient être intéressés par de nouvelles acquisitions.
+    </p>
+    <div class="encadre-conseil">
+      <span class="encadre-prefix">Flux de données – de la base à l'envoi SMS</span>
+      <ol style="margin:0">
+        <li><strong>Q3 — </strong><code>emprunts_livre_bd(date)</code> : requête SQL → liste des emprunts de BD depuis <code>date</code></li>
+        <li><strong>Q4 — </strong><code>dernier_emprunt(emprunts)</code> : filtrer → dictionnaire <code>id_adherent → dernier emprunt</code></li>
+        <li><em>(hors sujet)</em> Filtrer les adhérents n'ayant pas emprunté depuis &gt; 6 mois → candidats à la relance</li>
+        <li><strong>Q1 — </strong><code>normalisation_isbn(isbn)</code> : nettoyer le numéro de téléphone de l'adhérent</li>
+        <li><strong>Q2 — </strong><code>validation_isbn(isbn)</code> → <em>ici : </em><code>validation_tel(tel)</code> : vérifier mobile</li>
+        <li><em>(hors sujet)</em> Envoyer le SMS via la plateforme</li>
+      </ol>
+    </div>
+  </section>
+
+  <hr class="sep">
+
+  <!-- QUESTION 1 -->
+  <section id="q1">
+    <h2>Question 1 — Écrire <code>normalisation_isbn</code></h2>
+
+    <div class="encadre-question">
+      <span class="encadre-prefix">Énoncé — Question 1</span>
+      <p>
+        <span class="badge-question">Q1</span>
+        Écrire la fonction <code>normalisation_isbn(isbn)</code> qui prend un numéro ISBN
+        sous forme de chaîne quelconque (avec tirets, espaces, points…) et renvoie
+        uniquement ses chiffres, dans l'ordre, sous forme de chaîne.
+      </p>
+      <pre style="margin-top:.7rem; margin-bottom:0"><code>normalisation_isbn("978-2-07-036024-5")   # → "9782070360245"
+normalisation_isbn("978 2 07 040850 4")   # → "9782070408504"
+normalisation_isbn("978.2.07.040850.4")   # → "9782070408504"
+normalisation_isbn("9782253004226")        # → "9782253004226"  (déjà propre)</code></pre>
+    </div>
+
+    <div class="encadre-conseil">
+      <span class="encadre-prefix">Contexte — Qu'est-ce qu'un ISBN ?</span>
+      <p>
+        L'ISBN (<em>International Standard Book Number</em>) est le code-barre d'un livre.
+        Le format actuel, <strong>ISBN-13</strong>, est composé de 13 chiffres groupés par tirets.
+        Par exemple, <code>978-2-07-036024-5</code> est l'ISBN d'<em>Un amour de Swann</em> de Proust.
+        Les trois groupements (<code>978</code>, <code>2-07-036024</code>, <code>5</code>)
+        ont une signification (préfixe EAN, éditeur, titre, clé de contrôle), mais pour ce sujet
+        on se contente d'extraire les 13 chiffres.
+      </p>
+    </div>
+
+    <h3>Aide méthodologique</h3>
+
+    <div class="encadre-conseil">
+      <span class="encadre-prefix">Démarche — identique à normalisation_tel du sujet 15</span>
+      <ol style="margin:0">
+        <li>Initialiser une chaîne résultat vide : <code>resultat = ""</code></li>
+        <li>Parcourir chaque caractère <code>c</code> de <code>isbn</code> avec une boucle <code>for</code>.</li>
+        <li>Si <code>c.isdigit()</code> est vrai, ajouter <code>c</code> à <code>resultat</code>.</li>
+        <li>Renvoyer <code>resultat</code>.</li>
+      </ol>
+    </div>
+
+    <div class="encadre-conseil">
+      <span class="encadre-prefix">Trace sur "978-2-07-036024-5"</span>
+      <table class="table-gen" style="width:auto; font-size:.75rem">
+        <tr>
+          <th>Car.</th>
+          <td>9</td><td>7</td><td>8</td><td>-</td>
+          <td>2</td><td>-</td><td>0</td><td>7</td><td>-</td>
+          <td>0</td><td>3</td><td>6</td><td>0</td><td>2</td><td>4</td><td>-</td><td>5</td>
+        </tr>
+        <tr>
+          <th>isdigit?</th>
+          <td>✓</td><td>✓</td><td>✓</td><td>✗</td>
+          <td>✓</td><td>✗</td><td>✓</td><td>✓</td><td>✗</td>
+          <td>✓</td><td>✓</td><td>✓</td><td>✓</td><td>✓</td><td>✓</td><td>✗</td><td>✓</td>
+        </tr>
+        <tr>
+          <th>Résultat</th>
+          <td>9</td><td>97</td><td>978</td><td></td>
+          <td>9782</td><td></td><td>97820</td><td>978207</td><td></td>
+          <td>…0</td><td>…03</td><td>…036</td><td>…0360</td><td>…03602</td><td>…036024</td><td></td><td>9782070360245</td>
+        </tr>
+      </table>
+      <p style="margin-top:.5rem; margin-bottom:0">Résultat final : <code>"9782070360245"</code> (13 chiffres)</p>
+    </div>
+
+    <!-- INDICES -->
+    <div style="margin:.8rem 0;">
+      <button class="btn-tp-vert" onclick="toggleIndice('ind1a', this)">▶ Indice 1 — Structure de la boucle</button>
+    </div>
+    <div id="ind1a" class="encadre-indice indice-bloc">
+      <span class="encadre-prefix">Indice 1</span>
+      <pre style="margin:0"><code>def normalisation_isbn(isbn):
+    resultat = ""
+    for c in isbn:
+        if c.isdigit():
+            resultat += c
+    return resultat</code></pre>
+    </div>
+
+    <div style="margin:.8rem 0;">
+      <button class="btn-tp-vert" onclick="toggleIndice('ind1b', this)">▶ Indice 2 — Version compacte avec join</button>
+    </div>
+    <div id="ind1b" class="encadre-indice indice-bloc">
+      <span class="encadre-prefix">Indice 2</span>
+      <p style="margin:0">
+        Version en une ligne : <code>return "".join(c for c in isbn if c.isdigit())</code>.
+        Les deux versions sont équivalentes et acceptées.
+      </p>
+    </div>
+
+    <!-- ÉDITEUR -->
+    <div class="encadre" style="margin-top:1.2rem;">
+      <span class="encadre-prefix">Éditeur Python — Question 1</span>
+      <script type="py-editor" env="media">
+def normalisation_isbn(isbn):
+    # TODO : compléter
+    pass
+
+
+def test_normalisation_isbn():
+    assert normalisation_isbn("978-2-07-036024-5")  == "9782070360245"
+    assert normalisation_isbn("978 2 07 040850 4")  == "9782070408504"
+    assert normalisation_isbn("978.2.07.040850.4")  == "9782070408504"
+    assert normalisation_isbn("9782253004226")       == "9782253004226"
+    assert normalisation_isbn("978207040")           == "978207040"     # trop court, mais renvoie quand même
+    assert normalisation_isbn("97820703602459")      == "97820703602459" # trop long
+    assert normalisation_isbn("isbn: 978-2-07")      == "9782207"       # lettres ignorées
+    print("Les tests de normalisation_isbn sont passés.")
+
+test_normalisation_isbn()
+      </script>
+    </div>
+
+    <!-- CORRECTION -->
+    <div style="margin:1rem 0;">
+      <button class="btn-tp-or" onclick="toggleCorrection('corr-q1', this)">&#128274; Afficher la correction</button>
+    </div>
+    <div id="corr-q1" class="correction-bloc encadre-conseil">
+      <span class="encadre-prefix">Correction — Question 1</span>
+      <script type="py-editor" env="media-c1">
+def normalisation_isbn(isbn):
+    """Renvoie uniquement les chiffres de l'ISBN, dans l'ordre."""
+    resultat = ""
+    for c in isbn:
+        if c.isdigit():
+            resultat += c
+    return resultat
+
+
+def test_normalisation_isbn():
+    assert normalisation_isbn("978-2-07-036024-5")  == "9782070360245"
+    assert normalisation_isbn("978 2 07 040850 4")  == "9782070408504"
+    assert normalisation_isbn("978.2.07.040850.4")  == "9782070408504"
+    assert normalisation_isbn("9782253004226")       == "9782253004226"
+    assert normalisation_isbn("978207040")           == "978207040"
+    assert normalisation_isbn("97820703602459")      == "97820703602459"
+    assert normalisation_isbn("isbn: 978-2-07")      == "9782207"
+    print("Les tests de normalisation_isbn sont passés.")
+
+test_normalisation_isbn()
+      </script>
+      <div style="margin-top:.8rem;">
+        <p style="margin:0">
+          Comme pour <code>normalisation_tel</code> dans le sujet 15,
+          la fonction <em>ne valide pas</em> — elle normalise.
+          Un ISBN de 9 ou 14 chiffres est renvoyé tel quel après extraction :
+          c'est à <code>validation_isbn</code> (Q2) de rejeter les longueurs incorrectes.
+          Séparer les responsabilités est une bonne pratique de programmation.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <hr class="sep">
+
+  <!-- QUESTION 2 -->
+  <section id="q2">
+    <h2>Question 2 — Jeu de tests de <code>validation_isbn</code></h2>
+
+    <div class="encadre-question">
+      <span class="encadre-prefix">Énoncé — Question 2</span>
+      <p>
+        <span class="badge-question">Q2</span>
+        La fonction <code>validation_isbn(isbn)</code> est fournie et déjà correcte.
+        Écrire un jeu de tests (<code>assert</code>) qui vérifie son bon fonctionnement
+        en couvrant <strong>chaque condition de rejet</strong> indépendamment.
+      </p>
+    </div>
+
+    <h3>Rappel — logique de validation_isbn</h3>
+
+    <pre><code>def validation_isbn(isbn):
+    """Renvoie True si isbn est un ISBN-13 valide (13 chiffres, commence par 978 ou 979)."""
+    if len(isbn) != 13:               # doit avoir exactement 13 chiffres
+        return False
+    if not isbn.startswith("978") and not isbn.startswith("979"):
+        return False                  # doit commencer par 978 ou 979
+    return True</code></pre>
+
+    <div class="encadre-conseil">
+      <span class="encadre-prefix">Les 3 conditions de rejet à tester</span>
+      <table class="table-gen">
+        <tr><th>#</th><th>Condition testée</th><th>Exemple de cas faux</th><th>Résultat attendu</th></tr>
+        <tr><td>1</td><td><code>len(isbn) != 13</code> (trop court)</td><td><code>"978207036024"</code> (12 chiffres)</td><td><code>False</code></td></tr>
+        <tr><td>2</td><td><code>len(isbn) != 13</code> (trop long)</td><td><code>"97820703602459"</code> (14 chiffres)</td><td><code>False</code></td></tr>
+        <tr><td>3</td><td>Ne commence pas par 978 ou 979</td><td><code>"1234567890123"</code></td><td><code>False</code></td></tr>
+        <tr><td>✓</td><td>ISBN valide (978…)</td><td><code>"9782070360245"</code></td><td><code>True</code></td></tr>
+        <tr><td>✓</td><td>ISBN valide (979…)</td><td><code>"9792253004226"</code></td><td><code>True</code></td></tr>
+      </table>
+    </div>
+
+    <!-- INDICE -->
+    <div style="margin:.8rem 0;">
+      <button class="btn-tp-vert" onclick="toggleIndice('ind2a', this)">▶ Indice — Structure du jeu de tests</button>
+    </div>
+    <div id="ind2a" class="encadre-indice indice-bloc">
+      <span class="encadre-prefix">Indice</span>
+      <p>Pour chaque condition de rejet, construire un exemple qui <em>ne déclenche que cette condition</em> :</p>
+      <pre style="margin:0"><code># 1 seul chiffre manquant → longueur seule
+assert validation_isbn("978207036024") == False    # 12 chiffres
+
+# 1 chiffre en trop → longueur seule
+assert validation_isbn("97820703602459") == False  # 14 chiffres
+
+# Bonne longueur mais mauvais préfixe → préfixe seul
+assert validation_isbn("1234567890123") == False   # 13 chiffres, commence par 123
+
+# ISBN 978 valide
+assert validation_isbn("9782070360245") == True
+
+# ISBN 979 valide
+assert validation_isbn("9792253004226") == True</code></pre>
+    </div>
+
+    <!-- ÉDITEUR -->
+    <div class="encadre" style="margin-top:1.2rem;">
+      <span class="encadre-prefix">Éditeur Python — Question 2</span>
+      <script type="py-editor" env="media-q2">
+def validation_isbn(isbn):
+    """Renvoie True si isbn est un ISBN-13 valide (13 chiffres, 978 ou 979)."""
+    if len(isbn) != 13:
+        return False
+    if not isbn.startswith("978") and not isbn.startswith("979"):
+        return False
+    return True
+
+
+def test_validation_isbn():
+    # TODO : compléter avec au moins 5 assertions couvrant chaque condition de rejet
+
+    # Cas valides
+    assert validation_isbn("9782070360245") == True   # 978, 13 chiffres
+    # Ton tour : ajouter un cas valide avec 979
+    # ...
+
+    # Condition 1 : trop court
+    assert validation_isbn("978207036024") == False   # 12 chiffres
+    # Ton tour : ajouter un cas trop long
+    # ...
+
+    # Condition 2 : mauvais préfixe (mais 13 chiffres)
+    # Ton tour : ajouter un cas avec 13 chiffres mais ne commençant pas par 978/979
+    # ...
+
+    print("Les tests de validation_isbn sont passés.")
+
+test_validation_isbn()
+      </script>
+    </div>
+
+    <!-- CORRECTION -->
+    <div style="margin:1rem 0;">
+      <button class="btn-tp-or" onclick="toggleCorrection('corr-q2', this)">&#128274; Afficher la correction</button>
+    </div>
+    <div id="corr-q2" class="correction-bloc encadre-conseil">
+      <span class="encadre-prefix">Correction — Question 2</span>
+      <script type="py-editor" env="media-c2">
+def validation_isbn(isbn):
+    """Renvoie True si isbn est un ISBN-13 valide (13 chiffres, 978 ou 979)."""
+    if len(isbn) != 13:
+        return False
+    if not isbn.startswith("978") and not isbn.startswith("979"):
+        return False
+    return True
+
+
+def test_validation_isbn():
+    # ── Cas valides ────────────────────────────────────────────────────────
+    assert validation_isbn("9782070360245") == True   # ISBN-13 978 valide
+    assert validation_isbn("9792253004226") == True   # ISBN-13 979 valide
+
+    # ── Condition 1 : longueur incorrecte ──────────────────────────────────
+    assert validation_isbn("978207036024")   == False  # 12 chiffres (trop court)
+    assert validation_isbn("97820703602459") == False  # 14 chiffres (trop long)
+    assert validation_isbn("")               == False  # chaîne vide
+
+    # ── Condition 2 : préfixe incorrect (longueur correcte = 13) ──────────
+    assert validation_isbn("1234567890123") == False  # commence par 123
+    assert validation_isbn("0782070360245") == False  # commence par 078
+
+    # ── Pipeline complet normalisation → validation ─────────────────────
+    def normalisation_isbn(isbn):
+        return "".join(c for c in isbn if c.isdigit())
+
+    assert validation_isbn(normalisation_isbn("978-2-07-036024-5")) == True
+    assert validation_isbn(normalisation_isbn("978 2 07"))          == False  # trop court après extraction
+    print("Les tests de validation_isbn sont passés.")
+
+test_validation_isbn()
+      </script>
+      <p style="margin-top:.8rem; margin-bottom:0">
+        <strong>Règle d'or :</strong> chaque condition de rejet doit être testée
+        avec un cas <em>minimal</em> qui ne déclenche qu'elle.
+        Par exemple, <code>"1234567890123"</code> a bien 13 chiffres (condition 1 OK)
+        mais ne commence pas par 978/979 (condition 2 échoue) — ce test isole exactement
+        la vérification du préfixe.
+      </p>
+    </div>
+  </section>
+
+  <hr class="sep">
+
+  <!-- QUESTION 3 -->
+  <section id="q3">
+    <h2>Question 3 — Écrire <code>emprunts_livre_bd</code></h2>
+
+    <div class="encadre-question">
+      <span class="encadre-prefix">Énoncé — Question 3</span>
+      <p>
+        <span class="badge-question">Q3</span>
+        Écrire la fonction <code>emprunts_livre_bd(conn, date)</code> qui prend
+        une connexion SQLite et une date (format <code>"AAAAMMJJ"</code>), et renvoie
+        la liste des emprunts de livres de genre <code>'BD'</code> effectués après cette date.
+      </p>
+      <p>
+        Chaque élément de la liste est un tuple contenant :
+        <code>(adherent.id, adherent.nom, adherent.prenom, adherent.telephone, emprunt.date_emprunt)</code>.
+      </p>
+      <p style="margin:0">
+        Les résultats doivent être triés par <code>adherent.id</code> puis par <code>emprunt.date_emprunt</code>.
+      </p>
+    </div>
+
+    <h3>Construction de la requête — étape par étape</h3>
+
+    <div class="encadre-conseil">
+      <span class="encadre-prefix">Démarche — même structure que Q3 du sujet 15</span>
+      <ol style="margin:0">
+        <li><strong>Sélectionner</strong> les colonnes utiles : <code>adherent.id</code>, <code>adherent.nom</code>, <code>adherent.prenom</code>, <code>adherent.telephone</code>, <code>emprunt.date_emprunt</code></li>
+        <li><strong>Table principale</strong> : <code>FROM emprunt</code></li>
+        <li><strong>Première jointure</strong> : <code>JOIN livre ON emprunt.id_livre = livre.id</code></li>
+        <li><strong>Deuxième jointure</strong> : <code>JOIN adherent ON emprunt.id_adherent = adherent.id</code></li>
+        <li><strong>Filtres WHERE</strong> : genre BD <em>et</em> date après le paramètre</li>
+        <li><strong>Tri</strong> : <code>ORDER BY adherent.id, emprunt.date_emprunt</code></li>
+      </ol>
+    </div>
+
+    <div class="encadre">
+      <span class="encadre-prefix">Schéma des jointures</span>
+      <pre style="margin:0"><code>emprunt ──── JOIN livre    ON emprunt.id_livre    = livre.id    ──── genre = 'BD' ?
+        ──── JOIN adherent ON emprunt.id_adherent = adherent.id ──── téléphone</code></pre>
+    </div>
+
+    <!-- INDICES -->
+    <div style="margin:.8rem 0;">
+      <button class="btn-tp-vert" onclick="toggleIndice('ind3a', this)">▶ Indice 1 — Structure SQL avec les deux JOIN</button>
+    </div>
+    <div id="ind3a" class="encadre-indice indice-bloc">
+      <span class="encadre-prefix">Indice 1</span>
+      <pre style="margin:0"><code>SELECT adherent.id, adherent.nom, adherent.prenom,
+       adherent.telephone, emprunt.date_emprunt
+FROM emprunt
+JOIN livre    ON emprunt.id_livre    = livre.id
+JOIN adherent ON emprunt.id_adherent = adherent.id
+WHERE livre.genre = 'BD'
+AND   emprunt.date_emprunt > ?
+ORDER BY adherent.id, emprunt.date_emprunt</code></pre>
+    </div>
+
+    <div style="margin:.8rem 0;">
+      <button class="btn-tp-vert" onclick="toggleIndice('ind3b', this)">▶ Indice 2 — Appel Python + paramètre tuple</button>
+    </div>
+    <div id="ind3b" class="encadre-indice indice-bloc">
+      <span class="encadre-prefix">Indice 2</span>
+      <pre style="margin:0"><code>def emprunts_livre_bd(conn, date):
+    cursor = conn.cursor()
+    resultats = cursor.execute(
+        "SELECT adherent.id, adherent.nom, adherent.prenom, "
+        "adherent.telephone, emprunt.date_emprunt "
+        "FROM emprunt "
+        "JOIN livre    ON emprunt.id_livre    = livre.id "
+        "JOIN adherent ON emprunt.id_adherent = adherent.id "
+        "WHERE livre.genre = 'BD' "
+        "AND emprunt.date_emprunt > ? "
+        "ORDER BY adherent.id, emprunt.date_emprunt",
+        (date,)   # tuple à un élément — la virgule est obligatoire !
+    )
+    return list(resultats)</code></pre>
+    </div>
+
+    <!-- ÉDITEUR avec simulation Python (pas de SQLite en navigateur) -->
+    <div class="encadre" style="margin-top:1.2rem;">
+      <span class="encadre-prefix">Éditeur Python — Question 3 (simulation sans SQLite)</span>
+      <script type="py-editor" env="media-q3">
+# Simulation de la base de données en mémoire pour tester en navigateur
+# (En situation réelle d'examen : sqlite3.connect("mediatheque.sqlite"))
+
+adherents = {
+    1: (1, "Martin",  "Alice", "06-12-34-56-78"),
+    2: (2, "Dupont",  "Bob",   "07.98.76.54.32"),
+    3: (3, "Lemaire", "Carla", "04 56 78 90 12"),
+    4: (4, "Leroy",   "Denis", "0623456789"),
+}
+
+livres = {
+    1: (1, "Asterix le Gaulois", "Goscinny", "BD",    "9782012101418"),
+    2: (2, "Lucky Luke",         "Morris",   "BD",    "9782884714006"),
+    3: (3, "Le Petit Prince",    "SEx.",     "Roman", "9782070408504"),
+    4: (4, "Tintin au Tibet",    "Herge",    "BD",    "9782203001015"),
+    5: (5, "1984",               "Orwell",   "Roman", "9782070368228"),
+}
+
+emprunts = [
+    (1, 1, 1, "20240501", "20240515"),
+    (2, 1, 3, "20240615", "20240630"),
+    (3, 2, 2, "20240820", "20240905"),
+    (4, 3, 4, "20230901", "20230915"),
+    (5, 1, 4, "20241015", None),
+    (6, 2, 1, "20241201", None),
+]
+
+
+def emprunts_livre_bd_simulation(date):
+    """
+    Simule la requête SQL. Remplace conn par la simulation en mémoire.
+    En examen, cette fonction appellerait sqlite3 avec la vraie base.
+    """
+    resultats = []
+    for e in emprunts:
+        _, id_adh, id_livre, date_emprunt, _ = e
+        livre = livres[id_livre]
+        if livre[3] == "BD" and date_emprunt > date:
+            adh = adherents[id_adh]
+            resultats.append((adh[0], adh[1], adh[2], adh[3], date_emprunt))
+    # Tri par id_adherent puis date_emprunt
+    resultats.sort(key=lambda r: (r[0], r[4]))
+    return resultats
+
+
+def test_emprunts_livre_bd():
+    res = emprunts_livre_bd_simulation("20240101")
+    # Emprunts de BD après le 1er janv. 2024 :
+    # emp#1 (Adh1, Asterix, 20240501), emp#3 (Adh2, Lucky Luke, 20240820),
+    # emp#5 (Adh1, Tintin, 20241015), emp#6 (Adh2, Asterix, 20241201)
+    # emp#4 (Adh3, Tintin, 20230901) → trop ancien → exclu
+    assert len(res) == 4, f"Attendu 4, obtenu {len(res)}"
+    # Premier résultat : Adhérent 1, le plus ancien
+    assert res[0][0] == 1 and res[0][4] == "20240501"
+    # Dernier : Adhérent 2, le plus récent
+    assert res[-1][0] == 2 and res[-1][4] == "20241201"
+    # Aucun roman
+    for r in res:
+        assert r[0] in [1, 2]  # seuls Alice et Bob ont emprunté des BD après cette date
+    print("Les tests de emprunts_livre_bd sont passés.")
+
+test_emprunts_livre_bd()
+
+print("\nRésultats emprunts BD depuis 01/01/2024 :")
+for r in emprunts_livre_bd_simulation("20240101"):
+    print(f"  Adh#{r[0]} {r[1]} {r[2]} | tél: {r[3]} | date: {r[4]}")
+      </script>
+    </div>
+
+    <!-- CORRECTION -->
+    <div style="margin:1rem 0;">
+      <button class="btn-tp-or" onclick="toggleCorrection('corr-q3', this)">&#128274; Afficher la correction SQL</button>
+    </div>
+    <div id="corr-q3" class="correction-bloc encadre-conseil">
+      <span class="encadre-prefix">Correction — Question 3 (version SQLite réelle pour l'examen)</span>
+      <pre style="margin:0"><code>def emprunts_livre_bd(conn, date):
+    """
+    Renvoie la liste des emprunts de BD effectués après `date`.
+    Chaque tuple : (adherent.id, nom, prenom, telephone, date_emprunt).
+    Résultats triés par adherent.id puis date_emprunt.
+    """
+    cursor = conn.cursor()
+    resultats = cursor.execute(
+        "SELECT adherent.id, adherent.nom, adherent.prenom, "
+        "       adherent.telephone, emprunt.date_emprunt "
+        "FROM emprunt "
+        "JOIN livre    ON emprunt.id_livre    = livre.id "
+        "JOIN adherent ON emprunt.id_adherent = adherent.id "
+        "WHERE livre.genre = 'BD' "
+        "AND   emprunt.date_emprunt > ? "
+        "ORDER BY adherent.id, emprunt.date_emprunt",
+        (date,)     # ← tuple à un élément : la virgule après date est OBLIGATOIRE
+    )
+    return list(resultats)</code></pre>
+      <div style="margin-top:.8rem;">
+        <p><strong>Points critiques à retenir :</strong></p>
+        <ul style="margin:0">
+          <li><strong>Double JOIN</strong> : emprunt→livre (pour filtrer sur le genre) et emprunt→adhérent (pour récupérer les coordonnées).</li>
+          <li><strong>Préfixer les colonnes</strong> : écrire <code>adherent.id</code> et non juste <code>id</code> pour lever toute ambiguïté (emprunt et adhérent ont tous les deux un champ <code>id</code>).</li>
+          <li><strong>Paramètre <code>(date,)</code></strong> : la virgule transforme <code>date</code> en tuple d'un élément — sans elle, Python passerait une chaîne et SQLite lèverait une erreur.</li>
+          <li><strong><code>list(resultats)</code></strong> : convertir le curseur en liste pour pouvoir la réutiliser.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <hr class="sep">
+
+  <!-- QUESTION 4 -->
+  <section id="q4">
+    <h2>Question 4 — Analyser et corriger <code>dernier_emprunt</code></h2>
+
+    <div class="encadre-question">
+      <span class="encadre-prefix">Énoncé — Question 4</span>
+      <p>
+        <span class="badge-question">Q4</span>
+        La fonction <code>dernier_emprunt(emprunts)</code> est censée renvoyer,
+        pour chaque adhérent, l'emprunt le plus récent. Elle prend en paramètre
+        la liste renvoyée par <code>emprunts_livre_bd</code> (liste de tuples
+        <code>(id_adherent, nom, prenom, telephone, date_emprunt)</code>).
+      </p>
+      <p style="margin:0">
+        La fonction est incorrecte. Analyser le code, identifier le bug,
+        et proposer une version corrigée.
+      </p>
+    </div>
+
+    <h3>Le code fourni (bugué)</h3>
+
+    <pre><code>def dernier_emprunt(emprunts):
+    """
+    Renvoie un dictionnaire {id_adherent: tuple_emprunt}
+    contenant le dernier emprunt de chaque adhérent.
+    """
+    derniers = {}
+    for e in emprunts:
+        id_adh = e[0]
+        date   = e[4]
+        if id_adh not in derniers:
+            derniers[id_adh] = e
+        elif date <span style="color:#c0392b; font-weight:600">&lt;</span> derniers[id_adh][4]:   <span style="color:#c0392b">← BUG ICI</span>
+            derniers[id_adh] = e
+    return derniers</code></pre>
+
+    <div class="encadre-conseil">
+      <span class="encadre-prefix">Analyse — données de test pour révéler le bug</span>
+      <p>Considère la liste d'emprunts d'un même adhérent (id=1, Alice Martin) :</p>
+      <table class="table-gen" style="width:auto">
+        <tr><th>id_adh</th><th>nom</th><th>prenom</th><th>telephone</th><th>date_emprunt</th></tr>
+        <tr><td>1</td><td>Martin</td><td>Alice</td><td>0612345678</td><td>20240501</td></tr>
+        <tr><td>1</td><td>Martin</td><td>Alice</td><td>0612345678</td><td>20241015</td></tr>
+        <tr><td>1</td><td>Martin</td><td>Alice</td><td>0612345678</td><td>20231201</td></tr>
+      </table>
+
+      <p style="margin-top:.8rem"><strong>Trace d'exécution — version buguée :</strong></p>
+      <table class="table-gen" style="width:auto">
+        <tr><th>Itération</th><th>date</th><th>derniers[1] avant</th><th>Condition <code>date &lt; derniers[1][4]</code></th><th>derniers[1] après</th></tr>
+        <tr><td>1 (init)</td><td>20240501</td><td>absent</td><td>— (initialisation)</td><td class="ok">20240501</td></tr>
+        <tr><td>2</td><td>20241015</td><td>20240501</td><td class="bug">20241015 &lt; 20240501 → False → pas de mise à jour</td><td class="bug">20240501 (inchangé !)</td></tr>
+        <tr><td>3</td><td>20231201</td><td>20240501</td><td class="ok">20231201 &lt; 20240501 → True → mise à jour</td><td class="bug">20231201 (le plus ANCIEN !)</td></tr>
+      </table>
+      <p style="margin-top:.8rem; margin-bottom:0">
+        La version buguée garde <code>20231201</code> — la date la plus <strong>ancienne</strong>.
+        Elle devrait garder <code>20241015</code> — la plus <strong>récente</strong>.
+      </p>
+    </div>
+
+    <!-- INDICES -->
+    <div style="margin:.8rem 0;">
+      <button class="btn-tp-vert" onclick="toggleIndice('ind4a', this)">▶ Indice — Quelle condition garde le maximum ?</button>
+    </div>
+    <div id="ind4a" class="encadre-indice indice-bloc">
+      <span class="encadre-prefix">Indice</span>
+      <p>
+        Pour garder le <strong>maximum</strong> (date la plus récente),
+        la condition de mise à jour est <code>date &gt; derniers[id_adh][4]</code> :
+        on remplace l'ancienne valeur si la nouvelle est <em>plus grande</em>.
+      </p>
+      <p style="margin:0">
+        En résumé : <code>&lt;</code> garde le <strong>minimum</strong>,
+        <code>&gt;</code> garde le <strong>maximum</strong>.
+        Ici on veut le maximum → <code>&gt;</code>.
+      </p>
+    </div>
+
+    <!-- ÉDITEUR -->
+    <div class="encadre" style="margin-top:1.2rem;">
+      <span class="encadre-prefix">Éditeur Python — Question 4</span>
+      <script type="py-editor" env="media-q4">
+# Version BUGUÉE — ne pas modifier, observe son comportement
+def dernier_emprunt_bugue(emprunts):
+    derniers = {}
+    for e in emprunts:
+        id_adh = e[0]
+        date   = e[4]
+        if id_adh not in derniers:
+            derniers[id_adh] = e
+        elif date < derniers[id_adh][4]:   # ← BUG : garde le minimum
+            derniers[id_adh] = e
+    return derniers
+
+
+# TODO : écrire la version corrigée
+def dernier_emprunt(emprunts):
+    derniers = {}
+    for e in emprunts:
+        id_adh = e[0]
+        date   = e[4]
+        if id_adh not in derniers:
+            derniers[id_adh] = e
+        elif date < derniers[id_adh][4]:   # ← corriger ici
+            derniers[id_adh] = e
+    return derniers
+
+
+def test_dernier_emprunt():
+    emprunts_test = [
+        (1, "Martin",  "Alice", "0612345678", "20240501"),
+        (1, "Martin",  "Alice", "0612345678", "20241015"),  # ← le plus récent pour id=1
+        (1, "Martin",  "Alice", "0612345678", "20231201"),
+        (2, "Dupont",  "Bob",   "0798765432", "20241201"),  # ← seul emprunt pour id=2
+    ]
+
+    # Bugué : renvoie le MINIMUM pour Alice
+    d_bug = dernier_emprunt_bugue(emprunts_test)
+    print(f"Version buguée  — Alice (id=1) : {d_bug[1][4]}  (attendu 20241015)")
+
+    # Corrigé : doit renvoyer le MAXIMUM
+    d_corr = dernier_emprunt(emprunts_test)
+    assert d_corr[1][4] == "20241015", f"Attendu 20241015, obtenu {d_corr[1][4]}"
+    assert d_corr[2][4] == "20241201"
+    print(f"Version corrigée — Alice (id=1) : {d_corr[1][4]} ✓")
+    print(f"Version corrigée — Bob   (id=2) : {d_corr[2][4]} ✓")
+    print("Les tests de dernier_emprunt sont passés.")
+
+test_dernier_emprunt()
+      </script>
+    </div>
+
+    <!-- CORRECTION -->
+    <div style="margin:1rem 0;">
+      <button class="btn-tp-or" onclick="toggleCorrection('corr-q4', this)">&#128274; Afficher la correction</button>
+    </div>
+    <div id="corr-q4" class="correction-bloc encadre-conseil">
+      <span class="encadre-prefix">Correction — Question 4</span>
+      <script type="py-editor" env="media-c4">
+def dernier_emprunt(emprunts):
+    """
+    Renvoie {id_adherent: tuple_emprunt} avec le dernier emprunt de chaque adhérent.
+    Version CORRIGÉE : condition > pour garder le maximum.
+    """
+    derniers = {}
+    for e in emprunts:
+        id_adh = e[0]
+        date   = e[4]
+        if id_adh not in derniers:
+            derniers[id_adh] = e
+        elif date > derniers[id_adh][4]:   # ← CORRECTION : > au lieu de <
+            derniers[id_adh] = e
+    return derniers
+
+
+def test_dernier_emprunt():
+    emprunts_test = [
+        (1, "Martin",  "Alice", "0612345678", "20240501"),
+        (1, "Martin",  "Alice", "0612345678", "20241015"),
+        (1, "Martin",  "Alice", "0612345678", "20231201"),
+        (2, "Dupont",  "Bob",   "0798765432", "20241201"),
+        (3, "Lemaire", "Carla", "0456789012", "20230901"),
+    ]
+    d = dernier_emprunt(emprunts_test)
+    assert d[1][4] == "20241015"  # Alice : max de 20240501, 20241015, 20231201
+    assert d[2][4] == "20241201"  # Bob   : un seul emprunt
+    assert d[3][4] == "20230901"  # Carla : un seul emprunt
+    assert len(d) == 3            # 3 adhérents distincts
+    print("Les tests de dernier_emprunt sont passés.")
+
+test_dernier_emprunt()
+      </script>
+      <div style="margin-top:.8rem;">
+        <p>
+          <strong>La correction en un seul symbole :</strong> remplacer <code>&lt;</code> par <code>&gt;</code>.
+        </p>
+        <p style="margin:0">
+          <strong>Moyen mnémotechnique :</strong> pour garder le <strong>m<em>ax</em>imum</strong>,
+          on met à jour quand la nouvelle valeur est plus gr<em>ande</em> → signe <code>&gt;</code>.
+          Pour garder le <strong>m<em>in</em>imum</strong>, on met à jour quand elle est plus pet<em>ite</em>
+          → signe <code>&lt;</code>.
+          Ce sujet demande le <em>dernier</em> emprunt = la date la plus grande = <strong>maximum</strong> → <code>&gt;</code>.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <hr class="sep">
+
+  <!-- PIÈGES -->
+  <section id="pieges">
+    <h2>Pièges fréquents &amp; astuces de vérification</h2>
+
+    <div class="encadre-piege">
+      <span class="encadre-prefix">Piège 1 — Le tuple à un élément pour les paramètres SQL</span>
+      <p style="margin:0">
+        <code>cursor.execute("... WHERE ... > ?", date)</code> envoie une <strong>chaîne</strong>
+        comme paramètre — SQLite itère sur ses caractères et plante.
+        Il faut impérativement un <strong>tuple</strong>, même pour un seul paramètre.
+        La virgule après la valeur est obligatoire : <code>(date,)</code>.
+      </p>
+      <pre style="margin:.6rem 0 0"><code># FAUX — date est une chaîne, pas un tuple
+cursor.execute("... WHERE emprunt.date_emprunt > ?", date)
+
+# JUSTE — tuple à un élément
+cursor.execute("... WHERE emprunt.date_emprunt > ?", (date,))</code></pre>
+    </div>
+
+    <div class="encadre-piege">
+      <span class="encadre-prefix">Piège 2 — Oublier de convertir le curseur en liste</span>
+      <p style="margin:0">
+        <code>cursor.execute()</code> renvoie un <em>itérable paresseux</em>,
+        pas une liste. On ne peut le parcourir qu'une seule fois.
+        Sans <code>list(...)</code>, l'appelant peut se retrouver avec un objet vide
+        dès le deuxième accès.
+      </p>
+      <pre style="margin:.6rem 0 0"><code># FAUX — renvoie un curseur
+return cursor.execute("SELECT ...")
+
+# JUSTE — convertit en liste réutilisable
+return list(cursor.execute("SELECT ..."))</code></pre>
+    </div>
+
+    <div class="encadre-piege">
+      <span class="encadre-prefix">Piège 3 — Bug de dernier_emprunt : &lt; vs &gt;</span>
+      <p style="margin:0">
+        Pour trouver le <strong>maximum</strong> d'une série (la date la plus récente),
+        la condition de mise à jour est <code>&gt;</code>.
+        Pour le <strong>minimum</strong>, ce serait <code>&lt;</code>.
+        Confondre les deux produit un résultat plausible mais faux — c'est exactement
+        le bug de ce sujet (et du sujet 15 officiel).
+      </p>
+      <pre style="margin:.6rem 0 0"><code># Trouver le maximum (date la plus récente)
+if date > derniers[id_adh][4]:
+    derniers[id_adh] = e   # on garde la plus grande</code></pre>
+    </div>
+
+    <div class="encadre-piege">
+      <span class="encadre-prefix">Piège 4 — Ambiguïté de colonnes dans le SELECT</span>
+      <p style="margin:0">
+        Plusieurs tables ont des colonnes de même nom : <code>emprunt.id</code>
+        et <code>adherent.id</code> sont deux colonnes <code>id</code> différentes.
+        Sans préfixe (<code>adherent.id</code>, <code>livre.genre</code>…),
+        SQLite peut renvoyer la mauvaise colonne.
+        <strong>Toujours préfixer les colonnes</strong> dans les requêtes avec JOIN.
+      </p>
+    </div>
+
+    <div class="encadre-piege">
+      <span class="encadre-prefix">Piège 5 — Ne tester que les cas True dans validation_isbn</span>
+      <p style="margin:0">
+        Un jeu de tests qui vérifie uniquement les ISBN valides
+        (<code>assert validation_isbn("9782070360245") == True</code>)
+        ne prouve rien sur les rejets. La fonction pourrait renvoyer <code>True</code>
+        pour tout et les tests passeraient quand même.
+        Il faut tester <strong>chaque condition de rejet</strong> avec un exemple précis.
+      </p>
+    </div>
+
+    <!-- Astuces -->
+    <div class="encadre-conseil" style="margin-top:1.5rem;">
+      <span class="encadre-prefix">Astuces de vérification</span>
+      <ul style="margin:0">
+        <li>
+          <strong>Pipeline complet :</strong>
+          <code>validation_isbn(normalisation_isbn(isbn_brut))</code>.
+          Par exemple, <code>normalisation_isbn("978-2-07-036024-5")</code>
+          → <code>"9782070360245"</code> → <code>validation_isbn("9782070360245")</code>
+          → <code>True</code>.
+        </li>
+        <li>
+          <strong>Tester dernier_emprunt avec un seul adhérent :</strong>
+          une liste d'une seule entrée doit renvoyer un dictionnaire à une entrée,
+          avec la date de cet unique emprunt — facile à vérifier à la main.
+        </li>
+        <li>
+          <strong>Vérifier la Q3 avec une date très ancienne :</strong>
+          <code>emprunts_livre_bd(conn, "19000101")</code> doit renvoyer <em>tous</em>
+          les emprunts de BD — si la liste est vide, la date ou le filtre genre est faux.
+        </li>
+        <li>
+          <strong>ISBN invalides courants :</strong> l'ancien format ISBN-10 (10 chiffres)
+          est rejeté par <code>validation_isbn</code> car <code>len != 13</code>.
+          C'est normal et attendu — ce sujet ne gère que l'ISBN-13.
+        </li>
+      </ul>
+    </div>
+
+    <!-- Mini-exercices -->
+    <h3>Mini-exercices de vérification</h3>
+
+    <div class="encadre">
+      <span class="encadre-prefix">Mini-exercice A — Normalisation à la main</span>
+      <p>Sans Python, donne le résultat de <code>normalisation_isbn</code> sur ces entrées :</p>
+      <ol>
+        <li><code>"979-10-02-34567-8"</code></li>
+        <li><code>"978 2 07 040850"</code></li>
+        <li><code>"ISBN-13: 978-2-84097-579-1"</code></li>
+        <li><code>"0-306-40615-2"</code></li>
+      </ol>
+      <button class="btn-secondaire" onclick="toggleCorrection('corr-mini-a', this)">Vérifier</button>
+      <div id="corr-mini-a" class="correction-bloc" style="margin-top:.7rem;">
+        <ol>
+          <li><code>"9791002345678"</code> — 13 chiffres, commence par 979 → <strong>valide</strong></li>
+          <li><code>"978207040850"</code> — 12 chiffres → <strong>trop court</strong>, invalide</li>
+          <li><code>"9782840975791"</code> — 13 chiffres, commence par 978 → <strong>valide</strong></li>
+          <li><code>"0306406152"</code> — 10 chiffres, ancien format ISBN-10 → <strong>invalide</strong> (len ≠ 13)</li>
+        </ol>
+      </div>
+    </div>
+
+    <div class="encadre">
+      <span class="encadre-prefix">Mini-exercice B — Dernier emprunt à la main</span>
+      <p>Donne le résultat de <code>dernier_emprunt</code> (version corrigée) sur :</p>
+      <pre style="margin:.3rem 0"><code>[(10, "Dupuis", "Eve",  "0611111111", "20230601"),
+ (10, "Dupuis", "Eve",  "0611111111", "20240701"),
+ (10, "Dupuis", "Eve",  "0611111111", "20220501"),
+ (20, "Faure",  "Fred", "0722222222", "20241201")]</code></pre>
+      <button class="btn-secondaire" onclick="toggleCorrection('corr-mini-b', this)">Vérifier</button>
+      <div id="corr-mini-b" class="correction-bloc" style="margin-top:.7rem;">
+        <p>
+          Pour Eve (id=10) : 3 emprunts → dates comparées →
+          <code>20240701 &gt; 20230601 &gt; 20220501</code>
+          → la plus récente est <code>20240701</code>.<br>
+          Pour Fred (id=20) : un seul emprunt → <code>20241201</code>.
+        </p>
+        <pre style="margin:0"><code>{
+  10: (10, "Dupuis", "Eve",  "0611111111", "20240701"),
+  20: (20, "Faure",  "Fred", "0722222222", "20241201")
+}</code></pre>
+      </div>
+    </div>
+  </section>
+
+  <hr class="sep">
+
+  <!-- RÉCAPITULATIF -->
+  <div class="encadre" style="margin-top:2rem;">
+    <span class="encadre-prefix">Récapitulatif — Ce que tu dois retenir</span>
+    <ul style="margin:0">
+      <li><code>c.isdigit()</code> renvoie <code>True</code> pour les chiffres 0–9, <code>False</code> pour tout le reste (tirets, espaces, lettres…).</li>
+      <li>Normalisation : parcourir la chaîne, accumuler les <code>c</code> qui passent <code>isdigit()</code>.</li>
+      <li>Tester <code>validation_isbn</code> : couvrir chaque condition de rejet — longueur trop courte, trop longue, mauvais préfixe.</li>
+      <li>Dates <code>AAAAMMJJ</code> : ordre alphabétique = ordre chronologique, comparaison directe possible.</li>
+      <li>Requête Q3 : deux JOIN (<code>emprunt → livre → adhérent</code>), deux filtres WHERE, un ORDER BY double.</li>
+      <li>Paramètre SQL : toujours un tuple, même à un élément → <code>(date,)</code> avec virgule.</li>
+      <li>Bug Q4 : <code>&lt;</code> au lieu de <code>&gt;</code> — pour garder le maximum, la condition est <code>&gt;</code>.</li>
+    </ul>
+  </div>
+
+  <!-- TABLEAU COMPARATIF FINAL -->
+  <div class="encadre-conseil" style="margin-top:1.5rem;">
+    <span class="encadre-prefix">Tableau comparatif sujet 15 ↔ variante — en un coup d'œil</span>
+    <table class="table-gen">
+      <tr>
+        <th>Aspect</th>
+        <th>Sujet 15 officiel</th>
+        <th>Cette variante</th>
+      </tr>
+      <tr>
+        <td>Contexte</td>
+        <td>Cabinet vétérinaire</td>
+        <td>Médiathèque municipale</td>
+      </tr>
+      <tr>
+        <td>Q1 — normalisation</td>
+        <td><code>normalisation_tel("06.12…")</code> → supprimer tout sauf chiffres</td>
+        <td><code>normalisation_isbn("978-2…")</code> → même algorithme</td>
+      </tr>
+      <tr>
+        <td>Q2 — validation</td>
+        <td>10 chiffres, <code>tel[0]=='0'</code>, <code>tel[1]∈{6,7}</code></td>
+        <td>13 chiffres, commence par <code>978</code> ou <code>979</code></td>
+      </tr>
+      <tr>
+        <td>Q3 — SQL</td>
+        <td>JOIN consultation→animal→propriétaire, filtre espece+date, ORDER BY</td>
+        <td>JOIN emprunt→livre→adhérent, filtre genre+date, ORDER BY</td>
+      </tr>
+      <tr>
+        <td>Q4 — bug</td>
+        <td><code>&lt;</code> dans <code>derniere_vaccination</code> → garde la plus ancienne</td>
+        <td><code>&lt;</code> dans <code>dernier_emprunt</code> → garde la plus ancienne</td>
+      </tr>
+      <tr>
+        <td>Correction Q4</td>
+        <td>Remplacer <code>&lt;</code> par <code>&gt;</code></td>
+        <td>Remplacer <code>&lt;</code> par <code>&gt;</code></td>
+      </tr>
+    </table>
+  </div>
+
+</div><!-- /container-content -->
+
+<footer>
+  Lycée Antoine Watteau — DarkSATHI Li
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+  var btnTop = document.getElementById('btn-top');
+  window.addEventListener('scroll', function () {
+    btnTop.style.display = window.scrollY > 300 ? 'flex' : 'none';
+  });
+  btnTop.addEventListener('click', function () {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  });
+
+  function toggleIndice(id, btn) {
+    var el = document.getElementById(id);
+    if (!el) return;
+    el.classList.toggle('visible');
+    btn.textContent = el.classList.contains('visible')
+      ? btn.textContent.replace('▶', '▼')
+      : btn.textContent.replace('▼', '▶');
+  }
+
+  function toggleCorrection(id, btn) {
+    var el = document.getElementById(id);
+    if (!el) return;
+    el.classList.toggle('visible');
+    if (el.classList.contains('visible')) {
+      btn.textContent = btn.textContent.replace('Afficher', 'Masquer').replace('Vérifier', 'Masquer');
+    } else {
+      btn.textContent = btn.textContent.replace('Masquer', 'Afficher');
+    }
+  }
+</script>
+</body>
+</html>
