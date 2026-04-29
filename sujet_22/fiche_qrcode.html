@@ -1,0 +1,1134 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Fiche – QR Code & ASCII | NSI Terminale | BAC 2026 – Sujet 22</title>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Rubik+Dirt&family=Source+Serif+4:ital,opsz,wght@0,8..60,300..900;1,8..60,300..900&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+
+  <!-- Pyodide avec fallback local si CDN échoue -->
+  <script src="https://cdn.jsdelivr.net/pyodide/v0.26.4/full/pyodide.js"></script>
+
+  <!-- CodeMirror 5 -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.17/codemirror.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.17/theme/dracula.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.17/codemirror.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.17/mode/python/python.min.js"></script>
+
+  <style>
+    :root {
+      --bg-main:       #f8f9fb;
+      --bg-panel:      #eef1f5;
+      --accent:        #2a6496;
+      --accent-or:     #b5610a;
+      --accent-vert:   #2e7d32;
+      --text-main:     #1a1a1a;
+      --text-muted:    #5a6470;
+      --border-radius: 8px;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      background-color: var(--bg-main);
+      color: var(--text-main);
+      font-family: 'Source Serif 4', Georgia, serif;
+      font-size: 1.05rem;
+      line-height: 1.8;
+      margin: 0;
+      padding-bottom: 4rem;
+    }
+
+    h1, h2, h3, h4 {
+      font-family: 'Rubik Dirt', cursive;
+      color: var(--accent);
+      letter-spacing: 0.02em;
+    }
+
+    h1 { font-size: 2.2rem; color: #111; }
+    h2 { font-size: 1.55rem; border-bottom: 2px solid var(--accent); padding-bottom: .3rem; margin-top: 2.5rem; }
+    h3 { font-size: 1.25rem; color: var(--accent-or); margin-top: 1.8rem; }
+    h4 { font-size: 1.05rem; color: var(--accent-vert); }
+    p { margin-bottom: 1rem; }
+
+    code {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.88em;
+      background: #e8edf2;
+      padding: 2px 6px;
+      border-radius: 4px;
+      color: #8b3a00;
+    }
+
+    /* ── NAVIGATION ── */
+    #navbar {
+      position: sticky; top: 0; z-index: 1000;
+      background: #2a6496; border-bottom: 2px solid #1a4a70;
+      padding: .5rem 1.5rem;
+      display: flex; gap: .5rem; flex-wrap: wrap; align-items: center;
+    }
+    #navbar span {
+      font-family: 'JetBrains Mono', monospace; font-size: .8rem;
+      color: #ccddf0; margin-right: auto;
+    }
+    #navbar a {
+      font-family: 'JetBrains Mono', monospace; font-size: .8rem;
+      color: #fff; text-decoration: none;
+      padding: .25rem .7rem; border: 1px solid #ccddf0;
+      border-radius: 4px; transition: background .2s;
+    }
+    #navbar a:hover { background: #1a4a70; }
+
+    /* ── LAYOUT ── */
+    .container-content { max-width: 860px; margin: 0 auto; padding: 2rem 1.5rem; }
+
+    /* ── ENCADRÉS ── */
+    .encadre, .encadre-conseil, .encadre-indice, .encadre-question, .encadre-piege {
+      border-radius: var(--border-radius);
+      padding: 1.1rem 1.4rem;
+      margin: 1.4rem 0;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+    }
+    .encadre          { background:#fff;    border-left: 4px solid var(--accent); }
+    .encadre-conseil  { background:#fff8f0; border-left: 4px solid var(--accent-or); }
+    .encadre-indice   { background:#f0faf0; border-left: 4px solid var(--accent-vert); }
+    .encadre-question { background:#faf5ff; border-left: 4px solid #7b3fa8; border-top: 1px solid #c8a8e820; }
+    .encadre-piege    { background:#fff5f5; border-left: 4px solid #c0392b; }
+
+    .encadre-prefix {
+      font-family: 'JetBrains Mono', monospace; font-size: .72rem;
+      font-variant: small-caps; letter-spacing: .12em; text-transform: uppercase;
+      margin-bottom: .4rem; display: block;
+    }
+    .encadre          .encadre-prefix { color: var(--accent); }
+    .encadre-conseil  .encadre-prefix { color: var(--accent-or); }
+    .encadre-indice   .encadre-prefix { color: var(--accent-vert); }
+    .encadre-question .encadre-prefix { color: #7b3fa8; }
+    .encadre-piege    .encadre-prefix { color: #c0392b; }
+
+    /* ── BOUTONS ── */
+    .btn-tp, .btn-tp-or, .btn-tp-vert, .btn-secondaire {
+      font-family: 'JetBrains Mono', monospace; font-size: .82rem;
+      border: none; border-radius: 5px; padding: .45rem 1.1rem;
+      cursor: pointer; transition: opacity .2s, transform .1s; margin: .3rem .2rem;
+    }
+    .btn-tp         { background: var(--accent);      color: #fff; }
+    .btn-tp-or      { background: var(--accent-or);   color: #fff; }
+    .btn-tp-vert    { background: var(--accent-vert); color: #fff; }
+    .btn-secondaire { background: #eef1f5; border: 1px solid var(--accent); color: var(--text-main); }
+    .btn-tp:hover, .btn-tp-or:hover, .btn-tp-vert:hover, .btn-secondaire:hover {
+      opacity: .85; transform: translateY(-1px);
+    }
+
+    /* ── CODE COLORISÉ (affichage statique) ── */
+    pre.code-block {
+      background: #1e2430; color: #cdd6f4;
+      border-radius: var(--border-radius);
+      padding: 1rem 1.2rem;
+      font-family: 'JetBrains Mono', monospace; font-size: .88rem;
+      overflow-x: auto; margin: .75rem 0 1rem; line-height: 1.65;
+      white-space: pre;
+    }
+    pre.code-block .kw  { color: #cba6f7; }
+    pre.code-block .fn  { color: #89b4fa; }
+    pre.code-block .st  { color: #a6e3a1; }
+    pre.code-block .cm  { color: #6c7086; font-style: italic; }
+    pre.code-block .nb  { color: #fab387; }
+    pre.code-block .bug { color: #f38ba8; font-style: italic; }
+
+    /* ── ÉDITEUR PYODIDE ── */
+    .editor-container { margin: .5rem 0 1.2rem; }
+    .py-editor-wrap {
+      border: 2px solid var(--accent);
+      border-radius: var(--border-radius);
+      overflow: hidden;
+    }
+    .py-editor-wrap .CodeMirror {
+      font-family: 'JetBrains Mono', monospace; font-size: .87rem;
+      height: auto; min-height: 160px; background: #1e2430;
+    }
+    .py-editor-wrap .CodeMirror-scroll { min-height: 160px; }
+    .py-output {
+      background: #111827; color: #a6e3a1;
+      font-family: 'JetBrains Mono', monospace; font-size: .84rem;
+      padding: .7rem 1rem; border-top: 1px solid #2a6496;
+      white-space: pre-wrap; display: none;
+    }
+    .py-output.visible { display: block; }
+    .py-output.error   { color: #f38ba8; }
+    .btn-run {
+      font-family: 'JetBrains Mono', monospace; font-size: .8rem;
+      background: var(--accent); color: #fff;
+      border: none; border-radius: 5px;
+      padding: .35rem 1rem; cursor: pointer;
+      margin: .4rem 0; transition: opacity .2s;
+    }
+    .btn-run:hover { opacity: .8; }
+    .btn-run:disabled { opacity: .5; cursor: wait; }
+
+    /* ── INDICES / CORRECTIONS ── */
+    .indice-bloc, .correction-bloc { display: none; }
+    .indice-bloc.visible, .correction-bloc.visible { display: block; }
+
+    /* ── QR CODE VISUEL ── */
+    .qr-grid {
+      display: inline-grid;
+      grid-template-columns: repeat(8, 28px);
+      gap: 2px;
+      background: #fff;
+      padding: 8px;
+      border: 2px solid var(--accent);
+      border-radius: 6px;
+    }
+    .qr-cell {
+      width: 28px; height: 28px;
+      border-radius: 3px;
+    }
+    .qr-cell.black { background: #1a1a1a; }
+    .qr-cell.white { background: #f5f5f5; border: 1px solid #ddd; }
+
+    /* ── TABLEAU ASCII ── */
+    .table-ascii {
+      border-collapse: collapse;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: .8rem; margin: .8rem 0; width: 100%;
+    }
+    .table-ascii th {
+      background: #dce8f2; color: var(--accent);
+      border: 1px solid var(--accent); padding: .35rem .6rem; text-align: center;
+    }
+    .table-ascii td {
+      border: 1px solid #c8d8e8; padding: .3rem .6rem; text-align: center;
+    }
+    .table-ascii tr:nth-child(even) td { background: #f0f5fa; }
+    .table-ascii .highlight td { background: #fef9c3 !important; font-weight: 700; }
+
+    /* ── TABLEAU NOTION ── */
+    .notion-pill {
+      display: inline-block; background: #dce8f2; color: var(--accent);
+      border: 1px solid #aecde8; border-radius: 20px;
+      font-family: 'JetBrains Mono', monospace; font-size: .78rem;
+      padding: .2em .75em; margin: .15em .1em;
+    }
+
+    /* ── SÉPARATEUR ── */
+    .sep { border: none; border-top: 1px dashed var(--accent); margin: 2.5rem 0; opacity: .4; }
+
+    /* ── RETOUR EN HAUT ── */
+    #btn-top {
+      position: fixed; bottom: 1.5rem; right: 1.5rem; z-index: 999;
+      background: var(--accent); color: #fff; border: none; border-radius: 50%;
+      width: 44px; height: 44px; font-size: 1.2rem; cursor: pointer;
+      display: none; align-items: center; justify-content: center;
+      font-family: 'JetBrains Mono', monospace; box-shadow: 0 2px 12px rgba(0,0,0,0.2);
+    }
+    #btn-top:hover { opacity: .8; }
+
+    /* ── FOOTER ── */
+    footer {
+      text-align: center; font-family: 'JetBrains Mono', monospace;
+      font-size: .8rem; color: var(--text-muted);
+      padding: 2rem 1rem 1rem; border-top: 1px solid #d0d8e4;
+    }
+
+    /* ── PYODIDE STATUS ── */
+    #pyodide-status {
+      font-family: 'JetBrains Mono', monospace; font-size: .75rem;
+      color: var(--text-muted); margin-bottom: .5rem; display: inline-block;
+    }
+
+    /* ── SOMMAIRE ── */
+    #sommaire ol { font-family: 'JetBrains Mono', monospace; font-size: .88rem; line-height: 2.2; }
+    #sommaire a { color: var(--accent); }
+
+    /* ── TRACE TABLE ── */
+    .table-trace {
+      border-collapse: collapse; width: 100%;
+      font-family: 'JetBrains Mono', monospace; font-size: .82rem; margin: 1rem 0;
+    }
+    .table-trace th { background: #dce8f2; color: var(--accent); border: 1px solid var(--accent); padding: .4rem .7rem; }
+    .table-trace td { border: 1px solid #c8d8e8; padding: .38rem .7rem; }
+    .table-trace tr:nth-child(even) td { background: #f0f5fa; }
+
+    @media (max-width: 640px) { h1 { font-size: 1.6rem; } }
+  </style>
+</head>
+<body>
+
+<button id="btn-top" title="Retour en haut" aria-label="Retour en haut">▲</button>
+
+<nav id="navbar">
+  <span>NSI Terminale – QR Code ASCII · Sujet 22</span>
+  <a href="#s0">Intro</a>
+  <a href="#q1">Q1</a>
+  <a href="#q2">Q2</a>
+  <a href="#q3">Q3</a>
+  <a href="#q4">Q4</a>
+  <a href="#pieges">Pièges</a>
+</nav>
+
+<div class="container-content">
+
+  <!-- EN-TÊTE -->
+  <div style="text-align:center; padding: 2rem 0 1rem;">
+    <div style="font-family:'JetBrains Mono',monospace; font-size:.8rem; color:var(--text-muted); margin-bottom:.5rem;">
+      BAC NSI 2026 — Sujet n°22 — Partie pratique
+    </div>
+    <h1>QR Code simplifié &amp; table ASCII<br>
+      <span style="font-size:1.05rem; color:var(--accent); font-family:'Source Serif 4',serif; font-style:italic; font-weight:300;">
+        Binaire · ASCII · Dictionnaires · Débogage
+      </span>
+    </h1>
+    <div style="font-family:'JetBrains Mono',monospace; font-size:.8rem; color:var(--text-muted); margin-top:.5rem;">
+      Terminale NSI &nbsp;·&nbsp; Représentation des données &nbsp;·&nbsp; Algorithmique
+    </div>
+    <div style="margin-top:1rem;">
+      <span class="notion-pill">Binaire → Décimal</span>
+      <span class="notion-pill">Table ASCII</span>
+      <span class="notion-pill">Dictionnaire inverse</span>
+      <span class="notion-pill">Tuples &amp; listes</span>
+      <span class="notion-pill">Débogage logique</span>
+    </div>
+  </div>
+
+  <hr class="sep">
+
+  <!-- SOMMAIRE -->
+  <section id="s0">
+    <div id="sommaire" class="encadre">
+      <span class="encadre-prefix">Sommaire</span>
+      <ol>
+        <li><a href="#contexte">Contexte — QR code simplifié &amp; décodage</a></li>
+        <li><a href="#q1">Question 1 — Fonction <code>bin2dec</code> (binaire → décimal)</a></li>
+        <li><a href="#q2">Question 2 — Fonction <code>qrcode2dec</code> (QR code → liste d'entiers)</a></li>
+        <li><a href="#q3">Question 3 — Correction de <code>dec2str</code> (entiers → chaîne ASCII)</a></li>
+        <li><a href="#q4">Question 4 — Correction de <code>str2qrcode</code> (chaîne → QR code)</a></li>
+        <li><a href="#pieges">Pièges fréquents &amp; récapitulatif</a></li>
+      </ol>
+    </div>
+  </section>
+
+  <hr class="sep">
+
+  <!-- CONTEXTE -->
+  <section id="contexte">
+    <h2>Contexte &amp; structure du problème</h2>
+
+    <p>
+      Un <strong>QR code simplifié</strong> est une grille de cases noires (bit <code>1</code>)
+      et blanches (bit <code>0</code>). Ici, chaque ligne de 8 cases forme un <strong>tuple de 8 bits</strong>,
+      et le QR code entier est une <strong>liste de tuples</strong>.
+    </p>
+
+    <div class="encadre-conseil">
+      <span class="encadre-prefix">Pipeline de décodage</span>
+      <p style="margin:0; font-family:'JetBrains Mono',monospace; font-size:.9rem;">
+        QR code (liste de tuples binaires)<br>
+        &nbsp;&nbsp;→ <strong>bin2dec</strong> sur chaque tuple → liste d'entiers décimaux<br>
+        &nbsp;&nbsp;→ <strong>dec2str</strong> sur la liste → chaîne de caractères (message)
+      </p>
+    </div>
+
+    <h3>La figure 1 — QR code de l'exemple</h3>
+    <p>Voici le QR code (6 lignes × 8 colonnes) et sa représentation visuelle :</p>
+
+    <div style="display:flex; gap:2rem; align-items:flex-start; flex-wrap:wrap; margin:1rem 0;">
+      <div>
+        <div class="qr-grid" id="qr-visual"></div>
+        <div style="font-family:'JetBrains Mono',monospace; font-size:.75rem; color:var(--text-muted); text-align:center; margin-top:.5rem;">Figure 1 — QR code simplifié</div>
+      </div>
+      <div style="flex:1; min-width:220px;">
+        <pre class="code-block">figure1 = [
+  (<span class="nb">0</span>,<span class="nb">1</span>,<span class="nb">0</span>,<span class="nb">0</span>,<span class="nb">1</span>,<span class="nb">1</span>,<span class="nb">0</span>,<span class="nb">1</span>),  <span class="cm"># ligne 0</span>
+  (<span class="nb">0</span>,<span class="nb">0</span>,<span class="nb">1</span>,<span class="nb">0</span>,<span class="nb">1</span>,<span class="nb">1</span>,<span class="nb">1</span>,<span class="nb">0</span>),  <span class="cm"># ligne 1</span>
+  (<span class="nb">0</span>,<span class="nb">1</span>,<span class="nb">0</span>,<span class="nb">0</span>,<span class="nb">1</span>,<span class="nb">0</span>,<span class="nb">0</span>,<span class="nb">0</span>),  <span class="cm"># ligne 2</span>
+  (<span class="nb">0</span>,<span class="nb">1</span>,<span class="nb">1</span>,<span class="nb">0</span>,<span class="nb">0</span>,<span class="nb">0</span>,<span class="nb">0</span>,<span class="nb">1</span>),  <span class="cm"># ligne 3</span>
+  (<span class="nb">0</span>,<span class="nb">1</span>,<span class="nb">1</span>,<span class="nb">1</span>,<span class="nb">0</span>,<span class="nb">0</span>,<span class="nb">1</span>,<span class="nb">0</span>),  <span class="cm"># ligne 4</span>
+  (<span class="nb">0</span>,<span class="nb">1</span>,<span class="nb">1</span>,<span class="nb">0</span>,<span class="nb">0</span>,<span class="nb">0</span>,<span class="nb">0</span>,<span class="nb">1</span>),  <span class="cm"># ligne 5</span>
+]</pre>
+      </div>
+    </div>
+
+    <div class="encadre">
+      <span class="encadre-prefix">Rappel — Conversion binaire → décimal</span>
+      <p>
+        Chaque bit a un <strong>poids</strong> qui est une puissance de 2, en partant de la droite (bit de poids faible).
+        Pour un tuple de 8 bits <code>(b₇, b₆, b₅, b₄, b₃, b₂, b₁, b₀)</code> :
+      </p>
+      <p style="text-align:center; font-family:'JetBrains Mono',monospace;">
+        valeur = b₇×2⁷ + b₆×2⁶ + b₅×2⁵ + b₄×2⁴ + b₃×2³ + b₂×2² + b₁×2¹ + b₀×2⁰
+      </p>
+      <p style="margin:0;">
+        Exemple : <code>(0,1,1,0,0,0,0,1)</code> → 0×128 + 1×64 + 1×32 + 0×16 + 0×8 + 0×4 + 0×2 + 1×1 = <strong>97</strong> → caractère <strong>'a'</strong>
+      </p>
+    </div>
+  </section>
+
+  <hr class="sep">
+
+  <!-- QUESTION 1 -->
+  <section id="q1">
+    <h2>Question 1 — Fonction <code>bin2dec</code></h2>
+
+    <div class="encadre-question">
+      <span class="encadre-prefix">Question 1 / 4</span>
+      <p>
+        Écrire une fonction <code>bin2dec(tuple_bin)</code> qui prend en paramètre un tuple représentant
+        un nombre binaire et qui renvoie l'entier naturel en base 10 correspondant.
+      </p>
+      <p style="margin:0;">
+        Puis, à l'aide de cette fonction, <strong>déterminer la chaîne de caractères</strong> contenue
+        dans le QR code de la figure 1 pour découvrir le nom de l'inventeur de ce système de codage.
+      </p>
+    </div>
+
+    <h3>Analyse &amp; méthode</h3>
+    <p>
+      Il faut parcourir le tuple de droite à gauche en multipliant chaque bit par la puissance de 2 correspondante,
+      ou de gauche à droite en utilisant l'algorithme de <strong>Horner</strong> (plus élégant).
+    </p>
+
+    <div class="encadre-conseil">
+      <span class="encadre-prefix">Deux approches possibles</span>
+      <p><strong>Approche 1 — Par puissances de 2 :</strong> utiliser <code>enumerate</code> en inversant le tuple.</p>
+      <p style="margin:0;"><strong>Approche 2 — Algorithme de Horner :</strong> accumuler bit par bit avec <code>resultat = resultat * 2 + bit</code>.</p>
+    </div>
+
+    <button class="btn-secondaire" onclick="toggle('ind1', this)">▶ Indice</button>
+    <button class="btn-tp-vert" onclick="toggle('cor1', this)">Voir la correction</button>
+
+    <div class="indice-bloc" id="ind1">
+      <div class="encadre-indice" style="margin-top:.6rem;">
+        <span class="encadre-prefix">Indice</span>
+        <p style="margin:0;">
+          Pour l'approche par puissances : <code>for i, bit in enumerate(reversed(tuple_bin))</code>
+          puis <code>resultat += bit * (2 ** i)</code>.<br><br>
+          Pour Horner : initialiser <code>resultat = 0</code>, puis pour chaque bit :
+          <code>resultat = resultat * 2 + bit</code>.
+        </p>
+      </div>
+    </div>
+
+    <div class="correction-bloc" id="cor1">
+      <div class="encadre-indice" style="margin-top:.6rem; border-left-color:var(--accent-vert);">
+        <span class="encadre-prefix" style="color:var(--accent-vert);">✔ Correction — deux approches</span>
+
+        <p><strong>Approche 1 — Par puissances de 2 :</strong></p>
+        <pre class="code-block"><span class="kw">def</span> <span class="fn">bin2dec</span>(tuple_bin):
+    <span class="st">"""Convertit un tuple de bits en entier décimal."""</span>
+    resultat = <span class="nb">0</span>
+    <span class="kw">for</span> i, bit <span class="kw">in</span> <span class="fn">enumerate</span>(<span class="fn">reversed</span>(tuple_bin)):
+        resultat += bit * (<span class="nb">2</span> ** i)
+    <span class="kw">return</span> resultat</pre>
+
+        <p><strong>Approche 2 — Algorithme de Horner (recommandée) :</strong></p>
+        <pre class="code-block"><span class="kw">def</span> <span class="fn">bin2dec</span>(tuple_bin):
+    <span class="st">"""Convertit un tuple de bits en entier décimal (méthode de Horner)."""</span>
+    resultat = <span class="nb">0</span>
+    <span class="kw">for</span> bit <span class="kw">in</span> tuple_bin:
+        resultat = resultat * <span class="nb">2</span> + bit
+    <span class="kw">return</span> resultat</pre>
+
+        <p><strong>Trace sur l'exemple <code>(0,1,1,0,0,0,0,1)</code> (Horner) :</strong></p>
+        <div style="overflow-x:auto;">
+          <table class="table-trace">
+            <thead>
+              <tr><th>bit lu</th><th>calcul</th><th>resultat</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>0</td><td>0×2 + 0</td><td>0</td></tr>
+              <tr><td>1</td><td>0×2 + 1</td><td>1</td></tr>
+              <tr><td>1</td><td>1×2 + 1</td><td>3</td></tr>
+              <tr><td>0</td><td>3×2 + 0</td><td>6</td></tr>
+              <tr><td>0</td><td>6×2 + 0</td><td>12</td></tr>
+              <tr><td>0</td><td>12×2 + 0</td><td>24</td></tr>
+              <tr><td>0</td><td>24×2 + 0</td><td>48</td></tr>
+              <tr><td>1</td><td>48×2 + 1</td><td><strong>97</strong> → 'a'</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <p style="margin:0; font-size:.93rem;">
+          Le QR code de la figure 1 encode le nom : <strong>"Masahiro Hara"</strong>
+          (ingénieur Toyota, inventeur du QR code en 1994).
+        </p>
+      </div>
+    </div>
+
+    <p style="font-size:.88rem; color:var(--text-muted); margin-top:1rem;">📝 Testez votre fonction <code>bin2dec</code> et décodez la figure 1 :</p>
+    <div class="editor-container">
+      <span id="pyodide-status">⏳ Chargement de Python…</span><br>
+      <div class="py-editor-wrap" id="wrap-q1">
+        <textarea id="ta-q1">figure1 = [
+    (0, 1, 0, 0, 1, 1, 0, 1),
+    (0, 0, 1, 0, 1, 1, 1, 0),
+    (0, 1, 0, 0, 1, 0, 0, 0),
+    (0, 1, 1, 0, 0, 0, 0, 1),
+    (0, 1, 1, 1, 0, 0, 1, 0),
+    (0, 1, 1, 0, 0, 0, 0, 1),
+]
+
+dict_ascii = {
+    32: " ", 33: "!", 34: '"', 35: "#", 36: "$", 37: "%", 38: "&", 39: "'",
+    40: "(", 41: ")", 42: "*", 43: "+", 44: ",", 45: "-", 46: ".", 47: "/",
+    48: "0", 49: "1", 50: "2", 51: "3", 52: "4", 53: "5", 54: "6", 55: "7",
+    56: "8", 57: "9", 64: "@", 65: "A", 66: "B", 67: "C", 68: "D", 69: "E",
+    70: "F", 71: "G", 72: "H", 73: "I", 74: "J", 75: "K", 76: "L", 77: "M",
+    78: "N", 79: "O", 80: "P", 81: "Q", 82: "R", 83: "S", 84: "T", 85: "U",
+    86: "V", 87: "W", 88: "X", 89: "Y", 90: "Z", 97: "a", 98: "b", 99: "c",
+    100: "d", 101: "e", 102: "f", 103: "g", 104: "h", 105: "i", 106: "j",
+    107: "k", 108: "l", 109: "m", 110: "n", 111: "o", 112: "p", 113: "q",
+    114: "r", 115: "s", 116: "t", 117: "u", 118: "v", 119: "w", 120: "x",
+    121: "y", 122: "z"
+}
+
+# ── À compléter ──────────────────────────────────────────────────────
+def bin2dec(tuple_bin):
+    pass  # Remplacer par votre code
+# ─────────────────────────────────────────────────────────────────────
+
+# Test rapide
+print("Test (0,1,1,0,0,0,0,1) →", bin2dec((0,1,1,0,0,0,0,1)), "(attendu : 97)")
+
+# Décoder figure1
+message = ""
+for ligne in figure1:
+    valeur = bin2dec(ligne)
+    message += dict_ascii.get(valeur, "?")
+print("Message figure 1 :", message)
+</textarea>
+        <div class="py-output" id="out-q1"></div>
+      </div>
+      <button class="btn-run" id="btn-q1" onclick="runEditor('q1')" disabled>▶ Exécuter</button>
+    </div>
+  </section>
+
+  <hr class="sep">
+
+  <!-- QUESTION 2 -->
+  <section id="q2">
+    <h2>Question 2 — Fonction <code>qrcode2dec</code></h2>
+
+    <div class="encadre-question">
+      <span class="encadre-prefix">Question 2 / 4</span>
+      <p>
+        Écrire une fonction <code>qrcode2dec(qrcode)</code> qui prend en paramètre une <strong>liste de tuples</strong>
+        représentant un QR code et qui renvoie une <strong>liste d'entiers décimaux</strong> correspondant
+        à chacune des lignes.
+      </p>
+      <p style="margin:0;">
+        Proposer un test qui utilisera la représentation du QR code de la figure 1 fournie dans <code>ascii.py</code>.
+      </p>
+    </div>
+
+    <button class="btn-secondaire" onclick="toggle('ind2', this)">▶ Indice</button>
+    <button class="btn-tp-vert" onclick="toggle('cor2', this)">Voir la correction</button>
+
+    <div class="indice-bloc" id="ind2">
+      <div class="encadre-indice" style="margin-top:.6rem;">
+        <span class="encadre-prefix">Indice</span>
+        <p style="margin:0;">
+          Cette fonction applique simplement <code>bin2dec</code> à chaque tuple de la liste.
+          Une compréhension de liste est idéale : <code>[bin2dec(t) for t in qrcode]</code>.
+        </p>
+      </div>
+    </div>
+
+    <div class="correction-bloc" id="cor2">
+      <div class="encadre-indice" style="margin-top:.6rem; border-left-color:var(--accent-vert);">
+        <span class="encadre-prefix" style="color:var(--accent-vert);">✔ Correction</span>
+        <pre class="code-block"><span class="kw">def</span> <span class="fn">qrcode2dec</span>(qrcode):
+    <span class="st">"""Convertit une liste de tuples binaires en liste d'entiers décimaux."""</span>
+    <span class="kw">return</span> [<span class="fn">bin2dec</span>(ligne) <span class="kw">for</span> ligne <span class="kw">in</span> qrcode]</pre>
+
+        <p><strong>Test attendu sur figure1 :</strong></p>
+        <pre class="code-block"><span class="fn">print</span>(<span class="fn">qrcode2dec</span>(figure1))
+<span class="cm"># → [77, 46, 72, 97, 114, 97]
+# → M . H a r a  →  "M.Hara" (Masahiro Hara)</span></pre>
+
+        <p style="margin:0; font-size:.93rem;">
+          <strong>Point clé :</strong> <code>qrcode2dec</code> est un simple <em>mapper</em> — elle délègue
+          tout le travail à <code>bin2dec</code>. La compréhension de liste est la solution la plus Pythonique.
+        </p>
+      </div>
+    </div>
+
+    <p style="font-size:.88rem; color:var(--text-muted); margin-top:1rem;">📝 Testez votre fonction <code>qrcode2dec</code> :</p>
+    <div class="editor-container">
+      <div class="py-editor-wrap" id="wrap-q2">
+        <textarea id="ta-q2">figure1 = [
+    (0, 1, 0, 0, 1, 1, 0, 1),
+    (0, 0, 1, 0, 1, 1, 1, 0),
+    (0, 1, 0, 0, 1, 0, 0, 0),
+    (0, 1, 1, 0, 0, 0, 0, 1),
+    (0, 1, 1, 1, 0, 0, 1, 0),
+    (0, 1, 1, 0, 0, 0, 0, 1),
+]
+
+def bin2dec(tuple_bin):
+    resultat = 0
+    for bit in tuple_bin:
+        resultat = resultat * 2 + bit
+    return resultat
+
+# ── À compléter ──────────────────────────────────────────────────────
+def qrcode2dec(qrcode):
+    pass  # Remplacer par votre code
+# ─────────────────────────────────────────────────────────────────────
+
+# Test
+resultat = qrcode2dec(figure1)
+print("qrcode2dec(figure1) =", resultat)
+print("Attendu : [77, 46, 72, 97, 114, 97]")
+print("Correct :", resultat == [77, 46, 72, 97, 114, 97])
+</textarea>
+        <div class="py-output" id="out-q2"></div>
+      </div>
+      <button class="btn-run" id="btn-q2" onclick="runEditor('q2')" disabled>▶ Exécuter</button>
+    </div>
+  </section>
+
+  <hr class="sep">
+
+  <!-- QUESTION 3 -->
+  <section id="q3">
+    <h2>Question 3 — Correction de <code>dec2str</code></h2>
+
+    <div class="encadre-question">
+      <span class="encadre-prefix">Question 3 / 4</span>
+      <p>
+        Exécuter la fonction fournie <code>test_dec2str()</code> et observer les résultats affichés.
+        Identifier le problème et proposer une modification de <code>dec2str</code> pour l'éviter.
+      </p>
+      <p style="margin:0;">
+        Après modification, <code>dec2str</code> devra <strong>toujours renvoyer une chaîne lisible</strong>.
+      </p>
+    </div>
+
+    <h3>Code fourni (bugué)</h3>
+    <pre class="code-block"><span class="kw">def</span> <span class="fn">dec2str</span>(liste_dec):
+    table_ascii = dict_ascii
+    chaine = <span class="st">""</span>
+    <span class="kw">for</span> entier <span class="kw">in</span> liste_dec:
+        chaine += table_ascii[entier]   <span class="bug"># ← BUG : KeyError si entier > 127</span>
+    <span class="kw">return</span> chaine
+
+<span class="kw">def</span> <span class="fn">test_dec2str</span>():
+    tests = [test1, test2, test3]
+    <span class="kw">for</span> test <span class="kw">in</span> tests:
+        <span class="fn">print</span>(<span class="fn">dec2str</span>(test))</pre>
+
+    <div class="encadre-piege">
+      <span class="encadre-prefix">🐛 Identification du bug</span>
+      <p style="margin:0;">
+        <code>test3</code> contient l'entier <code>233</code> (le caractère <strong>é</strong> en
+        Latin-1/ISO 8859-1), qui est <strong>hors de la table ASCII</strong> (0–127).
+        L'accès <code>table_ascii[233]</code> lève une <code>KeyError</code> car 233 n'est pas
+        une clé du dictionnaire <code>dict_ascii</code>.
+      </p>
+    </div>
+
+    <button class="btn-secondaire" onclick="toggle('ind3', this)">▶ Indice</button>
+    <button class="btn-tp-vert" onclick="toggle('cor3', this)">Voir la correction</button>
+
+    <div class="indice-bloc" id="ind3">
+      <div class="encadre-indice" style="margin-top:.6rem;">
+        <span class="encadre-prefix">Indice</span>
+        <p style="margin:0;">
+          Utilisez <code>dict.get(clé, valeur_par_défaut)</code> pour éviter le <code>KeyError</code>.
+          Quelle valeur par défaut rendre si le code n'est pas dans la table ASCII ?
+          Un caractère comme <code>'?'</code> ou <code>'□'</code> indique un caractère inconnu.
+        </p>
+      </div>
+    </div>
+
+    <div class="correction-bloc" id="cor3">
+      <div class="encadre-indice" style="margin-top:.6rem; border-left-color:var(--accent-vert);">
+        <span class="encadre-prefix" style="color:var(--accent-vert);">✔ Correction</span>
+
+        <p><strong>Approche 1 — Avec <code>.get()</code> et valeur par défaut :</strong></p>
+        <pre class="code-block"><span class="kw">def</span> <span class="fn">dec2str</span>(liste_dec):
+    <span class="st">"""Convertit une liste d'entiers en chaîne ASCII.
+    Les codes hors table (>127) sont remplacés par '?'."""</span>
+    table_ascii = dict_ascii
+    chaine = <span class="st">""</span>
+    <span class="kw">for</span> entier <span class="kw">in</span> liste_dec:
+        chaine += table_ascii.get(entier, <span class="st">"?"</span>)
+    <span class="kw">return</span> chaine</pre>
+
+        <p><strong>Approche 2 — Avec <code>in</code> pour tester l'existence :</strong></p>
+        <pre class="code-block"><span class="kw">def</span> <span class="fn">dec2str</span>(liste_dec):
+    table_ascii = dict_ascii
+    chaine = <span class="st">""</span>
+    <span class="kw">for</span> entier <span class="kw">in</span> liste_dec:
+        <span class="kw">if</span> entier <span class="kw">in</span> table_ascii:
+            chaine += table_ascii[entier]
+        <span class="kw">else</span>:
+            chaine += <span class="st">"?"</span>
+    <span class="kw">return</span> chaine</pre>
+
+        <p style="margin:0; font-size:.93rem;">
+          <strong>Résultats attendus de <code>test_dec2str()</code> :</strong><br>
+          <code>test1</code> → <code>Test 1 réussi!</code><br>
+          <code>test2</code> → <code>Test 2 réussi!</code><br>
+          <code>test3</code> → <code>Test 3 r?ussi!</code> (le é est remplacé par ?)
+        </p>
+      </div>
+    </div>
+
+    <p style="font-size:.88rem; color:var(--text-muted); margin-top:1rem;">📝 Observez le bug puis testez votre correction :</p>
+    <div class="editor-container">
+      <div class="py-editor-wrap" id="wrap-q3">
+        <textarea id="ta-q3">dict_ascii = {
+    0: "NUL", 32: " ", 33: "!", 49: "1", 50: "2", 51: "3",
+    84: "T", 101: "e", 115: "s", 116: "t", 32: " ",
+    114: "r", 117: "u", 105: "i", 33: "!"
+}
+# Table simplifiée pour le test — version complète dans ascii.py
+dict_ascii = {
+    32:" ",33:"!",49:"1",50:"2",51:"3",84:"T",101:"e",
+    115:"s",116:"t",114:"r",117:"u",105:"i"
+}
+
+test1 = [84,101,115,116,32,49,32,114,101,117,115,115,105,33]
+test2 = [84,101,115,116,32,50,32,114,101,117,115,115,105,33]
+test3 = [84,101,115,116,32,51,32,114,233,117,115,115,105,33]
+
+# ── Version buguée (décommentez pour observer l'erreur) ──────────────
+# def dec2str(liste_dec):
+#     chaine = ""
+#     for entier in liste_dec:
+#         chaine += dict_ascii[entier]  # KeyError sur 233 !
+#     return chaine
+
+# ── À compléter : version corrigée ───────────────────────────────────
+def dec2str(liste_dec):
+    chaine = ""
+    for entier in liste_dec:
+        chaine += dict_ascii.get(entier, "?")
+    return chaine
+# ─────────────────────────────────────────────────────────────────────
+
+print("test1 →", dec2str(test1))
+print("test2 →", dec2str(test2))
+print("test3 →", dec2str(test3))  # doit afficher "?" pour le é (233)
+</textarea>
+        <div class="py-output" id="out-q3"></div>
+      </div>
+      <button class="btn-run" id="btn-q3" onclick="runEditor('q3')" disabled>▶ Exécuter</button>
+    </div>
+  </section>
+
+  <hr class="sep">
+
+  <!-- QUESTION 4 -->
+  <section id="q4">
+    <h2>Question 4 — Correction de <code>str2qrcode</code></h2>
+
+    <div class="encadre-question">
+      <span class="encadre-prefix">Question 4 / 4</span>
+      <p>
+        La fonction <code>str2qrcode(message)</code> est censée effectuer l'opération inverse :
+        convertir une chaîne de caractères en liste de tuples binaires (le QR code).
+      </p>
+      <p style="margin:0;">
+        Cependant, en l'appliquant à la chaîne de la figure 1, on n'obtient pas exactement
+        la figure 1. <strong>Analyser le code, identifier le bug, proposer une correction.</strong>
+      </p>
+    </div>
+
+    <h3>Code fourni (bugué)</h3>
+    <pre class="code-block"><span class="kw">def</span> <span class="fn">str2qrcode</span>(message):
+    qrcode = []
+    table_inverse = {valeur: cle <span class="kw">for</span> cle, valeur <span class="kw">in</span> dict_ascii.items()}
+    <span class="kw">for</span> caractere <span class="kw">in</span> message:
+        entier = table_inverse.get(caractere, <span class="nb">63</span>)
+        binaire_str = <span class="fn">bin</span>(entier)[<span class="nb">2</span>:]          <span class="bug"># ← BUG : longueur variable !</span>
+        ligne = <span class="fn">tuple</span>(<span class="fn">int</span>(bit) <span class="kw">for</span> bit <span class="kw">in</span> binaire_str)
+        qrcode.append(ligne)
+    <span class="kw">return</span> qrcode</pre>
+
+    <div class="encadre-piege">
+      <span class="encadre-prefix">🐛 Identification du bug</span>
+      <p>
+        <code>bin(entier)[2:]</code> renvoie une chaîne binaire <strong>sans les zéros de tête</strong>.
+        Par exemple :
+      </p>
+      <ul style="margin:0; padding-left:1.5rem;">
+        <li><code>bin(77)[2:]</code> → <code>'1001101'</code> (7 bits) au lieu de <code>'01001101'</code> (8 bits)</li>
+        <li><code>bin(46)[2:]</code> → <code>'101110'</code> (6 bits) au lieu de <code>'00101110'</code> (8 bits)</li>
+      </ul>
+      <p style="margin-top:.5rem; margin-bottom:0;">
+        Les tuples générés n'ont donc <strong>pas tous 8 éléments</strong>, ce qui ne correspond pas
+        au format du QR code (8 bits par ligne).
+      </p>
+    </div>
+
+    <button class="btn-secondaire" onclick="toggle('ind4', this)">▶ Indice</button>
+    <button class="btn-tp-vert" onclick="toggle('cor4', this)">Voir la correction</button>
+
+    <div class="indice-bloc" id="ind4">
+      <div class="encadre-indice" style="margin-top:.6rem;">
+        <span class="encadre-prefix">Indice</span>
+        <p style="margin:0;">
+          Il faut <strong>forcer la chaîne binaire à 8 caractères</strong> en ajoutant des zéros à gauche.
+          Python offre deux syntaxes pratiques :<br>
+          <code>binaire_str.zfill(8)</code> — remplit à gauche avec des '0' jusqu'à atteindre 8 chars.<br>
+          <code>f"{entier:08b}"</code> — format directement sur 8 bits avec zéros.
+        </p>
+      </div>
+    </div>
+
+    <div class="correction-bloc" id="cor4">
+      <div class="encadre-indice" style="margin-top:.6rem; border-left-color:var(--accent-vert);">
+        <span class="encadre-prefix" style="color:var(--accent-vert);">✔ Correction — deux variantes</span>
+
+        <p><strong>Variante 1 — avec <code>.zfill(8)</code> :</strong></p>
+        <pre class="code-block"><span class="kw">def</span> <span class="fn">str2qrcode</span>(message):
+    qrcode = []
+    table_inverse = {valeur: cle <span class="kw">for</span> cle, valeur <span class="kw">in</span> dict_ascii.items()}
+    <span class="kw">for</span> caractere <span class="kw">in</span> message:
+        entier = table_inverse.get(caractere, <span class="nb">63</span>)
+        binaire_str = <span class="fn">bin</span>(entier)[<span class="nb">2</span>:].<span class="fn">zfill</span>(<span class="nb">8</span>)  <span class="cm"># ← CORRECTION</span>
+        ligne = <span class="fn">tuple</span>(<span class="fn">int</span>(bit) <span class="kw">for</span> bit <span class="kw">in</span> binaire_str)
+        qrcode.append(ligne)
+    <span class="kw">return</span> qrcode</pre>
+
+        <p><strong>Variante 2 — avec f-string formatée (plus concise) :</strong></p>
+        <pre class="code-block"><span class="kw">def</span> <span class="fn">str2qrcode</span>(message):
+    qrcode = []
+    table_inverse = {valeur: cle <span class="kw">for</span> cle, valeur <span class="kw">in</span> dict_ascii.items()}
+    <span class="kw">for</span> caractere <span class="kw">in</span> message:
+        entier = table_inverse.get(caractere, <span class="nb">63</span>)
+        binaire_str = <span class="fn">f</span><span class="st">"{entier:08b}"</span>       <span class="cm"># ← CORRECTION : toujours 8 bits</span>
+        ligne = <span class="fn">tuple</span>(<span class="fn">int</span>(bit) <span class="kw">for</span> bit <span class="kw">in</span> binaire_str)
+        qrcode.append(ligne)
+    <span class="kw">return</span> qrcode</pre>
+
+        <p style="margin:0; font-size:.93rem;">
+          <strong>Vérification :</strong> <code>str2qrcode("M.Hara") == figure1</code> doit valoir <code>True</code>
+          après correction. Le format <code>:08b</code> signifie : binaire (<code>b</code>),
+          sur 8 caractères (<code>8</code>), complété par des zéros à gauche (<code>0</code>).
+        </p>
+      </div>
+    </div>
+
+    <p style="font-size:.88rem; color:var(--text-muted); margin-top:1rem;">📝 Observez le bug puis testez votre correction :</p>
+    <div class="editor-container">
+      <div class="py-editor-wrap" id="wrap-q4">
+        <textarea id="ta-q4">figure1 = [
+    (0, 1, 0, 0, 1, 1, 0, 1),
+    (0, 0, 1, 0, 1, 1, 1, 0),
+    (0, 1, 0, 0, 1, 0, 0, 0),
+    (0, 1, 1, 0, 0, 0, 0, 1),
+    (0, 1, 1, 1, 0, 0, 1, 0),
+    (0, 1, 1, 0, 0, 0, 0, 1),
+]
+
+dict_ascii = {
+    46:".", 72:"H", 77:"M", 97:"a", 114:"r", 97:"a",
+    32:" ",65:"A",66:"B",67:"C",68:"D",69:"E",70:"F",71:"G",
+    72:"H",73:"I",74:"J",75:"K",76:"L",77:"M",78:"N",79:"O",
+    80:"P",81:"Q",82:"R",83:"S",84:"T",85:"U",86:"V",87:"W",
+    88:"X",89:"Y",90:"Z",97:"a",98:"b",99:"c",100:"d",101:"e",
+    102:"f",103:"g",104:"h",105:"i",106:"j",107:"k",108:"l",
+    109:"m",110:"n",111:"o",112:"p",113:"q",114:"r",115:"s",
+    116:"t",117:"u",118:"v",119:"w",120:"x",121:"y",122:"z",46:"."
+}
+
+# ── Version buguée ────────────────────────────────────────────────────
+def str2qrcode_bug(message):
+    qrcode = []
+    table_inverse = {valeur: cle for cle, valeur in dict_ascii.items()}
+    for caractere in message:
+        entier = table_inverse.get(caractere, 63)
+        binaire_str = bin(entier)[2:]   # ← pas de zfill !
+        ligne = tuple(int(bit) for bit in binaire_str)
+        qrcode.append(ligne)
+    return qrcode
+
+# ── À compléter : version corrigée ───────────────────────────────────
+def str2qrcode(message):
+    qrcode = []
+    table_inverse = {valeur: cle for cle, valeur in dict_ascii.items()}
+    for caractere in message:
+        entier = table_inverse.get(caractere, 63)
+        binaire_str = bin(entier)[2:].zfill(8)  # ← CORRECTION
+        ligne = tuple(int(bit) for bit in binaire_str)
+        qrcode.append(ligne)
+    return qrcode
+# ─────────────────────────────────────────────────────────────────────
+
+message = "M.Hara"
+print("=== Version buguée ===")
+bug = str2qrcode_bug(message)
+for i, (attendu, obtenu) in enumerate(zip(figure1, bug)):
+    ok = "✔" if attendu == obtenu else "✘"
+    print(f"  ligne {i}: {ok} attendu={attendu} obtenu={obtenu}")
+
+print("\n=== Version corrigée ===")
+cor = str2qrcode(message)
+for i, (attendu, obtenu) in enumerate(zip(figure1, cor)):
+    ok = "✔" if attendu == obtenu else "✘"
+    print(f"  ligne {i}: {ok} attendu={attendu} obtenu={obtenu}")
+
+print("\nstr2qrcode('M.Hara') == figure1 :", cor == list(figure1))
+</textarea>
+        <div class="py-output" id="out-q4"></div>
+      </div>
+      <button class="btn-run" id="btn-q4" onclick="runEditor('q4')" disabled>▶ Exécuter</button>
+    </div>
+  </section>
+
+  <hr class="sep">
+
+  <!-- PIÈGES -->
+  <section id="pieges">
+    <h2>Pièges fréquents &amp; récapitulatif</h2>
+
+    <div class="encadre-piege">
+      <span class="encadre-prefix">Piège 1 — Oublier les zéros de tête dans bin()</span>
+      <p style="margin:0;">
+        <code>bin(77)</code> renvoie <code>'0b1001101'</code> → après <code>[2:]</code> : <code>'1001101'</code> (7 bits).
+        Sans <code>.zfill(8)</code> le tuple n'a que 7 éléments, ce qui casse tout le pipeline.
+        Toujours utiliser <code>.zfill(8)</code> ou <code>f"{n:08b}"</code>.
+      </p>
+    </div>
+
+    <div class="encadre-piege">
+      <span class="encadre-prefix">Piège 2 — KeyError dans dec2str</span>
+      <p style="margin:0;">
+        La table ASCII standard couvre 0–127. Tout entier hors de cet intervalle
+        (ex. 233 pour é) n'est pas dans <code>dict_ascii</code> et provoque un <code>KeyError</code>.
+        Toujours utiliser <code>.get(entier, "?")</code> plutôt qu'un accès direct <code>[entier]</code>.
+      </p>
+    </div>
+
+    <div class="encadre-piege">
+      <span class="encadre-prefix">Piège 3 — Confondre bin2dec et qrcode2dec</span>
+      <p style="margin:0;">
+        <code>bin2dec</code> travaille sur <strong>un seul tuple</strong> → renvoie <strong>un entier</strong>.<br>
+        <code>qrcode2dec</code> travaille sur <strong>une liste de tuples</strong> → renvoie <strong>une liste d'entiers</strong>.
+        Ne pas mélanger les deux niveaux d'abstraction.
+      </p>
+    </div>
+
+    <div class="encadre-piege">
+      <span class="encadre-prefix">Piège 4 — Horner vs puissances : ne pas inverser</span>
+      <p style="margin:0;">
+        Dans un QR code, le bit le plus à <strong>gauche</strong> est le bit de poids fort (2⁷).
+        Si on itère de gauche à droite avec des puissances, il faut utiliser
+        <code>enumerate(reversed(t))</code> pour avoir les bons exposants. Avec Horner, on itère
+        naturellement de gauche à droite sans se soucier des indices.
+      </p>
+    </div>
+
+    <div class="encadre" style="margin-top:2rem;">
+      <span class="encadre-prefix">Récapitulatif — Ce que tu dois retenir</span>
+      <ul style="margin:0;">
+        <li>La conversion binaire → décimal se fait avec la méthode de Horner : <code>r = r * 2 + bit</code>.</li>
+        <li><code>qrcode2dec</code> = appliquer <code>bin2dec</code> à chaque élément de la liste (compréhension de liste).</li>
+        <li>Pour les codes hors ASCII, utiliser <code>dict.get(clé, valeur_défaut)</code> pour éviter les <code>KeyError</code>.</li>
+        <li>Pour la conversion inverse, toujours forcer 8 bits avec <code>.zfill(8)</code> ou <code>f"{n:08b}"</code>.</li>
+        <li>Le dictionnaire inverse se construit avec : <code>{v: k for k, v in dict_ascii.items()}</code>.</li>
+      </ul>
+    </div>
+  </section>
+
+</div>
+
+<footer>
+  Lycée — NSI BAC 2026 &nbsp;·&nbsp; Sujet n°22 &nbsp;·&nbsp; QR Code &amp; ASCII
+</footer>
+
+<script>
+/* ── QR VISUEL ── */
+(function() {
+  const figure1 = [
+    [0,1,0,0,1,1,0,1],[0,0,1,0,1,1,1,0],[0,1,0,0,1,0,0,0],
+    [0,1,1,0,0,0,0,1],[0,1,1,1,0,0,1,0],[0,1,1,0,0,0,0,1]
+  ];
+  const grid = document.getElementById('qr-visual');
+  if (grid) {
+    figure1.forEach(row => {
+      row.forEach(bit => {
+        const cell = document.createElement('div');
+        cell.className = 'qr-cell ' + (bit ? 'black' : 'white');
+        grid.appendChild(cell);
+      });
+    });
+  }
+})();
+
+/* ── RETOUR EN HAUT ── */
+const btnTop = document.getElementById('btn-top');
+if (btnTop) {
+  window.addEventListener('scroll', () => { btnTop.style.display = window.scrollY > 300 ? 'flex' : 'none'; });
+  btnTop.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
+}
+
+/* ── TOGGLE ── */
+function toggle(id, btn) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  const isVisible = el.classList.toggle('visible');
+  if (btn) {
+    if (el.classList.contains('indice-bloc'))
+      btn.textContent = isVisible ? btn.textContent.replace('▶','▼') : btn.textContent.replace('▼','▶');
+    else
+      btn.textContent = isVisible ? btn.textContent.replace('Voir la correction','Masquer') : btn.textContent.replace('Masquer','Voir la correction');
+  }
+}
+
+/* ── PYODIDE ── */
+let pyodide = null;
+let pyodideLoadAttempt = false;
+
+// Fonction de chargement Pyodide avec fallback et gestion d'erreur
+async function loadPyodideWithFallback() {
+  if (pyodideLoadAttempt) return pyodide;
+  pyodideLoadAttempt = true;
+  
+  const statusEl = document.getElementById('pyodide-status');
+  
+  try {
+    // Tentative de chargement avec timeout
+    const loadPromise = loadPyodide({
+      indexURL: "https://cdn.jsdelivr.net/pyodide/v0.26.4/full/",
+      fullStdLib: false
+    });
+    
+    // Timeout après 30 secondes
+    const timeoutPromise = new Promise((_, reject) => {
+      setTimeout(() => reject(new Error("Timeout chargement Pyodide")), 30000);
+    });
+    
+    pyodide = await Promise.race([loadPromise, timeoutPromise]);
+    
+    if (statusEl) statusEl.textContent = '✔ Python prêt';
+    
+    // Activer tous les boutons d'exécution
+    document.querySelectorAll('.btn-run').forEach(b => b.disabled = false);
+    
+    return pyodide;
+  } catch(e) {
+    console.error("Erreur chargement Pyodide:", e);
+    if (statusEl) {
+      statusEl.innerHTML = '⚠️ Python non chargé (mode dégradé)<br>Utilisez l\'interpréteur Python local.';
+      statusEl.style.color = '#c0392b';
+    }
+    
+    // En mode dégradé : simulation basique pour éducation
+    pyodide = {
+      runPython: (code) => {
+        // Évaluation très basique pour afficher un message d'aide
+        if (code.includes('print')) {
+          const outDiv = document.querySelector('.py-output.visible');
+          if (outDiv) {
+            outDiv.textContent = "[Mode dégradé] Pyodide non disponible.\nVérifiez votre connexion ou utilisez Python local.";
+            outDiv.className = 'py-output visible error';
+          }
+        }
+        return null;
+      },
+      isSimulated: true
+    };
+    
+    return pyodide;
+  }
+}
+
+/* ── ÉDITEURS ── */
+const editors = {};
+
+document.addEventListener('DOMContentLoaded', () => {
+  ['q1','q2','q3','q4'].forEach(id => {
+    const ta = document.getElementById('ta-' + id);
+    if (ta) {
+      try {
+        const cm = CodeMirror.fromTextArea(ta, {
+          mode: 'python', theme: 'dracula',
+          lineNumbers: true, indentUnit: 4,
+          indentWithTabs: false, lineWrapping: false,
+          viewportMargin: Infinity
+        });
+        cm.refresh();
+        editors[id] = cm;
+      } catch(e) {
+        console.warn(`Erreur création CodeMirror pour ${id}:`, e);
+        // Fallback : textarea standard
+        editors[id] = { getValue: () => ta.value, setValue: (v) => { ta.value = v; } };
+      }
+    }
+  });
+  
+  // Démarrer le chargement Pyodide en arrière-plan
+  loadPyodideWithFallback();
+});
+
+async function runEditor(id) {
+  const btn = document.getElementById('btn-' + id);
+  const out = document.getElementById('out-' + id);
+  const cm = editors[id];
+  if (!cm || !out) {
+    console.error("Éditeur ou sortie manquant pour", id);
+    return;
+  }
+
+  btn.disabled = true;
+  const originalText = btn.textContent;
+  btn.textContent = '⏳ Exécution…';
+  out.className = 'py-output visible';
+  out.textContent = '';
+
+  // Attendre que Pyodide soit prêt (ou timeout)
+  try {
+    const py = await loadPyodideWithFallback();
+    
+    // Si Pyodide est simulé, afficher un message approprié
+    if (py.isSimulated) {
+      out.className = 'py-output visible error';
+      out.textContent = "⚠️ L'environnement Python n'a pas pu être chargé.\n\n" +
+        "Pour exécuter le code, veuillez :\n" +
+        "1. Copier le code ci-dessus\n" +
+        "2. Le coller dans un environnement Python local (IDLE, Thonny, ou terminal)\n\n" +
+        "Assurez-vous que votre connexion Internet permet l'accès au CDN Pyodide.";
+      btn.disabled = false;
+      btn.textContent = originalText;
+      return;
+    }
+    
+    // Exécution réelle
+    try {
+      py.runPython(`
+import sys, io
+_buf = io.StringIO()
+sys.stdout = _buf
+sys.stderr = _buf
+`);
+      const code = cm.getValue();
+      py.runPython(code);
+      const captured = py.runPython('_buf.getvalue()');
+      py.runPython('sys.stdout = sys.__stdout__; sys.stderr = sys.__stderr__');
+      out.className = 'py-output visible';
+      out.textContent = captured || '(aucune sortie)';
+    } catch(pyErr) {
+      out.className = 'py-output visible error';
+      out.textContent = String(pyErr);
+    }
+  } catch(err) {
+    out.className = 'py-output visible error';
+    out.textContent = "Erreur d'exécution : " + String(err);
+  }
+  
+  btn.disabled = false;
+  btn.textContent = originalText;
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,948 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Fiche – Cartes mémoire Leitner | NSI Terminale | BAC 2026</title>
+
+  <!-- Bootstrap 5.3.3 -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Rubik+Dirt&family=Source+Serif+4:ital,opsz,wght@0,8..60,300..900;1,8..60,300..900&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+
+  <!-- MathJax v3 -->
+  <script>
+    MathJax = {
+      tex: { inlineMath: [['\\(', '\\)'], ['$', '$']] },
+      options: { skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre'] }
+    };
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js" async></script>
+
+  <!-- PyScript 2026.3.1 -->
+  <link rel="stylesheet" href="https://pyscript.net/releases/2026.3.1/core.css">
+  <script type="module" src="https://pyscript.net/releases/2026.3.1/core.js"></script>
+
+  <style>
+    :root {
+      --bg-main:       #f8f9fb;
+      --bg-panel:      #eef1f5;
+      --bg-cours:      #ffffff;
+      --accent:        #2a6496;
+      --accent-or:     #b5610a;
+      --accent-vert:   #2e7d32;
+      --text-main:     #1a1a1a;
+      --text-muted:    #5a6470;
+      --border-radius: 8px;
+      --py-editor-input: white;
+    }
+
+    /* ── BASE ── */
+    *, *::before, *::after { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      background-color: var(--bg-main);
+      color: var(--text-main);
+      font-family: 'Source Serif 4', Georgia, serif;
+      font-size: 1.05rem;
+      line-height: 1.8;
+      margin: 0;
+      padding-bottom: 4rem;
+    }
+
+    h1, h2, h3, h4 {
+      font-family: 'Rubik Dirt', cursive;
+      color: var(--accent);
+      letter-spacing: 0.02em;
+    }
+
+    h1 { font-size: 2.2rem; color: #111; }
+    h2 { font-size: 1.55rem; border-bottom: 2px solid var(--accent); padding-bottom: .3rem; margin-top: 2.5rem; }
+    h3 { font-size: 1.25rem; color: var(--accent-or); margin-top: 1.8rem; }
+    h4 { font-size: 1.05rem; color: var(--accent-vert); }
+
+    p { margin-bottom: 1rem; }
+
+    code, pre, .mono {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.9em;
+    }
+
+    code {
+      background: #e8edf2;
+      padding: 2px 6px;
+      border-radius: 4px;
+      color: #8b3a00;
+    }
+
+    pre {
+      background: #f0f3f7;
+      border-left: 3px solid var(--accent);
+      padding: 1rem 1.2rem;
+      border-radius: var(--border-radius);
+      overflow-x: auto;
+      color: #1a1a1a;
+    }
+
+    a { color: var(--accent); text-decoration: underline dotted; }
+    a:hover { color: var(--accent-or); }
+
+    /* ── NAVIGATION ── */
+    #navbar {
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      background: #2a6496;
+      border-bottom: 2px solid #1a4a70;
+      padding: .5rem 1.5rem;
+      display: flex;
+      gap: .5rem;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    #navbar span {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: .8rem;
+      color: #ccddf0;
+      margin-right: auto;
+    }
+
+    #navbar a {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: .8rem;
+      color: #fff;
+      text-decoration: none;
+      padding: .25rem .7rem;
+      border: 1px solid #ccddf0;
+      border-radius: 4px;
+      transition: background .2s;
+    }
+
+    #navbar a:hover { background: #1a4a70; color: #fff; }
+
+    /* ── CONTENU ── */
+    .container-content {
+      max-width: 860px;
+      margin: 0 auto;
+      padding: 2rem 1.5rem;
+    }
+
+    /* ── ENCADRÉS ── */
+    .encadre,
+    .encadre-conseil,
+    .encadre-indice,
+    .encadre-question {
+      background: #ffffff;
+      border-radius: var(--border-radius);
+      padding: 1.1rem 1.4rem;
+      margin: 1.4rem 0;
+      position: relative;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+    }
+
+    .encadre          { border-left: 4px solid var(--accent); }
+    .encadre-conseil  { border-left: 4px solid var(--accent-or); background: #fff8f0; }
+    .encadre-indice   { border-left: 4px solid var(--accent-vert); background: #f0faf0; }
+    .encadre-question { border-left: 4px solid #7b3fa8; border-top: 1px solid #c8a8e820; background: #faf5ff; }
+
+    .encadre-prefix {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: .72rem;
+      font-variant: small-caps;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      margin-bottom: .4rem;
+      display: block;
+    }
+
+    .encadre          .encadre-prefix { color: var(--accent); }
+    .encadre-conseil  .encadre-prefix { color: var(--accent-or); }
+    .encadre-indice   .encadre-prefix { color: var(--accent-vert); }
+    .encadre-question .encadre-prefix { color: #7b3fa8; }
+
+    /* ── ENCADRÉ PIÈGE ── */
+    .encadre-piege {
+      background: #fff5f5;
+      border-left: 4px solid #c0392b;
+      border-radius: var(--border-radius);
+      padding: 1rem 1.4rem;
+      margin: 1.2rem 0;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+    }
+
+    .encadre-piege .encadre-prefix {
+      color: #c0392b;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: .72rem;
+      font-variant: small-caps;
+      letter-spacing: .12em;
+      display: block;
+      margin-bottom: .3rem;
+    }
+
+    /* ── BOUTONS ── */
+    .btn-tp, .btn-tp-or, .btn-tp-vert, .btn-secondaire {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: .82rem;
+      border: none;
+      border-radius: 5px;
+      padding: .45rem 1.1rem;
+      cursor: pointer;
+      transition: opacity .2s, transform .1s;
+      margin: .3rem .2rem;
+    }
+
+    .btn-tp         { background: var(--accent);      color: #fff; }
+    .btn-tp-or      { background: var(--accent-or);   color: #fff; }
+    .btn-tp-vert    { background: var(--accent-vert); color: #fff; }
+    .btn-secondaire { background: #eef1f5; border: 1px solid var(--accent); color: var(--text-main); }
+
+    .btn-tp:hover, .btn-tp-or:hover, .btn-tp-vert:hover, .btn-secondaire:hover {
+      opacity: .85; transform: translateY(-1px);
+    }
+
+    /* ── BADGE QUESTION ── */
+    .badge-question {
+      display: inline-block;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: .8rem;
+      background: #7b3fa8;
+      color: #fff;
+      border-radius: 4px;
+      padding: .15rem .7rem;
+      margin-right: .5rem;
+      vertical-align: middle;
+    }
+
+    /* ── INDICES / CORRECTIONS CACHÉS ── */
+    .indice-bloc    { display: none; }
+    .correction-bloc { display: none; }
+    .indice-bloc.visible    { display: block; }
+    .correction-bloc.visible { display: block; }
+
+    /* ── SOMMAIRE ── */
+    #sommaire ol {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: .88rem;
+      line-height: 2.2;
+    }
+    #sommaire a { color: var(--accent); }
+    #sommaire a:hover { color: var(--accent-or); }
+
+    /* ── NOTIONS PILLS ── */
+    .notion-pill {
+      display: inline-block;
+      background: #dce8f2;
+      color: var(--accent);
+      border: 1px solid #aecde8;
+      border-radius: 20px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: .78rem;
+      padding: .2em .75em;
+      margin: .15em .1em;
+    }
+
+    /* ── TABLEAU LEITNER ── */
+    .table-leitner {
+      border-collapse: collapse;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: .88rem;
+      margin: 1rem 0;
+    }
+
+    .table-leitner th {
+      background: #dce8f2;
+      color: var(--accent);
+      border: 1px solid var(--accent);
+      padding: .45rem .9rem;
+      text-align: center;
+    }
+
+    .table-leitner td {
+      border: 1px solid #c8d8e8;
+      padding: .4rem .9rem;
+      text-align: center;
+      color: var(--text-main);
+    }
+
+    .table-leitner tr:nth-child(even) td { background: #f0f5fa; }
+
+    /* ── TABLEAU TRACE ── */
+    .table-trace {
+      border-collapse: collapse;
+      width: 100%;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: .82rem;
+      margin: 1rem 0;
+    }
+
+    .table-trace th {
+      background: #dce8f2;
+      color: var(--accent);
+      border: 1px solid var(--accent);
+      padding: .4rem .7rem;
+    }
+
+    .table-trace td {
+      border: 1px solid #c8d8e8;
+      padding: .38rem .7rem;
+      color: var(--text-main);
+    }
+
+    .table-trace tr:nth-child(even) td { background: #f0f5fa; }
+    .trace-bug td { background: #fff0ee !important; font-weight: 600; }
+
+    /* ── BLOC CODE COLORISÉ ── */
+    .code-block {
+      background: #1e2430;
+      color: #cdd6f4;
+      border-radius: var(--border-radius);
+      padding: 1rem 1.2rem;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: .88rem;
+      overflow-x: auto;
+      margin: .75rem 0 1rem;
+      line-height: 1.65;
+    }
+    .code-block .kw  { color: #cba6f7; }
+    .code-block .fn  { color: #89b4fa; }
+    .code-block .st  { color: #a6e3a1; }
+    .code-block .cm  { color: #6c7086; font-style: italic; }
+    .code-block .nb  { color: #fab387; }
+    .code-block .op  { color: #89dceb; }
+    .code-block .bug { color: #f38ba8; font-style: italic; }
+
+    /* ── SÉPARATEUR ── */
+    .sep { border: none; border-top: 1px dashed var(--accent); margin: 2.5rem 0; opacity: .4; }
+
+    /* ── RETOUR EN HAUT ── */
+    #btn-top {
+      position: fixed;
+      bottom: 1.5rem;
+      right: 1.5rem;
+      z-index: 999;
+      background: var(--accent);
+      color: #fff;
+      border: none;
+      border-radius: 50%;
+      width: 44px;
+      height: 44px;
+      font-size: 1.2rem;
+      cursor: pointer;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      font-family: 'JetBrains Mono', monospace;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.2);
+      transition: opacity .2s;
+    }
+    #btn-top:hover { opacity: .8; }
+
+    /* ── PYSCRIPT EDITOR ── */
+    py-editor {
+      display: block;
+      border-radius: var(--border-radius);
+      overflow: hidden;
+      border: 2px solid var(--accent);
+      margin: .5rem 0 1rem;
+      min-height: 220px;
+    }
+
+    /* ── FOOTER ── */
+    footer {
+      text-align: center;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: .8rem;
+      color: var(--text-muted);
+      padding: 2rem 1rem 1rem;
+      border-top: 1px solid #d0d8e4;
+    }
+
+    @media (max-width: 640px) {
+      h1 { font-size: 1.6rem; }
+      .table-trace { font-size: .75rem; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- PyScript init -->
+<script type="py" env="s21">import datetime</script>
+
+<!-- RETOUR EN HAUT -->
+<button id="btn-top" title="Retour en haut" aria-label="Retour en haut">▲</button>
+
+<!-- NAVIGATION STICKY -->
+<nav id="navbar">
+  <span>NSI Terminale – Cartes Leitner · Sujet 21</span>
+  <a href="#s0">Intro</a>
+  <a href="#s1">Code fourni</a>
+  <a href="#q1">Q1</a>
+  <a href="#q2">Q2</a>
+  <a href="#q3">Q3</a>
+  <a href="#pieges">Pièges</a>
+</nav>
+
+<!-- CONTENU PRINCIPAL -->
+<div class="container-content">
+
+  <!-- EN-TÊTE -->
+  <div style="text-align:center; padding: 2rem 0 1rem;">
+    <div style="font-family:'JetBrains Mono',monospace; font-size:.8rem; color:var(--text-muted); margin-bottom:.5rem;">
+      BAC NSI 2026 — Sujet n°21 — Partie pratique
+    </div>
+    <h1>Cartes mémoire — Boîtes de Leitner<br>
+      <span style="font-size:1.05rem; color:var(--accent); font-family:'Source Serif 4',serif; font-style:italic; font-weight:300;">
+        POO · datetime · Filtrage · Débogage
+      </span>
+    </h1>
+    <div style="font-family:'JetBrains Mono',monospace; font-size:.8rem; color:var(--text-muted); margin-top:.5rem;">
+      Terminale NSI &nbsp;·&nbsp; Algorithmique &amp; Programmation &nbsp;·&nbsp; Structures de données
+    </div>
+    <div style="margin-top:1rem;">
+      <span class="notion-pill">POO · Classes</span>
+      <span class="notion-pill">datetime</span>
+      <span class="notion-pill">Compréhension de liste</span>
+      <span class="notion-pill">Débogage logique</span>
+      <span class="notion-pill">Algorithme de filtrage</span>
+    </div>
+  </div>
+
+  <hr class="sep">
+
+  <!-- SOMMAIRE -->
+  <section id="s0">
+    <div id="sommaire" class="encadre">
+      <span class="encadre-prefix">Sommaire</span>
+      <ol>
+        <li><a href="#s1">Code fourni — <code>cartes.py</code> et système Leitner</a></li>
+        <li><a href="#q1">Question 1 — Méthode <code>traiter_reponse(self, succes)</code></a></li>
+        <li><a href="#q2">Question 2 — Fonction <code>extraire_cartes_du_jour</code></a></li>
+        <li><a href="#q3">Question 3 — Débogage de <code>extraire_cartes_a_renforcer</code></a></li>
+        <li><a href="#pieges">Pièges fréquents &amp; récapitulatif</a></li>
+      </ol>
+    </div>
+  </section>
+
+  <hr class="sep">
+
+  <!-- CONTEXTE -->
+  <section id="s1">
+    <h2>Contexte &amp; code fourni</h2>
+
+    <p>
+      Les <strong>cartes mémoire</strong> (flashcards) sont des supports de révision comportant
+      une question au recto et la réponse au verso. Ce sujet implémente le
+      <strong>système des boîtes de Leitner</strong> : chaque carte possède un
+      <em>niveau d'avancement</em> de 0 à 4. Plus le niveau est élevé, plus le délai avant
+      la prochaine révision est long.
+    </p>
+
+    <div class="encadre-conseil">
+      <span class="encadre-prefix">Règles du système Leitner</span>
+      <p>
+        Si l'utilisateur répond <strong>correctement</strong>, la carte monte d'un niveau (maximum 4).<br>
+        S'il se trompe, la carte retombe au <strong>niveau 0</strong>.<br>
+        Dans les deux cas, <code>date_prochaine</code> est recalculée selon le nouveau niveau.
+      </p>
+      <table class="table-leitner">
+        <thead>
+          <tr><th>Niveau</th><th>DELAIS[niveau]</th><th>Délai (jours)</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>0</td><td>DELAIS[0]</td><td>1</td></tr>
+          <tr><td>1</td><td>DELAIS[1]</td><td>3</td></tr>
+          <tr><td>2</td><td>DELAIS[2]</td><td>7</td></tr>
+          <tr><td>3</td><td>DELAIS[3]</td><td>15</td></tr>
+          <tr><td>4</td><td>DELAIS[4]</td><td>30</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3>Code fourni — <code>cartes.py</code></h3>
+
+    <pre class="code-block"><span class="kw">import</span> datetime
+
+<span class="kw">def</span> <span class="fn">date_future</span>(nb_jours):
+    <span class="st">"""Renvoie la date située nb_jours après aujourd'hui."""</span>
+    <span class="kw">return</span> datetime.date.today() + datetime.timedelta(days=nb_jours)
+
+<span class="cm"># Délais en jours pour chaque niveau (index 0 à 4)</span>
+DELAIS = [<span class="nb">1</span>, <span class="nb">3</span>, <span class="nb">7</span>, <span class="nb">15</span>, <span class="nb">30</span>]
+
+<span class="kw">class</span> <span class="fn">Carte</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(self, question, reponse):
+        self.question = question
+        self.reponse  = reponse
+        self.niveau   = <span class="nb">0</span>
+        self.date_prochaine = datetime.date.today()
+
+    <span class="kw">def</span> <span class="fn">__repr__</span>(self):
+        <span class="kw">return</span> <span class="st">f"&lt;Carte: {self.question} (Niveau {self.niveau})&gt;"</span>
+
+    <span class="cm"># ← méthode traiter_reponse à écrire (Question 1)</span></pre>
+
+    <div class="encadre">
+      <span class="encadre-prefix">Point clé — notation pointée</span>
+      <p style="margin:0">
+        Les instances de <code>Carte</code> s'interrogent avec la <strong>notation pointée</strong> :
+        <code>c.niveau</code>, <code>c.date_prochaine</code>, <code>c.question</code>.
+        C'est différent des dictionnaires où on utilise les crochets <code>d['cle']</code>.
+      </p>
+    </div>
+  </section>
+
+  <hr class="sep">
+
+  <!-- QUESTION 1 -->
+  <section id="q1">
+    <h2>Question 1 — Méthode <code>traiter_reponse</code></h2>
+
+    <div class="encadre-question">
+      <span class="encadre-prefix">Question 1 / 3</span>
+      <p>
+        Écrire la méthode <code>traiter_reponse(self, succes)</code> de la classe <code>Carte</code>.
+      </p>
+      <ul>
+        <li>Si <code>succes</code> vaut <code>True</code> → le niveau augmente de 1 (sans dépasser 4).</li>
+        <li>Si <code>succes</code> vaut <code>False</code> → le niveau retombe à 0.</li>
+        <li>Dans les deux cas, <code>self.date_prochaine</code> est mise à jour avec
+          <code>date_future(DELAIS[self.niveau])</code> <strong>après</strong> la modification du niveau.</li>
+      </ul>
+    </div>
+
+    <button class="btn-secondaire" onclick="toggleIndice('ind1', this)">▶ Indice</button>
+    <button class="btn-tp-vert" onclick="toggleCorrection('cor1', this)">Voir la correction</button>
+
+    <div class="indice-bloc" id="ind1">
+      <div class="encadre-indice" style="margin-top:.6rem;">
+        <span class="encadre-prefix">Indice</span>
+        <p style="margin:0">
+          Pensez à modifier <code>self.niveau</code> <em>avant</em> de calculer <code>self.date_prochaine</code>.<br>
+          Pour plafonner à 4 sans <code>if</code> : <code>min(self.niveau + 1, 4)</code>.<br>
+          Ensuite : <code>self.date_prochaine = date_future(DELAIS[self.niveau])</code>.
+        </p>
+      </div>
+    </div>
+
+    <div class="correction-bloc" id="cor1">
+      <div class="encadre-indice" style="margin-top:.6rem; border-left-color: var(--accent-vert);">
+        <span class="encadre-prefix" style="color:var(--accent-vert);">✔ Correction</span>
+        <pre class="code-block" style="margin:.5rem 0 .75rem;"><span class="kw">def</span> <span class="fn">traiter_reponse</span>(self, succes):
+    <span class="kw">if</span> succes:
+        self.niveau = <span class="fn">min</span>(self.niveau + <span class="nb">1</span>, <span class="nb">4</span>)
+    <span class="kw">else</span>:
+        self.niveau = <span class="nb">0</span>
+    self.date_prochaine = <span class="fn">date_future</span>(DELAIS[self.niveau])</pre>
+        <p style="margin:0; font-size:.93rem;">
+          <strong>Points clés :</strong> on utilise <code>min(..., 4)</code> pour ne pas dépasser le niveau 4,
+          et on recalcule la date <em>après</em> avoir mis à jour le niveau — sinon on appliquerait
+          le délai de l'ancien niveau.
+        </p>
+      </div>
+    </div>
+
+    <p style="font-size:.88rem; color:var(--text-muted); margin-top:1rem;">📝 Testez votre code ci-dessous :</p>
+    <script type="py-editor" env="s21">
+import datetime
+
+def date_future(nb_jours):
+    return datetime.date.today() + datetime.timedelta(days=nb_jours)
+
+DELAIS = [1, 3, 7, 15, 30]
+
+class Carte:
+    def __init__(self, question, reponse):
+        self.question = question
+        self.reponse  = reponse
+        self.niveau   = 0
+        self.date_prochaine = datetime.date.today()
+
+    def __repr__(self):
+        return f"<Carte: {self.question} (Niveau {self.niveau}, prochaine: {self.date_prochaine})>"
+
+    # ── À compléter ──────────────────────────────────────────────
+    def traiter_reponse(self, succes):
+        pass  # Remplacer par votre code
+    # ─────────────────────────────────────────────────────────────
+
+# Tests
+c = Carte("Capitale de la France ?", "Paris")
+print("Initial :", c)
+
+c.traiter_reponse(True)
+print("Après 1 succès (niveau attendu : 1) :", c)
+
+c.traiter_reponse(False)
+print("Après 1 échec  (niveau attendu : 0) :", c)
+
+for _ in range(5):
+    c.traiter_reponse(True)
+print("Après 5 succès (niveau attendu : 4) :", c)
+    </script>
+  </section>
+
+  <hr class="sep">
+
+  <!-- QUESTION 2 -->
+  <section id="q2">
+    <h2>Question 2 — Fonction <code>extraire_cartes_du_jour</code></h2>
+
+    <div class="encadre-question">
+      <span class="encadre-prefix">Question 2 / 3</span>
+      <p>
+        Écrire la fonction <code>extraire_cartes_du_jour(paquet, date_jour)</code>.<br>
+        Elle retourne une <strong>nouvelle liste</strong> contenant uniquement les cartes
+        dont <code>date_prochaine &lt;= date_jour</code>.
+      </p>
+      <p style="margin:0">
+        Les objets <code>datetime.date</code> sont comparables avec les opérateurs usuels
+        <code>&lt;</code>, <code>&lt;=</code>, <code>==</code>, etc.
+      </p>
+    </div>
+
+    <button class="btn-secondaire" onclick="toggleIndice('ind2', this)">▶ Indice</button>
+    <button class="btn-tp-vert" onclick="toggleCorrection('cor2', this)">Voir la correction</button>
+
+    <div class="indice-bloc" id="ind2">
+      <div class="encadre-indice" style="margin-top:.6rem;">
+        <span class="encadre-prefix">Indice</span>
+        <p style="margin:0">
+          Une compréhension de liste est idéale ici :<br>
+          <code>[carte for carte in paquet if carte.date_prochaine &lt;= date_jour]</code>
+        </p>
+      </div>
+    </div>
+
+    <div class="correction-bloc" id="cor2">
+      <div class="encadre-indice" style="margin-top:.6rem; border-left-color: var(--accent-vert);">
+        <span class="encadre-prefix" style="color:var(--accent-vert);">✔ Correction — deux approches</span>
+        <p><strong>Approche 1 (compréhension de liste) :</strong></p>
+        <pre class="code-block" style="margin:.3rem 0 .75rem;"><span class="kw">def</span> <span class="fn">extraire_cartes_du_jour</span>(paquet, date_jour):
+    <span class="kw">return</span> [carte <span class="kw">for</span> carte <span class="kw">in</span> paquet
+            <span class="kw">if</span> carte.date_prochaine &lt;= date_jour]</pre>
+        <p><strong>Approche 2 (boucle explicite) :</strong></p>
+        <pre class="code-block" style="margin:.3rem 0 .5rem;"><span class="kw">def</span> <span class="fn">extraire_cartes_du_jour</span>(paquet, date_jour):
+    resultat = []
+    <span class="kw">for</span> carte <span class="kw">in</span> paquet:
+        <span class="kw">if</span> carte.date_prochaine &lt;= date_jour:
+            resultat.append(carte)
+    <span class="kw">return</span> resultat</pre>
+        <p style="margin:0; font-size:.93rem;">
+          <strong>Piège classique :</strong> utiliser <code>&lt;</code> au lieu de <code>&lt;=</code>
+          — on raterait les cartes dues <em>exactement</em> aujourd'hui.
+        </p>
+      </div>
+    </div>
+
+    <p style="font-size:.88rem; color:var(--text-muted); margin-top:1rem;">📝 Testez votre code ci-dessous :</p>
+    <script type="py-editor" env="s21">
+import datetime
+
+def date_future(nb_jours):
+    return datetime.date.today() + datetime.timedelta(days=nb_jours)
+
+DELAIS = [1, 3, 7, 15, 30]
+
+class Carte:
+    def __init__(self, question, reponse):
+        self.question = question
+        self.reponse  = reponse
+        self.niveau   = 0
+        self.date_prochaine = datetime.date.today()
+    def __repr__(self):
+        return f"<Carte: {self.question} (prochaine: {self.date_prochaine})>"
+
+# ── À compléter ──────────────────────────────────────────────────────
+def extraire_cartes_du_jour(paquet, date_jour):
+    pass  # Remplacer par votre code
+# ─────────────────────────────────────────────────────────────────────
+
+c1 = Carte("Capitale de l'Italie ?", "Rome")
+c1.date_prochaine = date_future(4)   # dans 4 jours → pas à réviser
+
+c2 = Carte("7 x 8 ?", "56")
+c2.date_prochaine = date_future(0)   # aujourd'hui → à réviser
+
+c3 = Carte("Symbole du Fer ?", "Fe")
+c3.date_prochaine = date_future(-2)  # il y a 2 jours → à réviser
+
+paquet = [c1, c2, c3]
+a_reviser = extraire_cartes_du_jour(paquet, datetime.date.today())
+
+print("Cartes à réviser aujourd'hui (attendu : c2 et c3) :")
+print(a_reviser)
+    </script>
+  </section>
+
+  <hr class="sep">
+
+  <!-- QUESTION 3 -->
+  <section id="q3">
+    <h2>Question 3 — Débogage de <code>extraire_cartes_a_renforcer</code></h2>
+
+    <div class="encadre-question">
+      <span class="encadre-prefix">Question 3 / 3</span>
+      <p>
+        La fonction doit retourner <strong>uniquement les cartes dont le niveau est
+        le minimum du paquet</strong>. Le code fourni contient une faille logique.
+        Identifiez-la et proposez une correction.
+      </p>
+    </div>
+
+    <h3>Code défaillant fourni</h3>
+
+    <pre class="code-block"><span class="kw">def</span> <span class="fn">extraire_cartes_a_renforcer</span>(paquet):
+    <span class="kw">if</span> <span class="fn">len</span>(paquet) == <span class="nb">0</span>:
+        <span class="kw">return</span> []
+
+    niveau_min = paquet[<span class="nb">0</span>].niveau
+    a_renforcer = []
+
+    <span class="kw">for</span> carte <span class="kw">in</span> paquet:
+        <span class="kw">if</span> carte.niveau &lt; niveau_min:
+            niveau_min = carte.niveau
+            a_renforcer.append(carte)    <span class="bug"># ← BUG ICI</span>
+        <span class="kw">elif</span> carte.niveau == niveau_min:
+            a_renforcer.append(carte)
+
+    <span class="kw">return</span> a_renforcer</pre>
+
+    <h3>Trace d'exécution</h3>
+
+    <p style="font-size:.93rem;">
+      Paquet de test : <code>c1.niveau=2</code>, <code>c2.niveau=1</code>, <code>c3.niveau=2</code><br>
+      Niveau minimum attendu : <strong>1</strong> → seule <code>c2</code> doit être retournée.
+    </p>
+
+    <div style="overflow-x:auto;">
+      <table class="table-trace">
+        <thead>
+          <tr>
+            <th>Itération</th><th>carte</th><th>carte.niveau</th>
+            <th>niveau_min (avant)</th><th>Condition vraie</th>
+            <th>a_renforcer après</th><th>niveau_min (après)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>1</td><td>c1</td><td>2</td><td>2</td>
+            <td><code>elif niveau == 2</code></td>
+            <td>[c1]</td><td>2</td>
+          </tr>
+          <tr class="trace-bug">
+            <td>2</td><td>c2</td><td>1</td><td>2</td>
+            <td><code>if 1 &lt; 2</code> ✓</td>
+            <td>[c1, <strong>c2</strong>]</td><td>1</td>
+          </tr>
+          <tr>
+            <td>3</td><td>c3</td><td>2</td><td>1</td>
+            <td>aucune</td>
+            <td>[c1, c2]</td><td>1</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="encadre-piege">
+      <span class="encadre-prefix">🐛 Explication du bug</span>
+      <p style="margin:0">
+        Lorsque <code>if carte.niveau &lt; niveau_min</code> est vrai, la carte est ajoutée
+        <em>sans vider la liste</em>. Les cartes précédemment ajoutées (à l'ancien niveau
+        supérieur, devenu invalide) restent dans <code>a_renforcer</code>. Résultat :
+        <code>c1</code> (niveau 2) et <code>c2</code> (niveau 1) sont retournées ensemble,
+        alors que seule <code>c2</code> devrait l'être.
+      </p>
+    </div>
+
+    <button class="btn-tp-vert" onclick="toggleCorrection('cor3', this)">Voir la correction</button>
+
+    <div class="correction-bloc" id="cor3">
+      <div class="encadre-indice" style="margin-top:.6rem; border-left-color: var(--accent-vert);">
+        <span class="encadre-prefix" style="color:var(--accent-vert);">✔ Correction — deux approches</span>
+
+        <p><strong>Approche 1 : réinitialiser la liste quand un nouveau minimum est trouvé</strong></p>
+        <pre class="code-block" style="margin:.3rem 0 .75rem;"><span class="kw">def</span> <span class="fn">extraire_cartes_a_renforcer</span>(paquet):
+    <span class="kw">if</span> <span class="fn">len</span>(paquet) == <span class="nb">0</span>:
+        <span class="kw">return</span> []
+    niveau_min = paquet[<span class="nb">0</span>].niveau
+    a_renforcer = []
+    <span class="kw">for</span> carte <span class="kw">in</span> paquet:
+        <span class="kw">if</span> carte.niveau &lt; niveau_min:
+            niveau_min = carte.niveau
+            a_renforcer = [carte]      <span class="cm"># ← réinitialisation !</span>
+        <span class="kw">elif</span> carte.niveau == niveau_min:
+            a_renforcer.append(carte)
+    <span class="kw">return</span> a_renforcer</pre>
+
+        <p><strong>Approche 2 : deux passes — trouver le min, puis filtrer</strong></p>
+        <pre class="code-block" style="margin:.3rem 0 .75rem;"><span class="kw">def</span> <span class="fn">extraire_cartes_a_renforcer</span>(paquet):
+    <span class="kw">if</span> <span class="fn">len</span>(paquet) == <span class="nb">0</span>:
+        <span class="kw">return</span> []
+    niveau_min = <span class="fn">min</span>(c.niveau <span class="kw">for</span> c <span class="kw">in</span> paquet)
+    <span class="kw">return</span> [c <span class="kw">for</span> c <span class="kw">in</span> paquet <span class="kw">if</span> c.niveau == niveau_min]</pre>
+
+        <p style="margin:0; font-size:.93rem;">
+          <strong>L'approche 2</strong> est plus lisible et évite toute ambiguïté.
+          L'approche 1 corrige le code original avec un changement minimal : remplacer
+          <code>.append(carte)</code> par <code>= [carte]</code>.
+        </p>
+      </div>
+    </div>
+
+    <p style="font-size:.88rem; color:var(--text-muted); margin-top:1rem;">📝 Corrigez la fonction et exécutez le test :</p>
+    <script type="py-editor" env="s21">
+import datetime
+
+def date_future(nb_jours):
+    return datetime.date.today() + datetime.timedelta(days=nb_jours)
+
+DELAIS = [1, 3, 7, 15, 30]
+
+class Carte:
+    def __init__(self, question, reponse):
+        self.question = question
+        self.reponse  = reponse
+        self.niveau   = 0
+        self.date_prochaine = datetime.date.today()
+    def __repr__(self):
+        return f"<Carte: {self.question} (Niveau {self.niveau})>"
+
+# ── Corrigez la fonction ci-dessous ─────────────────────────────────
+def extraire_cartes_a_renforcer(paquet):
+    if len(paquet) == 0:
+        return []
+    niveau_min = paquet[0].niveau
+    a_renforcer = []
+    for carte in paquet:
+        if carte.niveau < niveau_min:
+            niveau_min = carte.niveau
+            a_renforcer.append(carte)   # ← BUG : à corriger
+        elif carte.niveau == niveau_min:
+            a_renforcer.append(carte)
+    return a_renforcer
+# ─────────────────────────────────────────────────────────────────────
+
+def test_renforcement():
+    c1 = Carte("Capitale de l'Italie ?", "Rome")
+    c1.niveau = 2
+    c2 = Carte("7 x 8 ?", "56")
+    c2.niveau = 1
+    c3 = Carte("Symbole du Fer ?", "Fe")
+    c3.niveau = 2
+    resultat = extraire_cartes_a_renforcer([c1, c2, c3])
+    print("Résultat :", resultat)
+    if len(resultat) == 1 and resultat[0].question == "7 x 8 ?":
+        print("✔ Correct — seule c2 (niveau 1) retournée.")
+    else:
+        print("✘ Incorrect — vérifiez votre correction.")
+
+test_renforcement()
+    </script>
+  </section>
+
+  <hr class="sep">
+
+  <!-- PIÈGES FRÉQUENTS -->
+  <section id="pieges">
+    <h2>Pièges fréquents &amp; récapitulatif</h2>
+
+    <div class="encadre-piege">
+      <span class="encadre-prefix">Piège 1 — Mettre à jour la date avant le niveau</span>
+      <p style="margin:0">
+        En Q1, si on appelle <code>date_future(DELAIS[self.niveau])</code> <em>avant</em>
+        de modifier <code>self.niveau</code>, on applique le délai de l'<strong>ancien</strong>
+        niveau. Il faut toujours modifier le niveau en premier.
+      </p>
+    </div>
+
+    <div class="encadre-piege">
+      <span class="encadre-prefix">Piège 2 — Oublier le plafond à 4</span>
+      <p style="margin:0">
+        Sans <code>min(..., 4)</code>, un niveau 4 pourrait passer à 5 et provoquer
+        une <code>IndexError</code> lors de l'accès à <code>DELAIS[5]</code>
+        (la liste n'a que 5 éléments, d'index 0 à 4).
+      </p>
+    </div>
+
+    <div class="encadre-piege">
+      <span class="encadre-prefix">Piège 3 — Utiliser &lt; au lieu de &lt;= en Q2</span>
+      <p style="margin:0">
+        La condition correcte est <code>carte.date_prochaine &lt;= date_jour</code>.
+        Avec <code>&lt;</code> strict, les cartes dont la révision est prévue
+        <em>exactement</em> aujourd'hui ne seraient pas sélectionnées.
+      </p>
+    </div>
+
+    <div class="encadre-piege">
+      <span class="encadre-prefix">Piège 4 — Ne pas réinitialiser a_renforcer en Q3</span>
+      <p style="margin:0">
+        C'est le bug classique de la recherche de minimum avec collecte simultanée.
+        Quand on découvre un nouveau minimum, toutes les cartes du niveau précédent
+        sont désormais invalides. Il faut écrire <code>a_renforcer = [carte]</code>
+        et non <code>a_renforcer.append(carte)</code>.
+      </p>
+    </div>
+
+    <div class="encadre" style="margin-top:2rem;">
+      <span class="encadre-prefix">Récapitulatif — Ce que tu dois retenir</span>
+      <ul style="margin:0">
+        <li>En POO, toujours mettre à jour l'état (<code>self.niveau</code>) <strong>avant</strong> de recalculer les propriétés dérivées (<code>self.date_prochaine</code>).</li>
+        <li>Utiliser <code>min(..., 4)</code> pour plafonner sans conditionnelle supplémentaire.</li>
+        <li>Les comparaisons de dates avec <code>&lt;=</code> incluent le jour courant — <strong>ne pas utiliser <code>&lt;</code></strong>.</li>
+        <li>Quand on cherche un minimum en collectant des éléments, <strong>réinitialiser la liste</strong> dès qu'un nouveau minimum est trouvé.</li>
+        <li>L'approche deux passes (trouver le min avec <code>min()</code>, puis filtrer avec une compréhension) est souvent plus claire et moins sujette aux bugs.</li>
+      </ul>
+    </div>
+  </section>
+
+</div><!-- /container-content -->
+
+<!-- PIED DE PAGE -->
+<footer>
+  Lycée Antoine Watteau — DarkSATHI Li &nbsp;·&nbsp; NSI BAC 2026 &nbsp;·&nbsp; Sujet n°21
+</footer>
+
+<!-- SCRIPTS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+  /* ── RETOUR EN HAUT ── */
+  const btnTop = document.getElementById('btn-top');
+  window.addEventListener('scroll', () => {
+    btnTop.style.display = window.scrollY > 300 ? 'flex' : 'none';
+  });
+  btnTop.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
+
+  /* ── TOGGLE INDICE ── */
+  function toggleIndice(id, btn) {
+    const el = document.getElementById(id);
+    if (!el) return;
+    if (el.classList.contains('visible')) {
+      el.classList.remove('visible');
+      btn.textContent = btn.textContent.replace('▼', '▶');
+    } else {
+      el.classList.add('visible');
+      btn.textContent = btn.textContent.replace('▶', '▼');
+    }
+  }
+
+  /* ── TOGGLE CORRECTION ── */
+  function toggleCorrection(id, btn) {
+    const el = document.getElementById(id);
+    if (!el) return;
+    if (el.classList.contains('visible')) {
+      el.classList.remove('visible');
+      if (btn) btn.textContent = btn.textContent.replace('Masquer', 'Voir la correction');
+    } else {
+      el.classList.add('visible');
+      if (btn) btn.textContent = btn.textContent.replace('Voir la correction', 'Masquer');
+    }
+  }
+</script>
+</body>
+</html>
