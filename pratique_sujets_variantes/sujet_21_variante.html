@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Bac NSI - Système de tournoi d'échecs (classement Elo)</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', Roboto, system-ui, sans-serif;
+            background: #e9ecef;
+            padding: 2rem 1rem;
+            line-height: 1.5;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 1.5rem;
+            box-shadow: 0 20px 35px -12px rgba(0,0,0,0.2);
+            overflow: hidden;
+        }
+        .header {
+            background: linear-gradient(135deg, #1e3c2c 0%, #0f2b1e 100%);
+            color: white;
+            padding: 2rem;
+        }
+        .header h1 { font-size: 1.8rem; margin-bottom: 0.5rem; }
+        .header .badge {
+            background: #e6b422;
+            display: inline-block;
+            padding: 0.25rem 1rem;
+            border-radius: 30px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            color: #1e3c2c;
+        }
+        .content { padding: 2rem; }
+        h2 {
+            font-size: 1.5rem;
+            margin: 1.5rem 0 1rem;
+            border-left: 5px solid #e6b422;
+            padding-left: 1rem;
+            color: #1e4a2e;
+        }
+        h3 { font-size: 1.2rem; margin: 1rem 0 0.5rem; color: #2d6a4f; }
+        .question-block {
+            background: #fef9ef;
+            border: 1px solid #e9d5a7;
+            border-radius: 1rem;
+            padding: 1.2rem 1.5rem;
+            margin: 1.5rem 0;
+        }
+        .question-title {
+            font-size: 1.3rem;
+            font-weight: bold;
+            color: #b97f10;
+            margin-bottom: 0.75rem;
+        }
+        pre {
+            background: #1e2a36;
+            color: #e2e8f0;
+            padding: 1rem;
+            border-radius: 12px;
+            overflow-x: auto;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.85rem;
+            margin: 1rem 0;
+        }
+        .call-prof {
+            background: #e8f4fd;
+            border-radius: 30px;
+            padding: 0.5rem 1rem;
+            display: inline-block;
+            font-weight: bold;
+            margin: 0.75rem 0;
+            font-size: 0.85rem;
+            color: #0c4a6e;
+        }
+        button {
+            background: #2d6a4f;
+            color: white;
+            border: none;
+            padding: 8px 20px;
+            border-radius: 40px;
+            font-weight: bold;
+            cursor: pointer;
+            margin: 0.5rem 0;
+        }
+        button:hover { background: #1e4a2e; }
+        .info-box {
+            background: #e8f5e9;
+            border-left: 5px solid #2ecc71;
+            padding: 1rem;
+            border-radius: 12px;
+            margin: 1rem 0;
+        }
+        footer {
+            background: #f8fafc;
+            padding: 1rem;
+            text-align: center;
+            border-top: 1px solid #e2e8f0;
+            font-size: 0.8rem;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1rem 0;
+            background: #f9f9ff;
+        }
+        td, th {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: center;
+        }
+        th { background: #e9ecef; }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="header">
+        <h1>♟️ BACCALAURÉAT NSI 2026</h1>
+        <div class="badge">Épreuve pratique – Sujet inédit n°42</div>
+        <p style="margin-top: 0.75rem;">Système de gestion de tournoi d'échecs avec classement Elo et appariement suisse</p>
+        <p style="font-size: 0.85rem; opacity: 0.8;">Durée : 1h | Fichier : <strong>tournoi_echecs.py</strong></p>
+    </div>
+    <div class="content">
+
+        <h2>🎯 Contexte : Tournoi d'échecs</h2>
+        <p>Vous développez un logiciel d'organisation de tournoi d'échecs. Chaque joueur possède :</p>
+        <ul>
+            <li>un <strong>nom</strong></li>
+            <li>un <strong>classement Elo</strong> (entier, typiquement entre 1000 et 2800)</li>
+            <li>un <strong>score</strong> (nombre de points dans le tournoi : 1 pour une victoire, 0.5 pour une nulle, 0 pour une défaite)</li>
+            <li>une <strong>date du dernier match</strong> (pour pénalité d'inactivité)</li>
+        </ul>
+
+        <div class="info-box">
+            📊 <strong>Règle de mise à jour du classement Elo</strong> :<br>
+            Nouvel_Elo = Ancien_Elo + K * (Score_reel - Score_attendu)<br>
+            avec K = 32 (facteur de développement) et Score_attendu = 1 / (1 + 10^((Elo_adversaire - Elo_joueur)/400))
+        </div>
+
+        <h2>📁 Fichier de départ : tournoi_echecs.py</h2>
+        <pre id="codeContent">import datetime
+import math
+
+def date_future(nb_jours):
+    return datetime.date.today() + datetime.timedelta(days=nb_jours)
+
+class JoueurEchecs:
+    def __init__(self, nom, elo_initial=1200, nationalite="France"):
+        self.nom = nom
+        self.elo = elo_initial
+        self.score_tournoi = 0.0
+        self.dernier_match = datetime.date.today()
+        self.historique_matchs = []
+        self.nationalite = nationalite
+
+    def __repr__(self):
+        return f"&lt;Joueur: {self.nom} | Elo:{self.elo} | Score:{self.score_tournoi}&gt;"
+
+    ###########################################################################
+    # QUESTION 1 : Méthode match(self, adversaire, resultat, date_match)
+    # resultat : 1.0 (victoire), 0.5 (nulle), 0.0 (défaite)
+    ###########################################################################
+    def match(self, adversaire, resultat, date_match):
+        """Met à jour l'Elo, le score_tournoi, dernier_match et historique"""
+        pass
+
+    ###########################################################################
+    # QUESTION 4 : Méthode penalite_inactivite(self, date_reference, seuil_jours=30)
+    ###########################################################################
+    def penalite_inactivite(self, date_reference, seuil_jours=30):
+        """Retourne True si le joueur n'a pas joué depuis plus de seuil_jours"""
+        pass
+
+# ------------------------------------------------------------------
+# FONCTIONS À ÉCRIRE
+# ------------------------------------------------------------------
+
+def score_attendu(elo_joueur, elo_adversaire):
+    """Calcule le score attendu selon la formule Elo"""
+    return 1.0 / (1.0 + 10.0 ** ((elo_adversaire - elo_joueur) / 400.0))
+
+def appariement_suisse(joueurs, date_tour):
+    """
+    QUESTION 2 :
+    Applique le système suisse : trier par score décroissant, puis par Elo décroissant,
+    puis apparier les joueurs par rang adjacent (1-2, 3-4, ...).
+    Éviter les matchs déjà joués (même adversaire).
+    Retourne une liste de tuples (joueur1, joueur2).
+    """
+    pass
+
+def mise_a_jour_inactifs(paquet_joueurs, date_reference, penalite_elo=50):
+    """
+    QUESTION 3 :
+    Pour tout joueur inactif depuis + de 45 jours, diminuer son Elo de penalite_elo
+    (sans descendre en dessous de 800).
+    """
+    pass
+
+def classement_par_nationalite(joueurs):
+    """
+    QUESTION 5 - BONUS / INITIATIVE :
+    Reçoit une liste de joueurs avec attribut 'nationalite'
+    Retourne un dictionnaire {nationalite: [joueurs_tries_par_elo_decroissant]}
+    """
+    pass
+
+# ---------- TESTS ----------
+if __name__ == "__main__":
+    j1 = JoueurEchecs("Alice", 1500)
+    j2 = JoueurEchecs("Bob", 1450)
+    print(f"Score attendu Alice vs Bob : {score_attendu(j1.elo, j2.elo):.3f}")
+    j1.match(j2, 1.0, datetime.date.today())
+    print(f"Après match : {j1}")
+</pre>
+
+        <button id="downloadBtn">📥 Télécharger tournoi_echecs.py</button>
+
+        <div class="question-block">
+            <div class="question-title">❓ Question 1 · Mise à jour Elo et score (4 pts)</div>
+            <p>Implémenter la méthode <code>match(self, adversaire, resultat, date_match)</code> :</p>
+            <ul>
+                <li>Calculer le score attendu avec <code>score_attendu</code></li>
+                <li>Mettre à jour <code>self.elo</code> (formule Elo)</li>
+                <li>Ajouter <code>resultat</code> à <code>self.score_tournoi</code></li>
+                <li>Ajouter l'entrée dans <code>historique_matchs</code></li>
+                <li>Mettre à jour <code>self.dernier_match</code></li>
+            </ul>
+            <div class="call-prof">📣 Appel professeur après implémentation de la méthode</div>
+        </div>
+
+        <div class="question-block">
+            <div class="question-title">❓ Question 2 · Appariement suisse (4 pts)</div>
+            <p>Écrire <code>appariement_suisse(joueurs, date_tour)</code> :</p>
+            <ul>
+                <li>Trier les joueurs par <code>score_tournoi</code> décroissant, puis <code>elo</code> décroissant</li>
+                <li>Apparier (1-2, 3-4, 5-6…)</li>
+                <li>Si deux joueurs se sont déjà affrontés (vérifier dans <code>historique_matchs</code>), prendre le suivant dans la liste</li>
+                <li>Retourner la liste des paires</li>
+            </ul>
+            <div class="call-prof">📣 Appel professeur pour vérifier la logique d'appariement</div>
+        </div>
+
+        <div class="question-block">
+            <div class="question-title">❓ Question 3 · Pénalité d'inactivité (3 pts)</div>
+            <p>Implémenter <code>mise_a_jour_inactifs(paquet_joueurs, date_reference, penalite_elo=50)</code> : appliquer la pénalité aux joueurs inactifs.</p>
+            <div class="call-prof">📣 Appel professeur</div>
+        </div>
+
+        <div class="question-block">
+            <div class="question-title">❓ Question 4 · Détection d'inactivité (3 pts)</div>
+            <p>Méthode <code>penalite_inactivite(self, date_reference, seuil_jours=30)</code> : renvoie <code>True</code> si le joueur n'a pas joué depuis plus de <code>seuil_jours</code> jours.</p>
+        </div>
+
+        <div class="question-block">
+            <div class="question-title">❓ Question 5 · Classement par nationalité (4 pts)</div>
+            <p>Ajouter l'attribut <code>self.nationalite</code> dans <code>__init__</code>. Implémenter <code>classement_par_nationalite(joueurs)</code>.</p>
+            <div class="call-prof">📣 Appel professeur (initiative)</div>
+        </div>
+
+        <footer>
+            🔎 Pensez à tester vos fonctions avec plusieurs cas. La correction portera sur la justesse des calculs Elo et la robustesse des appariements.
+        </footer>
+    </div>
+</div>
+<script>
+    const solutionCode = `import datetime
+import math
+
+def date_future(nb_jours):
+    return datetime.date.today() + datetime.timedelta(days=nb_jours)
+
+class JoueurEchecs:
+    def __init__(self, nom, elo_initial=1200, nationalite="France"):
+        self.nom = nom
+        self.elo = elo_initial
+        self.score_tournoi = 0.0
+        self.dernier_match = datetime.date.today()
+        self.historique_matchs = []
+        self.nationalite = nationalite
+
+    def __repr__(self):
+        return f"<Joueur: {self.nom} | Elo:{self.elo} | Score:{self.score_tournoi}>"
+
+    def match(self, adversaire, resultat, date_match):
+        # Question 1
+        score_att = 1.0 / (1.0 + 10.0 ** ((adversaire.elo - self.elo) / 400.0))
+        self.elo = int(self.elo + 32 * (resultat - score_att))
+        self.score_tournoi += resultat
+        self.dernier_match = date_match
+        self.historique_matchs.append((adversaire.nom, resultat, date_match))
+
+    def penalite_inactivite(self, date_reference, seuil_jours=30):
+        # Question 4
+        return (date_reference - self.dernier_match).days > seuil_jours
+
+def score_attendu(elo_joueur, elo_adversaire):
+    return 1.0 / (1.0 + 10.0 ** ((elo_adversaire - elo_joueur) / 400.0))
+
+def appariement_suisse(joueurs, date_tour):
+    # Question 2
+    tri = sorted(joueurs, key=lambda j: (-j.score_tournoi, -j.elo))
+    apparies = []
+    utilises = set()
+    i = 0
+    while i < len(tri):
+        if tri[i] in utilises:
+            i += 1
+            continue
+        trouve = False
+        for j in range(i+1, len(tri)):
+            if tri[j] in utilises:
+                continue
+            deja_joue = any(adv == tri[j].nom for (adv, _, _) in tri[i].historique_matchs)
+            if not deja_joue:
+                apparies.append((tri[i], tri[j]))
+                utilises.add(tri[i])
+                utilises.add(tri[j])
+                trouve = True
+                break
+        if not trouve:
+            apparies.append((tri[i], None))
+            utilises.add(tri[i])
+        i += 1
+    return apparies
+
+def mise_a_jour_inactifs(paquet_joueurs, date_reference, penalite_elo=50):
+    # Question 3
+    for j in paquet_joueurs:
+        if j.penalite_inactivite(date_reference, 45):
+            j.elo = max(800, j.elo - penalite_elo)
+
+def classement_par_nationalite(joueurs):
+    # Question 5
+    d = {}
+    for j in joueurs:
+        d.setdefault(j.nationalite, []).append(j)
+    for nat in d:
+        d[nat].sort(key=lambda x: -x.elo)
+    return d
+
+if __name__ == "__main__":
+    j1 = JoueurEchecs("Alice", 1500, "France")
+    j2 = JoueurEchecs("Bob", 1450, "France")
+    j3 = JoueurEchecs("Carlos", 1600, "Espagne")
+    print(f"Score attendu: {score_attendu(j1.elo, j2.elo):.3f}")
+    j1.match(j2, 1.0, datetime.date.today())
+    print(j1)
+    print(f"Inactif? {j1.penalite_inactivite(datetime.date.today(), 10)}")
+    print("Appariement:", appariement_suisse([j1, j2, j3], datetime.date.today()))
+    mise_a_jour_inactifs([j1], datetime.date.today() + datetime.timedelta(days=50), 30)
+    print(f"Elo après pénalité: {j1.elo}")
+    print("Classement par nationalité:", classement_par_nationalite([j1, j2, j3]))
+`;
+
+    document.getElementById('downloadBtn').addEventListener('click', () => {
+        const blob = new Blob([solutionCode], { type: 'text/x-python' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'tournoi_echecs.py';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+    });
+</script>
+</body>
+</html>
