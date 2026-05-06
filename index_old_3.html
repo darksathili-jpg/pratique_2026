@@ -741,103 +741,6 @@
       }
     }
 
-    /* ── CARTES PRIORITAIRES ── */
-
-    /* Pulsation de la bordure externe de la carte */
-    @keyframes priorityGlow {
-      0%, 100% {
-        box-shadow: 0 0 0 2px #e53935,
-                    0 0 8px 2px rgba(229,57,53,.25),
-                    0 2px 6px rgba(0,0,0,.08);
-      }
-      50% {
-        box-shadow: 0 0 0 3px #e53935,
-                    0 0 20px 6px rgba(229,57,53,.45),
-                    0 4px 14px rgba(0,0,0,.10);
-      }
-    }
-
-    .card.priority {
-      border-top-color: #e53935 !important;
-      border-top-width: 4px;
-      animation: fadeUp .4s ease both, priorityGlow 2s ease-in-out infinite;
-    }
-
-    /* Sur la face image : overlay flash rouge en bord */
-    @keyframes imgFlash {
-      0%, 100% { opacity: 0; }
-      50%       { opacity: 1; }
-    }
-
-    .card.priority .card-face--img::after {
-      content: '';
-      position: absolute;
-      inset: 0;
-      border-radius: calc(var(--border-radius) - 1px);
-      box-shadow: inset 0 0 0 3px #e53935,
-                  inset 0 0 18px 4px rgba(229,57,53,.35);
-      animation: imgFlash 2s ease-in-out infinite;
-      pointer-events: none;
-      z-index: 5;
-    }
-
-    /* Badge "PRIORITAIRE" affiché sur la face image, toujours visible */
-    .priority-badge-img {
-      position: absolute;
-      top: .6rem;
-      left: .6rem;
-      z-index: 10;
-      background: #e53935;
-      color: #fff;
-      font-family: 'JetBrains Mono', monospace;
-      font-size: .55rem;
-      font-weight: 700;
-      letter-spacing: .1em;
-      padding: .25rem .6rem;
-      border-radius: 4px;
-      pointer-events: none;
-      display: flex;
-      align-items: center;
-      gap: .3rem;
-      animation: imgFlash 2s ease-in-out infinite;
-      box-shadow: 0 1px 6px rgba(0,0,0,.35);
-    }
-
-    .priority-badge-img::before {
-      content: '★';
-      font-size: .7rem;
-    }
-
-    /* Étoile pulsante dans le card-num (face info) */
-    .priority-star {
-      display: inline-block;
-      color: #e53935;
-      font-size: .9rem;
-      animation: starPulse 1.8s ease-in-out infinite;
-      margin-right: .2rem;
-      vertical-align: middle;
-    }
-
-    @keyframes starPulse {
-      0%, 100% { transform: scale(1);   opacity: 1; }
-      50%       { transform: scale(1.3); opacity: .7; }
-    }
-
-    /* Légende dans la filter-bar */
-    .priority-legend {
-      display: inline-flex;
-      align-items: center;
-      gap: .35rem;
-      font-family: 'JetBrains Mono', monospace;
-      font-size: .72rem;
-      color: #c62828;
-      background: #fff5f5;
-      border: 1px solid #ef9a9a;
-      border-radius: 20px;
-      padding: .28rem .85rem;
-      margin-left: auto;
-    }
-
     @media (max-width: 640px) {
       .grid { grid-template-columns: 1fr; }
       h1 { font-size: 1.8rem; }
@@ -890,7 +793,6 @@
       <button class="filter-btn active" data-filter="all">Tous</button>
       <button class="filter-btn" data-filter="done">✓ Fiche prête</button>
       <button class="filter-btn" data-filter="todo">⏳ À créer</button>
-      <span class="priority-legend">⭐ Sujets prioritaires à travailler</span>
     </div>
 
     <!-- GRILLE PRINCIPALE -->
@@ -939,7 +841,6 @@
         style="--card-accent:#2e7d32;" data-delay="2" data-video="" data-notebook="" data-image="sujet_3/menstruel.png"
         data-zip-original="pratique_sujets/26_BCG_NSI_3.zip"
         data-zip-variante="">
-        <div class="card-num">SUJET 03</div>
         <div class="card-title">Cycle menstruel — phases et ovulation</div>
         <div class="card-tags">
           <span class="tag">données</span>
@@ -953,7 +854,7 @@
       </a>
 
       <!-- ── Sujet 4 ── -->
-      <a class="card priority locked" href="sujet_4/fiche_plantes_nsi.html" data-status="done"
+      <a class="card locked" href="sujet_4/fiche_plantes_nsi.html" data-status="done"
         style="--card-accent:#7b3fa8;" data-delay="3" data-video="https://youtu.be/UORov7rBUWI" data-notebook="" data-image="sujet_4/serre_2.png"
         data-zip-original="pratique_sujets/26_BCG_NSI_4.zip"
         data-zip-variante="pratique_sujets_variantes/sujet_4_variante.zip">
@@ -1007,7 +908,7 @@
       </a>
 
       <!-- ── Sujet 7 ── -->
-      <a class="card priority locked" href="sujet_7/fiche_coccinelles_nsi_s07.html" data-status="done" style="--card-accent:#2e7d32;" data-delay="6"
+      <a class="card locked" href="sujet_7/fiche_coccinelles_nsi_s07.html" data-status="done" style="--card-accent:#2e7d32;" data-delay="6"
         data-notebook="https://notebooklm.google.com/notebook/72ddd5e5-2883-4670-825d-f38f3b81ef48" data-image="sujet_7/coccinelles.png"
         data-video="https://youtu.be/9exBm0U0Y3E"
         data-zip-original="pratique_sujets/26_BCG_NSI_7.zip"
@@ -1026,7 +927,7 @@
       </a>
 
       <!-- ── Sujet 8 ── -->
-      <a class="card priority locked" href="sujet_8/fiche_bcd_nsi_light.html" data-status="done" style="--card-accent:#7b3fa8;" data-delay="7" data-video=""
+      <a class="card locked" href="sujet_8/fiche_bcd_nsi_light.html" data-status="done" style="--card-accent:#7b3fa8;" data-delay="7" data-video=""
         data-notebook="https://notebooklm.google.com/notebook/5817f9ec-aaf5-4135-b1c6-c1ab066dedf1" data-image="sujet_8/bcd_2.png"
         data-zip-original="pratique_sujets/26_BCG_NSI_8.zip"
         data-zip-variante="">
@@ -1062,7 +963,7 @@
       </a>
 
       <!-- ── Sujet 10 ── -->
-      <a class="card priority locked" href="sujet_10/fiche_eau_nsi_light.html" data-status="done" style="--card-accent:#b5610a;" data-delay="9" data-video=""
+      <a class="card locked" href="sujet_10/fiche_eau_nsi_light.html" data-status="done" style="--card-accent:#b5610a;" data-delay="9" data-video=""
         data-notebook="https://notebooklm.google.com/notebook/1d196826-d6ad-41f0-90ee-2f53fa9c5bfd" data-image="sujet_10/eau.png"
         data-zip-original="pratique_sujets/26_BCG_NSI_10.zip"
         data-zip-variante="">
@@ -1080,7 +981,7 @@
       </a>
 
       <!-- ── Sujet 11 ── -->
-      <a class="card priority locked" href="sujet_11/fiche_sujet11_knn_renard.html" data-status="done" style="--card-accent:#2e7d32;" data-delay="10" data-video=""
+      <a class="card locked" href="sujet_11/fiche_sujet11_knn_renard.html" data-status="done" style="--card-accent:#2e7d32;" data-delay="10" data-video=""
         data-notebook="https://notebooklm.google.com/notebook/e0602d7b-b0d9-4cc9-9a78-ea740bf58ca5" data-image="sujet_11/renard_knn.png"
         data-zip-original="pratique_sujets/26_BCG_NSI_11.zip"
         data-zip-variante="">
@@ -1098,7 +999,7 @@
       </a>
 
       <!-- ── Sujet 12 ── -->
-      <a class="card priority locked" href="sujet_12/fiche_sujet12_refuge_renard.html" data-status="done" style="--card-accent:#7b3fa8;" data-delay="11" data-video=""
+      <a class="card locked" href="sujet_12/fiche_sujet12_refuge_renard.html" data-status="done" style="--card-accent:#7b3fa8;" data-delay="11" data-video=""
         data-notebook="https://notebooklm.google.com/notebook/414be745-e4cd-4585-a572-06302ba8db24" data-image="sujet_12/refuge.png"
         data-zip-original="pratique_sujets/26_BCG_NSI_12.zip"
         data-zip-variante="">
@@ -1116,7 +1017,7 @@
       </a>
 
       <!-- ── Sujet 13 ── -->
-      <a class="card priority locked" href="sujet_13/fiche_ballon_sonde.html" data-status="done" style="--card-accent:#2a6496;" data-delay="12" data-video=""
+      <a class="card locked" href="sujet_13/fiche_ballon_sonde.html" data-status="done" style="--card-accent:#2a6496;" data-delay="12" data-video=""
         data-notebook="sujet_13/ballon_sonde_notebooklm.md" data-image="sujet_13/ballon_sonde.png"
         data-zip-original="pratique_sujets/26_BCG_NSI_13.zip"
         data-zip-variante="">
@@ -1152,7 +1053,7 @@
       </a>
 
       <!-- ── Sujet 15 ── -->
-      <a class="card priority locked" href="sujet_15/fiche_veto_nsi_light.html" data-status="done" style="--card-accent:#2e7d32;" data-delay="14" data-video=""
+      <a class="card locked" href="sujet_15/fiche_veto_nsi_light.html" data-status="done" style="--card-accent:#2e7d32;" data-delay="14" data-video=""
         data-notebook="" data-image="sujet_15/veto.png"
         data-zip-original="pratique_sujets/26_BCG_NSI_15.zip"
         data-zip-variante="sujet_15/fiche_mediatheque_nsi_light.html">
@@ -1239,7 +1140,7 @@
       </a>
 
       <!-- ── Sujet 20 ── -->
-      <a class="card priority locked" href="sujet_20/fiche_sujet20_empreinte_carbone.html" data-status="done" style="--card-accent:#7b3fa8;" data-delay="19" data-video=""
+      <a class="card locked" href="sujet_20/fiche_sujet20_empreinte_carbone.html" data-status="done" style="--card-accent:#7b3fa8;" data-delay="19" data-video=""
         data-notebook="" data-image="sujet_20/empreinte_carbone.png"
         data-zip-original="pratique_sujets/26_BCG_NSI_20.zip"
         data-zip-variante="pratique_sujets_variantes/sujet_20_variante.zip">
@@ -1256,7 +1157,7 @@
       </a>
 
       <!-- ── Sujet 21 ── -->
-      <a class="card priority locked" href="sujet_21/fiche_cartes_leitner.html" data-status="done" style="--card-accent:#2a6496;" data-delay="20" data-video=""
+      <a class="card locked" href="sujet_21/fiche_cartes_leitner.html" data-status="done" style="--card-accent:#2a6496;" data-delay="20" data-video=""
         data-notebook="" data-image="sujet_21/letner.png"
         data-zip-original="pratique_sujets/26_BCG_NSI_21.zip"
         data-zip-variante="pratique_sujets_variantes/sujet_21_variante.html">
@@ -1273,7 +1174,7 @@
       </a>
 
       <!-- ── Sujet 22 ── -->
-      <a class="card priority locked" href="sujet_22/fiche_qrcode.html" data-status="done" style="--card-accent:#b5610a;" data-delay="21" data-video=""
+      <a class="card locked" href="sujet_22/fiche_qrcode.html" data-status="done" style="--card-accent:#b5610a;" data-delay="21" data-video=""
         data-notebook="" data-image="sujet_22/qrcode.png"
         data-zip-original="pratique_sujets/26_BCG_NSI_22.zip"
         data-zip-variante="vpratique_sujets_variantes/sujet_22_variante.zip">
@@ -1330,26 +1231,6 @@
   <script>
 
     /* ══════════════════════════════════════════
-       0. MARQUAGE VISUEL PRIORITAIRE
-       Le badge est injecté après la construction
-       des faces (section 1), donc on diffère via
-       un MutationObserver ou on place après.
-       Ici on l'applique directement sur .card.priority
-       avant l'injection des faces (le badge sera
-       déplacé dans card-face--img par le bloc 1).
-    ══════════════════════════════════════════ */
-    // Marquage des card-num (face info) — fait avant l'injection BD
-    document.querySelectorAll('.card.priority').forEach(card => {
-      const numEl = card.querySelector('.card-num');
-      if (numEl) {
-        const star = document.createElement('span');
-        star.className = 'priority-star';
-        star.textContent = '★';
-        numEl.insertBefore(star, numEl.firstChild);
-      }
-    });
-
-    /* ══════════════════════════════════════════
        1. INJECTION IMAGE BD (data-image)
        Structure créée :
          .card.has-preview
@@ -1387,14 +1268,6 @@
       hint.className = 'card-img-hint';
       hint.textContent = 'Voir la fiche';
       faceImg.appendChild(hint);
-
-      // Badge PRIORITAIRE sur la face image si la carte est prioritaire
-      if (card.classList.contains('priority')) {
-        const badge = document.createElement('div');
-        badge.className = 'priority-badge-img';
-        badge.textContent = 'PRIORITAIRE';
-        faceImg.appendChild(badge);
-      }
 
       // Face contenu
       const faceInfo = document.createElement('div');
