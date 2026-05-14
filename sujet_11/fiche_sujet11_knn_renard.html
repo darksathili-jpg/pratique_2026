@@ -556,26 +556,18 @@ t[1]   # → {'vegetation': 9, ...}</pre>
 
     <p>
       Pour mesurer à quel point deux habitats se ressemblent, on utilise une formule mathématique proche
-      de la distance « à vol d'oiseau » dans un espace à 5 dimensions (une par caractéristique).
+      de la distance « à vol d'oiseau » dans un espace à 4 dimensions (une par caractéristique).
     </p>
 
-    <p>Si l'habitat A a les valeurs \((v_a, p_a, de_a, di_a, pr_a)\) et l'habitat B a les valeurs \((v_b, p_b, de_b, di_b, pr_b)\), alors :</p>
+    <p>Si l'habitat A a les valeurs \((v_a, p_a, de_a, di_a)\) et l'habitat B a les valeurs \((v_b, p_b, de_b, di_b)\), alors :</p>
 
-    $$d = \sqrt{(v_a - v_b)^2 + (p_a - p_b)^2 + (de_a - de_b)^2 + (di_a - di_b)^2 + (pr_a - pr_b)^2}$$
+    $$d = \sqrt{(v_a - v_b)^2 + (p_a - p_b)^2 + (de_a - de_b)^2 + (di_a - di_b)^2}$$
 
     <p>
       En Python, la racine carrée s'obtient avec <code>sqrt(...)</code> du module <code>math</code>.
       Pour calculer chaque terme, tu fais <code>(habitat_1['vegetation'] - habitat_2['vegetation'])**2</code>, etc.
     </p>
 
-    <div class="encadre-conseil">
-      <span class="encadre-prefix">Attention aux 5 clés</span>
-      <p style="margin:0">
-        La distance utilise <strong>les 5 clés</strong> du dictionnaire, y compris <code>'presence_renard'</code>.
-        C'est peut-être surprenant, mais c'est bien ce que demande l'énoncé. La formule donnée dans le sujet
-        inclut \(pr_a\) et \(pr_b\).
-      </p>
-    </div>
   </section>
 
   <hr class="sep">
@@ -601,10 +593,10 @@ t[1]   # → {'vegetation': 9, ...}</pre>
     </p>
     <ol>
       <li>Pour chaque clé (<code>'vegetation'</code>, <code>'proximite_eau'</code>, <code>'densite_urbaine'</code>,
-          <code>'disponibilite_proies'</code>, <code>'presence_renard'</code>), calcule la différence
+          <code>'disponibilite_proies'</code>, calcule la différence
           <code>habitat_1[cle] - habitat_2[cle]</code>.</li>
       <li>Mets cette différence au carré : <code>** 2</code>.</li>
-      <li>Additionne ces cinq carrés.</li>
+      <li>Additionne ces quatre carrés.</li>
       <li>Prends la racine carrée du tout avec <code>sqrt(...)</code>.</li>
     </ol>
 
@@ -617,7 +609,7 @@ t[1]   # → {'vegetation': 9, ...}</pre>
         </p>
         <pre>def distance(habitat_1, habitat_2):
     somme = (habitat_1['vegetation'] - habitat_2['vegetation'])**2 \
-          + ...   # continue pour les 4 autres clés
+          + ...   # continue pour les 3 autres clés
     return sqrt(somme)</pre>
       </div>
     </div>
@@ -628,8 +620,7 @@ t[1]   # → {'vegetation': 9, ...}</pre>
       <div id="ind1b" class="indice-bloc">
         <pre>def distance(habitat_1, habitat_2):
     cles = ['vegetation', 'proximite_eau',
-            'densite_urbaine', 'disponibilite_proies',
-            'presence_renard']
+            'densite_urbaine', 'disponibilite_proies']
     somme = 0
     for cle in cles:
         diff = habitat_1[cle] - habitat_2[cle]
@@ -646,18 +637,18 @@ t[1]   # → {'vegetation': 9, ...}</pre>
     <table class="table-habitats">
       <tr>
         <th>habitat</th>
-        <th>vegetation</th><th>proximite_eau</th><th>densite_urbaine</th><th>disponibilite_proies</th><th>presence_renard</th>
+        <th>vegetation</th><th>proximite_eau</th><th>densite_urbaine</th><th>disponibilite_proies</th>
       </tr>
       <tr>
-        <td>A</td><td>9</td><td>6</td><td>0</td><td>4</td><td>1</td>
+        <td>A</td><td>9</td><td>6</td><td>0</td><td>4</td>
       </tr>
       <tr>
-        <td>nouveau</td><td>5</td><td>2</td><td>4</td><td>6</td><td>0</td>
+        <td>nouveau</td><td>5</td><td>2</td><td>4</td><td>6</td>
       </tr>
     </table>
     <p>
-      Calcul : \(d = \sqrt{(9-5)^2 + (6-2)^2 + (0-4)^2 + (4-6)^2 + (1-0)^2}
-      = \sqrt{16 + 16 + 16 + 4 + 1} = \sqrt{53} \approx 7{,}28\)
+      Calcul : \(d = \sqrt{(9-5)^2 + (6-2)^2 + (0-4)^2 + (4-6)^2}
+      = \sqrt{16 + 16 + 16 + 4 } = \sqrt{52} \approx 7{,}21\)
     </p>
     <p>
       Le résultat exact donné par le sujet (avec PyScript) est <code>7.211102550927978</code>. Ton code doit retourner exactement cette valeur pour le premier habitat.
@@ -706,7 +697,7 @@ test_distance()
       <div id="corr1" class="correction-bloc">
         <pre>def distance(habitat_1, habitat_2):
     cles = ['vegetation', 'proximite_eau', 'densite_urbaine',
-            'disponibilite_proies', 'presence_renard']
+            'disponibilite_proies']
     somme = 0
     for cle in cles:
         diff = habitat_1[cle] - habitat_2[cle]
