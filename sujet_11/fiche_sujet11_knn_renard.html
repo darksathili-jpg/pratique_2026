@@ -802,7 +802,7 @@ nouveau = {'vegetation': 5, 'proximite_eau': 2, 'densite_urbaine': 4, 'disponibi
 
 def distance(habitat_1, habitat_2):
     cles = ['vegetation', 'proximite_eau', 'densite_urbaine',
-            'disponibilite_proies', 'presence_renard']
+            'disponibilite_proies']
     somme = sum((habitat_1[c] - habitat_2[c])**2 for c in cles)
     return sqrt(somme)
 
@@ -926,7 +926,7 @@ nouveau = {'vegetation': 5, 'proximite_eau': 2, 'densite_urbaine': 4, 'disponibi
 
 def distance(habitat_1, habitat_2):
     cles = ['vegetation', 'proximite_eau', 'densite_urbaine',
-            'disponibilite_proies', 'presence_renard']
+            'disponibilite_proies']
     return sqrt(sum((habitat_1[c] - habitat_2[c])**2 for c in cles))
 
 def distance_d_un_habitat(habitat, habitats):
@@ -1032,7 +1032,7 @@ nouveau = {'vegetation': 5, 'proximite_eau': 2, 'densite_urbaine': 4, 'disponibi
 
 def distance(h1, h2):
     cles = ['vegetation', 'proximite_eau', 'densite_urbaine',
-            'disponibilite_proies', 'presence_renard']
+            'disponibilite_proies']
     return sqrt(sum((h1[c] - h2[c])**2 for c in cles))
 
 def distance_d_un_habitat(habitat, habitats):
@@ -1171,7 +1171,7 @@ nouveau = {'vegetation': 5, 'proximite_eau': 2, 'densite_urbaine': 4, 'disponibi
 
 def distance(h1, h2):
     cles = ['vegetation', 'proximite_eau', 'densite_urbaine',
-            'disponibilite_proies', 'presence_renard']
+            'disponibilite_proies']
     return sqrt(sum((h1[c] - h2[c])**2 for c in cles))
 
 def distance_d_un_habitat(habitat, habitats):
